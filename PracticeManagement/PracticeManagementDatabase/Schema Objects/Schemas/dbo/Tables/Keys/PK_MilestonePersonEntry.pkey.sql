@@ -1,0 +1,4 @@
+﻿ALTER TABLE [dbo].[MilestonePersonEntry]
+    ADD CONSTRAINT [PK_MilestonePersonEntry_Id] PRIMARY KEY CLUSTERED (Id)
+	 WITH (IGNORE_DUP_KEY = OFF, STATISTICS_NORECOMPUTE = OFF);
+
