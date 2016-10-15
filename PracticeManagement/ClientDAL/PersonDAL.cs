@@ -5576,7 +5576,7 @@ namespace DataAccess
 
         }
 
-        public static List<ConsultantPTOHours> GetConsultantPTOEntries(DateTime startDate, DateTime endDate, int step, bool includeActivePersons, bool includeContingentPersons, bool isW2Salary, bool isW2Hourly, string practiceIds, string divisionIds, string titleIds, int sortId, string sortDirection)
+        public static List<ConsultantPTOHours> GetConsultantPTOEntries(DateTime startDate, DateTime endDate, bool includeActivePersons, bool includeContingentPersons, bool isW2Salary, bool isW2Hourly, string practiceIds, string divisionIds, string titleIds, int sortId, string sortDirection)
         {
             using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
             {
@@ -5589,7 +5589,6 @@ namespace DataAccess
 
                     command.Parameters.AddWithValue(Constants.ParameterNames.StartDate, startDate);
                     command.Parameters.AddWithValue(Constants.ParameterNames.EndDateParam, endDate);
-                    command.Parameters.AddWithValue(Constants.ParameterNames.Period, step);
                     command.Parameters.AddWithValue(Constants.ParameterNames.ActivePersons, includeActivePersons);
                     command.Parameters.AddWithValue(Constants.ParameterNames.ProjectedPersons, includeContingentPersons);
                     command.Parameters.AddWithValue(Constants.ParameterNames.W2HourlyPersons, isW2Hourly);
@@ -5690,7 +5689,7 @@ namespace DataAccess
                         person.TerminationDate = (DateTime)reader[TerminationDateColumn];
                     }
 
-                    item.TimeOffDates = new SortedList<DateTime, double>();
+                    item.PTOOffDates = new SortedList<DateTime, double>();
                     item.Person = person;
                     item.PersonVacationDays = reader.GetInt32(personVacationDaysIndex);
                     res.Add(item);
@@ -5758,19 +5757,35 @@ namespace DataAccess
                     {
                         var personId = reader.GetInt32(personIdIndex);
                         var timeOffDate = reader.GetDateTime(timeOffDateIndex);
-                        var isTimeOff = reader.GetInt32(isTimeOffIndex) == 1;
+                        var offType = reader.GetInt32(isTimeOffIndex);
                         var timeOffHours = reader.GetDouble(timeOffHoursIndex);
+
                         string PTODescription = reader.IsDBNull(PTODescriptionIndex)
                                         ? string.Empty
                                         : reader.GetString(PTODescriptionIndex);
                         if (result.Any(p => p.Person.Id == personId))
                         {
                             var record = result.First(p => p.Person.Id == personId);
-                            if (record.TimeOffDates == null) record.TimeOffDates = new SortedList<DateTime, double>();
-                            if (record.CompanyHolidayDates == null) record.CompanyHolidayDates = new Dictionary<DateTime, string>();
-                            if (isTimeOff)
+                            if (record.PTOOffDates == null)
                             {
-                                record.TimeOffDates.Add(timeOffDate, timeOffHours);
+                                record.PTOOffDates = new SortedList<DateTime, double>();
+                            }
+                            if (record.CompanyHolidayDates == null)
+                            {
+                                record.CompanyHolidayDates = new Dictionary<DateTime, string>();
+                            }
+                            if (record.LeaveOfAbsence == null)
+                            {
+                                record.LeaveOfAbsence = new Dictionary<DateTime, double>();
+                            }
+
+                            if (offType == 1)
+                            {
+                                record.PTOOffDates.Add(timeOffDate, timeOffHours);
+                            }
+                            else if (offType == 2)
+                            {
+                                record.LeaveOfAbsence.Add(timeOffDate, timeOffHours);
                             }
                             else
                             {
@@ -5781,6 +5796,7 @@ namespace DataAccess
                 }
             }
         }
+
     }
 }
 
