@@ -42,6 +42,7 @@ namespace PraticeManagement.Reports
         private const string PERSON_TOOLTIP_FORMAT = "{0}, Hired {1}";
         private const string NOT_HIRED_PERSON_TOOLTIP_FORMAT = "{0}";
         private const string VACATION_TOOLTIP_FORMAT = "PTO : {0}";
+        private const string LOA_TOOLTIP_FORMAT = "Other Time Off : {0}";
         private const string PageCount = "Page {0} of {1}";
         private const int reportSize = 25;
         private int headerRowsCount = 1;
@@ -355,13 +356,16 @@ namespace PraticeManagement.Reports
                     }
                     else if (selectedVal == 3)//next 3 months
                     {
+                        var endDate = now.Date.AddMonths(3);
 
-                        return new DateTime(now.Year, now.Month + 3, 1).AddDays(-1);
+                        return new DateTime(endDate.Year, endDate.Month, 1).AddDays(-1);
 
                     }
                     else if (selectedVal == 1 || selectedVal == 2)//curent month, Previous month
                     {
-                        return new DateTime(now.Year, now.Month + (2 - selectedVal), 1).AddDays(-1);
+                        var endDate = now.Date.AddMonths(2 - selectedVal);
+
+                        return new DateTime(endDate.Year, endDate.Month, 1).AddDays(-1);
 
                     }
                     else
@@ -687,7 +691,7 @@ namespace PraticeManagement.Reports
             var dataSetList = new List<DataSet>();
 
             var report =
-            ServiceCallers.Custom.Person(client => client.GetConsultantPTOEntries(BegPeriod, EndPeriod, Granularity, ActivePersons, ProjectedPersons, PayTypeIsW2Salary, PayTypeIsW2Hourly, PracticesSelected, DivisionsSelected, TitlesSelected, SortId, SortDirection)).ToList(); ;
+            ServiceCallers.Custom.Person(client => client.GetConsultantPTOEntries(BegPeriod, EndPeriod, ActivePersons, ProjectedPersons, PayTypeIsW2Salary, PayTypeIsW2Hourly, PracticesSelected, DivisionsSelected, TitlesSelected, SortId, SortDirection)).ToList(); ;
 
             SortPersons(report);
 
@@ -862,7 +866,7 @@ namespace PraticeManagement.Reports
                     }
                     for (DateTime d = pointStartDate; d < pointEndDate; d = d.AddDays(1))
                     {
-                        weeklyPTOHours += person.TimeOffDates.Keys.Any(t => t == d) ? person.TimeOffDates[d] : 0;
+                        weeklyPTOHours += person.PTOOffDates.Keys.Any(t => t == d) ? person.PTOOffDates[d] : 0;
                     }
 
                     row.Add(weeklyPTOHours);
@@ -976,7 +980,7 @@ namespace PraticeManagement.Reports
         {
             if (SortId == 2)
             {
-                report.Sort((a, b) => a.TimeOffDates.FirstOrDefault().Key.CompareTo(b.TimeOffDates.FirstOrDefault().Key));
+                report.Sort((a, b) => a.PTOOffDates.FirstOrDefault().Key.CompareTo(b.PTOOffDates.FirstOrDefault().Key));
                 if (SortDirection == "ASC")
                 {
                     report.Reverse();
@@ -986,12 +990,11 @@ namespace PraticeManagement.Reports
 
         public void UpdateReport()
         {
-            InitChart();
-
             var report =
-             ServiceCallers.Custom.Person(client => client.GetConsultantPTOEntries(BegPeriod, EndPeriod, Granularity, ActivePersons, ProjectedPersons, PayTypeIsW2Salary, PayTypeIsW2Hourly, PracticesSelected, DivisionsSelected, TitlesSelected, SortId, SortDirection));
+             ServiceCallers.Custom.Person(client => client.GetConsultantPTOEntries(BegPeriod, EndPeriod, ActivePersons, ProjectedPersons, PayTypeIsW2Salary, PayTypeIsW2Hourly, PracticesSelected, DivisionsSelected, TitlesSelected, SortId, SortDirection));
             if (report != null && report.ToList().Count > 0)
             {
+                InitChart();
                 ConsultantPTOPerson = report.ToList();
 
                 ConsultantPTOPerson.Reverse();
@@ -1037,7 +1040,7 @@ namespace PraticeManagement.Reports
                 AddPersonRange(
                     quadruple.Person, //  Person
                      w, //  Range index
-                     payType == TimescaleType.Undefined ? "No Pay Type" : DataHelper.GetDescription(payType), quadruple.TimeOffDates, quadruple.CompanyHolidayDates, isPdf
+                     payType == TimescaleType.Undefined ? "No Pay Type" : DataHelper.GetDescription(payType), quadruple.PTOOffDates, quadruple.CompanyHolidayDates, quadruple.LeaveOfAbsence, isPdf
                      );
             }
 
@@ -1049,10 +1052,16 @@ namespace PraticeManagement.Reports
 
         }
 
-        private void AddPersonRange(Person p, int w, string payType, SortedList<DateTime, double> timeoffDates, Dictionary<DateTime, string> companyHolidayDates, bool isPdf)
+        private void AddPersonRange(Person p, int w, string payType, SortedList<DateTime, double> timeoffDates, Dictionary<DateTime, string> companyHolidayDates, Dictionary<DateTime, double> LOA, bool isPdf)
         {
+            if (LOA == null)
+            {
+                LOA = new Dictionary<DateTime, double>();
+            }
             if (companyHolidayDates == null)
+            {
                 companyHolidayDates = new Dictionary<DateTime, string>();
+            }
             var beginPeriod = BegPeriod;
             var endPeriod = EndPeriod;
 
@@ -1079,10 +1088,9 @@ namespace PraticeManagement.Reports
             var range = AddRange(pointStartDate, pointEndDate, _personsCount, isPdf);
             List<DataPoint> innerRangeList = new List<DataPoint>();
             bool isHiredIntheEmployeementRange = p.EmploymentHistory.Any(ph => ph.HireDate < pointEndDate && (!ph.TerminationDate.HasValue || ph.TerminationDate.Value >= pointStartDate));
-            bool isRangePTO = IsRangePTOTimeOff(pointStartDate, pointEndDate, timeoffDates) == 1;
-            bool isRangeComapnyHoliday = IsRangeComapanyHoliday(pointStartDate, pointEndDate, companyHolidayDates) == 2;
-            int rangeType = isRangePTO ? 1 : isRangeComapnyHoliday ? 2 : 0;
-            range.Color = GetColorForDay(rangeType, isHiredIntheEmployeementRange);
+
+            range.Color = GetColorForDay(0, isHiredIntheEmployeementRange);
+
             if (!isHiredIntheEmployeementRange)
             {
                 DateTime? oldTerminationdate = p.EmploymentHistory.Any(ph => ph.TerminationDate.HasValue && ph.TerminationDate.Value < pointStartDate) ? p.EmploymentHistory.Last(ph => ph.TerminationDate.HasValue && ph.TerminationDate.Value < pointStartDate).TerminationDate : (DateTime?)null;
@@ -1110,117 +1118,52 @@ namespace PraticeManagement.Reports
                 range.Color = Color.White;
 
                 List<Quadruple<DateTime, DateTime, DayType, string>> weekDatesRange = new List<Quadruple<DateTime, DateTime, DayType, string>>();//third parameter in the list int will have 3 possible values '0' for utilization '1' for timeoffs '2' for companyholiday
-                bool IsWholeRangeVacation = true;
 
                 for (var d = pointStartDate; d < pointEndDate; d = d.AddDays(1))
                 {
-                    if (!timeoffDates.Any(t => t.Key == d))
+                    int dayType = timeoffDates.Any(t => t.Key == d) ? 1 : companyHolidayDates.Any(t => t.Key == d) ? 2 : LOA.Any(t => t.Key == d) ? 3 : 0;
+                    string holidayDescription = companyHolidayDates.Keys.Any(t => t == d) ? companyHolidayDates[d] : timeoffDates.Keys.Any(t => t == d) ? timeoffDates[d].ToString() : LOA.Any(t => t.Key == d) ? LOA[d].ToString() : "8";
+
+                    if (weekDatesRange.Any(tri => tri.Second == d.AddDays(-1) && dayType == tri.Third.Type && tri.Fourth == holidayDescription))
                     {
-                        IsWholeRangeVacation = false;
-                        break;
+                        var tripleRange = weekDatesRange.First(tri => tri.Second == d.AddDays(-1) && dayType == tri.Third.Type);
+                        tripleRange.Second = d;
+                    }
+                    else
+                    {
+                        weekDatesRange.Add(new Quadruple<DateTime, DateTime, DayType, string>(d, d, new DayType() { Type = dayType }, holidayDescription));
                     }
                 }
 
-
-                if (!IsWholeRangeVacation)
+                foreach (var tripleR in weekDatesRange)
                 {
-                    for (var d = pointStartDate; d < pointEndDate; d = d.AddDays(1))
-                    {
-                        int dayType = timeoffDates.Any(t => t.Key == d) ? 1 : companyHolidayDates.Any(t => t.Key == d) ? 2 : 0;
-                        string holidayDescription = companyHolidayDates.Keys.Any(t => t == d) ? companyHolidayDates[d] : timeoffDates.Keys.Any(t => t == d) ? timeoffDates[d].ToString() : "8";
-
-                        if (weekDatesRange.Any(tri => tri.Second == d.AddDays(-1) && dayType == tri.Third.Type && tri.Fourth == holidayDescription))
-                        {
-                            var tripleRange = weekDatesRange.First(tri => tri.Second == d.AddDays(-1) && dayType == tri.Third.Type);
-                            tripleRange.Second = d;
-                        }
-                        else
-                        {
-                            weekDatesRange.Add(new Quadruple<DateTime, DateTime, DayType, string>(d, d, new DayType() { Type = dayType }, holidayDescription));
-                        }
-                    }
-
-                    foreach (var tripleR in weekDatesRange)
-                    {
-                        var innerRange = AddRange(tripleR.First, tripleR.Second.AddDays(1), _personsCount, isPdf);
-                        innerRange.Color = GetColorForDay(tripleR.Third.Type, isHiredIntheEmployeementRange);
-                        innerRange.ToolTip = FormatRangeTooltip(tripleR.First, tripleR.Second, tripleR.Third, payType, tripleR.Fourth);
-                        innerRange.BackSecondaryColor = Color.Black;
-                        innerRangeList.Add(innerRange);
-                    }
-                }
-
-
-                else //If the whole range is vacation days
-                {
-                    for (var d = pointStartDate; d < pointEndDate; d = d.AddDays(1))
-                    {
-                        int dayType = 1;
-                        string holidayDescription = timeoffDates.Keys.Any(t => t == d) ? timeoffDates[d].ToString() : "8";
-
-                        if (weekDatesRange.Any(tri => tri.Second == d.AddDays(-1) && dayType == tri.Third.Type && tri.Fourth == holidayDescription))
-                        {
-                            var tripleRange = weekDatesRange.First(tri => tri.Second == d.AddDays(-1) && dayType == tri.Third.Type);
-                            tripleRange.Second = d;
-                        }
-                        else
-                        {
-                            weekDatesRange.Add(new Quadruple<DateTime, DateTime, DayType, string>(d, d, new DayType() { Type = dayType }, holidayDescription));
-                        }
-                    }
-
-                    foreach (var tripleR in weekDatesRange)
-                    {
-                        var innerRange = AddRange(tripleR.First, tripleR.Second.AddDays(1), _personsCount, isPdf);
-                        innerRange.Color = GetColorForDay(1, isHiredIntheEmployeementRange);
-                        innerRange.ToolTip = FormatRangeTooltip(tripleR.First, tripleR.Second, tripleR.Third, null, tripleR.Fourth);
-                        innerRange.BackSecondaryColor = Color.Black;
-
-                        innerRangeList.Add(innerRange);
-                    }
+                    var innerRange = AddRange(tripleR.First, tripleR.Second.AddDays(1), _personsCount, isPdf);
+                    innerRange.Color = GetColorForDay(tripleR.Third.Type, isHiredIntheEmployeementRange);
+                    innerRange.ToolTip = FormatRangeTooltip(tripleR.First, tripleR.Second, tripleR.Third, payType, tripleR.Fourth);
+                    innerRange.BackSecondaryColor = Color.Black;
+                    innerRangeList.Add(innerRange);
                 }
             }
         }
 
-        private int IsRangePTOTimeOff(DateTime startDate, DateTime endDate, SortedList<DateTime, double> TimeOffDates)
-        {
-            //returns '1' for PTO Timeoff 
-
-            for (var i = startDate; i < endDate; i = i.AddDays(1))
-            {
-                if (TimeOffDates.Keys.Any(d => d == i) && (i.DayOfWeek == DayOfWeek.Saturday || i.DayOfWeek == DayOfWeek.Sunday))
-                    return 1;
-            }
-            return 0;
-        }
-
-        private int IsRangeComapanyHoliday(DateTime startDate, DateTime endDate, Dictionary<DateTime, string> ComapnyHolidayDates)
-        {
-            //returns '2' for ComapanyHoliday 
-
-            for (var i = startDate; i < endDate; i = i.AddDays(1))
-            {
-                if (ComapnyHolidayDates.Keys.Any(d => d == i) && (i.DayOfWeek == DayOfWeek.Saturday || i.DayOfWeek == DayOfWeek.Sunday))
-                    return 2;
-            }
-            return 0;
-        }
 
         private static string FormatRangeTooltip(DateTime pointStartDate, DateTime pointEndDate, DayType dayType, string payType = null, string holidayDescription = null)
         {
-            //dayType = '1' for PTO '2' for company holiday 
+            //dayType = '1' for PTO 
+            //          '2' for company holiday 
+            //          '3' for Leave of Absence(all other time off's)
             string tooltip = "";
 
             if (pointStartDate == pointEndDate)
             {
-                tooltip = dayType.Type == 1 ?
-                    string.Format(VACATION_TOOLTIP_FORMAT, pointStartDate.ToString("MMM. d")) + (holidayDescription != "8" ? "- " + holidayDescription + " hours" : string.Empty) : dayType.Type == 2 ? holidayDescription + ":" + pointStartDate.ToString("MMM. d") : "";
-
+                tooltip = (dayType.Type == 1 || dayType.Type == 3) ?
+                    string.Format(dayType.Type == 1 ? VACATION_TOOLTIP_FORMAT : LOA_TOOLTIP_FORMAT, pointStartDate.ToString("MMM. d")) + (holidayDescription != "8" ? "- " + holidayDescription + " hours" : string.Empty) :
+                    dayType.Type == 2 ? holidayDescription + ":" + pointStartDate.ToString("MMM. d") : "";
             }
             else
             {
-                tooltip = dayType.Type == 1 ?
-                          string.Format(VACATION_TOOLTIP_FORMAT, pointStartDate.ToString("MMM. d") + " - " +
+                tooltip = (dayType.Type == 1 || dayType.Type == 3) ?
+                          string.Format(dayType.Type == 1 ? VACATION_TOOLTIP_FORMAT : LOA_TOOLTIP_FORMAT, pointStartDate.ToString("MMM. d") + " - " +
                           pointEndDate.ToString("MMM. d")) + (holidayDescription != "8" ? "- " + holidayDescription + " hours" : string.Empty) : dayType.Type == 2 ? holidayDescription + ":" + (pointStartDate.ToString("MMM. d") + " - " +
                           pointEndDate.ToString("MMM. d")) : "";
             }
@@ -1246,6 +1189,10 @@ namespace PraticeManagement.Reports
             else if (dayType == 2)
             {
                 return coloring.CompanyHolidayColor;
+            }
+            else if (dayType == 3)
+            {
+                return Color.Navy;
             }
             else
             {
@@ -1572,7 +1519,7 @@ namespace PraticeManagement.Reports
               ConsReportColoringElementSection.ColorSettings;
             legendItems.Add(coloring.VacationColor, "PTO");
             legendItems.Add(coloring.CompanyHolidayColor, "Company Holiday");
-
+            legendItems.Add(Color.Navy, "Other Time Off");
         }
 
         //Filter parameters for browser session
