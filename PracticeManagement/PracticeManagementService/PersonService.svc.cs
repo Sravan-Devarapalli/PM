@@ -1298,9 +1298,9 @@ namespace PracticeManagementService
             PersonDAL.DeleteReportFilterValues(currentUserId, previousUserId, sessionId);
         }
 
-        public List<ConsultantPTOHours> GetConsultantPTOEntries(DateTime startDate, DateTime endDate, int step, bool includeActivePersons, bool includeContingentPersons, bool isW2Salary, bool isW2Hourly, string practiceIds, string divisionIds, string titleIds, int sortId, string sortDirection)
+        public List<ConsultantPTOHours> GetConsultantPTOEntries(DateTime startDate, DateTime endDate, bool includeActivePersons, bool includeContingentPersons, bool isW2Salary, bool isW2Hourly, string practiceIds, string divisionIds, string titleIds, int sortId, string sortDirection)
         {
-            return PersonDAL.GetConsultantPTOEntries(startDate, endDate, step, includeActivePersons, includeContingentPersons, isW2Salary, isW2Hourly, practiceIds, divisionIds, titleIds, sortId, sortDirection);
+            return PersonDAL.GetConsultantPTOEntries(startDate, endDate, includeActivePersons, includeContingentPersons, isW2Salary, isW2Hourly, practiceIds, divisionIds, titleIds, sortId, sortDirection);
         }
         #endregion IPersonService Members
     }
