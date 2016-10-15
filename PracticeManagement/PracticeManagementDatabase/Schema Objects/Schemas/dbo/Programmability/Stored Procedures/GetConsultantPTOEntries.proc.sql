@@ -1,7 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[GetConsultantPTOEntries]
 (
 	 @StartDate DATETIME
-	,@Step INT = 7
 	,@EndDate DATETIME
 	,@ActivePersons BIT = 1
 	,@ProjectedPersons BIT = 1
@@ -78,8 +77,6 @@ BEGIN
 			CASE WHEN  @SortDirection = 'DESC' THEN P.LastName END DESC,
 			CASE WHEN  @SortDirection = 'ASC' THEN P.LastName END ASC
 		
-					
-
 
 	  SELECT PH.PersonId
 			,PH.HireDate
@@ -88,25 +85,25 @@ BEGIN
 	       INNER JOIN @CurrentConsultants AS c ON c.ConsId = PH.PersonId
 	  ORDER BY PH.PersonId,PH.HireDate
 
-
-
+	--To get PTO Hours
 	 SELECT	PC.PersonId
 		   ,PC.Date
-		   ,CASE WHEN PC.TimeTypeId=@PTOTimeType THEN 1 ELSE 0 END AS IsTimeOff
+		   ,CASE WHEN PC.TimeTypeId=@PTOTimeType THEN 1 ELSE 2 END AS IsTimeOff
 		   ,PC.Description
 		   ,ROUND(ISNULL(PC.ActualHours,0),2) TimeOffHours
 	 FROM dbo.PersonCalendar PC 
 		  INNER JOIN @CurrentConsultants AS c ON c.ConsId=PC.PersonId AND PC.Date BETWEEN @StartDateReport AND @EndDateReport
-		  LEFT JOIN dbo.Calendar AS Cal ON Cal.Date=PC.Date
-	 WHERE PC.DayOff=1 AND DATEPART(DW,PC.Date) NOT IN (1,7) AND PC.TimeTypeId=@PTOTimeType
+		  --LEFT JOIN dbo.Calendar AS Cal ON Cal.Date=PC.Date
+	 WHERE PC.DayOff=1  AND DATEPART(DW,PC.Date) NOT IN (1,7) --AND PC.TimeTypeId=@PTOTimeType
+	 
 	 UNION ALL
-
-	SELECT	PC.PersonId
+	 -- To get Company Holidays
+	 SELECT	PC.PersonId
 		   ,PC.Date
-		   ,CASE WHEN  PC.CompanyDayOff=1 THEN 0	ELSE 1 END AS IsTimeOff
+		   ,0 AS IsTimeOff
 		   ,Cal.HolidayDescription as Description
 		   ,ROUND(ISNULL(PC.TimeOffHours,0),2) TimeOffHours
-	FROM dbo.PersonCalendarAuto PC INNER JOIN @CurrentConsultants AS c ON c.ConsId=PC.PersonId AND PC.Date BETWEEN @StartDate AND @EndDate
+	 FROM dbo.PersonCalendarAuto PC INNER JOIN @CurrentConsultants AS c ON c.ConsId=PC.PersonId AND PC.Date BETWEEN @StartDate AND @EndDate
 		LEFT JOIN dbo.Calendar AS Cal ON Cal.Date=PC.Date
 		WHERE PC.DayOff=1 AND PC.CompanyDayOff=1 AND DATEPART(DW,PC.Date) NOT IN (1,7) 
 		ORDER BY PC.PersonId,PC.Date
