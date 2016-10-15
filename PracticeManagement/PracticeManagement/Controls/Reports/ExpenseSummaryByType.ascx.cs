@@ -353,11 +353,11 @@ namespace PraticeManagement.Controls.Reports
             }
             if (showEtimated)
             {
-                row.Cells[row.Cells.Count - 1].InnerHtml = "<span class=\"EstimatedExpense\">" + expenseSummary.TotalExpectedAmount.ToString(CurrencyDisplayFormat) + "</span><br />";
+                row.Cells[row.Cells.Count - 1].InnerHtml = "<span style=\"color: #696969\">" + expenseSummary.TotalExpectedAmount.ToString(CurrencyDisplayFormat) + "</span><br />";
             }
             if (showActuals)
             {
-                row.Cells[row.Cells.Count - 1].InnerHtml += "<span class=\"ActualExpense\">" + expenseSummary.TotalExpense.ToString(CurrencyDisplayFormat) + "</span>";
+                row.Cells[row.Cells.Count - 1].InnerHtml += "<span style=\"color: #0000FF\">" + expenseSummary.TotalExpense.ToString(CurrencyDisplayFormat) + "</span>";
             }
         }
 
