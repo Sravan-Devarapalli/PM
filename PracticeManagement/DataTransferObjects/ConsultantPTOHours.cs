@@ -20,7 +20,7 @@ namespace DataTransferObjects.Reports
         }
 
         [DataMember]
-        public SortedList<DateTime, double> TimeOffDates
+        public SortedList<DateTime, double> PTOOffDates
         {
             get;
             set;
@@ -28,6 +28,13 @@ namespace DataTransferObjects.Reports
 
         [DataMember]
         public Dictionary<DateTime, string> CompanyHolidayDates
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public Dictionary<DateTime, double> LeaveOfAbsence
         {
             get;
             set;
@@ -45,7 +52,7 @@ namespace DataTransferObjects.Reports
             get
             {
                 double hours = 0;
-                foreach (var t in TimeOffDates)
+                foreach (var t in PTOOffDates)
                 {
                     hours += t.Value;
                 }
