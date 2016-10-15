@@ -554,7 +554,7 @@ namespace PracticeManagementService
         //void SendCompensationChangeEmail(Person person, Pay oldPay, Pay newPay, bool isRehire);
 
         [OperationContract]
-        List<ConsultantPTOHours> GetConsultantPTOEntries(DateTime startDate, DateTime endDate, int step, bool includeActivePersons, bool includeContingentPersons,bool isW2Salary, bool isW2Hourly,string practiceIds, string divisionIds, string titleIds,int sortId,string sortDirection);
+        List<ConsultantPTOHours> GetConsultantPTOEntries(DateTime startDate, DateTime endDate, bool includeActivePersons, bool includeContingentPersons, bool isW2Salary, bool isW2Hourly, string practiceIds, string divisionIds, string titleIds, int sortId, string sortDirection);
     }
 }
 
