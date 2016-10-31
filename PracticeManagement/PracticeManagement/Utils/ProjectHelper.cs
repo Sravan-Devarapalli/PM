@@ -14,7 +14,8 @@ namespace PraticeManagement.Utils
                     {ProjectStatusType.Active, "pr-indicator"},
                     {ProjectStatusType.Internal, "pr-internal"},
                     {ProjectStatusType.Inactive, "InactiveProject"},
-                    {ProjectStatusType.Proposed,"ProposedProject"}
+                    {ProjectStatusType.Proposed,"ProposedProject"},
+                    {ProjectStatusType.AtRisk,"AtRiskProject"}
                 };
 
         public static string GetIndicatorClassByStatusId(int statusId)
@@ -23,3 +24,4 @@ namespace PraticeManagement.Utils
         }
     }
 }
+
