@@ -97,6 +97,8 @@ namespace DataTransferObjects.Filters
         public bool IsProjected { get; set; }
 
         public bool IsProposed { get; set; }
+
+        public bool IsAtRisk { get; set; }
     }
 
 }
