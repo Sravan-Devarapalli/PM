@@ -391,6 +391,15 @@ namespace PraticeManagement.Controls.Reports {
         protected global::System.Web.UI.WebControls.CheckBox chbProposedProjects;
         
         /// <summary>
+        /// chbAtRiskProjects control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chbAtRiskProjects;
+        
+        /// <summary>
         /// cblDivisions control.
         /// </summary>
         /// <remarks>
