@@ -42,12 +42,10 @@
     }
 
     function HideColumns() {
-        debugger;
         $(".hideCol").css("display", "none");
     }
 
     function ShowColumns() {
-        debugger;
         $(".hideCol").css("display", "");
     }
 
@@ -184,7 +182,7 @@
         document.getElementById("<%= chbExperimental.ClientID %>").checked = false;
         document.getElementById("<%= chbProposed.ClientID %>").checked = true;
         document.getElementById("<%= chbInactive.ClientID %>").checked = false;
-
+        document.getElementById("<%= chbAtRisk.ClientID %>").checked = true;
         document.getElementById("<%= ddlCalculateRange.ClientID %>").selectedIndex = 0;
     }
 
@@ -609,6 +607,9 @@
                                         </td>
                                         <td>
                                             <asp:CheckBox ID="chbInactive" runat="server" Text="Inactive" EnableViewState="False" />
+                                        </td>
+                                        <td>
+                                            <asp:CheckBox ID="chbAtRisk" runat="server" Text="At Risk" EnableViewState="False" />
                                         </td>
                                     </tr>
                                     <tr class="PadLeft10Td">
