@@ -37,5 +37,9 @@ namespace DataTransferObjects.ContextObjects
 
         [DataMember]
         public bool CompletedProjects { get; set; }
+
+        [DataMember]
+        public bool AtRiskProjects { get; set; }
     }
 }
+
