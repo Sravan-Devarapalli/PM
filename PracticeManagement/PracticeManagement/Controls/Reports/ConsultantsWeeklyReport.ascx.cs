@@ -40,7 +40,7 @@ namespace PraticeManagement.Controls.Reports
         private const string TITLE_FORMAT_WITHOUT_REPORT_ForPdf = "Consulting {0} \n{1} to {2}\nFor {3} Persons; For {4} Projects\n{5}\n{6}\n{7}\n*{0} reflects person vacation time during this period.";
         private const string TITLE_FORMAT = "Consulting {0} Report \n{1} to {2}\nFor {3} Persons; For {4} Projects\n{5}\n{6}\n{7}\n*{0} reflects person vacation time during this period.\nClick on a colored bar to load the individual's detail report";
         private const string TITLE_FORMAT_WITHOUT_REPORT = "Consulting {0} \n{1} to {2}\nFor {3} Persons; For {4} Projects\n{5}\n{6}\n{7}\n*{0} reflects person vacation time during this period.\nClick on a colored bar to load the individual's detail report";
-        private const string POSTBACK_FORMAT = "{1}{0}{2}{0}{3}{0}{4}{0}{5}{0}{6}{0}{7}{0}{8}{0}{9}{0}{10}";
+        private const string POSTBACK_FORMAT = "{1}{0}{2}{0}{3}{0}{4}{0}{5}{0}{6}{0}{7}{0}{8}{0}{9}{0}{10}{0}{11}";
         private const char DELIMITER = '+';
         private const string TOOLTIP_FORMAT = "{0}-{1} {2},{3}";
         private const string TOOLTIP_FORMAT_FOR_SINGLEDAY = "{0} {1},{2}";
@@ -127,7 +127,7 @@ namespace PraticeManagement.Controls.Reports
                 CellStyles percentageCellStyle = new CellStyles();
                 percentageCellStyle.DataFormat = "0%";
                 percentageCellStyle.WrapText = true;
-                CellStyles[] dataCellStylearray = { dataCellStyle, 
+                CellStyles[] dataCellStylearray = { dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
                                                     percentageCellStyle
@@ -439,7 +439,7 @@ namespace PraticeManagement.Controls.Reports
 
         protected void Page_PreRender(object sender, EventArgs e)
         {
-            
+
             chart.ChartAreas[MAIN_CHART_AREA_NAME].InnerPlotPosition.X = 35;
             chart.ChartAreas[MAIN_CHART_AREA_NAME].InnerPlotPosition.Width = 50;
             if (chart.Height.Value > 500)
@@ -447,11 +447,12 @@ namespace PraticeManagement.Controls.Reports
                 chart.ChartAreas[MAIN_CHART_AREA_NAME].InnerPlotPosition.Y = 3;
                 chart.ChartAreas[MAIN_CHART_AREA_NAME].InnerPlotPosition.Height = 94;
             }
-            else {
+            else
+            {
                 chart.ChartAreas[MAIN_CHART_AREA_NAME].InnerPlotPosition.Y = 20;
                 chart.ChartAreas[MAIN_CHART_AREA_NAME].InnerPlotPosition.Height = 60;
             }
-            
+
             if (!ExculdeInvestmentResources)
             {
                 investmentChart.Visible = false;
@@ -519,7 +520,7 @@ namespace PraticeManagement.Controls.Reports
             if (cookie.PersonId.HasValue)
             {
                 ShowDetailedReport(cookie.PersonId.Value, cookie.BegPeriod.Date, cookie.EndPeriod.Date, cookie.ChartTitle,
-                    cookie.ActiveProjects, cookie.ProjectedProjects, cookie.InternalProjects, cookie.ExperimentalProjects, cookie.ProposedProjects, cookie.CompletedProjects);
+                    cookie.ActiveProjects, cookie.ProjectedProjects, cookie.InternalProjects, cookie.ExperimentalProjects, cookie.ProposedProjects, cookie.CompletedProjects,cookie.AtRiskProjects);
 
                 System.Web.UI.ScriptManager.RegisterStartupScript(updConsReport, updConsReport.GetType(), "focusDetailReport", "window.location='#details';", true);
             }
@@ -535,7 +536,7 @@ namespace PraticeManagement.Controls.Reports
                     utf.ActivePersons, utf.ProjectedPersons,
                     utf.ActiveProjects, utf.ProjectedProjects,
                     utf.ExperimentalProjects,
-                    utf.InternalProjects, utf.ProposedProjects, utf.CompletedProjects, TimescaleIds, PracticeIdList, AvgUtil, SortId, (IsCapacityMode && SortId == 0) ? (SortDirection == "Desc" ? "Asc" : "Desc") : SortDirection, utf.ExcludeInternalPractices, 0, utf.IncludeBadgeStatus, DivisionIdList);
+                    utf.InternalProjects, utf.ProposedProjects, utf.CompletedProjects, utf.AtRiskProjects, TimescaleIds, PracticeIdList, AvgUtil, SortId, (IsCapacityMode && SortId == 0) ? (SortDirection == "Desc" ? "Asc" : "Desc") : SortDirection, utf.ExcludeInternalPractices, 0, utf.IncludeBadgeStatus, DivisionIdList);
             ConsultantUtilizationPerson = report;
 
             InvestmentResources = report.Where(r => r.Person.IsInvestmentResource).ToList();
@@ -976,7 +977,7 @@ namespace PraticeManagement.Controls.Reports
                     utf.ActivePersons, utf.ProjectedPersons,
                     utf.ActiveProjects, utf.ProjectedProjects,
                     utf.ExperimentalProjects,
-                    utf.InternalProjects, utf.ProposedProjects, utf.CompletedProjects, TimescaleIds, PracticeIdList, AvgUtil, SortId, (IsCapacityMode && SortId == 0) ? (SortDirection == "Desc" ? "Desc" : "Asc") : SortDirection, utf.ExcludeInternalPractices, optionNumber == 2 ? 0 : optionNumber, false, DivisionIdList);
+                    utf.InternalProjects, utf.ProposedProjects, utf.CompletedProjects, utf.AtRiskProjects, TimescaleIds, PracticeIdList, AvgUtil, SortId, (IsCapacityMode && SortId == 0) ? (SortDirection == "Desc" ? "Desc" : "Asc") : SortDirection, utf.ExcludeInternalPractices, optionNumber == 2 ? 0 : optionNumber, false, DivisionIdList);
             report.Reverse();
             string personsPlaceHolder = string.Empty, projectsPlaceHolder = string.Empty, practicesPlaceHolder = string.Empty;
             if (utf.ProjectedPersons && utf.ActivePersons)
@@ -1126,7 +1127,7 @@ namespace PraticeManagement.Controls.Reports
                         CellStyles percentageCellStyle = new CellStyles();
                         percentageCellStyle.DataFormat = "0%";
                         percentageCellStyle.WrapText = true;
-                        CellStyles[] dataCellStylearray = { dataCellStyle, 
+                        CellStyles[] dataCellStylearray = { dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
                                                     percentageCellStyle
@@ -1175,7 +1176,7 @@ namespace PraticeManagement.Controls.Reports
                     CellStyles percentageCellStyle = new CellStyles();
                     percentageCellStyle.DataFormat = "0%";
                     percentageCellStyle.WrapText = true;
-                    CellStyles[] dataCellStylearray = { dataCellStyle, 
+                    CellStyles[] dataCellStylearray = { dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
                                                     percentageCellStyle
@@ -1416,9 +1417,10 @@ namespace PraticeManagement.Controls.Reports
             var experimentalProjects = bool.Parse(query[7]);
             var proposedProjects = bool.Parse(query[8]);
             var completedProjects = bool.Parse(query[9]);
+            var atRiskProjects = bool.Parse(query[10]);
 
             ShowDetailedReport(personId, repStartDate, repEndDate, query[3],
-            activeProjects, projectedProjects, internalProjects, experimentalProjects, proposedProjects, completedProjects);
+            activeProjects, projectedProjects, internalProjects, experimentalProjects, proposedProjects, completedProjects,atRiskProjects);
 
             System.Web.UI.ScriptManager.RegisterClientScriptBlock(updConsReport, updConsReport.GetType(), "focusDetailReport", "window.location='#details';", true);
 
@@ -1434,7 +1436,7 @@ namespace PraticeManagement.Controls.Reports
         }
 
         private void ShowDetailedReport(int personId, DateTime repStartDate, DateTime repEndDate, string chartTitle,
-            bool activeProjects, bool projectedProjects, bool internalProjects, bool experimentalProjects, bool proposedProjects, bool completedProjects)
+            bool activeProjects, bool projectedProjects, bool internalProjects, bool experimentalProjects, bool proposedProjects, bool completedProjects, bool atRiskProjects)
         {
             chartDetails.Visible = true;
 
@@ -1454,10 +1456,11 @@ namespace PraticeManagement.Controls.Reports
                     experimentalProjects,
                     proposedProjects,
                     completedProjects,
+                    atRiskProjects,
                     IsCapacityMode);
 
             var utilizationDaily = DataHelper.ConsultantUtilizationDailyByPerson(repStartDate, ParseInt(repEndDate.Subtract(repStartDate).Days.ToString(), DAYS_FORWARD),
-                utf.ActiveProjects, utf.ProjectedProjects, utf.InternalProjects, utf.ExperimentalProjects, utf.ProposedProjects, utf.CompletedProjects, personId);
+                utf.ActiveProjects, utf.ProjectedProjects, utf.InternalProjects, utf.ExperimentalProjects, utf.ProposedProjects, utf.CompletedProjects, utf.AtRiskProjects, personId);
             var avgUtils = utilizationDaily.First().WeeklyUtilization;
             for (int index = 0; index < avgUtils.Count; index++)
             {
@@ -1647,7 +1650,7 @@ namespace PraticeManagement.Controls.Reports
             label.ToolTip = string.Format(DateTime.MinValue != p.HireDate ? PERSON_TOOLTIP_FORMAT : NOT_HIRED_PERSON_TOOLTIP_FORMAT,
                                             p.CurrentPay.TimescaleName, // Current Pay Type
                                             p.HireDate.ToString("MM/dd/yyyy") // Hire date
-                //,avg // Average U%
+                                                                              //,avg // Average U%
                     );
             string target = p.IsInvestmentResource && p.TargetUtilization != null ? (IsCapacityMode ? (100 - p.TargetUtilization).ToString() + "%" : p.TargetUtilization.ToString() + "%") : string.Empty;
 
@@ -1957,17 +1960,23 @@ namespace PraticeManagement.Controls.Reports
             var result = new ChartHatchStyle();
             switch (badgeType)
             {
-                case 0: result = ChartHatchStyle.None;
+                case 0:
+                    result = ChartHatchStyle.None;
                     break;
-                case 1: result = ChartHatchStyle.LargeGrid;
+                case 1:
+                    result = ChartHatchStyle.LargeGrid;
                     break;
-                case 2: result = ChartHatchStyle.Vertical;
+                case 2:
+                    result = ChartHatchStyle.Vertical;
                     break;
-                case 3: result = ChartHatchStyle.Divot;
+                case 3:
+                    result = ChartHatchStyle.Divot;
                     break;
-                case 4: result = ChartHatchStyle.Divot;
+                case 4:
+                    result = ChartHatchStyle.Divot;
                     break;
-                case 5: result = ChartHatchStyle.DiagonalBrick;
+                case 5:
+                    result = ChartHatchStyle.DiagonalBrick;
                     break;
             }
             return result;
@@ -2215,7 +2224,8 @@ namespace PraticeManagement.Controls.Reports
                               utf.InternalProjects.ToString(),
                               utf.ExperimentalProjects.ToString(),
                               utf.ProposedProjects.ToString(),
-                              utf.CompletedProjects.ToString()
+                              utf.CompletedProjects.ToString(),
+                              utf.AtRiskProjects.ToString()
                               );
         }
 
@@ -2267,13 +2277,17 @@ namespace PraticeManagement.Controls.Reports
             var result = "";
             switch (badgeType)
             {
-                case 1: result = "MS Badged";
+                case 1:
+                    result = "MS Badged";
                     break;
-                case 2: result = "18 mos Window Active";
+                case 2:
+                    result = "18 mos Window Active";
                     break;
-                case 3: result = "6-Month Break";
+                case 3:
+                    result = "6-Month Break";
                     break;
-                case 4: result = "Block";
+                case 4:
+                    result = "Block";
                     break;
             }
             return result;
