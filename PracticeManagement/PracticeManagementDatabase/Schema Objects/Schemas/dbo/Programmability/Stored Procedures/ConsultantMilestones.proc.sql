@@ -9,6 +9,7 @@ CREATE PROCEDURE dbo.ConsultantMilestones
 	@includeExperimental BIT = 1,
 	@includeProjected BIT = 1,
 	@includeCompleted BIT = 1,
+	@IncludeAtRisk BIT =1,
 	@IncludeDefaultMileStone BIT = 1
 AS
 BEGIN
@@ -74,6 +75,8 @@ BEGIN
 			(@includeCompleted = 1 OR (@includeCompleted = 0 AND pr.ProjectStatusId <> 4))
 		   AND
 			(@includeProjected = 1 OR (@includeProjected = 0 AND pr.ProjectStatusId <> 2))
+		   AND 
+		   (@IncludeAtRisk = 1 OR (@IncludeAtRisk = 0 AND pr.ProjectStatusId <> 8))
 		   
 	)
 	SELECT *
