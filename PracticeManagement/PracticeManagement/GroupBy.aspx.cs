@@ -618,6 +618,7 @@ namespace PraticeManagement
                      SalespersonIdsList = SelectedSalespersonIds,
                      ProjectGroupIdsList = SelectedGroupIds,
                      ShowActive = chbActive.Checked,
+                     ShowAtRisk= chbAtRisk.Checked,
                      ShowCompleted = chbCompleted.Checked,
                      ShowProjected = chbProjected.Checked,
                      ShowProposed = chbProposed.Checked,
@@ -725,6 +726,7 @@ namespace PraticeManagement
                 filter.EndMonth = mpToControl.SelectedMonth;
                 chbExcludeInternalPractices.Checked = filter.ExcludeInternalPractices;
                 chbActive.Checked = filter.ShowActive;
+                chbAtRisk.Checked = filter.ShowAtRisk;
                 chbCompleted.Checked = filter.ShowCompleted;
                 chbExperimental.Checked = filter.ShowExperimental;
                 chbProjected.Checked = filter.ShowProjected;
