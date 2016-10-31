@@ -211,6 +211,18 @@ namespace PraticeManagement.Reports
 
         private bool ShowExperimental { get { return chbExperimental.Checked; } }
 
+        private bool ShowAtRisk
+        {
+            get
+            {
+                return chbAtRisk.Checked;
+            }
+            set
+            {
+                chbAtRisk.Checked = value;
+            }
+        }
+
         private List<Project> ProjectList { get; set; }
 
         private SheetStyles HeaderSheetStyle
@@ -331,6 +343,7 @@ namespace PraticeManagement.Reports
                                                                                         ShowExperimental,
                                                                                         ShowProposed,
                                                                                         ShowInactive,
+                                                                                        ShowAtRisk,
                                                                                         StartDate,
                                                                                         EndDate,
                                                                                         SelectedSalespersonIds,
@@ -377,7 +390,7 @@ namespace PraticeManagement.Reports
         public void PDFExport()
         {
             var data = ServiceCallers.Custom.Report(r => r.ProjectsListWithFilters(SelectedClientIds, ShowProjected, ShowCompleted, ShowActive, ShowInternal, ShowExperimental,
-                ShowProposed, ShowInactive, StartDate, EndDate, SelectedSalespersonIds, SelectedProjectOwnerIds, SelectedPracticeIds, SelectedGroupIds, SelectedDivisionIds, SelectedChannelIds, SelectedRevenueTypeIds, SelectedOfferingIds, Page.User.Identity.Name)).ToList();
+                ShowProposed, ShowInactive,ShowAtRisk, StartDate, EndDate, SelectedSalespersonIds, SelectedProjectOwnerIds, SelectedPracticeIds, SelectedGroupIds, SelectedDivisionIds, SelectedChannelIds, SelectedRevenueTypeIds, SelectedOfferingIds, Page.User.Identity.Name)).ToList();
 
             HtmlToPdfBuilder builder = new HtmlToPdfBuilder(iTextSharp.text.PageSize.A4_LANDSCAPE);
             string filename = "ProjectsList.pdf";
@@ -693,6 +706,7 @@ namespace PraticeManagement.Reports
             cblRevenueType.SelectAll();
 
             chbActive.Checked = true;
+            chbAtRisk.Checked = true;
             chbCompleted.Checked = true;
             chbProjected.Checked = true;
             chbProposed.Checked = true;
@@ -717,7 +731,7 @@ namespace PraticeManagement.Reports
         public void PopulateData()
         {
             ProjectList = ServiceCallers.Custom.Report(r => r.ProjectsListWithFilters(SelectedClientIds, ShowProjected, ShowCompleted, ShowActive, ShowInternal, ShowExperimental,
-                ShowProposed, ShowInactive, StartDate, EndDate, SelectedSalespersonIds, SelectedProjectOwnerIds, SelectedPracticeIds, SelectedGroupIds, SelectedDivisionIds, SelectedChannelIds, SelectedRevenueTypeIds, SelectedOfferingIds, Page.User.Identity.Name)).ToList();
+                ShowProposed, ShowInactive,ShowAtRisk, StartDate, EndDate, SelectedSalespersonIds, SelectedProjectOwnerIds, SelectedPracticeIds, SelectedGroupIds, SelectedDivisionIds, SelectedChannelIds, SelectedRevenueTypeIds, SelectedOfferingIds, Page.User.Identity.Name)).ToList();
             if (ProjectList.Any())
             {
                 divWholePage.Visible = true;
@@ -786,6 +800,7 @@ namespace PraticeManagement.Reports
             filter.IsProposed = chbProposed.Checked;
             filter.IsCompleted = chbCompleted.Checked;
             filter.IsExperimental = chbExperimental.Checked;
+            filter.IsAtRisk = chbAtRisk.Checked;
             filter.ReportStartDate = diRange.FromDate;
             filter.ReportEndDate = diRange.ToDate;
             ReportsFilterHelper.SaveFilterValues(ReportName.ProjectsList, filter);
@@ -821,6 +836,7 @@ namespace PraticeManagement.Reports
                 chbExperimental.Checked = filters.IsExperimental;
                 chbProjected.Checked = filters.IsProjected;
                 chbProposed.Checked = filters.IsProposed;
+                ShowAtRisk = filters.IsAtRisk;
                 ddlPeriod.SelectedValue = filters.ReportPeriod;
                 diRange.FromDate = filters.ReportStartDate;
                 diRange.ToDate = filters.ReportEndDate;
