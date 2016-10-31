@@ -418,6 +418,7 @@ namespace PraticeManagement.Reports
                      ShowExperimental = false,
                      ShowProposed = true,
                      ShowInactive = false,
+                     ShowAtRisk = true,
                      PeriodSelected = Convert.ToInt32(ddlPeriod.SelectedValue),
                      ViewSelected = -1,
                      CalculateRangeSelected = (ProjectCalculateRangeType)1,
