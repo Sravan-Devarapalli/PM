@@ -11,6 +11,7 @@
 	@ProposedProjects BIT=1,
 	@InternalProjects	BIT = 1,
 	@CompletedProjects BIT = 1,
+	@AtRiskProjects BIT = 1,
 	@TimescaleIds NVARCHAR(4000) = NULL,
 	@PracticeIds NVARCHAR(4000) = NULL,
 	@ExcludeInternalPractices BIT = 0
@@ -85,7 +86,8 @@ AS
 			 @ExperimentalProjects = 1 AND s.ProjectStatusId = 5 OR	--  5 - Experimental
 			 @ProposedProjects =1 AND s.ProjectStatusId =7 OR --7-proposed
 			 @InternalProjects = 1 AND s.ProjectStatusId = 6 OR --6 - Internal
-			 @CompletedProjects = 1 AND s.ProjectStatusId = 4 -- 4 - Completed
+			 @CompletedProjects = 1 AND s.ProjectStatusId = 4 OR -- 4 - Completed
+			 @AtRiskProjects = 1 AND s.ProjectStatusId = 8
 			 )
 	GROUP BY s.PersonId ,CCWV.StartDate ,CCWV.Timescale,S.ProjectId,P.ProjectNumber,P.Name
 ),
