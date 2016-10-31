@@ -62,6 +62,12 @@ namespace DataTransferObjects.Filters
             set;
         }
 
+        public bool IsAtRisk
+        {
+            get;
+            set;
+        }
+
         public bool IncludeOverheads
         {
             get;
