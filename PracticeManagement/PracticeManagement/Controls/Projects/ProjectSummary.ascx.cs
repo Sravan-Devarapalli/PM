@@ -711,6 +711,7 @@ namespace PraticeManagement.Controls.Projects
                      SalespersonIdsList = SelectedSalespersonIds,
                      ProjectGroupIdsList = SelectedGroupIds,
                      ShowActive = chbActive.Checked,
+                     ShowAtRisk = chbAtRisk.Checked,
                      ShowCompleted = chbCompleted.Checked,
                      ShowProjected = chbProjected.Checked,
                      ShowInternal = chbInternal.Checked,
@@ -1353,6 +1354,7 @@ namespace PraticeManagement.Controls.Projects
                 chbInternal.Checked = filter.ShowInternal;
                 chbInactive.Checked = filter.ShowInactive;
                 chbProposed.Checked = filter.ShowProposed;
+                chbAtRisk.Checked = filter.ShowAtRisk;
 
                 SelectedClientIds = filter.ClientIdsList;
                 SelectedPracticeIds = filter.PracticeIdsList;
@@ -1545,6 +1547,7 @@ namespace PraticeManagement.Controls.Projects
                                 this.chbExperimental.Checked.ToString() + "," +
                                 this.chbProposed.Checked.ToString() + "," +
                                 this.chbInternal.Checked.ToString() + "," +
+                                this.chbInactive.Checked.ToString() + "," +
                                 this.chbInactive.Checked.ToString() + "," +
                                 useActuals.ToString(),
 
