@@ -340,6 +340,7 @@ namespace DataAccess
             bool showExperimental,
             bool showProposed,
             bool showInactive,
+            bool showAtRisk,
             DateTime periodStart,
             DateTime periodEnd,
             string salespersonIdsList,
@@ -369,6 +370,7 @@ namespace DataAccess
                     command.Parameters.AddWithValue(Constants.ParameterNames.ShowExperimentalParam, showExperimental);
                     command.Parameters.AddWithValue(Constants.ParameterNames.ShowProposedParam, showProposed);
                     command.Parameters.AddWithValue(Constants.ParameterNames.ShowInactiveParam, showInactive);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.ShowAtRiskParam, showAtRisk);
                     command.Parameters.AddWithValue(Constants.ParameterNames.SalespersonIdsParam, salespersonIdsList);
                     command.Parameters.AddWithValue(Constants.ParameterNames.ProjectOwnerIdsParam, practiceManagerIdsList);
                     command.Parameters.AddWithValue(Constants.ParameterNames.PracticeIdsParam, practiceIdsList);
@@ -420,6 +422,7 @@ namespace DataAccess
             bool showInternal,
             bool showExperimental,
             bool showInactive,
+            bool showAtRisk,
             DateTime periodStart,
             DateTime periodEnd,
             string salespersonIdsList,
@@ -443,6 +446,7 @@ namespace DataAccess
                     command.Parameters.AddWithValue(Constants.ParameterNames.ShowInternalParam, showInternal);
                     command.Parameters.AddWithValue(Constants.ParameterNames.ShowExperimentalParam, showExperimental);
                     command.Parameters.AddWithValue(Constants.ParameterNames.ShowInactiveParam, showInactive);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.ShowAtRiskParam, showAtRisk);
                     command.Parameters.AddWithValue(Constants.ParameterNames.SalespersonIdsParam, salespersonIdsList);
                     command.Parameters.AddWithValue(Constants.ParameterNames.ProjectOwnerIdsParam, practiceManagerIdsList);
                     command.Parameters.AddWithValue(Constants.ParameterNames.PracticeIdsParam, practiceIdsList);
@@ -770,6 +774,7 @@ namespace DataAccess
             bool showExperimental,
             bool showProposed,
             bool showInactive,
+             bool showAtRisk,
             string salespersonIdsList,
             string projectManagerIdsList,
             string practiceIdsList,
@@ -796,6 +801,7 @@ namespace DataAccess
                 command.Parameters.AddWithValue(Constants.ParameterNames.ShowExperimentalParam, showExperimental);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ShowProposedParam, showProposed);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ShowInactiveParam, showInactive);
+                command.Parameters.AddWithValue(Constants.ParameterNames.ShowAtRiskParam, showAtRisk);
                 command.Parameters.AddWithValue(Constants.ParameterNames.SalespersonIdsParam, salespersonIdsList);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ProjectOwnerIdsParam, projectManagerIdsList);
                 command.Parameters.AddWithValue(Constants.ParameterNames.PracticeIdsParam, practiceIdsList);
@@ -2623,6 +2629,7 @@ namespace DataAccess
             bool showExperimental,
             bool showProposed,
             bool showInactive,
+            bool showAtRisk,
             string practiceIdsList,
             bool excludeInternalPractices,
             string personIds,
@@ -2644,6 +2651,7 @@ namespace DataAccess
                 command.Parameters.AddWithValue(Constants.ParameterNames.ShowExperimentalParam, showExperimental);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ShowProposedParam, showProposed);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ShowInactiveParam, showInactive);
+                command.Parameters.AddWithValue(Constants.ParameterNames.ShowAtRiskParam, showAtRisk);
 
                 command.Parameters.AddWithValue(Constants.ParameterNames.PracticeIdsParam, practiceIdsList);
 
@@ -2672,6 +2680,7 @@ namespace DataAccess
             bool showExperimental,
             bool showProposed,
             bool showInactive,
+            bool showAtRisk,
             string practiceIdsList,
             bool excludeInternalPractices)
         {
@@ -2691,6 +2700,7 @@ namespace DataAccess
                 command.Parameters.AddWithValue(Constants.ParameterNames.ShowExperimentalParam, showExperimental);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ShowProposedParam, showProposed);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ShowInactiveParam, showInactive);
+                command.Parameters.AddWithValue(Constants.ParameterNames.ShowAtRiskParam, showAtRisk);
                 command.Parameters.AddWithValue(Constants.ParameterNames.PracticeIdsParam, practiceIdsList);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ExcludeInternalPractices, excludeInternalPractices);
                 command.Parameters.AddWithValue(Constants.ParameterNames.CategoryTypeIdParam, BudgetCategoryType.PracticeArea);
