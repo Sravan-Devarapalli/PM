@@ -44,6 +44,8 @@ namespace PraticeManagement.Controls
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private bool showActiveValue;
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private bool showAtRiskValue;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private bool showCompletedValue;
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private bool showInternalValue;
@@ -184,6 +186,12 @@ namespace PraticeManagement.Controls
         {
             get { return showActiveValue; }
             set { showActiveValue = value; }
+        }
+
+        public bool ShowAtRisk
+        {
+            get { return showAtRiskValue; }
+            set { showAtRiskValue = value; }
         }
 
         /// <summary>
@@ -489,6 +497,7 @@ namespace PraticeManagement.Controls
             ShowProjected = true;
             ShowInternal = true;
             ShowProposed = true;
+            ShowAtRisk = true;
 
             HideAdvancedFilter = true;
             ExcludeInternalPractices = false;
@@ -504,7 +513,7 @@ namespace PraticeManagement.Controls
             UseActualTimeEntries = true;
             CalculationsType = 2;
             FinancialsFromCache = false;
-            IsQuarterColoumnsShown =false;
+            IsQuarterColoumnsShown = false;
             IsYearToDateColoumnsShown = false;
         }
 
@@ -553,6 +562,7 @@ namespace PraticeManagement.Controls
                     ShowProjected == compareObj.ShowProjected &&
                     ShowInternal == compareObj.ShowInternal &&
                     ShowInactive == compareObj.ShowInactive &&
+                    ShowAtRisk == compareObj.ShowAtRisk &&
                     // total range
                     TotalOnlySelectedDateWindow == compareObj.TotalOnlySelectedDateWindow &&
                     CalculateRangeSelected == compareObj.CalculateRangeSelected &&
@@ -600,6 +610,7 @@ namespace PraticeManagement.Controls
                    Convert.ToInt32(ShowProjected) +
                    Convert.ToInt32(ShowInternal) +
                    Convert.ToInt32(ShowInactive) +
+                   Convert.ToInt32(ShowAtRisk) +
                 // total range
                    Convert.ToInt32(CalculateRangeSelected) +
                    Convert.ToInt32(TotalOnlySelectedDateWindow) +
@@ -611,7 +622,7 @@ namespace PraticeManagement.Controls
                 // FinancialsFromCache
                     Convert.ToInt32(FinancialsFromCache) +
                     Convert.ToInt32(IsQuarterColoumnsShown) +
-                    Convert.ToInt32(IsYearToDateColoumnsShown); 
+                    Convert.ToInt32(IsYearToDateColoumnsShown);
         }
 
         /// <summary>
