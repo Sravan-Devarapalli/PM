@@ -310,7 +310,7 @@
                                                         <div id="divProjectFlr" class="displayNone" runat="server">
                                                             <table class="WholeWidth">
                                                                 <tr align="center" class="tb-header">
-                                                                    <th colspan="3" class="BorderBottom1px ">
+                                                                    <th colspan="4" class="BorderBottom1px ">
                                                                         Project Types Included
                                                                     </th>
                                                                     <td class="Width30Px">
@@ -347,6 +347,10 @@
                                                                     </td>
                                                                     <td class="ProjectSummaryCheckboxTd Width50PxImp">
                                                                         <asp:CheckBox ID="chbCompleted" runat="server" Text="Completed" Checked="True" EnableViewState="False"
+                                                                            onclick="EnableResetButton();" />
+                                                                    </td>
+                                                                    <td class="ProjectSummaryCheckboxTd Width50PxImp">
+                                                                        <asp:CheckBox ID="chbAtRisk" runat="server" Text="At Risk" Checked="true" EnableViewState="False"
                                                                             onclick="EnableResetButton();" />
                                                                     </td>
                                                                     <td>
@@ -405,6 +409,8 @@
                                                                     <td class="ProjectSummaryCheckboxTd Width50PxImp">
                                                                         <asp:CheckBox ID="chbExperimental" runat="server" Text="Experimental" Checked="false"
                                                                             EnableViewState="False" onclick="EnableResetButton();" />
+                                                                    </td>
+                                                                    <td>
                                                                     </td>
                                                                     <td>
                                                                     </td>
@@ -473,14 +479,12 @@
                 <asp:MultiView ID="mvExpenseReport" runat="server" ActiveViewIndex="0">
                     <asp:View ID="vwProjectReport" runat="server">
                         <asp:Panel ID="pnlProjectReport" runat="server">
-                            <uc:ByProject ID="tpByProject" runat="server">
-                            </uc:ByProject>
+                            <uc:ByProject ID="tpByProject" runat="server"></uc:ByProject>
                         </asp:Panel>
                     </asp:View>
                     <asp:View ID="vwExpenseTypeReport" runat="server">
                         <asp:Panel ID="pnlExpenseTypeReport" runat="server" CssClass="WholeWidth">
-                            <uc:ByExpenseType ID="tpByExpenseType" runat="server">
-                            </uc:ByExpenseType>
+                            <uc:ByExpenseType ID="tpByExpenseType" runat="server"></uc:ByExpenseType>
                         </asp:Panel>
                     </asp:View>
                 </asp:MultiView>
