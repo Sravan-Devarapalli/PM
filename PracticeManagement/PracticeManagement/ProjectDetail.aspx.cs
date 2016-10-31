@@ -1299,14 +1299,49 @@ namespace PraticeManagement
             {
                 currentStatus = int.Parse(ddlProjectStatus.SelectedValue);
             }
+            if (currentStatus == (int)ProjectStatusType.AtRisk)
+            {
+                e.IsValid = true;
 
-            e.IsValid =
-                // Administrators can set any status
-                Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.AdministratorRoleName) ||
-                // Practice Managers and Salespersons can set only status Experimental, Inactive or Projected
-                (IsStatusValidForNonadmin(currentStatus) && IsStatusValidForNonadmin(Project)) ||
-                // Status was not changed
-                currentStatus == (Project != null && Project.Status != null ? Project.Status.Id : 0);
+            }
+            else if ((int)ProjectStatusType.AtRisk == (Project != null && Project.Status != null ? Project.Status.Id : 0))
+            {
+                e.IsValid = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.AdministratorRoleName) || (Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.OperationsRoleName) && (currentStatus != (int)ProjectStatusType.Active && currentStatus != (int)ProjectStatusType.Completed));
+            }
+            else
+            {
+                e.IsValid =
+                  // Administrators can set any status
+                  Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.AdministratorRoleName) ||
+                  // Practice Managers and Salespersons can set only status Experimental, Inactive or Projected
+                  (IsStatusValidForNonadmin(currentStatus) && IsStatusValidForNonadmin(Project)) ||
+                  // Status was not changed
+                  currentStatus == (Project != null && Project.Status != null ? Project.Status.Id : 0);
+
+            }
+        }
+        protected void custAtRiskStatus_ServerValidate(object sender, ServerValidateEventArgs e)
+        {
+            int currentStatus = 0;
+            if (!string.IsNullOrEmpty(ddlProjectStatus.SelectedValue))
+            {
+                currentStatus = int.Parse(ddlProjectStatus.SelectedValue);
+            }
+            if ((!string.IsNullOrEmpty(ddlProjectStatus.SelectedValue) && (int)ProjectStatusType.AtRisk == currentStatus))
+            {
+                e.IsValid =
+                // Administrators, Oprations can set At Risk status
+                Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.AdministratorRoleName) || Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.OperationsRoleName);
+                //return;
+            }
+
+            //if (!string.IsNullOrEmpty(ddlProjectStatus.SelectedValue) && ((int)ProjectStatusType.AtRisk == (Project != null && Project.Status != null ? Project.Status.Id : 0) && (int)ProjectStatusType.AtRisk != currentStatus))
+            //{
+            //    e.IsValid =
+            //       // Administrators, Oprations can set At Risk status to any
+            //       Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.AdministratorRoleName) || (Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.OperationsRoleName) && (currentStatus != (int)ProjectStatusType.Active && currentStatus != (int)ProjectStatusType.Completed));
+            //    //return;
+            //}
         }
 
         protected void custActiveStatus_ServerValidate(object sender, ServerValidateEventArgs e)
@@ -1613,7 +1648,8 @@ namespace PraticeManagement
                 var excludeStatuses = new List<int>
                 {
                     (int) (ProjectStatusType.Active),
-                    (int) (ProjectStatusType.Completed)
+                    (int) (ProjectStatusType.Completed),
+                    (int) ProjectStatusType.AtRisk
                 };
                 DataHelper.FillProjectStatusList(ddlProjectStatus, string.Empty, excludeStatuses);
                 ddlProjectStatus.SelectedIndex =
