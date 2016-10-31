@@ -153,7 +153,7 @@ namespace PraticeManagement.Controls.Reports
         {
             List<ExpenseSummary> report = null;
 
-            report = ServiceCallers.Custom.Report(r => r.DetailedExpenseSummary(HostingPage.StartDate.Value, HostingPage.EndDate.Value, HostingPage.AccountsSelected, HostingPage.DivisionsSelected, HostingPage.PracticesSelected, HostingPage.ProjectsSelected, HostingPage.showActive, HostingPage.showProjected, HostingPage.showCompleted, HostingPage.showProposed, HostingPage.showInActive, HostingPage.showExperimental, null)).ToList();
+            report = ServiceCallers.Custom.Report(r => r.DetailedExpenseSummary(HostingPage.StartDate.Value, HostingPage.EndDate.Value, HostingPage.AccountsSelected, HostingPage.DivisionsSelected, HostingPage.PracticesSelected, HostingPage.ProjectsSelected, HostingPage.showActive, HostingPage.showProjected, HostingPage.showCompleted, HostingPage.showProposed, HostingPage.showInActive, HostingPage.showExperimental, HostingPage.showAtRisk, null)).ToList();
 
             BindDetailedReport(report, true);
         }
@@ -161,7 +161,7 @@ namespace PraticeManagement.Controls.Reports
         public void PopulateExpenseData()
         {
             List<ExpenseSummary> report = null;
-            report = ServiceCallers.Custom.Report(r => r.DetailedExpenseSummary(HostingPage.StartDate.Value, HostingPage.EndDate.Value, null, null, null, null, true, true, true, true, true, true, HostingPage.ExpenseTypesSelected)).ToList();
+            report = ServiceCallers.Custom.Report(r => r.DetailedExpenseSummary(HostingPage.StartDate.Value, HostingPage.EndDate.Value, null, null, null, null, true, true, true, true, true, true, true, HostingPage.ExpenseTypesSelected)).ToList();
             BindDetailedReport(report, false);
         }
 
@@ -292,11 +292,11 @@ namespace PraticeManagement.Controls.Reports
 
             if (HostingPage.SelectedView == "0")
             {
-                report = ServiceCallers.Custom.Report(r => r.DetailedExpenseSummary(HostingPage.StartDate.Value, HostingPage.EndDate.Value, HostingPage.AccountsSelected, HostingPage.DivisionsSelected, HostingPage.PracticesSelected, HostingPage.ProjectsSelected, HostingPage.showActive, HostingPage.showProjected, HostingPage.showCompleted, HostingPage.showProposed, HostingPage.showInActive, HostingPage.showExperimental, null)).ToList();
+                report = ServiceCallers.Custom.Report(r => r.DetailedExpenseSummary(HostingPage.StartDate.Value, HostingPage.EndDate.Value, HostingPage.AccountsSelected, HostingPage.DivisionsSelected, HostingPage.PracticesSelected, HostingPage.ProjectsSelected, HostingPage.showActive, HostingPage.showProjected, HostingPage.showCompleted, HostingPage.showProposed, HostingPage.showInActive, HostingPage.showExperimental, HostingPage.showAtRisk, null)).ToList();
             }
             else if (HostingPage.SelectedView == "1")
             {
-                report = ServiceCallers.Custom.Report(r => r.DetailedExpenseSummary(HostingPage.StartDate.Value, HostingPage.EndDate.Value, null, null, null, null, true, true, true, true, true, true, HostingPage.ExpenseTypesSelected)).ToList();
+                report = ServiceCallers.Custom.Report(r => r.DetailedExpenseSummary(HostingPage.StartDate.Value, HostingPage.EndDate.Value, null, null, null, null, true, true, true, true, true, true, true, HostingPage.ExpenseTypesSelected)).ToList();
             }
             var fileName = string.Format("ExpenseSummaryDetails.xls");
 
@@ -417,3 +417,4 @@ namespace PraticeManagement.Controls.Reports
         }
     }
 }
+
