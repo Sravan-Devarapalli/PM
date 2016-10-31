@@ -10,6 +10,7 @@
 	@ShowExperimental	BIT = 0,
 	@ShowProposed		BIT=0,
 	@ShowInactive		BIT = 0,
+	@ShowAtRisk			BIT = 0,
 	@SalespersonIds		VARCHAR(8000) = NULL,
 	@ProjectOwnerIds	VARCHAR(8000) = NULL,
 	@PracticeIds		VARCHAR(8000) = NULL,
@@ -264,6 +265,7 @@ AS
 				  OR ( @ShowExperimental = 1 AND FP.ProjectStatusId = 5 ) 
 				  OR ( @ShowProposed = 1 AND FP.ProjectStatusId = 7 ) -- Proposed
 				  OR ( @ShowInactive = 1 AND FP.ProjectStatusId = 1 ) -- Inactive
+				  OR ( @ShowAtRisk = 1 AND FP.ProjectStatusId=8)
 			)
 		ORDER BY FP.ProjectName, FP.MilestoneStartDate
 
