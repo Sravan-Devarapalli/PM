@@ -27,6 +27,10 @@ namespace DataTransferObjects
         Internal = 6,
 
         [EnumMember]
-        Proposed = 7
+        Proposed = 7,
+
+        [EnumMember]
+        AtRisk = 8
     }
 }
+
