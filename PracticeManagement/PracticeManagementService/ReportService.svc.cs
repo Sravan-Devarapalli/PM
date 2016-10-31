@@ -205,6 +205,7 @@ namespace PracticeManagementService
          bool showExperimental,
             bool showProposed,
          bool showInactive,
+         bool showAtRisk,
          DateTime periodStart,
          DateTime periodEnd,
          string salespersonIdsList,
@@ -219,7 +220,7 @@ namespace PracticeManagementService
          bool IsYearToDateColoumnsShown,
          bool getFinancialsFromCache)
         {
-            return ReportDAL.GetAttainmentProjectListMultiParameters(clientIds, showProjected, showCompleted, showActive, showInternal, showExperimental, showProposed, showInactive, periodStart, periodEnd, salespersonIdsList, practiceManagerIdsList, practiceIdsList, projectGroupIdsList, includeCurentYearFinancials, excludeInternalPractices, userLogin, IsMonthsColoumnsShown, IsQuarterColoumnsShown, IsYearToDateColoumnsShown, getFinancialsFromCache);
+            return ReportDAL.GetAttainmentProjectListMultiParameters(clientIds, showProjected, showCompleted, showActive, showInternal, showExperimental, showProposed, showInactive, showAtRisk, periodStart, periodEnd, salespersonIdsList, practiceManagerIdsList, practiceIdsList, projectGroupIdsList, includeCurentYearFinancials, excludeInternalPractices, userLogin, IsMonthsColoumnsShown, IsQuarterColoumnsShown, IsYearToDateColoumnsShown, getFinancialsFromCache);
         }
 
         public List<Project> ProjectAttributionReport(DateTime startDate, DateTime endDate)
@@ -326,6 +327,7 @@ namespace PracticeManagementService
             bool showExperimental,
             bool showProposed,
             bool showInactive,
+            bool showAtRisk,
             DateTime periodStart,
             DateTime periodEnd,
             string salespersonIdsList,
@@ -347,6 +349,7 @@ namespace PracticeManagementService
                  showExperimental,
                  showProposed,
                  showInactive,
+                 showAtRisk,
                  periodStart,
                  periodEnd,
                  salespersonIdsList,
@@ -362,9 +365,9 @@ namespace PracticeManagementService
         }
 
 
-        public List<ExpenseSummary> GetExpenseSummaryGroupedByProject(DateTime startDate, DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental)
+        public List<ExpenseSummary> GetExpenseSummaryGroupedByProject(DateTime startDate, DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental, bool atRisk)
         {
-            return ReportDAL.GetExpenseSummaryGroupedByProject(startDate, endDate, clientIds, divisionIds, practiceIds, projectIds, active, projected, completed, proposed, inActive, experimental);
+            return ReportDAL.GetExpenseSummaryGroupedByProject(startDate, endDate, clientIds, divisionIds, practiceIds, projectIds, active, projected, completed, proposed, inActive, experimental, atRisk);
         }
 
         public List<ExpenseSummary> GetExpenseSummaryGroupedBytype(DateTime startDate, DateTime endDate, string expenseTypeIds)
@@ -377,9 +380,9 @@ namespace PracticeManagementService
             return ReportDAL.ExpenseDetailReport(startDate, endDate, projectId, expenseTypeId);
         }
 
-        public List<ExpenseSummary> DetailedExpenseSummary(DateTime startDate, DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental, string expenseTypeIds)
+        public List<ExpenseSummary> DetailedExpenseSummary(DateTime startDate, DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental, bool atRisk, string expenseTypeIds)
         {
-            return ReportDAL.DetailedExpenseSummary(startDate, endDate, clientIds, divisionIds, practiceIds, projectIds, active, projected, completed, proposed, inActive, experimental,  expenseTypeIds);
+            return ReportDAL.DetailedExpenseSummary(startDate, endDate, clientIds, divisionIds, practiceIds, projectIds, active, projected, completed, proposed, inActive, experimental, atRisk, expenseTypeIds);
         }
     }
 }
