@@ -402,6 +402,10 @@
                                                     <asp:CheckBox ID="chbInactive" runat="server" Text="Inactive" onclick="EnableResetButton();"
                                                         EnableViewState="False" />
                                                 </td>
+                                                <td>
+                                                    <asp:CheckBox ID="chbAtRisk" runat="server" Text="At Risk" onclick="EnableResetButton();"
+                                                        EnableViewState="False" />
+                                                </td>
                                             </tr>
                                             <tr class="PadLeft10Td">
                                                 <td>
@@ -516,8 +520,8 @@
                                     Business Unit
                                 </th>
                                 <th class="DayTotalHoursBorderLeft Padding5Imp">
-                                   <span>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;</span> Project Name
-                                   <span>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;</span>
+                                    <span>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;</span> Project Name <span>&nbsp;
+                                        &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;</span>
                                 </th>
                                 <th class="DayTotalHoursBorderLeft Padding5Imp">
                                     Status
