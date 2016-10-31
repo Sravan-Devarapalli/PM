@@ -12,6 +12,7 @@ CREATE PROCEDURE [dbo].[PersonListBenchExpense]
 	@ExperimentalProjects BIT = 1,
 	@ProposedProjects	BIT =1,
 	@CompletedProjects BIT = 1,
+	@AtRiskProjects    BIT = 1,
 	@PracticeIds NVARCHAR(4000) = NULL,
 	@IncludeOverheads BIT = 1,
 	@IncludeZeroCostEmployees BIT = 0,
@@ -29,6 +30,7 @@ AS
 		@ExperimentalProjectsLocal BIT,
 		@ProposedProjectsLocal	BIT,
 		@CompletedProjectsLocal BIT,
+		@AtRiskProjectsLocal BIT,
 		@PracticeIdsLocal NVARCHAR(4000) = NULL,
 		@TimeScaleIdsLocal NVARCHAR(1000) = NULL,
 		@IncludeOverheadsLocal BIT,
@@ -46,6 +48,7 @@ AS
 			@ExperimentalProjectsLocal=@ExperimentalProjects,
 			@ProposedProjectsLocal = @ProposedProjects,
 			@CompletedProjectsLocal = @CompletedProjects,
+			@AtRiskProjectsLocal=@AtRiskProjects,
 			@PracticeIdsLocal=@PracticeIds,
 			@TimeScaleIdsLocal = @TimeScaleIds,
 			@IncludeOverheadsLocal = @IncludeOverheads,
@@ -205,6 +208,7 @@ AS
 								OR proj.ProjectStatusId = 5 AND @ExperimentalProjectsLocal = 1
 								OR proj.ProjectStatusId = 4 AND @CompletedProjectsLocal = 1
 								OR proj.ProjectStatusId = 7 AND @ProposedProjectsLocal = 1
+								OR proj.ProjectStatusId = 8 AND @AtRiskProjectsLocal=1
 								) AND proj.ProjectStatusId NOT IN(6,1)
 					JOIN MilestonePersonEntry MPE 
 						ON MPE.MilestonePersonId = MP.MilestonePersonId
