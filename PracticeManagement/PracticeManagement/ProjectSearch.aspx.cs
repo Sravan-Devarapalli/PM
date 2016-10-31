@@ -148,6 +148,18 @@ namespace PraticeManagement
             }
         }
 
+        private bool ShowAtRisk
+        {
+            get
+            {
+                return chbAtRisk.Checked;
+            }
+            set
+            {
+                chbAtRisk.Checked = value;
+            }
+        }
+
         private bool ShowInternal
         {
             get
@@ -332,6 +344,7 @@ namespace PraticeManagement
                 SelectedChannelIds = filters.ChannelIdsList;
                 ShowActive = filters.ShowActive;
                 ShowCompleted = filters.ShowCompleted;
+                ShowAtRisk = filters.ShowAtRisk;
                 ShowExperimental = filters.ShowExperimental;
                 ShowInactive = filters.ShowInactive;
                 ShowInternal = filters.ShowInternal;
@@ -363,6 +376,7 @@ namespace PraticeManagement
                                 ShowExperimental,
                                 ShowProposed,
                                 ShowInactive,
+                                ShowAtRisk,
                                 SelectedSalespersonIds,
                                 SelectedProjectOwnerIds,
                                 SelectedPracticeIds,
