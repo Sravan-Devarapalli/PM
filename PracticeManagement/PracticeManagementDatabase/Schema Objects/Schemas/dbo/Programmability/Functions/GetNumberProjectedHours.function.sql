@@ -13,7 +13,8 @@ CREATE FUNCTION dbo.GetNumberProjectedHours
 	  @ExperimentalProjects BIT = 1,
 	  @ProposedProjects BIT =1,
 	  @InternalProjects	BIT = 1,
-	  @CompletedProjects BIT = 1
+	  @CompletedProjects BIT = 1,
+	  @AtRiskProjects BIT =1
     )
 RETURNS INT
 AS BEGIN
@@ -44,8 +45,8 @@ DECLARE @DefaultMilestoneId INT
 			 @ExperimentalProjects = 1 AND pr.ProjectStatusId = 5 OR	--  5 - Experimental
 			 @ProposedProjects = 1 AND pr.ProjectStatusId = 7 OR --7-Proposed
 			 @InternalProjects = 1 AND pr.ProjectStatusId = 6 OR--6 - Internal
-			 @CompletedProjects = 1 AND pr.ProjectStatusId = 4 -- 4 - Completed
-			 )
+			 @CompletedProjects = 1 AND pr.ProjectStatusId = 4 OR-- 4 - Completed
+			 @AtRiskProjects = 1 ANd  pr.ProjectStatusId = 8)
     RETURN @res
    END
 
