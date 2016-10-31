@@ -55,7 +55,7 @@ namespace PraticeManagement.Controls.Reports
         public static List<ConsultantUtilizationPerson> GetConsultantsTimelineReport(
             DateTime start, int granularity, int period,
             bool activePersons, bool projectedPersons, bool activeProjects,
-            bool projectedProjects, bool experimentalProjects, bool internalProjects,bool proposedProjects,bool completedProjects,
+            bool projectedProjects, bool experimentalProjects, bool internalProjects,bool proposedProjects,bool completedProjects, bool atRiskProjects,
             string timescaleIds, string practiceIdList, int sortId, string sortDirection,
             bool excludeInternalPractices, int utilizationType,bool includeBadgeStatus,bool isSampleReport,string divisionIds)
         {
@@ -81,7 +81,8 @@ namespace PraticeManagement.Controls.Reports
                                   UtilizationType = utilizationType,
                                   IncludeBadgeStatus = includeBadgeStatus,
                                   //ExcludeInvestmentResource = excludeInvestmentResource,
-                                  DivisionIdList = divisionIds
+                                  DivisionIdList = divisionIds,
+                                  AtRiskProjects=atRiskProjects
                               };
 
             var consultants = ServiceCallers.Custom.Person(
