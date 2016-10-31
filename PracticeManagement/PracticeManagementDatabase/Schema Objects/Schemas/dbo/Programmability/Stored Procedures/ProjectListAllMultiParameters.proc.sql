@@ -11,6 +11,7 @@ CREATE PROCEDURE  [dbo].[ProjectListAllMultiParameters]
 	@ShowExperimental	BIT = 0,
 	@ShowProposed		BIT=0,
 	@ShowInactive		BIT = 0,
+	@ShowAtRisk			BIT = 0,
 	@SalespersonIds		VARCHAR(8000) = NULL,
 	@ProjectOwnerIds	VARCHAR(8000) = NULL,
 	@PracticeIds		VARCHAR(8000) = NULL,
@@ -202,6 +203,7 @@ AS
 				  OR ( @ShowExperimental = 1 AND P.ProjectStatusId = 5 ) 
 				  OR ( @ShowProposed = 1 AND P.ProjectStatusId = 7 ) -- Proposed
 				  OR ( @ShowInactive = 1 AND P.ProjectStatusId = 1 ) -- Inactive
+				  OR ( @ShowAtRisk = 1 AND P.ProjectStatusId = 8 )
 			)
 			AND  (ISNULL(pr.IsCompanyInternal, 0) = 0 AND @ExcludeInternalPractices  = 1 OR @ExcludeInternalPractices = 0)
 			AND P.ProjectId <> @DefaultProjectId
