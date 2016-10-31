@@ -9,6 +9,7 @@
 	,@CompletedProjects BIT = 1
 	,@ExperimentalProjects BIT = 1
 	,@InternalProjects BIT = 1
+	,@AtRiskProjects BIT = 1
 	,@TimescaleIds NVARCHAR(4000) = NULL
 	,@PracticeIds NVARCHAR(4000) = NULL
 	,@ExcludeInternalPractices BIT = 0
@@ -93,10 +94,10 @@ BEGIN
 		        FROM v_person AS p INNER JOIN @CurrentConsultants AS c ON c.ConsId = p.PersonId
 				LEFT JOIN v_CurrentMSBadge M ON M.PersonId = p.PersonId INNER JOIN dbo.PersonStatus AS st ON p.PersonStatusId = st.PersonStatusId
 				LEFT JOIN MSBadge B ON B.Personid=p.personid 
-				LEFT JOIN dbo.GetNumberAvaliableHoursTable(@StartDate,@EndDate,@ActiveProjects,@ProjectedProjects,@ExperimentalProjects,@InternalProjects,@ProposedProjects,@CompletedProjects) AS AvaHrs ON AvaHrs.PersonId =  p.PersonId 
+				LEFT JOIN dbo.GetNumberAvaliableHoursTable(@StartDate,@EndDate,@ActiveProjects,@ProjectedProjects,@ExperimentalProjects,@InternalProjects,@ProposedProjects,@CompletedProjects,@AtRiskProjects) AS AvaHrs ON AvaHrs.PersonId =  p.PersonId 
 		LEFT JOIN dbo.Practice AS pr ON p.DefaultPractice = pr.PracticeId
                 LEFT JOIN dbo.GetPersonVacationDaysTable(@StartDate,@Enddate) VactionDaysTable ON VactionDaysTable.PersonId = c.ConsId
-				LEFT JOIN dbo.GetAvgUtilizationTable(@StartDate,@EndDate,@ActiveProjects,@ProjectedProjects,@ExperimentalProjects,@InternalProjects,@ProposedProjects,@CompletedProjects) AS AvgUT ON AvgUT.PersonId =  p.PersonId'
+				LEFT JOIN dbo.GetAvgUtilizationTable(@StartDate,@EndDate,@ActiveProjects,@ProjectedProjects,@ExperimentalProjects,@InternalProjects,@ProposedProjects,@CompletedProjects,@AtRiskProjects) AS AvgUT ON AvgUT.PersonId =  p.PersonId'
 	SET @Query = @Query + @OrderBy
 	SET @Query = @Query + '  
 		SELECT PH.PersonId,PH.HireDate,PH.TerminationDate FROM v_PersonHistory PH INNER JOIN @CurrentConsultants AS c ON c.ConsId = PH.PersonId
@@ -122,6 +123,7 @@ BEGIN
 								 @ExperimentalProjects	BIT,
 								 @InternalProjects		BIT,
 								 @CompletedProjects		BIT,
+								 @AtRiskProjects		BIT,
 								 @TimescaleIds			NVARCHAR(4000),
 								 @PracticeIds			NVARCHAR(4000),
 								 @ExcludeInternalPractices	BIT,
@@ -137,6 +139,7 @@ BEGIN
 		,@ExperimentalProjects = @ExperimentalProjects
 		,@InternalProjects = @InternalProjects
 		,@CompletedProjects = @CompletedProjects
+		,@AtRiskProjects = @AtRiskProjects
 		,@TimescaleIds = @TimescaleIds
 		,@PracticeIds = @PracticeIds
 		,@ExcludeInternalPractices = @ExcludeInternalPractices
@@ -240,7 +243,9 @@ BEGIN
 			(@ProposedProjects=1 AND Prj.ProjectStatusId=7)  OR
 			(@CompletedProjects=1 AND  Prj.ProjectStatusId=4 ) OR
 			(@ExperimentalProjects=1 AND  Prj.ProjectStatusId=5 ) OR
-			(@InternalProjects=1 AND Prj.ProjectStatusId=6))
+			(@InternalProjects=1 AND Prj.ProjectStatusId=6) OR
+			(@AtRiskProjects=1 AND prj.ProjectStatusId=8)
+			)
 
 END
 
