@@ -231,7 +231,7 @@ namespace PraticeManagement.Reports.Badge
                 FillPersonStatusList();
                 cblPersonStatus.SelectItems(new List<int>() { 1, 5 });
                 DataHelper.FillProjectStatusList(cblProjectTypes, Resources.Controls.AllTypes);
-                cblProjectTypes.SelectItems(new List<int>() { 1, 2, 3, 4 });
+                cblProjectTypes.SelectItems(new List<int>() { 1, 2, 3, 4, 8});
                 DataHelper.FillPracticeList(cblPractices, Resources.Controls.AllPracticesText);
                 cblPractices.SelectAll();
                 var allClients = ServiceCallers.Custom.Client(c => c.ClientListAllWithoutPermissions());
@@ -646,15 +646,15 @@ namespace PraticeManagement.Reports.Badge
             if (filters != null)
             {
                 cblClient.UnSelectAll();
-                cblClient.SelectedItems=filters.ClientIds;
+                cblClient.SelectedItems = filters.ClientIds;
                 cblPayTypes.UnSelectAll();
-                cblPayTypes.SelectedItems=filters.PayTypeIds;
+                cblPayTypes.SelectedItems = filters.PayTypeIds;
                 cblPersonStatus.UnSelectAll();
-                cblPersonStatus.SelectedItems=filters.PersonStatusIds;
+                cblPersonStatus.SelectedItems = filters.PersonStatusIds;
                 cblProjectTypes.UnSelectAll();
-                cblProjectTypes.SelectedItems=filters.ProjectStatusIds;
+                cblProjectTypes.SelectedItems = filters.ProjectStatusIds;
                 cblPractices.UnSelectAll();
-                cblPractices.SelectedItems=filters.PracticeIds;
+                cblPractices.SelectedItems = filters.PracticeIds;
                 chkExcludeInternalPractices.Checked = filters.ExcludeInternalPractices;
                 PopulateData();
             }
