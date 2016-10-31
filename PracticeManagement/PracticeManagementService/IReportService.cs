@@ -35,7 +35,7 @@ namespace PracticeManagementService
         List<PersonLevelGroupedHours> ProjectSummaryReportByResource(string projectNumber, int? mileStoneId, DateTime? startDate, DateTime? endDate, string personRoleNames);
 
         [OperationContract]
-        List<PersonLevelGroupedHours> ProjectDetailReportByResource(string projectNumber, int? mileStoneId, DateTime? startDate, DateTime? endDate, string personRoleNames,bool isExport = false);
+        List<PersonLevelGroupedHours> ProjectDetailReportByResource(string projectNumber, int? mileStoneId, DateTime? startDate, DateTime? endDate, string personRoleNames, bool isExport = false);
 
         [OperationContract]
         List<WorkTypeLevelGroupedHours> ProjectSummaryReportByWorkType(string projectNumber, int? mileStoneId, DateTime? startDate, DateTime? endDate, string categoryNames);
@@ -122,6 +122,7 @@ namespace PracticeManagementService
         bool showExperimental,
             bool showProposed,
         bool showInactive,
+        bool showAtRisk,
         DateTime periodStart,
         DateTime periodEnd,
         string salespersonIdsList,
@@ -161,7 +162,7 @@ namespace PracticeManagementService
         List<ProjectLevelGroupedHours> NonBillableReport(DateTime startDate, DateTime endDate, string projectNumber, string directorIds, string businessUnitIds, string practiceIds);
 
         [OperationContract]
-        List<BadgedResourcesByTime> BadgedResourcesByTimeReport(string payTypes,string personStatusIds, DateTime startDate, DateTime endDate, int step);
+        List<BadgedResourcesByTime> BadgedResourcesByTimeReport(string payTypes, string personStatusIds, DateTime startDate, DateTime endDate, int step);
 
         [OperationContract]
         List<MSBadge> ListBadgeResourcesByType(string paytypes, string personStatuses, DateTime startDate, DateTime endDate, bool isNotBadged, bool isClockNotStart, bool isBlocked, bool isBreak, bool badgedOnProject, bool isBadgedException, bool isNotBadgedException);
@@ -170,7 +171,7 @@ namespace PracticeManagementService
         List<GroupByPractice> ResourcesByPracticeReport(string paytypes, string PersonStatuses, string practices, DateTime startDate, DateTime endDate, int step);
 
         [OperationContract]
-        List<GroupbyTitle> ResourcesByTitleReport(string paytypes,string personStatuses,string titles, DateTime startDate, DateTime endDate, int step);
+        List<GroupbyTitle> ResourcesByTitleReport(string paytypes, string personStatuses, string titles, DateTime startDate, DateTime endDate, int step);
 
         [OperationContract]
         List<MSBadge> GetBadgeRequestNotApprovedList();
@@ -203,6 +204,7 @@ namespace PracticeManagementService
            bool showExperimental,
            bool showProposed,
            bool showInactive,
+           bool showAtRisk,
            DateTime periodStart,
            DateTime periodEnd,
            string salespersonIdsList,
@@ -217,7 +219,7 @@ namespace PracticeManagementService
            );
 
         [OperationContract]
-        List<ExpenseSummary> GetExpenseSummaryGroupedByProject(DateTime startDate, DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental);
+        List<ExpenseSummary> GetExpenseSummaryGroupedByProject(DateTime startDate, DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental, bool atRisk);
 
         [OperationContract]
         List<ExpenseSummary> GetExpenseSummaryGroupedBytype(DateTime startDate, DateTime endDate, string expenseTypeIds);
@@ -226,7 +228,7 @@ namespace PracticeManagementService
         List<ExpenseSummary> ExpenseDetailReport(DateTime startDate, DateTime endDate, int? projectId, int? expenseTypeId);
 
         [OperationContract]
-        List<ExpenseSummary> DetailedExpenseSummary(DateTime startDate, DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental, string expenseTypeIds);
+        List<ExpenseSummary> DetailedExpenseSummary(DateTime startDate, DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental,bool atRisk, string expenseTypeIds);
     }
 }
 
