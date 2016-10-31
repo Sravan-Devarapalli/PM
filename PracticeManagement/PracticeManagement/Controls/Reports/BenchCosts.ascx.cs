@@ -35,7 +35,7 @@ namespace PraticeManagement.Controls.Reports
         private const string Legend1 = "Person was hired during {0} month.";
         private const string Legend2 = "Person was terminated during {0} month.";
         private const string Legend3 = "Person was changed from salaried to hourly compensation during {0} month.";
-        private const string Legend4 = "Person was changed from hourly to salaried compensation during {0} month. "; 
+        private const string Legend4 = "Person was changed from hourly to salaried compensation during {0} month. ";
 
         private BenchReportContext ReportContext
         {
@@ -52,6 +52,7 @@ namespace PraticeManagement.Controls.Reports
                         ExperimentalProjects = chbExperimentalProjects.Checked,
                         ProposedProjects = chbProposed.Checked,
                         CompletedProjects = chbCompletedProjects.Checked,
+                        AtRiskProjects = chbATRiskProjects.Checked,
                         UserName = DataHelper.CurrentPerson.Alias,
                         PracticeIds = string.IsNullOrEmpty(cblPractices.SelectedItems) ? string.Empty : cblPractices.SelectedItems,
                         IncludeOverheads = chbIncludeOverHeads.Checked,
@@ -269,7 +270,7 @@ namespace PraticeManagement.Controls.Reports
                 dataCellStylearray.Add(dataCellStyle);
 
                 var datarowStyle = new RowStyles(dataCellStylearray.ToArray());
-                RowStyles[] rowStylearray = { headerrowStyle};
+                RowStyles[] rowStylearray = { headerrowStyle };
                 var sheetStyle = new SheetStyles(rowStylearray)
                 {
                     TopRowNo = headerRowsCount,
@@ -356,7 +357,7 @@ namespace PraticeManagement.Controls.Reports
                 dataRowsCount = data.Rows.Count;
                 var dataStyle = DataSheetStyle;
 
-                
+
                 var rowStylesList = dataStyle.rowStyles.ToList();
                 for (int i = 0; i < SheetHeightForExternalPractice.Count; i++)
                 {
@@ -490,7 +491,7 @@ namespace PraticeManagement.Controls.Reports
                     };
                 var monthBegin = BegPeriod;
                 var list = new ArrayList();
-                PracticeManagementCurrency lastBenchValue=new PracticeManagementCurrency();
+                PracticeManagementCurrency lastBenchValue = new PracticeManagementCurrency();
                 lastBenchValue.Value = 0M;
                 for (int i = 3, k = 0; k < periodLength; i++, k++, monthBegin = monthBegin.AddMonths(1))
                 {
@@ -623,8 +624,8 @@ namespace PraticeManagement.Controls.Reports
                     "",
                     ""
                 };
-            for (int i = 3; i < data.Columns.Count-1; i++)
-                totalsRow.Add(string.Format(NPOIExcel.CustomColorKey, "red",grandTotals[i - 3]));
+            for (int i = 3; i < data.Columns.Count - 1; i++)
+                totalsRow.Add(string.Format(NPOIExcel.CustomColorKey, "red", grandTotals[i - 3]));
             data.Rows.Add(totalsRow.ToArray());
             return data;
         }
@@ -1200,7 +1201,7 @@ namespace PraticeManagement.Controls.Reports
             ddlPeriod.SelectedValue = "1";
             diRange.FromDate = BegPeriod;
             diRange.ToDate = EndPeriod;
-            chbActiveProjects.Checked = chbProjectedProjects.Checked = chbProjectedProjects.Checked = chbProposed.Checked = true;
+            chbActiveProjects.Checked = chbProjectedProjects.Checked = chbProjectedProjects.Checked = chbProposed.Checked = chbATRiskProjects.Checked = true;
             chbExperimentalProjects.Checked = false;
             chbIncludeZeroCostEmps.Checked = false;
             chbIncludeOverHeads.Checked = true;
@@ -1279,6 +1280,7 @@ namespace PraticeManagement.Controls.Reports
             filter.IsProposed = chbProposed.Checked;
             filter.IsCompleted = chbCompletedProjects.Checked;
             filter.IsExperimental = chbExperimentalProjects.Checked;
+            filter.IsAtRisk = chbATRiskProjects.Checked;
             filter.IncludeOverheads = chbIncludeOverHeads.Checked;
             filter.IncludeZeroCost = chbIncludeZeroCostEmps.Checked;
             filter.SeperateInternalExternalTables = chbSeperateInternalExternal.Checked;
@@ -1300,6 +1302,7 @@ namespace PraticeManagement.Controls.Reports
                 chbExperimentalProjects.Checked = filters.IsExperimental;
                 chbProjectedProjects.Checked = filters.IsProjected;
                 chbProposed.Checked = filters.IsProposed;
+                chbATRiskProjects.Checked = filters.IsAtRisk;
                 chbIncludeOverHeads.Checked = filters.IncludeOverheads;
                 chbIncludeZeroCostEmps.Checked = filters.IncludeZeroCost;
                 chbSeperateInternalExternal.Checked = filters.SeperateInternalExternalTables;
