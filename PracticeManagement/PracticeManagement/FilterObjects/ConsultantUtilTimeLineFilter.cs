@@ -32,6 +32,8 @@ namespace PraticeManagement.FilterObjects
 
         public bool CompletedProjects { get; set; }
 
+        public bool AtRiskProjects { get; set; }
+
         public string TimescalesSelected { get; set; }
 
         public bool ExcludeInternalPractices { get; set; }
@@ -53,3 +55,4 @@ namespace PraticeManagement.FilterObjects
         public bool FiltersChanged { get; set; }
     }
 }
+
