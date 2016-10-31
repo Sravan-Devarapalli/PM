@@ -97,6 +97,7 @@ namespace DataAccess
                 command.Parameters.AddWithValue(Constants.ParameterNames.IncludeInternal, context.IncludeInternalProjects);
                 command.Parameters.AddWithValue(Constants.ParameterNames.IncludeExperimental, context.IncludeExperimentalProjects);
                 command.Parameters.AddWithValue(Constants.ParameterNames.IncludeDefaultMileStone, context.IncludeDefaultMileStone);
+                command.Parameters.AddWithValue(Constants.ParameterNames.IncludeAtRisk, context.IncludeAtRiskProjects);
 
                 connection.Open();
                 using (var reader = command.ExecuteReader())
