@@ -158,7 +158,10 @@
                                                 <asp:CheckBox ID="chbExperimental" runat="server" AutoPostBack="false" Checked="false"
                                                     onclick="EnableResetButton();" Text="Experimental" ToolTip="Include Experimental projects into report" />
                                             </td>
-                                            <td></td>
+                                            <td>
+                                                <asp:CheckBox ID="chbAtRisk" runat="server" AutoPostBack="false" Checked="true"
+                                                    onclick="EnableResetButton();" Text="At Risk" ToolTip="Include At Risk projects into report" />
+                                            </td>
                                         </tr>
                                     </table>
                                 </td>
