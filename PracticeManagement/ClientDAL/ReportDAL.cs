@@ -2771,6 +2771,7 @@ namespace DataAccess
           bool showExperimental,
             bool showProposed,
           bool showInactive,
+          bool showAtRisk,
           DateTime periodStart,
           DateTime periodEnd,
           string salespersonIdsList,
@@ -2795,6 +2796,7 @@ namespace DataAccess
                 showExperimental,
                 showProposed,
                 showInactive,
+                showAtRisk,
                 periodStart,
                 periodEnd,
                 salespersonIdsList,
@@ -3103,6 +3105,7 @@ namespace DataAccess
           bool showExperimental,
             bool showProposed,
           bool showInactive,
+          bool showAtRisk,
           DateTime periodStart,
           DateTime periodEnd,
           string salespersonIdsList,
@@ -3128,6 +3131,7 @@ namespace DataAccess
                     command.Parameters.AddWithValue(Constants.ParameterNames.ShowExperimentalParam, showExperimental);
                     command.Parameters.AddWithValue(Constants.ParameterNames.ShowProposedParam, showProposed);
                     command.Parameters.AddWithValue(Constants.ParameterNames.ShowInactiveParam, showInactive);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.ShowAtRiskParam, showAtRisk);
                     command.Parameters.AddWithValue(Constants.ParameterNames.SalespersonIdsParam, salespersonIdsList);
                     command.Parameters.AddWithValue(Constants.ParameterNames.ProjectOwnerIdsParam, practiceManagerIdsList);
                     command.Parameters.AddWithValue(Constants.ParameterNames.PracticeIdsParam, practiceIdsList);
@@ -5446,7 +5450,7 @@ namespace DataAccess
             }
         }
 
-        public static List<Project> ProjectsListWithFilters(string clientIdsList, bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showProposed, bool showInactive, DateTime periodStart, DateTime periodEnd, string salespersonIdsList, string ProjectOwnerIdsList, string practiceIdsList, string projectGroupIdsList, string divisionIdsList,
+        public static List<Project> ProjectsListWithFilters(string clientIdsList, bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showProposed, bool showInactive, bool showAtRisk, DateTime periodStart, DateTime periodEnd, string salespersonIdsList, string ProjectOwnerIdsList, string practiceIdsList, string projectGroupIdsList, string divisionIdsList,
             string channelIdsList,
             string revenueTypeIdsList,
             string offeringIdsList, string userLogin)
@@ -5466,6 +5470,7 @@ namespace DataAccess
                     command.Parameters.AddWithValue(Constants.ParameterNames.ShowExperimentalParam, showExperimental);
                     command.Parameters.AddWithValue(Constants.ParameterNames.ShowProposedParam, showProposed);
                     command.Parameters.AddWithValue(Constants.ParameterNames.ShowInactiveParam, showInactive);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.ShowAtRiskParam, showAtRisk);
                     command.Parameters.AddWithValue(Constants.ParameterNames.SalespersonIdsParam, salespersonIdsList);
                     command.Parameters.AddWithValue(Constants.ParameterNames.ProjectOwnerIdsParam, ProjectOwnerIdsList);
                     command.Parameters.AddWithValue(Constants.ParameterNames.PracticeIdsParam, practiceIdsList);
@@ -5632,7 +5637,7 @@ namespace DataAccess
         }
 
 
-        public static List<ExpenseSummary> GetExpenseSummaryGroupedByProject(DateTime startDate, DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool Completed, bool proposed, bool inActive, bool experimental)
+        public static List<ExpenseSummary> GetExpenseSummaryGroupedByProject(DateTime startDate, DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool Completed, bool proposed, bool inActive, bool experimental,bool atRisk)
         {
             using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
             using (var command = new SqlCommand(Constants.ProcedureNames.Reports.ExpenseSummaryGroupedByProject, connection))
@@ -5651,6 +5656,7 @@ namespace DataAccess
                 command.Parameters.AddWithValue(Constants.ParameterNames.ShowExperimentalParam, experimental);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ShowProposedParam, proposed);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ShowInactiveParam, inActive);
+                command.Parameters.AddWithValue(Constants.ParameterNames.ShowAtRiskParam, atRisk);
 
                 connection.Open();
                 using (var reader = command.ExecuteReader())
@@ -5942,7 +5948,7 @@ namespace DataAccess
             }
         }
 
-        public static List<ExpenseSummary> DetailedExpenseSummary(DateTime startDate, DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool Completed, bool proposed, bool inActive, bool experimental, string expenseTypeIds)
+        public static List<ExpenseSummary> DetailedExpenseSummary(DateTime startDate, DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool Completed, bool proposed, bool inActive, bool experimental, bool atRisk, string expenseTypeIds)
         {
             using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
             using (var command = new SqlCommand(Constants.ProcedureNames.Reports.ExpenseSummaryDetails, connection))
@@ -5961,6 +5967,7 @@ namespace DataAccess
                 command.Parameters.AddWithValue(Constants.ParameterNames.ShowExperimentalParam, experimental);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ShowProposedParam, proposed);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ShowInactiveParam, inActive);
+                command.Parameters.AddWithValue(Constants.ParameterNames.ShowAtRiskParam, atRisk);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ExpenseTypes, expenseTypeIds ?? (Object)DBNull.Value);
 
                 connection.Open();
