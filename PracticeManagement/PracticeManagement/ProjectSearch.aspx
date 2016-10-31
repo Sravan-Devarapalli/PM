@@ -163,7 +163,6 @@
             }
         }
 
-
         function GetDefault(control) {
             control.fireEvent('onclick');
         }
@@ -175,6 +174,7 @@
             document.getElementById("<%= chbCompleted.ClientID %>").checked = true;
             document.getElementById("<%= chbExperimental.ClientID %>").checked = true;
             document.getElementById("<%= chbProposed.ClientID %>").checked = true;
+            document.getElementById("<%= chbAtRisk.ClientID %>").checked = true;
             document.getElementById("<%= chbInactive.ClientID %>").checked = false;
         }
 
@@ -186,7 +186,7 @@
 
             $(".FilterPanel .Filter").live("click", function () {
                 $(this).parent().toggleClass("FilterDiv");
-                $(".FilterPanel .panel").parent().toggleClass("FltPanel",20000);
+                $(".FilterPanel .panel").parent().toggleClass("FltPanel", 20000);
             });
 
             if ($(".collapseExpandEnable .chevron").length > 0) {
@@ -214,12 +214,10 @@
                 <tbody>
                     <tr>
                         <td class="Width3Percent FilterDiv">
-                            
                             <div class="Filter">
                                 &nbsp;
                             </div>
                             <asp:Label ID="lblFilter" runat="server"></asp:Label>&nbsp;
-                          
                         </td>
                         <td class="padRight8 width60PImp">
                             <asp:TextBox ID="txtSearchText" runat="server" CssClass="WholeWidth" MaxLength="255">
@@ -251,6 +249,10 @@
                                     </td>
                                     <td>
                                         <asp:CheckBox ID="chbInactive" runat="server" Text="Inactive" EnableViewState="False" />
+                                    </td>
+                                    <td>
+                                        <asp:CheckBox ID="chbAtRisk" runat="server" Text="At Risk" EnableViewState="False"
+                                            Checked="true" />
                                     </td>
                                 </tr>
                                 <tr class="PadLeft10Td">
@@ -327,7 +329,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="PaddingTop10" style="padding-right:40px">
+                                                    <td class="PaddingTop10" style="padding-right: 40px">
                                                         <asp:Button ID="btnReset" runat="server" Text="Reset" CausesValidation="False" OnClientClick="resetFiltersTab();  return false;"
                                                             EnableViewState="False" CssClass="Width100Px" />
                                                     </td>
