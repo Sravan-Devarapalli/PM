@@ -266,6 +266,8 @@
                                     ToolTip="Include experimental projects into report" onclick="EnableResetButton();" />
                             </td>
                             <td>
+                                <asp:CheckBox ID="chbATRiskProjects" runat="server" AutoPostBack="false" Text="At Risk"
+                                    Checked="true" ToolTip="Include At Risk projects into report" onclick="EnableResetButton();" />
                             </td>
                             <td>
                             </td>
