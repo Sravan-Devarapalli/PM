@@ -7,6 +7,7 @@
 	@showInternal		BIT = 0,
 	@ShowExperimental	BIT = 0,
 	@ShowInactive		BIT = 0,
+	@ShowAtRisk			BIT = 0,
 	@SalespersonIds		NVARCHAR(MAX) = NULL,
 	@ProjectOwnerIds	NVARCHAR(MAX) = NULL,
 	@PracticeIds		NVARCHAR(MAX) = NULL,
@@ -27,6 +28,7 @@ BEGIN
 	@showInternalLocal		BIT = 0,
 	@ShowExperimentalLocal	BIT = 0,
 	@ShowInactiveLocal		BIT = 0,
+	@ShowAtRiskLocal		BIT	= 0,
 	@SalespersonIdsLocal		NVARCHAR(MAX) = NULL,
 	@ProjectOwnerIdsLocal	NVARCHAR(MAX) = NULL,
 	@PracticeIdsLocal		NVARCHAR(MAX) = NULL,
@@ -42,6 +44,7 @@ BEGIN
 	@showInternalLocal		=@showInternal,
 	@ShowExperimentalLocal	=@ShowExperimental,
 	@ShowInactiveLocal		=@ShowInactive,
+	@ShowAtRiskLocal		=@ShowAtRisk,
 	@SalespersonIdsLocal	=@SalespersonIds,
 	@ProjectOwnerIdsLocal	=@ProjectOwnerIds,
 	@PracticeIdsLocal		=@PracticeIds,
@@ -158,6 +161,7 @@ BEGIN
 				  OR ( @showInternalLocal = 1 AND p.ProjectStatusId = 6 ) -- Internal
 				  OR ( @ShowExperimentalLocal = 1 AND p.ProjectStatusId = 5 )
 				  OR ( @ShowInactiveLocal = 1 AND p.ProjectStatusId = 1 ) -- Inactive
+				  OR ( @ShowAtRiskLocal = 1 AND p.ProjectStatusId = 8 )
 			)
 			AND  (ISNULL(pr.IsCompanyInternal, 0) = 0 AND @ExcludeInternalPracticesLocal  = 1 OR @ExcludeInternalPracticesLocal = 0)
 			AND P.IsAllowedToShow = 1
