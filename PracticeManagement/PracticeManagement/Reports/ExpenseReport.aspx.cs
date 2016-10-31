@@ -283,6 +283,18 @@ namespace PraticeManagement.Reports
             }
         }
 
+        public bool showAtRisk
+        {
+            get
+            {
+                return chbAtRisk.Checked;
+            }
+            set
+            {
+                chbAtRisk.Checked = value;
+            }
+        }
+
         public bool showProjected
         {
             get
@@ -508,6 +520,7 @@ namespace PraticeManagement.Reports
             filter.IsInactive = showInActive;
             filter.IsProjected = showProjected;
             filter.IsProposed = showProposed;
+            filter.IsAtRisk = showAtRisk;
             ReportsFilterHelper.SaveFilterValues(ReportName.ExpenseReport, filter);
         }
 
@@ -533,6 +546,7 @@ namespace PraticeManagement.Reports
                 showInActive = filters.IsInactive;
                 showProjected = filters.IsProjected;
                 showProposed = filters.IsProposed;
+                showAtRisk = filters.IsAtRisk;
                 IsFromBrowserSession = true;
             }
             else
@@ -554,6 +568,7 @@ namespace PraticeManagement.Reports
             showInActive = false;
             showProjected = true;
             showProposed = true;
+            showAtRisk = true;
             cblAccounts.SelectAll();
             cblPractices.SelectAll();
             cblDivisions.SelectAll();
