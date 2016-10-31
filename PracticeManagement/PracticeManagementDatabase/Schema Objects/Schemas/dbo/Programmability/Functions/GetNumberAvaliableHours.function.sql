@@ -13,7 +13,8 @@ CREATE FUNCTION [dbo].[GetNumberAvaliableHours]
 	  @ExperimentalProjects BIT = 1	,
 	  @ProposedProjects BIT =1,
 	  @InternalProjects		BIT = 1,
-	  @CompletedProjects BIT = 1
+	  @CompletedProjects BIT = 1,
+	  @AtRiskProjects BIT =1
     )
 RETURNS INT
 AS BEGIN
@@ -27,7 +28,7 @@ AS BEGIN
 										AND @PersonId = PersonId AND (DayOff = 0 OR (DayOff = 1 AND CompanyDayOff = 0)))
 	END 
     ELSE
-		SET @res = ISNULL(dbo.GetNumberProjectedHours(@PersonId, @startDate, @endDate, @ActiveProjects, @ProjectedProjects, @ExperimentalProjects,@ProposedProjects,@InternalProjects,@CompletedProjects), 0)
+		SET @res = ISNULL(dbo.GetNumberProjectedHours(@PersonId, @startDate, @endDate, @ActiveProjects, @ProjectedProjects, @ExperimentalProjects,@ProposedProjects,@InternalProjects,@CompletedProjects,@AtRiskProjects), 0)
     
     RETURN @res
    END
