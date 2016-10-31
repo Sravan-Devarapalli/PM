@@ -819,6 +819,7 @@
             public const string ProjectedProjects = "ProjectedProjects";
             public const string ExperimentalProjects = "ExperimentalProjects";
             public const string CompletedProjects = "CompletedProjects";
+            public const string AtRiskProjects = "AtRiskProjects";
             public const string InternalProjects = "InternalProjects";
             public const string IncludeOverheads = "@IncludeOverheads";
             public const string IncludeZeroCostEmployees = "@IncludeZeroCostEmployees";
@@ -854,6 +855,7 @@
             public const string ForecastedHoursFrom = ColumnNames.ForecastedHoursFrom;
             public const string ForecastedHoursTo = ColumnNames.ForecastedHoursTo;
             public const string HoursPerDay = ColumnNames.HoursPerDay;
+            public const string IncludeAtRisk = "IncludeAtRisk";
             public const string IncludeActive = "IncludeActive";
             public const string IncludeProjected = "IncludeProjected";
             public const string IncludeInactive = "IncludeInactive";
@@ -972,6 +974,7 @@
             public const string ShowExperimentalParam = "@ShowExperimental";
             public const string ShowProposedParam = "@ShowProposed";
             public const string ShowInactiveParam = "@showInactive";
+            public const string ShowAtRiskParam = "@showAtRisk";
             public const string UserParam = "@User";
             public const string LookedParam = "@Looked";
             public const string BuyerNameParam = "@BuyerName";
