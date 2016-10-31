@@ -21,6 +21,7 @@ BEGIN
 		4	Completed
 		5	Experimental
 		6	Internal
+		8	At Risk
 	*/
 	;WITH UsedProjectIds
 	AS 
@@ -56,7 +57,7 @@ BEGIN
 	LEFT JOIN AssignedProjects AP ON P.ProjectId = AP.ProjectId
 	WHERE P.IsAllowedToShow = 1 
 		AND ((@IsOnlyEnternalProjects  = 1 AND P.IsInternal = 0) OR @IsOnlyEnternalProjects = 0 )
-		AND (@IsOnlyActiveAndInternal = 1 AND P.ProjectStatusId IN (3,6))
+		AND (@IsOnlyActiveAndInternal = 1 AND P.ProjectStatusId IN (3,6,8)) -- including At Risk which should behave same as active
 		AND P.ProjectId NOT IN (SELECT ProjectId FROM UsedProjectIds)
 		AND ((@EndDate < '20120401') OR  ((@EndDate >= '20120401') AND P.ProjectId != 174 ))
 		AND (ISNULL(P.InvisibleInTimeEntry,0) = 0)
