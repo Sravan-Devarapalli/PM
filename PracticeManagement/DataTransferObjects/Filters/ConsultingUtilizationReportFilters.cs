@@ -80,6 +80,12 @@ namespace DataTransferObjects.Filters
             set;
         }
 
+        public bool IncludeAtRiskProjects
+        {
+            get;
+            set;
+        }
+
         public string TimescaleIds
         {
             get;
