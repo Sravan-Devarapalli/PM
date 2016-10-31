@@ -105,11 +105,14 @@ BEGIN
 		END
 
 		--if that projectstatus is other that active or internal recursive entries need to be removed
-		IF (@ProjectStatusId != 3 AND @ProjectStatusId != 6)
+		IF (@ProjectStatusId != 3 AND @ProjectStatusId != 6 AND @ProjectStatusId != 8) -- add AT risk
 		BEGIN
 			 DELETE [dbo].[PersonTimeEntryRecursiveSelection]
    			 WHERE [ProjectId] = @ProjectId
 		END
+
+		EXEC dbo.SessionLogUnprepare
+		EXEC dbo.SessionLogPrepare @UserLogin = @UserLogin
 
 		UPDATE P
 			SET ClientId		= @ClientId,
@@ -146,7 +149,7 @@ BEGIN
 		WHERE ProjectId = @ProjectId
 
 		--If project status 
-		IF((@ProjectStatusId IN (1,2,3,4) AND @PreviousProjectStatusId IN (5,6,7)) OR (@PreviousProjectStatusId IN (1,2,3,4) AND @ProjectStatusId IN (5,6,7)))
+		IF((@ProjectStatusId IN (1,2,3,4,8) AND @PreviousProjectStatusId IN (5,6,7)) OR (@PreviousProjectStatusId IN (1,2,3,4,8) AND @ProjectStatusId IN (5,6,7)))
 		BEGIN
 			 INSERT INTO @Persons(Id,IsDoneExecuting)
 			 SELECT DISTINCT mp.PersonId,0
