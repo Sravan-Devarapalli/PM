@@ -466,7 +466,7 @@
                     <span class="bg"><a href="#"><span>Filters</span></a> </span>
                 </HeaderTemplate>
                 <ContentTemplate>
-                    <table class="WholeWidth">
+                    <table class="">
                         <tr align="center">
                             <td class="Width125Px BorderBottom1px vTop">
                                 Person Status
@@ -478,7 +478,7 @@
                             </td>
                             <td class="Width30Px">
                             </td>
-                            <td class="Width320Px BorderBottom1px vTop" colspan="3">
+                            <td class="BorderBottom1px vTop" colspan="4">
                                 Project Type
                             </td>
                             <td class="Width30Px">
@@ -509,21 +509,25 @@
                             </td>
                             <td>
                             </td>
-                            <td>
+                            <td class="Width100Px">
                                 <asp:CheckBox ID="chbActiveProjects" runat="server" AutoPostBack="false" Checked="True"
                                     onclick="EnableResetButton();" Text="Active" ToolTip="Include active projects into report" />
                             </td>
-                            <td>
+                            <td class="Width100Px">
                                 <asp:CheckBox ID="chbInternalProjects" runat="server" AutoPostBack="false" Checked="True"
                                     onclick="EnableResetButton();" Text="Internal" ToolTip="Include internal projects into report" />
                             </td>
-                            <td>
+                            <td class="Width100Px">
                                 <asp:CheckBox ID="chbProposedProjects" runat="server" AutoPostBack="false" Checked="True"
                                     onclick="EnableResetButton();" Text="Proposed" ToolTip="Include proposed projects into report" />
                             </td>
-                            <td>
+                            <td class="Width100Px">
+                                <asp:CheckBox ID="chbAtRiskProjects" runat="server" AutoPostBack="false" Checked="True" onclick="EnableResetButton();"
+                                    Text="At Risk" ToolTip="Include At Risk projects into report" />
                             </td>
                             <td>
+                            </td>
+                            <td rowspan="2" class="floatRight">
                                 <cc2:ScrollingDropDown ID="cblDivisions" runat="server" AllSelectedReturnType="AllItems"
                                     onclick="scrollingDropdown_onclick('cblDivisions','Division')" CellPadding="3"
                                     NoItemsType="All" SetDirty="False" DropDownListType="Division" CssClass="UTilTimeLineFilterCblPractices" />
@@ -572,6 +576,8 @@
                             <td>
                                 <asp:CheckBox ID="chkExcludeInternalPractices" runat="server" Text="Exclude Internal Practice Areas"
                                     Checked="true" onclick="EnableResetButton();" />
+                            </td>
+                            <td>
                             </td>
                         </tr>
                     </table>
