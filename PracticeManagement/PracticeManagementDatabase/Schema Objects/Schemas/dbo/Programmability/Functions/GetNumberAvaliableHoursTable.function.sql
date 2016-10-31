@@ -7,7 +7,8 @@
 	  @ExperimentalProjects BIT = 1	,
 	  @InternalProjects		BIT = 1,
 	  @ProposedProjects BIT = 1,
-	  @CompletedProjects BIT = 1
+	  @CompletedProjects BIT = 1,
+	  @AtRiskProjects BIT = 1
     )
 /*
 If the person's current pay type is salary type
@@ -53,7 +54,8 @@ RETURN
 													 @ExperimentalProjects = 1 AND MPS.ProjectStatusId = 5 OR	--  5 - Experimental
 													 @InternalProjects = 1 AND MPS.ProjectStatusId = 6 OR --6 - Internal
 													 @ProposedProjects = 1 AND MPS.ProjectStatusId = 7 OR --7 - Proposed
-													 @CompletedProjects = 1 AND MPS.ProjectStatusId = 4 -- 4 - Completed
+													 @CompletedProjects = 1 AND MPS.ProjectStatusId = 4 OR -- 4 - Completed
+													 @AtRiskProjects = 1 AND MPS.ProjectStatusId=8 -- 8 - At Risk
 													)
 	GROUP BY P.PersonId
 	)
