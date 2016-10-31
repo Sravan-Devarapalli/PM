@@ -41,6 +41,8 @@ namespace PraticeManagement.Controls.Reports
 
         public bool CompletedProjects { get { return chbCompletedProjects.Checked; } }
 
+        public bool AtRiskProjects { get { return chbAtRiskProjects.Checked; } }
+
         public string TimescalesSelected { get { return cblTimeScales.SelectedItems; } set { cblTimeScales.SelectedItems = value; } }
 
         public bool ExcludeInternalPractices { get { return chkExcludeInternalPractices.Checked; } }
@@ -397,6 +399,7 @@ namespace PraticeManagement.Controls.Reports
                 chbCompletedProjects.Checked = Convert.ToBoolean(resoureDictionary[Constants.ResourceKeys.CompletedProjectsKey]);
                 chkExcludeInternalPractices.Checked = Convert.ToBoolean(resoureDictionary[Constants.ResourceKeys.ExcludeInternalPracticesKey]);
                 chbExcludeInvestmentResources.Checked = Convert.ToBoolean(resoureDictionary[Constants.ResourceKeys.ExcludeInvestmentResourceKey]);
+                chbAtRiskProjects.Checked = true;
 
                 rbSortbyAsc.Checked = resoureDictionary[Constants.ResourceKeys.SortDirectionKey] == "Desc" ? true : false;
 
@@ -434,6 +437,7 @@ namespace PraticeManagement.Controls.Reports
             chbExperimentalProjects.Checked = cookie.ExperimentalProjects;
             chbInternalProjects.Checked = cookie.InternalProjects;
             chbCompletedProjects.Checked = cookie.CompletedProjects;
+            chbAtRiskProjects.Checked = cookie.AtRiskProjects;
             chkExcludeInternalPractices.Checked = cookie.ExcludeInternalPractices;
             rbSortbyAsc.Checked = cookie.SortDirection == "Asc" ? true : false;
             rbSortbyDesc.Checked = cookie.SortDirection == "Desc" ? true : false;
@@ -507,6 +511,7 @@ namespace PraticeManagement.Controls.Reports
             this.chbProposedProjects.Checked = true;
             this.chbExperimentalProjects.Checked = false;
             this.chbCompletedProjects.Checked = true;
+            this.chbAtRiskProjects.Checked = true;
             this.chkExcludeInternalPractices.Checked = true;
             SelectAllItems(this.cblPractices);
             SelectAllItems(this.cblDivisions);
@@ -697,7 +702,8 @@ namespace PraticeManagement.Controls.Reports
                 TimescalesSelected = cblTimeScales.Items[0].Selected ? null : TimescalesSelected,
                 PersonId = personId.HasValue ? (int?)personId.Value : null,
                 ChartTitle = chartTitle,
-                FiltersChanged = hdnFiltersChanged.Value == "false" ? false : true
+                FiltersChanged = hdnFiltersChanged.Value == "false" ? false : true,
+                AtRiskProjects=AtRiskProjects
             };
 
             return filter;
@@ -718,6 +724,7 @@ namespace PraticeManagement.Controls.Reports
             chbInternalProjects.Checked = Filters.IncludeInternalProjects;
             chbProjectedProjects.Checked = Filters.IncludeProjectedProjects;
             chbProposedProjects.Checked = Filters.IncludeProposedProjects;
+            chbAtRiskProjects.Checked = Filters.IncludeAtRiskProjects;
             chbShowMSBadge.Checked = Filters.IncludeBadgeStatus;
             chkExcludeInternalPractices.Checked = Filters.ExcludeInternalPractices;
             cblTimeScales.UnSelectAll();
@@ -760,6 +767,7 @@ namespace PraticeManagement.Controls.Reports
             filters.IncludeInternalProjects = chbInternalProjects.Checked;
             filters.IncludeProjectedProjects = chbProjectedProjects.Checked;
             filters.IncludeProposedProjects = chbProposedProjects.Checked;
+            filters.IncludeAtRiskProjects = chbAtRiskProjects.Checked;
             filters.IncludeBadgeStatus = chbShowMSBadge.Checked;
             filters.TimescaleIds = cblTimeScales.SelectedItems;
             filters.PracticeIds = cblPractices.SelectedItems;
