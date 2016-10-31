@@ -464,7 +464,7 @@
                     window.open(url);
                 }
 
-             
+
 
             </script>
             <asp:Table ID="tblProjectTypeViewSwitch" runat="server" CssClass="CustomTabStyle CustomTabStyleProjectDetail">
@@ -574,6 +574,11 @@
                                                             ToolTip="Only system administrators can make projects Active or Completed." ValidationGroup="Project"
                                                             Text="*" EnableClientScript="false" SetFocusOnError="true" Display="Dynamic"
                                                             OnServerValidate="custProjectStatus_ServerValidate"></asp:CustomValidator>
+                                                        <asp:CustomValidator ID="custAtRiskStatus" runat="server" ControlToValidate="ddlProjectStatus"
+                                                            ErrorMessage="Only system administrators, Operations can make projects At Risk."
+                                                            ToolTip="Only system administrators, Operations can make projects At Risk." ValidationGroup="Project"
+                                                            Text="*" EnableClientScript="false" SetFocusOnError="true" Display="Dynamic"
+                                                            OnServerValidate="custAtRiskStatus_ServerValidate"></asp:CustomValidator>
                                                         <asp:CustomValidator ID="cvIsInternal" runat="server" EnableClientScript="false"
                                                             ErrorMessage="Can not change project status as some work types are already in use."
                                                             ValidateEmptyText="true" Text="*" ToolTip="Can not change project status as some timetypes are already in use."></asp:CustomValidator>
