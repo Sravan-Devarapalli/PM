@@ -12,6 +12,7 @@
 	@ShowExperimental		BIT = 0,
 	@ShowProposed			BIT = 0,
 	@ShowInactive			BIT = 0,
+	@ShowAtRisk				BIT = 0,
 	@ExcludeInternalPractices BIT = 0
 )
 AS
@@ -25,6 +26,7 @@ BEGIN
 			 @ShowProjectedLocal		BIT,
 			 @ShowCompletedLocal		BIT,
 			 @ShowActiveLocal			BIT,
+			 @ShowAtRiskLocal			BIT,
 			 @showInternalLocal			BIT,
 			 @ShowExperimentalLocal		BIT,
 			 @ShowProposedLocal			BIT,
@@ -41,6 +43,7 @@ BEGIN
 	 @ShowProjectedLocal			=	@ShowProjected,
 	 @ShowCompletedLocal			=	@ShowCompleted,
 	 @ShowActiveLocal				=	@ShowActive,
+	 @ShowAtRiskLocal				=	@ShowAtRisk,
 	 @showInternalLocal				=	@showInternal,
 	 @ShowExperimentalLocal			=	@ShowExperimental,
 	 @ShowProposedLocal				=   @ShowProposed,
@@ -185,6 +188,7 @@ BEGIN
 							OR ( @ShowExperimentalLocal = 1 AND r.ProjectStatusId = 5 )
 							OR ( @ShowProposedLocal = 1 AND r.ProjectStatusId = 7 ) -- Proposed
 							OR ( @ShowInactiveLocal = 1 AND r.ProjectStatusId = 1 ) -- Inactive
+							OR ( @ShowAtRiskLocal = 1 AND r.ProjectStatusId = 8 )
 						)
 					AND ( @PracticeIdsLocal IS NULL OR r.PracticeId IN (SELECT ResultId FROM [dbo].[ConvertStringListIntoTable](@PracticeIdsLocal))OR r.PracticeId IS NULL )
 					AND (ISNULL(r.IsCompanyInternal, 0) = 0 AND @ExcludeInternalPracticesLocal  = 1 OR @ExcludeInternalPracticesLocal = 0)
@@ -382,6 +386,7 @@ BEGIN
 							OR ( @ShowExperimentalLocal = 1 AND r.ProjectStatusId = 5 )
 							OR ( @ShowProposedLocal = 1 AND r.ProjectStatusId = 7 ) -- Proposed
 							OR ( @ShowInactiveLocal = 1 AND r.ProjectStatusId = 1 ) -- Inactive
+							OR ( @ShowAtRiskLocal = 1 AND r.ProjectStatusId = 8 )
 						)
 					AND ( @PracticeIdsLocal IS NULL OR r.PracticeId IN (SELECT ResultId FROM [dbo].[ConvertStringListIntoTable](@PracticeIdsLocal)) OR r.PracticeId IS NULL )
 					AND (ISNULL(r.IsCompanyInternal, 0) = 0 AND @ExcludeInternalPracticesLocal  = 1 OR @ExcludeInternalPracticesLocal = 0)
@@ -567,6 +572,7 @@ BEGIN
 							OR ( @ShowExperimentalLocal = 1 AND r.ProjectStatusId = 5 )
 							OR ( @ShowProposedLocal = 1 AND r.ProjectStatusId = 7 ) -- Proposed
 							OR ( @ShowInactiveLocal = 1 AND r.ProjectStatusId = 1 ) -- Inactive
+							OR ( @ShowAtRiskLocal = 1 AND r.ProjectStatusId = 8 )
 						)
 			GROUP BY r.Date,p.PracticeId,r.IsHourlyAmount,  m.HoursPerDay,s.HoursPerDay, m.Amount, r.MilestoneDailyAmount
 			  ) 
