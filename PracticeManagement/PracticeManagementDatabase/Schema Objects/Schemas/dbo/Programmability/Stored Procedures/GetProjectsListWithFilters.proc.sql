@@ -8,6 +8,7 @@
 	@ShowExperimental	BIT = 0,
 	@ShowProposed		BIT = 0,
 	@ShowInactive		BIT = 0,
+	@ShowAtRisk			BIT = 0,
 	@SalespersonIds		NVARCHAR(MAX) = NULL,
 	@ProjectOwnerIds	NVARCHAR(MAX) = NULL,
 	@PracticeIds		NVARCHAR(MAX) = NULL,
@@ -164,6 +165,7 @@ AS
 				OR ( @ShowExperimental = 1 AND P.ProjectStatusId = 5 ) --Experimental
 				OR ( @ShowProposed = 1 AND P.ProjectStatusId = 7 ) -- Proposed
 				OR ( @ShowInactive = 1 AND P.ProjectStatusId = 1 ) -- Inactive
+				OR (@ShowAtRisk =1 AND p.ProjectStatusId=8) -- At Risk
 			  )
 		 AND (@UserHasHighRoleThanProjectLead IS NULL
 					OR @UserHasHighRoleThanProjectLead > 0
