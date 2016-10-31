@@ -1,4 +1,5 @@
 ﻿
+
 CREATE PROCEDURE  [dbo].[AttainmentProjectList]
 	@ClientIds			NVARCHAR(MAX) = NULL,
 	@ShowProjected		BIT = 0,
@@ -8,6 +9,7 @@ CREATE PROCEDURE  [dbo].[AttainmentProjectList]
 	@ShowExperimental	BIT = 0,
 	@ShowProposed		BIT = 0,
 	@ShowInactive		BIT = 0,
+	@ShowAtRisk			BIT = 0,
 	@SalespersonIds		NVARCHAR(MAX) = NULL,
 	@ProjectOwnerIds	NVARCHAR(MAX) = NULL,
 	@PracticeIds		NVARCHAR(MAX) = NULL,
@@ -152,6 +154,7 @@ AS
 				  OR ( @ShowExperimental = 1 AND P.ProjectStatusId = 5 )
 				  OR ( @ShowProposed = 1 AND P.ProjectStatusId = 7 ) -- Proposed
 				  OR ( @ShowInactive = 1 AND P.ProjectStatusId = 1 ) -- Inactive
+				  OR ( @ShowAtRisk = 1 AND P.ProjectStatusId = 8)
 			)
 			AND  (ISNULL(pr.IsCompanyInternal, 0) = 0 AND @ExcludeInternalPractices  = 1 OR @ExcludeInternalPractices = 0)
 			AND P.ProjectId <> @DefaultProjectId
