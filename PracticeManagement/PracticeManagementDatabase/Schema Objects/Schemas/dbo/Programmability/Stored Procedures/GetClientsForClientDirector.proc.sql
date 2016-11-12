@@ -11,7 +11,7 @@ BEGIN
 				C.Name AS ClientName
 		FROM dbo.Client C
 		INNER JOIN dbo.Project P ON P.ClientId = C.ClientId
-		WHERE P.ProjectStatusId IN (3,4) --Active and Completed status 
+		WHERE P.ProjectStatusId IN (3,4,8) --Active and Completed status 
 		ORDER BY C.Name
 	END
 	ELSE
