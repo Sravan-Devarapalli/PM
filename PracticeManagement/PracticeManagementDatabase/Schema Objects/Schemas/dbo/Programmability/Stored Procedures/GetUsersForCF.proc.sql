@@ -122,7 +122,7 @@ BEGIN
 		  AND PF.ReviewPeriodEndDate >= '20140701'
 		  AND CONVERT(NVARCHAR(10), PF.ReviewPeriodEndDate, 111) = CONVERT(NVARCHAR(10), @Q4EndDate , 111)
 		  AND CONVERT(NVARCHAR(10), @Today, 111) = CONVERT(NVARCHAR(10), @TriggerOn, 111)
-		  AND Pro.ProjectStatusId IN (3,4)
+		  AND Pro.ProjectStatusId IN (3,4,8)
 		  AND F.ProjectId = PF.ProjectId AND F.ReviewEndDate = PF.ReviewPeriodEndDate AND F.ReviewStartDate = PF.ReviewPeriodStartDate
 		  AND F.Count <= 8
 		  AND title.PositionId IS NOT NULL
