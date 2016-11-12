@@ -26,7 +26,7 @@
 </asp:Content>
 <asp:Content ID="cntBody" ContentPlaceHolderID="body" runat="server">
     <script src="Scripts/jquery.tablesorter_2.min.js" type="text/javascript"></script>
-    <script src="../../Scripts/date.yui.js" type="text/javascript"></script>
+    <script src="Scripts/date.yui.js" type="text/javascript"></script>
     <script type="text/javascript" language="javascript">
      var currentSort = [[1, 0]];
                 $(document).ready(function () {
