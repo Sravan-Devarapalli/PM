@@ -36,10 +36,12 @@
       <xs:element minOccurs="0" name="MilestonePersons" nillable="true" type="tns:ArrayOfMilestonePerson" />
       <xs:element minOccurs="0" name="People" nillable="true" type="tns:ArrayOfPerson" />
       <xs:element minOccurs="0" name="PersonCount" type="xs:int" />
+      <xs:element minOccurs="0" name="PremiumDiscount" type="xs:decimal" />
       <xs:element minOccurs="0" name="Project" nillable="true" type="tns:Project" />
       <xs:element minOccurs="0" name="ProjectedDeliveryDate" type="xs:dateTime" />
       <xs:element minOccurs="0" name="ProjectedDuration" type="xs:int" />
       <xs:element minOccurs="0" name="StartDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="milestoneType" type="xs:int" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="Milestone" nillable="true" type="tns:Milestone" />
@@ -319,6 +321,8 @@
       <xs:element minOccurs="0" name="Attachments" nillable="true" type="tns:ArrayOfProjectAttachment" />
       <xs:element minOccurs="0" name="AttributionList" nillable="true" type="tns:ArrayOfAttribution" />
       <xs:element minOccurs="0" name="BillableType" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Budget" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="BudgetResetRequestId" type="xs:int" />
       <xs:element minOccurs="0" name="BusinessGroup" nillable="true" type="tns:BusinessGroup" />
       <xs:element minOccurs="0" name="BusinessType" type="tns:BusinessType" />
       <xs:element minOccurs="0" name="BuyerName" nillable="true" type="xs:string" />
@@ -347,6 +351,7 @@
       <xs:element minOccurs="0" name="HasTimeEntries" type="xs:boolean" />
       <xs:element minOccurs="0" name="Id" nillable="true" type="xs:int" />
       <xs:element minOccurs="0" name="IsAssignedProject" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsBudgetResetPending" type="xs:boolean" />
       <xs:element minOccurs="0" name="IsBusinessDevelopment" type="xs:boolean" />
       <xs:element minOccurs="0" name="IsCSATEligible" type="xs:boolean" />
       <xs:element minOccurs="0" name="IsChargeable" type="xs:boolean" />
@@ -399,6 +404,7 @@
       <xs:element minOccurs="0" name="TimeEntrySectionId" type="xs:int" />
       <xs:element minOccurs="0" name="TimeTypeId" type="xs:int" />
       <xs:element minOccurs="0" name="ToAddressList" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="showBudgetRequest" type="xs:boolean" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="Project" nillable="true" type="tns:Project" />
