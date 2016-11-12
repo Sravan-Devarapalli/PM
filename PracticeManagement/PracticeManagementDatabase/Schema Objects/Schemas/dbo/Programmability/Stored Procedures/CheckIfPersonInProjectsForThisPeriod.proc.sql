@@ -19,7 +19,7 @@ BEGIN
 		INNER JOIN dbo.MilestonePerson MP ON MP.MilestonePersonId = MPE.MilestonePersonId
 		INNER JOIN dbo.Milestone M ON M.MilestoneId = MP.MilestoneId
 		INNER JOIN dbo.Project P ON P.ProjectId = M.ProjectId
-		WHERE MP.PersonId = @PersonId AND P.ProjectStatusId IN (1,2,3,4) AND MPE.IsBadgeRequired = 1 AND @ModifiedEndDate <= MPE.BadgeEndDate AND MPE.BadgeStartDate <= @OldEndDate
+		WHERE MP.PersonId = @PersonId AND P.ProjectStatusId IN (1,2,3,4,8) AND MPE.IsBadgeRequired = 1 AND @ModifiedEndDate <= MPE.BadgeEndDate AND MPE.BadgeStartDate <= @OldEndDate
 
 	END
 
@@ -31,7 +31,7 @@ BEGIN
 		INNER JOIN dbo.MilestonePerson MP ON MP.MilestonePersonId = MPE.MilestonePersonId
 		INNER JOIN dbo.Milestone M ON M.MilestoneId = MP.MilestoneId
 		INNER JOIN dbo.Project P ON P.ProjectId = M.ProjectId
-		WHERE MP.PersonId = @PersonId AND P.ProjectStatusId IN (1,2,3,4) AND MPE.IsBadgeRequired = 1 AND @OldStartDate <= MPE.BadgeEndDate AND MPE.BadgeStartDate <= @ModifiedStartDate
+		WHERE MP.PersonId = @PersonId AND P.ProjectStatusId IN (1,2,3,4,8) AND MPE.IsBadgeRequired = 1 AND @OldStartDate <= MPE.BadgeEndDate AND MPE.BadgeStartDate <= @ModifiedStartDate
 
 	END
 
