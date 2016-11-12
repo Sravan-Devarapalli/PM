@@ -66,7 +66,7 @@ BEGIN
 	WHERE Per.IsStrawman = 1 
 		AND MPE.StartDate <= @EndDate AND MPE.StartDate >= @StartDate
 		AND P.StartDate <= @EndDate AND P.EndDate >= @StartDate
-		AND P.ProjectStatusId IN (2,3) -- Only Active and Projected status Projects.
+		AND P.ProjectStatusId IN (2,3,8) -- Only Active and Projected status Projects.
 	GROUP BY P.ProjectId, Per.PersonId,  Per.LastName, Per.FirstName, P.ProjectStatusId, P.Name, P.ProjectNumber, P.ClientId, C.Name, P.StartDate, P.EndDate, P.OpportunityId, O.OpportunityNumber,P.Description,O.Description 
 END
 
