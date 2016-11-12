@@ -33,7 +33,7 @@ BEGIN
 	FROM dbo.Project AS P
 	WHERE P.GroupId = @ProjectGroupId 
 		AND P.IsInternal = @IsInternal 
-		AND P.ProjectStatusId IN (3,6)
+		AND P.ProjectStatusId IN (3,6,8)
 		AND P.ProjectId NOT IN (SELECT ProjectId FROM UsedProjectIds)
 		AND P.IsAdministrative = 0
 		AND (ISNULL(P.InvisibleInTimeEntry,0) = 0)
