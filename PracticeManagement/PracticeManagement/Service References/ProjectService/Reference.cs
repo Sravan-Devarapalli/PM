@@ -15,6 +15,170 @@ namespace PraticeManagement.ProjectService {
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ProjectService.IProjectService")]
     public interface IProjectService {
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ProjectGetById", ReplyAction="http://tempuri.org/IProjectService/ProjectGetByIdResponse")]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClient))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClientGroup))]
+        DataTransferObjects.Project ProjectGetById(int projectId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectLastChangeDateFortheGivenStatus", ReplyAction="http://tempuri.org/IProjectService/GetProjectLastChangeDateFortheGivenStatusRespo" +
+            "nse")]
+        System.DateTime GetProjectLastChangeDateFortheGivenStatus(int projectId, int projectStatusId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectsComputedFinancials", ReplyAction="http://tempuri.org/IProjectService/GetProjectsComputedFinancialsResponse")]
+        DataTransferObjects.ComputedFinancials GetProjectsComputedFinancials(int projectId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectMilestonesFinancials", ReplyAction="http://tempuri.org/IProjectService/GetProjectMilestonesFinancialsResponse")]
+        System.Data.DataSet GetProjectMilestonesFinancials(int projectId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ProjectCountByClient", ReplyAction="http://tempuri.org/IProjectService/ProjectCountByClientResponse")]
+        int ProjectCountByClient(int clientId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectListByDateRange", ReplyAction="http://tempuri.org/IProjectService/GetProjectListByDateRangeResponse")]
+        DataTransferObjects.Project[] GetProjectListByDateRange(bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showInactive, System.DateTime periodStart, System.DateTime periodEnd);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ListProjectsByClient", ReplyAction="http://tempuri.org/IProjectService/ListProjectsByClientResponse")]
+        DataTransferObjects.Project[] ListProjectsByClient(System.Nullable<int> clientId, string viewerUsername);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ListProjectsByClientShort", ReplyAction="http://tempuri.org/IProjectService/ListProjectsByClientShortResponse")]
+        DataTransferObjects.Project[] ListProjectsByClientShort(System.Nullable<int> clientId, bool IsOnlyActiveAndProjective, bool IsOnlyActiveAndInternal, bool IsOnlyEnternalProjects);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ListProjectsByClientAndPersonInPeriod", ReplyAction="http://tempuri.org/IProjectService/ListProjectsByClientAndPersonInPeriodResponse")]
+        DataTransferObjects.Project[] ListProjectsByClientAndPersonInPeriod(int clientId, bool isOnlyActiveAndInternal, bool isOnlyEnternalProjects, int personId, System.DateTime startDate, System.DateTime endDate);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ListProjectsByClientWithSort", ReplyAction="http://tempuri.org/IProjectService/ListProjectsByClientWithSortResponse")]
+        DataTransferObjects.Project[] ListProjectsByClientWithSort(System.Nullable<int> clientId, string viewerUsername, string sortBy);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/CloneProject", ReplyAction="http://tempuri.org/IProjectService/CloneProjectResponse")]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClient))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClientGroup))]
+        int CloneProject(DataTransferObjects.ContextObjects.ProjectCloningContext context);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectListCustom", ReplyAction="http://tempuri.org/IProjectService/GetProjectListCustomResponse")]
+        DataTransferObjects.Project[] GetProjectListCustom(bool projected, bool completed, bool active, bool experimantal, bool proposed);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ProjectListAllMultiParameters", ReplyAction="http://tempuri.org/IProjectService/ProjectListAllMultiParametersResponse")]
+        DataTransferObjects.Project[] ProjectListAllMultiParameters(
+                    string clientIds, 
+                    bool showProjected, 
+                    bool showCompleted, 
+                    bool showActive, 
+                    bool showInternal, 
+                    bool showExperimental, 
+                    bool showProposed, 
+                    bool showInactive, 
+                    bool showAtRisk, 
+                    System.DateTime periodStart, 
+                    System.DateTime periodEnd, 
+                    string salespersonIdsList, 
+                    string projectOwnerIdsList, 
+                    string practiceIdsList, 
+                    string divisionIdsList, 
+                    string channelIdsList, 
+                    string revenueTypeIdsList, 
+                    string offeringIdsList, 
+                    string projectGroupIdsList, 
+                    DataTransferObjects.ProjectCalculateRangeType includeCurentYearFinancials, 
+                    bool excludeInternalPractices, 
+                    string userLogin, 
+                    bool useActuals, 
+                    bool getFinancialsFromCache);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/IsProjectSummaryCachedToday", ReplyAction="http://tempuri.org/IProjectService/IsProjectSummaryCachedTodayResponse")]
+        bool IsProjectSummaryCachedToday();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectListWithFinancials", ReplyAction="http://tempuri.org/IProjectService/GetProjectListWithFinancialsResponse")]
+        DataTransferObjects.Project[] GetProjectListWithFinancials(string clientIds, bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showInactive, bool showAtRisk, System.DateTime periodStart, System.DateTime periodEnd, string salespersonIdsList, string projectOwnerIdsList, string practiceIdsList, string projectGroupIdsList, bool excludeInternalPractices);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectListGroupByPracticeManagers", ReplyAction="http://tempuri.org/IProjectService/GetProjectListGroupByPracticeManagersResponse")]
+        DataTransferObjects.MilestonePerson[] GetProjectListGroupByPracticeManagers(string clientIds, bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showProposed, bool showInactive, System.DateTime periodStart, System.DateTime periodEnd, string salespersonIdsList, string projectOwnerIdsList, string practiceIdsList, string projectGroupIdsList, bool excludeInternalPractices);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetBenchList", ReplyAction="http://tempuri.org/IProjectService/GetBenchListResponse")]
+        DataTransferObjects.Project[] GetBenchList(DataTransferObjects.ContextObjects.BenchReportContext context);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetBenchListWithoutBenchTotalAndAdminCosts", ReplyAction="http://tempuri.org/IProjectService/GetBenchListWithoutBenchTotalAndAdminCostsResp" +
+            "onse")]
+        DataTransferObjects.Project[] GetBenchListWithoutBenchTotalAndAdminCosts(DataTransferObjects.ContextObjects.BenchReportContext context);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ProjectSearchText", ReplyAction="http://tempuri.org/IProjectService/ProjectSearchTextResponse")]
+        DataTransferObjects.Project[] ProjectSearchText(
+                    string looked, 
+                    int personId, 
+                    string clientIdsList, 
+                    bool showProjected, 
+                    bool showCompleted, 
+                    bool showActive, 
+                    bool showInternal, 
+                    bool showExperimental, 
+                    bool showProposed, 
+                    bool showInactive, 
+                    bool showAtRisk, 
+                    string salespersonIdsList, 
+                    string projectManagerIdsList, 
+                    string practiceIdsList, 
+                    string divisionIdsList, 
+                    string channelIdsList, 
+                    string revenueTypeIdsList, 
+                    string offeringIdsList, 
+                    string projectGroupIdsList);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectDetailWithoutMilestones", ReplyAction="http://tempuri.org/IProjectService/GetProjectDetailWithoutMilestonesResponse")]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClient))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClientGroup))]
+        DataTransferObjects.Project GetProjectDetailWithoutMilestones(int projectId, string userName);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/SaveProjectDetail", ReplyAction="http://tempuri.org/IProjectService/SaveProjectDetailResponse")]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClient))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClientGroup))]
+        int SaveProjectDetail(DataTransferObjects.Project project, string userName);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/SaveInternalProject", ReplyAction="http://tempuri.org/IProjectService/SaveInternalProjectResponse")]
+        void SaveInternalProject(string projectName, string projectNumberSeries, int divisionId, int practiceId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/MonthMiniReport", ReplyAction="http://tempuri.org/IProjectService/MonthMiniReportResponse")]
+        string MonthMiniReport(System.DateTime month, string userName, bool showProjected, bool showCompleted, bool showActive, bool showExperimental, bool showProposed, bool showInternal, bool showInactive, bool useActuals);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/PersonStartsReport", ReplyAction="http://tempuri.org/IProjectService/PersonStartsReportResponse")]
+        DataTransferObjects.PersonStats[] PersonStartsReport(System.DateTime startDate, System.DateTime endDate, string userName, System.Nullable<int> salespersonId, System.Nullable<int> practiceManagerId, bool showProjected, bool showCompleted, bool showActive, bool showExperimental, bool showProposed, bool showInternal, bool showInactive, bool useActuals);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectId", ReplyAction="http://tempuri.org/IProjectService/GetProjectIdResponse")]
+        System.Nullable<int> GetProjectId(string projectNumber);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/PersonBudgetListByYear", ReplyAction="http://tempuri.org/IProjectService/PersonBudgetListByYearResponse")]
+        DataTransferObjects.ProjectsGroupedByPerson[] PersonBudgetListByYear(int year, DataTransferObjects.BudgetCategoryType categoryType);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/PracticeBudgetListByYear", ReplyAction="http://tempuri.org/IProjectService/PracticeBudgetListByYearResponse")]
+        DataTransferObjects.ProjectsGroupedByPractice[] PracticeBudgetListByYear(int year);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/CategoryItemBudgetSave", ReplyAction="http://tempuri.org/IProjectService/CategoryItemBudgetSaveResponse")]
+        void CategoryItemBudgetSave(int itemId, DataTransferObjects.BudgetCategoryType categoryType, System.DateTime monthStartDate, DataTransferObjects.PracticeManagementCurrency amount);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/CalculateBudgetForPersons", ReplyAction="http://tempuri.org/IProjectService/CalculateBudgetForPersonsResponse")]
+        DataTransferObjects.ProjectsGroupedByPerson[] CalculateBudgetForPersons(System.DateTime startDate, System.DateTime endDate, bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showProposed, bool showInactive, bool showAtRisk, string practiceIdsList, bool excludeInternalPractices, string personIds, DataTransferObjects.BudgetCategoryType categoryType);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/CalculateBudgetForPractices", ReplyAction="http://tempuri.org/IProjectService/CalculateBudgetForPracticesResponse")]
+        DataTransferObjects.ProjectsGroupedByPractice[] CalculateBudgetForPractices(System.DateTime startDate, System.DateTime endDate, bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showProposed, bool showInactive, bool showAtRisk, string practiceIdsList, bool excludeInternalPractices);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/CategoryItemsSaveFromXML", ReplyAction="http://tempuri.org/IProjectService/CategoryItemsSaveFromXMLResponse")]
+        void CategoryItemsSaveFromXML(DataTransferObjects.CategoryItemBudget[] categoryItems, int year);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ProjectDelete", ReplyAction="http://tempuri.org/IProjectService/ProjectDeleteResponse")]
+        void ProjectDelete(int projectId, string userName);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectExpensesForProject", ReplyAction="http://tempuri.org/IProjectService/GetProjectExpensesForProjectResponse")]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClient))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClientGroup))]
+        DataTransferObjects.ProjectExpense[] GetProjectExpensesForProject(DataTransferObjects.ProjectExpense entity);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/AllProjectsWithFinancialTotalsAndPersons", ReplyAction="http://tempuri.org/IProjectService/AllProjectsWithFinancialTotalsAndPersonsRespon" +
+            "se")]
+        DataTransferObjects.Project[] AllProjectsWithFinancialTotalsAndPersons();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/IsUserHasPermissionOnProject", ReplyAction="http://tempuri.org/IProjectService/IsUserHasPermissionOnProjectResponse")]
+        bool IsUserHasPermissionOnProject(string user, int id, bool isProjectId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/IsUserIsOwnerOfProject", ReplyAction="http://tempuri.org/IProjectService/IsUserIsOwnerOfProjectResponse")]
+        bool IsUserIsOwnerOfProject(string user, int id, bool isProjectId);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/IsUserIsProjectOwner", ReplyAction="http://tempuri.org/IProjectService/IsUserIsProjectOwnerResponse")]
         bool IsUserIsProjectOwner(string user, int id);
         
@@ -116,168 +280,6 @@ namespace PraticeManagement.ProjectService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectsForClients", ReplyAction="http://tempuri.org/IProjectService/GetProjectsForClientsResponse")]
         DataTransferObjects.Project[] GetProjectsForClients(string clientIds);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ProjectGetById", ReplyAction="http://tempuri.org/IProjectService/ProjectGetByIdResponse")]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClient))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClientGroup))]
-        DataTransferObjects.Project ProjectGetById(int projectId);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectLastChangeDateFortheGivenStatus", ReplyAction="http://tempuri.org/IProjectService/GetProjectLastChangeDateFortheGivenStatusRespo" +
-            "nse")]
-        System.DateTime GetProjectLastChangeDateFortheGivenStatus(int projectId, int projectStatusId);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectsComputedFinancials", ReplyAction="http://tempuri.org/IProjectService/GetProjectsComputedFinancialsResponse")]
-        DataTransferObjects.ComputedFinancials GetProjectsComputedFinancials(int projectId);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectMilestonesFinancials", ReplyAction="http://tempuri.org/IProjectService/GetProjectMilestonesFinancialsResponse")]
-        System.Data.DataSet GetProjectMilestonesFinancials(int projectId);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ProjectCountByClient", ReplyAction="http://tempuri.org/IProjectService/ProjectCountByClientResponse")]
-        int ProjectCountByClient(int clientId);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectListByDateRange", ReplyAction="http://tempuri.org/IProjectService/GetProjectListByDateRangeResponse")]
-        DataTransferObjects.Project[] GetProjectListByDateRange(bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showInactive, System.DateTime periodStart, System.DateTime periodEnd);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ListProjectsByClient", ReplyAction="http://tempuri.org/IProjectService/ListProjectsByClientResponse")]
-        DataTransferObjects.Project[] ListProjectsByClient(System.Nullable<int> clientId, string viewerUsername);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ListProjectsByClientShort", ReplyAction="http://tempuri.org/IProjectService/ListProjectsByClientShortResponse")]
-        DataTransferObjects.Project[] ListProjectsByClientShort(System.Nullable<int> clientId, bool IsOnlyActiveAndProjective, bool IsOnlyActiveAndInternal, bool IsOnlyEnternalProjects);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ListProjectsByClientAndPersonInPeriod", ReplyAction="http://tempuri.org/IProjectService/ListProjectsByClientAndPersonInPeriodResponse")]
-        DataTransferObjects.Project[] ListProjectsByClientAndPersonInPeriod(int clientId, bool isOnlyActiveAndInternal, bool isOnlyEnternalProjects, int personId, System.DateTime startDate, System.DateTime endDate);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ListProjectsByClientWithSort", ReplyAction="http://tempuri.org/IProjectService/ListProjectsByClientWithSortResponse")]
-        DataTransferObjects.Project[] ListProjectsByClientWithSort(System.Nullable<int> clientId, string viewerUsername, string sortBy);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/CloneProject", ReplyAction="http://tempuri.org/IProjectService/CloneProjectResponse")]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClient))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClientGroup))]
-        int CloneProject(DataTransferObjects.ContextObjects.ProjectCloningContext context);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectListCustom", ReplyAction="http://tempuri.org/IProjectService/GetProjectListCustomResponse")]
-        DataTransferObjects.Project[] GetProjectListCustom(bool projected, bool completed, bool active, bool experimantal, bool proposed);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ProjectListAllMultiParameters", ReplyAction="http://tempuri.org/IProjectService/ProjectListAllMultiParametersResponse")]
-        DataTransferObjects.Project[] ProjectListAllMultiParameters(
-                    string clientIds, 
-                    bool showProjected, 
-                    bool showCompleted, 
-                    bool showActive, 
-                    bool showInternal, 
-                    bool showExperimental, 
-                    bool showProposed, 
-                    bool showInactive, 
-                    System.DateTime periodStart, 
-                    System.DateTime periodEnd, 
-                    string salespersonIdsList, 
-                    string projectOwnerIdsList, 
-                    string practiceIdsList, 
-                    string divisionIdsList, 
-                    string channelIdsList, 
-                    string revenueTypeIdsList, 
-                    string offeringIdsList, 
-                    string projectGroupIdsList, 
-                    DataTransferObjects.ProjectCalculateRangeType includeCurentYearFinancials, 
-                    bool excludeInternalPractices, 
-                    string userLogin, 
-                    bool useActuals, 
-                    bool getFinancialsFromCache);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/IsProjectSummaryCachedToday", ReplyAction="http://tempuri.org/IProjectService/IsProjectSummaryCachedTodayResponse")]
-        bool IsProjectSummaryCachedToday();
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectListWithFinancials", ReplyAction="http://tempuri.org/IProjectService/GetProjectListWithFinancialsResponse")]
-        DataTransferObjects.Project[] GetProjectListWithFinancials(string clientIds, bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showInactive, System.DateTime periodStart, System.DateTime periodEnd, string salespersonIdsList, string projectOwnerIdsList, string practiceIdsList, string projectGroupIdsList, bool excludeInternalPractices);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectListGroupByPracticeManagers", ReplyAction="http://tempuri.org/IProjectService/GetProjectListGroupByPracticeManagersResponse")]
-        DataTransferObjects.MilestonePerson[] GetProjectListGroupByPracticeManagers(string clientIds, bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showProposed, bool showInactive, System.DateTime periodStart, System.DateTime periodEnd, string salespersonIdsList, string projectOwnerIdsList, string practiceIdsList, string projectGroupIdsList, bool excludeInternalPractices);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetBenchList", ReplyAction="http://tempuri.org/IProjectService/GetBenchListResponse")]
-        DataTransferObjects.Project[] GetBenchList(DataTransferObjects.ContextObjects.BenchReportContext context);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetBenchListWithoutBenchTotalAndAdminCosts", ReplyAction="http://tempuri.org/IProjectService/GetBenchListWithoutBenchTotalAndAdminCostsResp" +
-            "onse")]
-        DataTransferObjects.Project[] GetBenchListWithoutBenchTotalAndAdminCosts(DataTransferObjects.ContextObjects.BenchReportContext context);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ProjectSearchText", ReplyAction="http://tempuri.org/IProjectService/ProjectSearchTextResponse")]
-        DataTransferObjects.Project[] ProjectSearchText(
-                    string looked, 
-                    int personId, 
-                    string clientIdsList, 
-                    bool showProjected, 
-                    bool showCompleted, 
-                    bool showActive, 
-                    bool showInternal, 
-                    bool showExperimental, 
-                    bool showProposed, 
-                    bool showInactive, 
-                    string salespersonIdsList, 
-                    string projectManagerIdsList, 
-                    string practiceIdsList, 
-                    string divisionIdsList, 
-                    string channelIdsList, 
-                    string revenueTypeIdsList, 
-                    string offeringIdsList, 
-                    string projectGroupIdsList);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectDetailWithoutMilestones", ReplyAction="http://tempuri.org/IProjectService/GetProjectDetailWithoutMilestonesResponse")]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClient))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClientGroup))]
-        DataTransferObjects.Project GetProjectDetailWithoutMilestones(int projectId, string userName);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/SaveProjectDetail", ReplyAction="http://tempuri.org/IProjectService/SaveProjectDetailResponse")]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClient))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClientGroup))]
-        int SaveProjectDetail(DataTransferObjects.Project project, string userName);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/SaveInternalProject", ReplyAction="http://tempuri.org/IProjectService/SaveInternalProjectResponse")]
-        void SaveInternalProject(string projectName, string projectNumberSeries, int divisionId, int practiceId);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/MonthMiniReport", ReplyAction="http://tempuri.org/IProjectService/MonthMiniReportResponse")]
-        string MonthMiniReport(System.DateTime month, string userName, bool showProjected, bool showCompleted, bool showActive, bool showExperimental, bool showProposed, bool showInternal, bool showInactive, bool useActuals);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/PersonStartsReport", ReplyAction="http://tempuri.org/IProjectService/PersonStartsReportResponse")]
-        DataTransferObjects.PersonStats[] PersonStartsReport(System.DateTime startDate, System.DateTime endDate, string userName, System.Nullable<int> salespersonId, System.Nullable<int> practiceManagerId, bool showProjected, bool showCompleted, bool showActive, bool showExperimental, bool showProposed, bool showInternal, bool showInactive, bool useActuals);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectId", ReplyAction="http://tempuri.org/IProjectService/GetProjectIdResponse")]
-        System.Nullable<int> GetProjectId(string projectNumber);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/PersonBudgetListByYear", ReplyAction="http://tempuri.org/IProjectService/PersonBudgetListByYearResponse")]
-        DataTransferObjects.ProjectsGroupedByPerson[] PersonBudgetListByYear(int year, DataTransferObjects.BudgetCategoryType categoryType);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/PracticeBudgetListByYear", ReplyAction="http://tempuri.org/IProjectService/PracticeBudgetListByYearResponse")]
-        DataTransferObjects.ProjectsGroupedByPractice[] PracticeBudgetListByYear(int year);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/CategoryItemBudgetSave", ReplyAction="http://tempuri.org/IProjectService/CategoryItemBudgetSaveResponse")]
-        void CategoryItemBudgetSave(int itemId, DataTransferObjects.BudgetCategoryType categoryType, System.DateTime monthStartDate, DataTransferObjects.PracticeManagementCurrency amount);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/CalculateBudgetForPersons", ReplyAction="http://tempuri.org/IProjectService/CalculateBudgetForPersonsResponse")]
-        DataTransferObjects.ProjectsGroupedByPerson[] CalculateBudgetForPersons(System.DateTime startDate, System.DateTime endDate, bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showProposed, bool showInactive, string practiceIdsList, bool excludeInternalPractices, string personIds, DataTransferObjects.BudgetCategoryType categoryType);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/CalculateBudgetForPractices", ReplyAction="http://tempuri.org/IProjectService/CalculateBudgetForPracticesResponse")]
-        DataTransferObjects.ProjectsGroupedByPractice[] CalculateBudgetForPractices(System.DateTime startDate, System.DateTime endDate, bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showProposed, bool showInactive, string practiceIdsList, bool excludeInternalPractices);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/CategoryItemsSaveFromXML", ReplyAction="http://tempuri.org/IProjectService/CategoryItemsSaveFromXMLResponse")]
-        void CategoryItemsSaveFromXML(DataTransferObjects.CategoryItemBudget[] categoryItems, int year);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ProjectDelete", ReplyAction="http://tempuri.org/IProjectService/ProjectDeleteResponse")]
-        void ProjectDelete(int projectId, string userName);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectExpensesForProject", ReplyAction="http://tempuri.org/IProjectService/GetProjectExpensesForProjectResponse")]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClient))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClientGroup))]
-        DataTransferObjects.ProjectExpense[] GetProjectExpensesForProject(DataTransferObjects.ProjectExpense entity);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/AllProjectsWithFinancialTotalsAndPersons", ReplyAction="http://tempuri.org/IProjectService/AllProjectsWithFinancialTotalsAndPersonsRespon" +
-            "se")]
-        DataTransferObjects.Project[] AllProjectsWithFinancialTotalsAndPersons();
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/IsUserHasPermissionOnProject", ReplyAction="http://tempuri.org/IProjectService/IsUserHasPermissionOnProjectResponse")]
-        bool IsUserHasPermissionOnProject(string user, int id, bool isProjectId);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/IsUserIsOwnerOfProject", ReplyAction="http://tempuri.org/IProjectService/IsUserIsOwnerOfProjectResponse")]
-        bool IsUserIsOwnerOfProject(string user, int id, bool isProjectId);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -302,6 +304,193 @@ namespace PraticeManagement.ProjectService {
         
         public ProjectServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress) {
+        }
+        
+        public DataTransferObjects.Project ProjectGetById(int projectId) {
+            return base.Channel.ProjectGetById(projectId);
+        }
+        
+        public System.DateTime GetProjectLastChangeDateFortheGivenStatus(int projectId, int projectStatusId) {
+            return base.Channel.GetProjectLastChangeDateFortheGivenStatus(projectId, projectStatusId);
+        }
+        
+        public DataTransferObjects.ComputedFinancials GetProjectsComputedFinancials(int projectId) {
+            return base.Channel.GetProjectsComputedFinancials(projectId);
+        }
+        
+        public System.Data.DataSet GetProjectMilestonesFinancials(int projectId) {
+            return base.Channel.GetProjectMilestonesFinancials(projectId);
+        }
+        
+        public int ProjectCountByClient(int clientId) {
+            return base.Channel.ProjectCountByClient(clientId);
+        }
+        
+        public DataTransferObjects.Project[] GetProjectListByDateRange(bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showInactive, System.DateTime periodStart, System.DateTime periodEnd) {
+            return base.Channel.GetProjectListByDateRange(showProjected, showCompleted, showActive, showInternal, showExperimental, showInactive, periodStart, periodEnd);
+        }
+        
+        public DataTransferObjects.Project[] ListProjectsByClient(System.Nullable<int> clientId, string viewerUsername) {
+            return base.Channel.ListProjectsByClient(clientId, viewerUsername);
+        }
+        
+        public DataTransferObjects.Project[] ListProjectsByClientShort(System.Nullable<int> clientId, bool IsOnlyActiveAndProjective, bool IsOnlyActiveAndInternal, bool IsOnlyEnternalProjects) {
+            return base.Channel.ListProjectsByClientShort(clientId, IsOnlyActiveAndProjective, IsOnlyActiveAndInternal, IsOnlyEnternalProjects);
+        }
+        
+        public DataTransferObjects.Project[] ListProjectsByClientAndPersonInPeriod(int clientId, bool isOnlyActiveAndInternal, bool isOnlyEnternalProjects, int personId, System.DateTime startDate, System.DateTime endDate) {
+            return base.Channel.ListProjectsByClientAndPersonInPeriod(clientId, isOnlyActiveAndInternal, isOnlyEnternalProjects, personId, startDate, endDate);
+        }
+        
+        public DataTransferObjects.Project[] ListProjectsByClientWithSort(System.Nullable<int> clientId, string viewerUsername, string sortBy) {
+            return base.Channel.ListProjectsByClientWithSort(clientId, viewerUsername, sortBy);
+        }
+        
+        public int CloneProject(DataTransferObjects.ContextObjects.ProjectCloningContext context) {
+            return base.Channel.CloneProject(context);
+        }
+        
+        public DataTransferObjects.Project[] GetProjectListCustom(bool projected, bool completed, bool active, bool experimantal, bool proposed) {
+            return base.Channel.GetProjectListCustom(projected, completed, active, experimantal, proposed);
+        }
+        
+        public DataTransferObjects.Project[] ProjectListAllMultiParameters(
+                    string clientIds, 
+                    bool showProjected, 
+                    bool showCompleted, 
+                    bool showActive, 
+                    bool showInternal, 
+                    bool showExperimental, 
+                    bool showProposed, 
+                    bool showInactive, 
+                    bool showAtRisk, 
+                    System.DateTime periodStart, 
+                    System.DateTime periodEnd, 
+                    string salespersonIdsList, 
+                    string projectOwnerIdsList, 
+                    string practiceIdsList, 
+                    string divisionIdsList, 
+                    string channelIdsList, 
+                    string revenueTypeIdsList, 
+                    string offeringIdsList, 
+                    string projectGroupIdsList, 
+                    DataTransferObjects.ProjectCalculateRangeType includeCurentYearFinancials, 
+                    bool excludeInternalPractices, 
+                    string userLogin, 
+                    bool useActuals, 
+                    bool getFinancialsFromCache) {
+            return base.Channel.ProjectListAllMultiParameters(clientIds, showProjected, showCompleted, showActive, showInternal, showExperimental, showProposed, showInactive, showAtRisk, periodStart, periodEnd, salespersonIdsList, projectOwnerIdsList, practiceIdsList, divisionIdsList, channelIdsList, revenueTypeIdsList, offeringIdsList, projectGroupIdsList, includeCurentYearFinancials, excludeInternalPractices, userLogin, useActuals, getFinancialsFromCache);
+        }
+        
+        public bool IsProjectSummaryCachedToday() {
+            return base.Channel.IsProjectSummaryCachedToday();
+        }
+        
+        public DataTransferObjects.Project[] GetProjectListWithFinancials(string clientIds, bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showInactive, bool showAtRisk, System.DateTime periodStart, System.DateTime periodEnd, string salespersonIdsList, string projectOwnerIdsList, string practiceIdsList, string projectGroupIdsList, bool excludeInternalPractices) {
+            return base.Channel.GetProjectListWithFinancials(clientIds, showProjected, showCompleted, showActive, showInternal, showExperimental, showInactive, showAtRisk, periodStart, periodEnd, salespersonIdsList, projectOwnerIdsList, practiceIdsList, projectGroupIdsList, excludeInternalPractices);
+        }
+        
+        public DataTransferObjects.MilestonePerson[] GetProjectListGroupByPracticeManagers(string clientIds, bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showProposed, bool showInactive, System.DateTime periodStart, System.DateTime periodEnd, string salespersonIdsList, string projectOwnerIdsList, string practiceIdsList, string projectGroupIdsList, bool excludeInternalPractices) {
+            return base.Channel.GetProjectListGroupByPracticeManagers(clientIds, showProjected, showCompleted, showActive, showInternal, showExperimental, showProposed, showInactive, periodStart, periodEnd, salespersonIdsList, projectOwnerIdsList, practiceIdsList, projectGroupIdsList, excludeInternalPractices);
+        }
+        
+        public DataTransferObjects.Project[] GetBenchList(DataTransferObjects.ContextObjects.BenchReportContext context) {
+            return base.Channel.GetBenchList(context);
+        }
+        
+        public DataTransferObjects.Project[] GetBenchListWithoutBenchTotalAndAdminCosts(DataTransferObjects.ContextObjects.BenchReportContext context) {
+            return base.Channel.GetBenchListWithoutBenchTotalAndAdminCosts(context);
+        }
+        
+        public DataTransferObjects.Project[] ProjectSearchText(
+                    string looked, 
+                    int personId, 
+                    string clientIdsList, 
+                    bool showProjected, 
+                    bool showCompleted, 
+                    bool showActive, 
+                    bool showInternal, 
+                    bool showExperimental, 
+                    bool showProposed, 
+                    bool showInactive, 
+                    bool showAtRisk, 
+                    string salespersonIdsList, 
+                    string projectManagerIdsList, 
+                    string practiceIdsList, 
+                    string divisionIdsList, 
+                    string channelIdsList, 
+                    string revenueTypeIdsList, 
+                    string offeringIdsList, 
+                    string projectGroupIdsList) {
+            return base.Channel.ProjectSearchText(looked, personId, clientIdsList, showProjected, showCompleted, showActive, showInternal, showExperimental, showProposed, showInactive, showAtRisk, salespersonIdsList, projectManagerIdsList, practiceIdsList, divisionIdsList, channelIdsList, revenueTypeIdsList, offeringIdsList, projectGroupIdsList);
+        }
+        
+        public DataTransferObjects.Project GetProjectDetailWithoutMilestones(int projectId, string userName) {
+            return base.Channel.GetProjectDetailWithoutMilestones(projectId, userName);
+        }
+        
+        public int SaveProjectDetail(DataTransferObjects.Project project, string userName) {
+            return base.Channel.SaveProjectDetail(project, userName);
+        }
+        
+        public void SaveInternalProject(string projectName, string projectNumberSeries, int divisionId, int practiceId) {
+            base.Channel.SaveInternalProject(projectName, projectNumberSeries, divisionId, practiceId);
+        }
+        
+        public string MonthMiniReport(System.DateTime month, string userName, bool showProjected, bool showCompleted, bool showActive, bool showExperimental, bool showProposed, bool showInternal, bool showInactive, bool useActuals) {
+            return base.Channel.MonthMiniReport(month, userName, showProjected, showCompleted, showActive, showExperimental, showProposed, showInternal, showInactive, useActuals);
+        }
+        
+        public DataTransferObjects.PersonStats[] PersonStartsReport(System.DateTime startDate, System.DateTime endDate, string userName, System.Nullable<int> salespersonId, System.Nullable<int> practiceManagerId, bool showProjected, bool showCompleted, bool showActive, bool showExperimental, bool showProposed, bool showInternal, bool showInactive, bool useActuals) {
+            return base.Channel.PersonStartsReport(startDate, endDate, userName, salespersonId, practiceManagerId, showProjected, showCompleted, showActive, showExperimental, showProposed, showInternal, showInactive, useActuals);
+        }
+        
+        public System.Nullable<int> GetProjectId(string projectNumber) {
+            return base.Channel.GetProjectId(projectNumber);
+        }
+        
+        public DataTransferObjects.ProjectsGroupedByPerson[] PersonBudgetListByYear(int year, DataTransferObjects.BudgetCategoryType categoryType) {
+            return base.Channel.PersonBudgetListByYear(year, categoryType);
+        }
+        
+        public DataTransferObjects.ProjectsGroupedByPractice[] PracticeBudgetListByYear(int year) {
+            return base.Channel.PracticeBudgetListByYear(year);
+        }
+        
+        public void CategoryItemBudgetSave(int itemId, DataTransferObjects.BudgetCategoryType categoryType, System.DateTime monthStartDate, DataTransferObjects.PracticeManagementCurrency amount) {
+            base.Channel.CategoryItemBudgetSave(itemId, categoryType, monthStartDate, amount);
+        }
+        
+        public DataTransferObjects.ProjectsGroupedByPerson[] CalculateBudgetForPersons(System.DateTime startDate, System.DateTime endDate, bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showProposed, bool showInactive, bool showAtRisk, string practiceIdsList, bool excludeInternalPractices, string personIds, DataTransferObjects.BudgetCategoryType categoryType) {
+            return base.Channel.CalculateBudgetForPersons(startDate, endDate, showProjected, showCompleted, showActive, showInternal, showExperimental, showProposed, showInactive, showAtRisk, practiceIdsList, excludeInternalPractices, personIds, categoryType);
+        }
+        
+        public DataTransferObjects.ProjectsGroupedByPractice[] CalculateBudgetForPractices(System.DateTime startDate, System.DateTime endDate, bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showProposed, bool showInactive, bool showAtRisk, string practiceIdsList, bool excludeInternalPractices) {
+            return base.Channel.CalculateBudgetForPractices(startDate, endDate, showProjected, showCompleted, showActive, showInternal, showExperimental, showProposed, showInactive, showAtRisk, practiceIdsList, excludeInternalPractices);
+        }
+        
+        public void CategoryItemsSaveFromXML(DataTransferObjects.CategoryItemBudget[] categoryItems, int year) {
+            base.Channel.CategoryItemsSaveFromXML(categoryItems, year);
+        }
+        
+        public void ProjectDelete(int projectId, string userName) {
+            base.Channel.ProjectDelete(projectId, userName);
+        }
+        
+        public DataTransferObjects.ProjectExpense[] GetProjectExpensesForProject(DataTransferObjects.ProjectExpense entity) {
+            return base.Channel.GetProjectExpensesForProject(entity);
+        }
+        
+        public DataTransferObjects.Project[] AllProjectsWithFinancialTotalsAndPersons() {
+            return base.Channel.AllProjectsWithFinancialTotalsAndPersons();
+        }
+        
+        public bool IsUserHasPermissionOnProject(string user, int id, bool isProjectId) {
+            return base.Channel.IsUserHasPermissionOnProject(user, id, isProjectId);
+        }
+        
+        public bool IsUserIsOwnerOfProject(string user, int id, bool isProjectId) {
+            return base.Channel.IsUserIsOwnerOfProject(user, id, isProjectId);
         }
         
         public bool IsUserIsProjectOwner(string user, int id) {
@@ -430,191 +619,6 @@ namespace PraticeManagement.ProjectService {
         
         public DataTransferObjects.Project[] GetProjectsForClients(string clientIds) {
             return base.Channel.GetProjectsForClients(clientIds);
-        }
-        
-        public DataTransferObjects.Project ProjectGetById(int projectId) {
-            return base.Channel.ProjectGetById(projectId);
-        }
-        
-        public System.DateTime GetProjectLastChangeDateFortheGivenStatus(int projectId, int projectStatusId) {
-            return base.Channel.GetProjectLastChangeDateFortheGivenStatus(projectId, projectStatusId);
-        }
-        
-        public DataTransferObjects.ComputedFinancials GetProjectsComputedFinancials(int projectId) {
-            return base.Channel.GetProjectsComputedFinancials(projectId);
-        }
-        
-        public System.Data.DataSet GetProjectMilestonesFinancials(int projectId) {
-            return base.Channel.GetProjectMilestonesFinancials(projectId);
-        }
-        
-        public int ProjectCountByClient(int clientId) {
-            return base.Channel.ProjectCountByClient(clientId);
-        }
-        
-        public DataTransferObjects.Project[] GetProjectListByDateRange(bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showInactive, System.DateTime periodStart, System.DateTime periodEnd) {
-            return base.Channel.GetProjectListByDateRange(showProjected, showCompleted, showActive, showInternal, showExperimental, showInactive, periodStart, periodEnd);
-        }
-        
-        public DataTransferObjects.Project[] ListProjectsByClient(System.Nullable<int> clientId, string viewerUsername) {
-            return base.Channel.ListProjectsByClient(clientId, viewerUsername);
-        }
-        
-        public DataTransferObjects.Project[] ListProjectsByClientShort(System.Nullable<int> clientId, bool IsOnlyActiveAndProjective, bool IsOnlyActiveAndInternal, bool IsOnlyEnternalProjects) {
-            return base.Channel.ListProjectsByClientShort(clientId, IsOnlyActiveAndProjective, IsOnlyActiveAndInternal, IsOnlyEnternalProjects);
-        }
-        
-        public DataTransferObjects.Project[] ListProjectsByClientAndPersonInPeriod(int clientId, bool isOnlyActiveAndInternal, bool isOnlyEnternalProjects, int personId, System.DateTime startDate, System.DateTime endDate) {
-            return base.Channel.ListProjectsByClientAndPersonInPeriod(clientId, isOnlyActiveAndInternal, isOnlyEnternalProjects, personId, startDate, endDate);
-        }
-        
-        public DataTransferObjects.Project[] ListProjectsByClientWithSort(System.Nullable<int> clientId, string viewerUsername, string sortBy) {
-            return base.Channel.ListProjectsByClientWithSort(clientId, viewerUsername, sortBy);
-        }
-        
-        public int CloneProject(DataTransferObjects.ContextObjects.ProjectCloningContext context) {
-            return base.Channel.CloneProject(context);
-        }
-        
-        public DataTransferObjects.Project[] GetProjectListCustom(bool projected, bool completed, bool active, bool experimantal, bool proposed) {
-            return base.Channel.GetProjectListCustom(projected, completed, active, experimantal, proposed);
-        }
-        
-        public DataTransferObjects.Project[] ProjectListAllMultiParameters(
-                    string clientIds, 
-                    bool showProjected, 
-                    bool showCompleted, 
-                    bool showActive, 
-                    bool showInternal, 
-                    bool showExperimental, 
-                    bool showProposed, 
-                    bool showInactive, 
-                    System.DateTime periodStart, 
-                    System.DateTime periodEnd, 
-                    string salespersonIdsList, 
-                    string projectOwnerIdsList, 
-                    string practiceIdsList, 
-                    string divisionIdsList, 
-                    string channelIdsList, 
-                    string revenueTypeIdsList, 
-                    string offeringIdsList, 
-                    string projectGroupIdsList, 
-                    DataTransferObjects.ProjectCalculateRangeType includeCurentYearFinancials, 
-                    bool excludeInternalPractices, 
-                    string userLogin, 
-                    bool useActuals, 
-                    bool getFinancialsFromCache) {
-            return base.Channel.ProjectListAllMultiParameters(clientIds, showProjected, showCompleted, showActive, showInternal, showExperimental, showProposed, showInactive, periodStart, periodEnd, salespersonIdsList, projectOwnerIdsList, practiceIdsList, divisionIdsList, channelIdsList, revenueTypeIdsList, offeringIdsList, projectGroupIdsList, includeCurentYearFinancials, excludeInternalPractices, userLogin, useActuals, getFinancialsFromCache);
-        }
-        
-        public bool IsProjectSummaryCachedToday() {
-            return base.Channel.IsProjectSummaryCachedToday();
-        }
-        
-        public DataTransferObjects.Project[] GetProjectListWithFinancials(string clientIds, bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showInactive, System.DateTime periodStart, System.DateTime periodEnd, string salespersonIdsList, string projectOwnerIdsList, string practiceIdsList, string projectGroupIdsList, bool excludeInternalPractices) {
-            return base.Channel.GetProjectListWithFinancials(clientIds, showProjected, showCompleted, showActive, showInternal, showExperimental, showInactive, periodStart, periodEnd, salespersonIdsList, projectOwnerIdsList, practiceIdsList, projectGroupIdsList, excludeInternalPractices);
-        }
-        
-        public DataTransferObjects.MilestonePerson[] GetProjectListGroupByPracticeManagers(string clientIds, bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showProposed, bool showInactive, System.DateTime periodStart, System.DateTime periodEnd, string salespersonIdsList, string projectOwnerIdsList, string practiceIdsList, string projectGroupIdsList, bool excludeInternalPractices) {
-            return base.Channel.GetProjectListGroupByPracticeManagers(clientIds, showProjected, showCompleted, showActive, showInternal, showExperimental, showProposed, showInactive, periodStart, periodEnd, salespersonIdsList, projectOwnerIdsList, practiceIdsList, projectGroupIdsList, excludeInternalPractices);
-        }
-        
-        public DataTransferObjects.Project[] GetBenchList(DataTransferObjects.ContextObjects.BenchReportContext context) {
-            return base.Channel.GetBenchList(context);
-        }
-        
-        public DataTransferObjects.Project[] GetBenchListWithoutBenchTotalAndAdminCosts(DataTransferObjects.ContextObjects.BenchReportContext context) {
-            return base.Channel.GetBenchListWithoutBenchTotalAndAdminCosts(context);
-        }
-        
-        public DataTransferObjects.Project[] ProjectSearchText(
-                    string looked, 
-                    int personId, 
-                    string clientIdsList, 
-                    bool showProjected, 
-                    bool showCompleted, 
-                    bool showActive, 
-                    bool showInternal, 
-                    bool showExperimental, 
-                    bool showProposed, 
-                    bool showInactive, 
-                    string salespersonIdsList, 
-                    string projectManagerIdsList, 
-                    string practiceIdsList, 
-                    string divisionIdsList, 
-                    string channelIdsList, 
-                    string revenueTypeIdsList, 
-                    string offeringIdsList, 
-                    string projectGroupIdsList) {
-            return base.Channel.ProjectSearchText(looked, personId, clientIdsList, showProjected, showCompleted, showActive, showInternal, showExperimental, showProposed, showInactive, salespersonIdsList, projectManagerIdsList, practiceIdsList, divisionIdsList, channelIdsList, revenueTypeIdsList, offeringIdsList, projectGroupIdsList);
-        }
-        
-        public DataTransferObjects.Project GetProjectDetailWithoutMilestones(int projectId, string userName) {
-            return base.Channel.GetProjectDetailWithoutMilestones(projectId, userName);
-        }
-        
-        public int SaveProjectDetail(DataTransferObjects.Project project, string userName) {
-            return base.Channel.SaveProjectDetail(project, userName);
-        }
-        
-        public void SaveInternalProject(string projectName, string projectNumberSeries, int divisionId, int practiceId) {
-            base.Channel.SaveInternalProject(projectName, projectNumberSeries, divisionId, practiceId);
-        }
-        
-        public string MonthMiniReport(System.DateTime month, string userName, bool showProjected, bool showCompleted, bool showActive, bool showExperimental, bool showProposed, bool showInternal, bool showInactive, bool useActuals) {
-            return base.Channel.MonthMiniReport(month, userName, showProjected, showCompleted, showActive, showExperimental, showProposed, showInternal, showInactive, useActuals);
-        }
-        
-        public DataTransferObjects.PersonStats[] PersonStartsReport(System.DateTime startDate, System.DateTime endDate, string userName, System.Nullable<int> salespersonId, System.Nullable<int> practiceManagerId, bool showProjected, bool showCompleted, bool showActive, bool showExperimental, bool showProposed, bool showInternal, bool showInactive, bool useActuals) {
-            return base.Channel.PersonStartsReport(startDate, endDate, userName, salespersonId, practiceManagerId, showProjected, showCompleted, showActive, showExperimental, showProposed, showInternal, showInactive, useActuals);
-        }
-        
-        public System.Nullable<int> GetProjectId(string projectNumber) {
-            return base.Channel.GetProjectId(projectNumber);
-        }
-        
-        public DataTransferObjects.ProjectsGroupedByPerson[] PersonBudgetListByYear(int year, DataTransferObjects.BudgetCategoryType categoryType) {
-            return base.Channel.PersonBudgetListByYear(year, categoryType);
-        }
-        
-        public DataTransferObjects.ProjectsGroupedByPractice[] PracticeBudgetListByYear(int year) {
-            return base.Channel.PracticeBudgetListByYear(year);
-        }
-        
-        public void CategoryItemBudgetSave(int itemId, DataTransferObjects.BudgetCategoryType categoryType, System.DateTime monthStartDate, DataTransferObjects.PracticeManagementCurrency amount) {
-            base.Channel.CategoryItemBudgetSave(itemId, categoryType, monthStartDate, amount);
-        }
-        
-        public DataTransferObjects.ProjectsGroupedByPerson[] CalculateBudgetForPersons(System.DateTime startDate, System.DateTime endDate, bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showProposed, bool showInactive, string practiceIdsList, bool excludeInternalPractices, string personIds, DataTransferObjects.BudgetCategoryType categoryType) {
-            return base.Channel.CalculateBudgetForPersons(startDate, endDate, showProjected, showCompleted, showActive, showInternal, showExperimental, showProposed, showInactive, practiceIdsList, excludeInternalPractices, personIds, categoryType);
-        }
-        
-        public DataTransferObjects.ProjectsGroupedByPractice[] CalculateBudgetForPractices(System.DateTime startDate, System.DateTime endDate, bool showProjected, bool showCompleted, bool showActive, bool showInternal, bool showExperimental, bool showProposed, bool showInactive, string practiceIdsList, bool excludeInternalPractices) {
-            return base.Channel.CalculateBudgetForPractices(startDate, endDate, showProjected, showCompleted, showActive, showInternal, showExperimental, showProposed, showInactive, practiceIdsList, excludeInternalPractices);
-        }
-        
-        public void CategoryItemsSaveFromXML(DataTransferObjects.CategoryItemBudget[] categoryItems, int year) {
-            base.Channel.CategoryItemsSaveFromXML(categoryItems, year);
-        }
-        
-        public void ProjectDelete(int projectId, string userName) {
-            base.Channel.ProjectDelete(projectId, userName);
-        }
-        
-        public DataTransferObjects.ProjectExpense[] GetProjectExpensesForProject(DataTransferObjects.ProjectExpense entity) {
-            return base.Channel.GetProjectExpensesForProject(entity);
-        }
-        
-        public DataTransferObjects.Project[] AllProjectsWithFinancialTotalsAndPersons() {
-            return base.Channel.AllProjectsWithFinancialTotalsAndPersons();
-        }
-        
-        public bool IsUserHasPermissionOnProject(string user, int id, bool isProjectId) {
-            return base.Channel.IsUserHasPermissionOnProject(user, id, isProjectId);
-        }
-        
-        public bool IsUserIsOwnerOfProject(string user, int id, bool isProjectId) {
-            return base.Channel.IsUserIsOwnerOfProject(user, id, isProjectId);
         }
     }
 }
