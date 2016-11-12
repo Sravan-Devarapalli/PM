@@ -58,7 +58,7 @@ BEGIN
 										AND PC.Date BETWEEN @StartDateLocal AND @EndDateLocal-1
 			INNER JOIN dbo.Project PRO ON PRO.ProjectId = M.ProjectId							
 			WHERE MP.PersonId = @PersonIdLocal 
-				AND PRO.ProjectStatusId IN (3,4,6) -- 3	Active, 4	Completed, 6 Internal
+				AND PRO.ProjectStatusId IN (3,4,6,8) -- 3	Active, 4	Completed, 6 Internal, 8 At Risk
 				AND PRO.Projectid <> 174
 			GROUP BY P.PersonId
 		)
@@ -92,7 +92,7 @@ BEGIN
 						CC.timeTypeId != @HolidayTimeType
 						OR (CC.timeTypeId = @HolidayTimeType AND PTSH.PersonStatusId IN (1,5) )
 					)
-				AND PRO.ProjectStatusId IN (3,4,6) --3  Active, 4	Completed, 6 Internal
+				AND PRO.ProjectStatusId IN (3,4,6,8) --3  Active, 4	Completed, 6 Internal, 8 At Risk
 		)
 
 		SELECT	ISNULL(B.BillableHours,0) AS BillableHours,
