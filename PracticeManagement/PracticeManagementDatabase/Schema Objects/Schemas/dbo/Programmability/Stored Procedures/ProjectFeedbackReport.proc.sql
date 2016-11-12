@@ -169,7 +169,7 @@ BEGIN
 							 AND (@PayTypeIds IS NULL OR (pay.Timescale IN (SELECT Ids FROM @PayTypeIdsTable)))
 						   ))
 		  AND PF.ReviewPeriodEndDate BETWEEN @StartDate AND @EndDate
-		  AND Pro.ProjectStatusId IN (3,4)
+		  AND Pro.ProjectStatusId IN (3,4,8)
     ORDER BY  P.LastName,
 			  ISNULL(P.PreferredFirstName,P.FirstName),
 			  Pro.Name,
