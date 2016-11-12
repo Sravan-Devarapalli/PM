@@ -25,7 +25,7 @@ BEGIN
 	INNER JOIN v_Person Per ON Per.PersonId = MP.PersonId
 	INNER JOIN v_CurrentMSBadge MB ON MB.PersonId = MP.PersonId
 	LEFT JOIN dbo.Person R ON R.PersonId = MPE.Requester
-	WHERE ISNULL(MB.ExcludeInReports,0) = 0 AND MPE.IsBadgeRequired = 1 AND MPE.IsApproved = 0 AND P.ProjectStatusId IN (2,3)
+	WHERE ISNULL(MB.ExcludeInReports,0) = 0 AND MPE.IsBadgeRequired = 1 AND MPE.IsApproved = 0 AND P.ProjectStatusId IN (2,3,8)
 	ORDER BY Per.LastName,ISNULL(Per.PreferredFirstName,Per.FirstName)
 
 END
