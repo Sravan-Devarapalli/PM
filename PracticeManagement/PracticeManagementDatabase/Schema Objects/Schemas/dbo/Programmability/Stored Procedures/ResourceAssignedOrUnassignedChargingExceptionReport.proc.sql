@@ -38,7 +38,7 @@ BEGIN
 								INNER JOIN dbo.ProjectStatus PS ON PS.ProjectStatusId = Pro.ProjectStatusId
 						WHERE   PC.Date BETWEEN @StartDate AND @EndDate 
 								AND Pro.IsAllowedToShow = 1 AND Pro.ProjectNumber != 'P031000'
-								AND Pro.ProjectStatusId IN (3,4) --Active AND Completed status
+								AND Pro.ProjectStatusId IN (3,4,8) --Active AND Completed status
 								AND PC.Date BETWEEN pay.StartDate AND pay.EndDateOrig-1
 								AND pay.Timescale IN (@W2Hourly,@W2Salary,@1099Hourly)
 						GROUP BY	MP.PersonId,
@@ -78,7 +78,7 @@ BEGIN
 								INNER JOIN dbo.ProjectStatus PS ON PS.ProjectStatusId = Pro.ProjectStatusId
 						WHERE	CC.TimeEntrySectionId != 4 -- Adminstrative TimeEntrySectionId
 										AND Pro.IsAllowedToShow = 1 AND Pro.ProjectNumber != 'P031000'
-										AND Pro.ProjectStatusId IN (3,4)
+										AND Pro.ProjectStatusId IN (3,4,8)
 										AND TE.ChargeCodeDate BETWEEN pay.StartDate AND pay.EndDateOrig-1
 										AND pay.Timescale IN (@W2Hourly,@W2Salary,@1099Hourly)
 						GROUP BY	TE.PersonId,
