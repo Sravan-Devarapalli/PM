@@ -495,8 +495,8 @@ namespace PraticeManagement.Controls
             ShowActive = true;
             ShowCompleted = true;
             ShowProjected = true;
-            ShowInternal = true;
-            ShowProposed = true;
+            ShowInternal = false;
+            ShowProposed = false;
             ShowAtRisk = true;
 
             HideAdvancedFilter = true;
