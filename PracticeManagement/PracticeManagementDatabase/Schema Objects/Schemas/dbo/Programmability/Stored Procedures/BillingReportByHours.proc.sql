@@ -148,7 +148,7 @@ BEGIN
 	LEFT JOIN dbo.ProjectAccess PM ON PM.ProjectId = p.ProjectId
 	LEFT JOIN dbo.Person manager ON manager.PersonId = PM.ProjectAccessId
 	WHERE P.StartDate <= @EndDateLocal AND @StartDateLocal <= P.EndDate
-	AND P.ProjectStatusId IN (2,3,7)
+	AND P.ProjectStatusId IN (2,3,7,8)
 	AND p.projectid != 174
 	ORDER BY P.ProjectId 
 END
