@@ -6,12 +6,6 @@
   <xs:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/ProjectService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
   <xs:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/ProjectService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/DataTransferObjects.Financials" />
   <xs:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/ProjectService.svc?xsd=xsd7" namespace="http://schemas.datacontract.org/2004/07/DataTransferObjects.TimeEntry" />
-  <xs:complexType name="ArrayOfProject">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="Project" nillable="true" type="tns:Project" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ArrayOfProject" nillable="true" type="tns:ArrayOfProject" />
   <xs:complexType name="Project">
     <xs:sequence>
       <xs:element minOccurs="0" name="AccessLevel" nillable="true" type="tns:Seniority" />
@@ -615,6 +609,12 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="VendorAttachment" nillable="true" type="tns:VendorAttachment" />
+  <xs:complexType name="ArrayOfProject">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Project" nillable="true" type="tns:Project" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfProject" nillable="true" type="tns:ArrayOfProject" />
   <xs:complexType name="VendorType">
     <xs:sequence>
       <xs:element minOccurs="0" name="Id" type="xs:int" />
@@ -962,36 +962,6 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="ProjectStatus" nillable="true" type="tns:ProjectStatus" />
-  <xs:complexType name="ArrayOfProjectFeedbackStatus">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="ProjectFeedbackStatus" nillable="true" type="tns:ProjectFeedbackStatus" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ArrayOfProjectFeedbackStatus" nillable="true" type="tns:ArrayOfProjectFeedbackStatus" />
-  <xs:complexType name="ArrayOfOffering">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="Offering" nillable="true" type="tns:Offering" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ArrayOfOffering" nillable="true" type="tns:ArrayOfOffering" />
-  <xs:complexType name="ArrayOfRevenue">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="Revenue" nillable="true" type="tns:Revenue" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ArrayOfRevenue" nillable="true" type="tns:ArrayOfRevenue" />
-  <xs:complexType name="ArrayOfChannel">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="Channel" nillable="true" type="tns:Channel" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ArrayOfChannel" nillable="true" type="tns:ArrayOfChannel" />
-  <xs:complexType name="ArrayOfProjectDivision">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="ProjectDivision" nillable="true" type="tns:ProjectDivision" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ArrayOfProjectDivision" nillable="true" type="tns:ArrayOfProjectDivision" />
   <xs:simpleType name="ProjectCalculateRangeType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="ProjectValueInRange">
@@ -1182,4 +1152,34 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="ArrayOfProjectExpense" nillable="true" type="tns:ArrayOfProjectExpense" />
+  <xs:complexType name="ArrayOfProjectFeedbackStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ProjectFeedbackStatus" nillable="true" type="tns:ProjectFeedbackStatus" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfProjectFeedbackStatus" nillable="true" type="tns:ArrayOfProjectFeedbackStatus" />
+  <xs:complexType name="ArrayOfOffering">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Offering" nillable="true" type="tns:Offering" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfOffering" nillable="true" type="tns:ArrayOfOffering" />
+  <xs:complexType name="ArrayOfRevenue">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Revenue" nillable="true" type="tns:Revenue" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfRevenue" nillable="true" type="tns:ArrayOfRevenue" />
+  <xs:complexType name="ArrayOfChannel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Channel" nillable="true" type="tns:Channel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfChannel" nillable="true" type="tns:ArrayOfChannel" />
+  <xs:complexType name="ArrayOfProjectDivision">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ProjectDivision" nillable="true" type="tns:ProjectDivision" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfProjectDivision" nillable="true" type="tns:ArrayOfProjectDivision" />
 </xs:schema>
