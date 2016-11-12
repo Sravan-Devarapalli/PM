@@ -176,11 +176,11 @@
 
     function resetCalculationsTab() {
         document.getElementById("<%= chbActive.ClientID %>").checked = true;
-        document.getElementById("<%= chbInternal.ClientID %>").checked = true;
+        document.getElementById("<%= chbInternal.ClientID %>").checked = false;
         document.getElementById("<%= chbProjected.ClientID %>").checked = true;
         document.getElementById("<%= chbCompleted.ClientID %>").checked = true;
         document.getElementById("<%= chbExperimental.ClientID %>").checked = false;
-        document.getElementById("<%= chbProposed.ClientID %>").checked = true;
+        document.getElementById("<%= chbProposed.ClientID %>").checked = false;
         document.getElementById("<%= chbInactive.ClientID %>").checked = false;
         document.getElementById("<%= chbAtRisk.ClientID %>").checked = true;
         document.getElementById("<%= ddlCalculateRange.ClientID %>").selectedIndex = 0;
@@ -588,10 +588,10 @@
                                             <asp:CheckBox ID="chbActive" runat="server" Text="Active" Checked="True" EnableViewState="False" />
                                         </td>
                                         <td class="ProjectSummaryCheckboxTd">
-                                            <asp:CheckBox ID="chbInternal" runat="server" Text="Internal" Checked="True" EnableViewState="False" />
+                                            <asp:CheckBox ID="chbInternal" runat="server" Text="Internal" Checked="false" EnableViewState="False" />
                                         </td>
                                         <td class="ProjectSummaryCheckboxTd">
-                                            <asp:CheckBox ID="chbProposed" runat="server" Text="Proposed" Checked="True" EnableViewState="False" />
+                                            <asp:CheckBox ID="chbProposed" runat="server" Text="Proposed" Checked="false" EnableViewState="False" />
                                         </td>
                                         <td rowspan="2" class="ProjectSummaryCalculateRangeTd">
                                             <asp:DropDownList ID="ddlCalculateRange" runat="server" AutoPostBack="false">
@@ -609,7 +609,7 @@
                                             <asp:CheckBox ID="chbInactive" runat="server" Text="Inactive" EnableViewState="False" />
                                         </td>
                                         <td>
-                                            <asp:CheckBox ID="chbAtRisk" runat="server" Text="At Risk" EnableViewState="False" />
+                                            <asp:CheckBox ID="chbAtRisk" runat="server" Text="At Risk" EnableViewState="False" Checked="true" />
                                         </td>
                                     </tr>
                                     <tr class="PadLeft10Td">
