@@ -33,7 +33,7 @@ AS
 		 INNER JOIN dbo.Milestone AS sh ON m.ProjectId = sh.ProjectId AND m.StartDate > sh.StartDate
 		 INNER JOIN dbo.Project P ON P.ProjectId = sh.ProjectId
 		 INNER JOIN dbo.Person Per ON Per.PersonId = MP.PersonId
-	WHERE sh.MilestoneId = @MilestoneId AND @MoveFutureMilestones = 1 AND mpe.IsBadgeRequired = 1 AND P.ProjectStatusId IN (2,3) --Inactive,Completed,active and projected statuses.
+	WHERE sh.MilestoneId = @MilestoneId AND @MoveFutureMilestones = 1 AND mpe.IsBadgeRequired = 1 AND P.ProjectStatusId IN (2,3,8) --Inactive,Completed,active and projected statuses.
 	UNION ALL
 	SELECT P.ProjectId,P.Name AS ProjectName,P.ProjectNumber,mpe.BadgeStartDate,MPE.BadgeEndDate,DATEADD(dd, @ShiftDays, mpe.BadgeStartDate) AS NewBadgeStartDate, DATEADD(dd, @ShiftDays, mpe.BadgeEndDate) AS NewBadgeEndDate,
 		   MP.PersonId,Per.LastName,Per.FirstName,mpe.IsBadgeException
@@ -42,7 +42,7 @@ AS
 	       INNER JOIN dbo.Milestone AS sh ON mp.MilestoneId = sh.MilestoneId
 		   INNER JOIN dbo.Project P ON P.ProjectId = sh.ProjectId
 		 INNER JOIN dbo.Person Per ON Per.PersonId = MP.PersonId
-	 WHERE sh.MilestoneId = @MilestoneId AND mpe.IsBadgeRequired = 1 AND P.ProjectStatusId IN (2,3) --Inactive,Completed,active and projected statuses.
+	 WHERE sh.MilestoneId = @MilestoneId AND mpe.IsBadgeRequired = 1 AND P.ProjectStatusId IN (2,3,8) --Inactive,Completed,active and projected statuses.
 
 	IF @MoveFutureMilestones = 1
 	BEGIN
