@@ -31,11 +31,11 @@ BEGIN
 				JOIN dbo.Project PP ON PP.ProjectId = MI.ProjectId
 				WHERE MI.MilestoneId <> @MilestoneId
 					  AND MPEI.BadgeStartDate IS NOT NULL AND MPEI.BadgeEndDate IS NOT NULL AND MPEI.IsApproved = 1
-					  AND PP.ProjectStatusId IN (1,2,3,4)
+					  AND PP.ProjectStatusId IN (1,2,3,4,8)
 			  ) OtherProjects ON OtherProjects.PersonId = MP.PersonId
 	WHERE M.MilestoneId = @MilestoneId
 		  AND MPE.BadgeStartDate IS NOT NULL AND MPE.BadgeEndDate IS NOT NULL AND MPE.IsApproved = 1
-		  AND P.ProjectStatusId IN (1,2,3,4)
+		  AND P.ProjectStatusId IN (1,2,3,4,8)
 		  AND @MilestoneNewStartDate < M.StartDate
 		  AND @MilestoneNewEndDate >= @DefaultStartDate
 
@@ -48,7 +48,7 @@ BEGIN
 	JOIN dbo.Person Per ON Per.PersonId = MP.PersonId
 	WHERE M.MilestoneId <> @MilestoneId
 			AND MPE.BadgeStartDate IS NOT NULL AND MPE.BadgeEndDate IS NOT NULL AND MPE.IsApproved = 1
-			AND P.ProjectStatusId IN (1,2,3,4)
+			AND P.ProjectStatusId IN (1,2,3,4,8)
 			AND (MPE.BadgeStartDate <= B.NewBadgeBreakEndDate AND B.NewBadgeBreakStartDate <= MPE.BadgeEndDate)
 		
 END
