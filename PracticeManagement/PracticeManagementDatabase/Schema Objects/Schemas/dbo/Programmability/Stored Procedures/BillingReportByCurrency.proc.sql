@@ -41,7 +41,7 @@ AS
 			SELECT Pro.ProjectId,CAST(CASE WHEN SUM(CAST(m.IsHourlyAmount as INT)) > 0 THEN 1 ELSE 0 END AS BIT) AS IsHourlyAmount
 			FROM Project Pro 
 				LEFT JOIN Milestone m ON m.ProjectId = Pro.ProjectId 
-			WHERE Pro.IsAllowedToShow = 1 AND Pro.ProjectStatusId IN (2,3,7) AND
+			WHERE Pro.IsAllowedToShow = 1 AND Pro.ProjectStatusId IN (2,3,7,8) AND
 			  (@PracticeIds IS NULL OR Pro.PracticeId IN (SELECT ResultId FROM [dbo].[ConvertStringListIntoTable](@PracticeIds))) AND
 			  Pro.ClientId IN (SELECT ResultId FROM [dbo].[ConvertStringListIntoTable](@AccountIds)) AND
 			  Pro.GroupId IN (SELECT ResultId FROM [dbo].[ConvertStringListIntoTable](@BusinessUnitIds)) AND
@@ -81,7 +81,7 @@ AS
 			INNER JOIN dbo.MilestonePerson AS mp ON m.[MilestoneId] = mp.[MilestoneId]
 			INNER JOIN dbo.MilestonePersonEntry AS mpe ON mp.MilestonePersonId = mpe.MilestonePersonId
 			INNER JOIN dbo.PersonCalendarAuto AS cal ON cal.Date BETWEEN mpe.Startdate AND mpe.EndDate AND cal.PersonId = mp.PersonId 
-			WHERE P.ProjectStatusId IN (2,3,7) AND
+			WHERE P.ProjectStatusId IN (2,3,7,8) AND
 			  (@PracticeIds IS NULL OR P.PracticeId IN (SELECT ResultId FROM [dbo].[ConvertStringListIntoTable](@PracticeIds))) AND
 			  P.ClientId IN (SELECT ResultId FROM [dbo].[ConvertStringListIntoTable](@AccountIds)) AND
 			  P.GroupId IN (SELECT ResultId FROM [dbo].[ConvertStringListIntoTable](@BusinessUnitIds)) AND
@@ -228,6 +228,6 @@ FROM ActualTimeEntries AS AE --ActualEntriesByPerson
 	LEFT JOIN dbo.Person senior ON senior.PersonId = P.EngagementManagerId
 	LEFT JOIN dbo.ProjectAccess PM ON PM.ProjectId = p.ProjectId
 	LEFT JOIN dbo.Person manager ON manager.PersonId = PM.ProjectAccessId
-	ORDER BY ProjectId 
+	ORDER BY APV.ProjectId 
 END
 
