@@ -52,7 +52,7 @@ BEGIN
 	LEFT JOIN v_MilestonePerson VMP ON PPT.PersonId = VMP.PersonId 
 									AND VMP.StartDate <= PPT.EndDate AND PPT.StartDate <= VMP.EndDate 
 									AND VMP.ProjectNumber <> 'P031000'
-									AND VMP.ProjectStatusId IN (2,3,4)
+									AND VMP.ProjectStatusId IN (2,3,4,8)
 	INNER JOIN dbo.Person P ON P.PersonId = PPT.PersonId
 	INNER JOIN dbo.TimeType TT ON TT.TimeTypeId = PPT.TimeTypeId
 	LEFT JOIN dbo.Project pro ON pro.ProjectId = VMP.ProjectId 
