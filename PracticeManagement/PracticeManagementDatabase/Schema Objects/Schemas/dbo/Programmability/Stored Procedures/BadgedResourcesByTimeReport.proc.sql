@@ -86,7 +86,7 @@ BEGIN
 		INNER JOIN Ranges R ON MPE.BadgeStartDate <= R.EndDate AND R.StartDate <= MPE.BadgeEndDate
 		INNER JOIN dbo.MSBadge MB ON MB.PersonId = MP.PersonId
 		INNER JOIN v_Pay pay ON pay.PersonId = MB.PersonId AND pay.StartDate <= R.EndDate AND R.StartDate < pay.EndDateOrig
-		WHERE MB.ExcludeInReports = 0 AND (@PayTypeIds IS NULL OR pay.Timescale IN (SELECT Ids FROM @PayTypeIdsTable)) AND mpe.IsbadgeRequired = 1 AND P.ProjectStatusId IN (1,2,3,4) 
+		WHERE MB.ExcludeInReports = 0 AND (@PayTypeIds IS NULL OR pay.Timescale IN (SELECT Ids FROM @PayTypeIdsTable)) AND mpe.IsbadgeRequired = 1 AND P.ProjectStatusId IN (1,2,3,4,8) 
 
 		UNION ALL
 		SELECT DISTINCT M.PersonId,R.StartDate,R.EndDate,0
