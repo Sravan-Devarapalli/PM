@@ -26,7 +26,7 @@ BEGIN
 				MAX(CASE WHEN PC.ReferralScore <> -1 THEN ModifiedDate END) AS ModifiedDateWithoutFilter,
 				MAX( CASE WHEN (@PracticeIds IS null OR  pra.Id IS NOT NULL ) AND ( @AccountIds IS NULL OR acc.Id IS NOT NULL) AND (PC.ReferralScore <> -1) THEN  ModifiedDate END) AS ModifiedDateWithFilter
 		  FROM dbo.ProjectCSAT PC
-		  INNER JOIN dbo.Project P ON pc.ProjectId=p.ProjectId AND P.ProjectStatusId IN (3,4)
+		  INNER JOIN dbo.Project P ON pc.ProjectId=p.ProjectId AND P.ProjectStatusId IN (3,4,8)
 		  LEFT JOIN @PracticeIdsTable pra ON pra.Id = P.PracticeId
 		  LEFT JOIN @AccountIdsTable acc ON acc.Id = P.ClientId
 		  WHERE PC.CompletionDate BETWEEN @StartDate AND @EndDate
