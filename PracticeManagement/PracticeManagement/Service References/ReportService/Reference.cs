@@ -15,110 +15,6 @@ namespace PraticeManagement.ReportService {
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ReportService.IReportService")]
     public interface IReportService {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/ResourceAssignedOrUnassignedChargingExceptionRe" +
-            "port", ReplyAction="http://tempuri.org/IReportService/ResourceAssignedOrUnassignedChargingExceptionRe" +
-            "portResponse")]
-        DataTransferObjects.Reports.ResourceExceptionReport[] ResourceAssignedOrUnassignedChargingExceptionReport(System.DateTime startDate, System.DateTime endDate, bool isUnassignedReport);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/RecruitingMetricsReport", ReplyAction="http://tempuri.org/IReportService/RecruitingMetricsReportResponse")]
-        DataTransferObjects.Person[] RecruitingMetricsReport(System.DateTime startDate, System.DateTime endDate);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/ProjectFeedbackReport", ReplyAction="http://tempuri.org/IReportService/ProjectFeedbackReportResponse")]
-        DataTransferObjects.ProjectFeedback[] ProjectFeedbackReport(
-                    string accountIds, 
-                    string businessGroupIds, 
-                    System.DateTime startDate, 
-                    System.DateTime endDate, 
-                    string projectStatus, 
-                    string projectIds, 
-                    string directorIds, 
-                    string practiceIds, 
-                    bool excludeInternalPractices, 
-                    string personIds, 
-                    string titleIds, 
-                    string reviewStartdateMonths, 
-                    string reviewEnddateMonths, 
-                    string projectmanagerIds, 
-                    string statusIds, 
-                    bool isExport, 
-                    string payTypeIds);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/BillingReportByCurrency", ReplyAction="http://tempuri.org/IReportService/BillingReportByCurrencyResponse")]
-        DataTransferObjects.Reports.BillingReport[] BillingReportByCurrency(System.DateTime startDate, System.DateTime endDate, string practiceIds, string accountIds, string businessUnitIds, string directorIds, string salesPersonIds, string projectManagerIds, string seniorManagerIds);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/BillingReportByHours", ReplyAction="http://tempuri.org/IReportService/BillingReportByHoursResponse")]
-        DataTransferObjects.Reports.BillingReport[] BillingReportByHours(System.DateTime startDate, System.DateTime endDate, string practiceIds, string accountIds, string businessUnitIds, string directorIds, string salesPersonIds, string projectManagerIds, string seniorManagerIds);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/NonBillableReport", ReplyAction="http://tempuri.org/IReportService/NonBillableReportResponse")]
-        DataTransferObjects.Reports.ProjectLevelGroupedHours[] NonBillableReport(System.DateTime startDate, System.DateTime endDate, string projectNumber, string directorIds, string businessUnitIds, string practiceIds);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/BadgedResourcesByTimeReport", ReplyAction="http://tempuri.org/IReportService/BadgedResourcesByTimeReportResponse")]
-        DataTransferObjects.Reports.BadgedResourcesByTime[] BadgedResourcesByTimeReport(string payTypes, string personStatusIds, System.DateTime startDate, System.DateTime endDate, int step);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/ListBadgeResourcesByType", ReplyAction="http://tempuri.org/IReportService/ListBadgeResourcesByTypeResponse")]
-        DataTransferObjects.MSBadge[] ListBadgeResourcesByType(string paytypes, string personStatuses, System.DateTime startDate, System.DateTime endDate, bool isNotBadged, bool isClockNotStart, bool isBlocked, bool isBreak, bool badgedOnProject, bool isBadgedException, bool isNotBadgedException);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/ResourcesByPracticeReport", ReplyAction="http://tempuri.org/IReportService/ResourcesByPracticeReportResponse")]
-        DataTransferObjects.Reports.GroupByPractice[] ResourcesByPracticeReport(string paytypes, string PersonStatuses, string practices, System.DateTime startDate, System.DateTime endDate, int step);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/ResourcesByTitleReport", ReplyAction="http://tempuri.org/IReportService/ResourcesByTitleReportResponse")]
-        DataTransferObjects.Reports.GroupbyTitle[] ResourcesByTitleReport(string paytypes, string personStatuses, string titles, System.DateTime startDate, System.DateTime endDate, int step);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/GetBadgeRequestNotApprovedList", ReplyAction="http://tempuri.org/IReportService/GetBadgeRequestNotApprovedListResponse")]
-        DataTransferObjects.MSBadge[] GetBadgeRequestNotApprovedList();
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/GetAllBadgeDetails", ReplyAction="http://tempuri.org/IReportService/GetAllBadgeDetailsResponse")]
-        DataTransferObjects.MSBadge[] GetAllBadgeDetails(string payTypes, string personStatuses);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/UtilizationReport", ReplyAction="http://tempuri.org/IReportService/UtilizationReportResponse")]
-        DataTransferObjects.Reports.PersonTimeEntriesTotals UtilizationReport(int personId, System.DateTime startDate, System.DateTime endDate);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/ManagedServiceReportByPerson", ReplyAction="http://tempuri.org/IReportService/ManagedServiceReportByPersonResponse")]
-        DataTransferObjects.Reports.ManagementMeetingReport[] ManagedServiceReportByPerson(string paytypes, string personStatuses, System.DateTime startDate, System.DateTime endDate);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/SaveManagedParametersByPerson", ReplyAction="http://tempuri.org/IReportService/SaveManagedParametersByPersonResponse")]
-        void SaveManagedParametersByPerson(string userLogin, decimal actualRevenuePerHour, decimal targetRevenuePerHour, decimal hoursUtilization, decimal targetRevenuePerAnnum);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/GetManagedParametersByPerson", ReplyAction="http://tempuri.org/IReportService/GetManagedParametersByPersonResponse")]
-        DataTransferObjects.Reports.RevenueReport GetManagedParametersByPerson(string userLogin);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/GetAveragePercentagesByTitles", ReplyAction="http://tempuri.org/IReportService/GetAveragePercentagesByTitlesResponse")]
-        DataTransferObjects.Reports.GroupbyTitle[] GetAveragePercentagesByTitles(string paytypes, string personStatuses, string titles, System.DateTime startDate, System.DateTime endDate);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/ProjectsListWithFilters", ReplyAction="http://tempuri.org/IReportService/ProjectsListWithFiltersResponse")]
-        DataTransferObjects.Project[] ProjectsListWithFilters(
-                    string clientIdsList, 
-                    bool showProjected, 
-                    bool showCompleted, 
-                    bool showActive, 
-                    bool showInternal, 
-                    bool showExperimental, 
-                    bool showProposed, 
-                    bool showInactive, 
-                    System.DateTime periodStart, 
-                    System.DateTime periodEnd, 
-                    string salespersonIdsList, 
-                    string ProjectOwnerIdsList, 
-                    string practiceIdsList, 
-                    string projectGroupIdsList, 
-                    string divisionIdsList, 
-                    string channelIdsList, 
-                    string revenueTypeIdsList, 
-                    string offeringIdsList, 
-                    string userLogin);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/GetExpenseSummaryGroupedByProject", ReplyAction="http://tempuri.org/IReportService/GetExpenseSummaryGroupedByProjectResponse")]
-        DataTransferObjects.Reports.ExpenseSummary[] GetExpenseSummaryGroupedByProject(System.DateTime startDate, System.DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/GetExpenseSummaryGroupedBytype", ReplyAction="http://tempuri.org/IReportService/GetExpenseSummaryGroupedBytypeResponse")]
-        DataTransferObjects.Reports.ExpenseSummary[] GetExpenseSummaryGroupedBytype(System.DateTime startDate, System.DateTime endDate, string expenseTypeIds);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/ExpenseDetailReport", ReplyAction="http://tempuri.org/IReportService/ExpenseDetailReportResponse")]
-        DataTransferObjects.Reports.ExpenseSummary[] ExpenseDetailReport(System.DateTime startDate, System.DateTime endDate, System.Nullable<int> projectId, System.Nullable<int> expenseTypeId);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/DetailedExpenseSummary", ReplyAction="http://tempuri.org/IReportService/DetailedExpenseSummaryResponse")]
-        DataTransferObjects.Reports.ExpenseSummary[] DetailedExpenseSummary(System.DateTime startDate, System.DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental, string expenseTypeIds);
-        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/PersonTimeEntriesDetails", ReplyAction="http://tempuri.org/IReportService/PersonTimeEntriesDetailsResponse")]
         DataTransferObjects.Reports.TimeEntriesGroupByClientAndProject[] PersonTimeEntriesDetails(int personId, System.DateTime startDate, System.DateTime endDate);
         
@@ -231,6 +127,7 @@ namespace PraticeManagement.ReportService {
                     bool showExperimental, 
                     bool showProposed, 
                     bool showInactive, 
+                    bool showAtRisk, 
                     System.DateTime periodStart, 
                     System.DateTime periodEnd, 
                     string salespersonIdsList, 
@@ -250,6 +147,111 @@ namespace PraticeManagement.ReportService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/ZeroHourlyRateExceptionReport", ReplyAction="http://tempuri.org/IReportService/ZeroHourlyRateExceptionReportResponse")]
         DataTransferObjects.Reports.ResourceExceptionReport[] ZeroHourlyRateExceptionReport(System.DateTime startDate, System.DateTime endDate);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/ResourceAssignedOrUnassignedChargingExceptionRe" +
+            "port", ReplyAction="http://tempuri.org/IReportService/ResourceAssignedOrUnassignedChargingExceptionRe" +
+            "portResponse")]
+        DataTransferObjects.Reports.ResourceExceptionReport[] ResourceAssignedOrUnassignedChargingExceptionReport(System.DateTime startDate, System.DateTime endDate, bool isUnassignedReport);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/RecruitingMetricsReport", ReplyAction="http://tempuri.org/IReportService/RecruitingMetricsReportResponse")]
+        DataTransferObjects.Person[] RecruitingMetricsReport(System.DateTime startDate, System.DateTime endDate);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/ProjectFeedbackReport", ReplyAction="http://tempuri.org/IReportService/ProjectFeedbackReportResponse")]
+        DataTransferObjects.ProjectFeedback[] ProjectFeedbackReport(
+                    string accountIds, 
+                    string businessGroupIds, 
+                    System.DateTime startDate, 
+                    System.DateTime endDate, 
+                    string projectStatus, 
+                    string projectIds, 
+                    string directorIds, 
+                    string practiceIds, 
+                    bool excludeInternalPractices, 
+                    string personIds, 
+                    string titleIds, 
+                    string reviewStartdateMonths, 
+                    string reviewEnddateMonths, 
+                    string projectmanagerIds, 
+                    string statusIds, 
+                    bool isExport, 
+                    string payTypeIds);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/BillingReportByCurrency", ReplyAction="http://tempuri.org/IReportService/BillingReportByCurrencyResponse")]
+        DataTransferObjects.Reports.BillingReport[] BillingReportByCurrency(System.DateTime startDate, System.DateTime endDate, string practiceIds, string accountIds, string businessUnitIds, string directorIds, string salesPersonIds, string projectManagerIds, string seniorManagerIds);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/BillingReportByHours", ReplyAction="http://tempuri.org/IReportService/BillingReportByHoursResponse")]
+        DataTransferObjects.Reports.BillingReport[] BillingReportByHours(System.DateTime startDate, System.DateTime endDate, string practiceIds, string accountIds, string businessUnitIds, string directorIds, string salesPersonIds, string projectManagerIds, string seniorManagerIds);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/NonBillableReport", ReplyAction="http://tempuri.org/IReportService/NonBillableReportResponse")]
+        DataTransferObjects.Reports.ProjectLevelGroupedHours[] NonBillableReport(System.DateTime startDate, System.DateTime endDate, string projectNumber, string directorIds, string businessUnitIds, string practiceIds);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/BadgedResourcesByTimeReport", ReplyAction="http://tempuri.org/IReportService/BadgedResourcesByTimeReportResponse")]
+        DataTransferObjects.Reports.BadgedResourcesByTime[] BadgedResourcesByTimeReport(string payTypes, string personStatusIds, System.DateTime startDate, System.DateTime endDate, int step);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/ListBadgeResourcesByType", ReplyAction="http://tempuri.org/IReportService/ListBadgeResourcesByTypeResponse")]
+        DataTransferObjects.MSBadge[] ListBadgeResourcesByType(string paytypes, string personStatuses, System.DateTime startDate, System.DateTime endDate, bool isNotBadged, bool isClockNotStart, bool isBlocked, bool isBreak, bool badgedOnProject, bool isBadgedException, bool isNotBadgedException);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/ResourcesByPracticeReport", ReplyAction="http://tempuri.org/IReportService/ResourcesByPracticeReportResponse")]
+        DataTransferObjects.Reports.GroupByPractice[] ResourcesByPracticeReport(string paytypes, string PersonStatuses, string practices, System.DateTime startDate, System.DateTime endDate, int step);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/ResourcesByTitleReport", ReplyAction="http://tempuri.org/IReportService/ResourcesByTitleReportResponse")]
+        DataTransferObjects.Reports.GroupbyTitle[] ResourcesByTitleReport(string paytypes, string personStatuses, string titles, System.DateTime startDate, System.DateTime endDate, int step);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/GetBadgeRequestNotApprovedList", ReplyAction="http://tempuri.org/IReportService/GetBadgeRequestNotApprovedListResponse")]
+        DataTransferObjects.MSBadge[] GetBadgeRequestNotApprovedList();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/GetAllBadgeDetails", ReplyAction="http://tempuri.org/IReportService/GetAllBadgeDetailsResponse")]
+        DataTransferObjects.MSBadge[] GetAllBadgeDetails(string payTypes, string personStatuses);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/UtilizationReport", ReplyAction="http://tempuri.org/IReportService/UtilizationReportResponse")]
+        DataTransferObjects.Reports.PersonTimeEntriesTotals UtilizationReport(int personId, System.DateTime startDate, System.DateTime endDate);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/ManagedServiceReportByPerson", ReplyAction="http://tempuri.org/IReportService/ManagedServiceReportByPersonResponse")]
+        DataTransferObjects.Reports.ManagementMeetingReport[] ManagedServiceReportByPerson(string paytypes, string personStatuses, System.DateTime startDate, System.DateTime endDate);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/SaveManagedParametersByPerson", ReplyAction="http://tempuri.org/IReportService/SaveManagedParametersByPersonResponse")]
+        void SaveManagedParametersByPerson(string userLogin, decimal actualRevenuePerHour, decimal targetRevenuePerHour, decimal hoursUtilization, decimal targetRevenuePerAnnum);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/GetManagedParametersByPerson", ReplyAction="http://tempuri.org/IReportService/GetManagedParametersByPersonResponse")]
+        DataTransferObjects.Reports.RevenueReport GetManagedParametersByPerson(string userLogin);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/GetAveragePercentagesByTitles", ReplyAction="http://tempuri.org/IReportService/GetAveragePercentagesByTitlesResponse")]
+        DataTransferObjects.Reports.GroupbyTitle[] GetAveragePercentagesByTitles(string paytypes, string personStatuses, string titles, System.DateTime startDate, System.DateTime endDate);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/ProjectsListWithFilters", ReplyAction="http://tempuri.org/IReportService/ProjectsListWithFiltersResponse")]
+        DataTransferObjects.Project[] ProjectsListWithFilters(
+                    string clientIdsList, 
+                    bool showProjected, 
+                    bool showCompleted, 
+                    bool showActive, 
+                    bool showInternal, 
+                    bool showExperimental, 
+                    bool showProposed, 
+                    bool showInactive, 
+                    bool showAtRisk, 
+                    System.DateTime periodStart, 
+                    System.DateTime periodEnd, 
+                    string salespersonIdsList, 
+                    string ProjectOwnerIdsList, 
+                    string practiceIdsList, 
+                    string projectGroupIdsList, 
+                    string divisionIdsList, 
+                    string channelIdsList, 
+                    string revenueTypeIdsList, 
+                    string offeringIdsList, 
+                    string userLogin);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/GetExpenseSummaryGroupedByProject", ReplyAction="http://tempuri.org/IReportService/GetExpenseSummaryGroupedByProjectResponse")]
+        DataTransferObjects.Reports.ExpenseSummary[] GetExpenseSummaryGroupedByProject(System.DateTime startDate, System.DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental, bool atRisk);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/GetExpenseSummaryGroupedBytype", ReplyAction="http://tempuri.org/IReportService/GetExpenseSummaryGroupedBytypeResponse")]
+        DataTransferObjects.Reports.ExpenseSummary[] GetExpenseSummaryGroupedBytype(System.DateTime startDate, System.DateTime endDate, string expenseTypeIds);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/ExpenseDetailReport", ReplyAction="http://tempuri.org/IReportService/ExpenseDetailReportResponse")]
+        DataTransferObjects.Reports.ExpenseSummary[] ExpenseDetailReport(System.DateTime startDate, System.DateTime endDate, System.Nullable<int> projectId, System.Nullable<int> expenseTypeId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/DetailedExpenseSummary", ReplyAction="http://tempuri.org/IReportService/DetailedExpenseSummaryResponse")]
+        DataTransferObjects.Reports.ExpenseSummary[] DetailedExpenseSummary(System.DateTime startDate, System.DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental, bool atRisk, string expenseTypeIds);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -274,130 +276,6 @@ namespace PraticeManagement.ReportService {
         
         public ReportServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress) {
-        }
-        
-        public DataTransferObjects.Reports.ResourceExceptionReport[] ResourceAssignedOrUnassignedChargingExceptionReport(System.DateTime startDate, System.DateTime endDate, bool isUnassignedReport) {
-            return base.Channel.ResourceAssignedOrUnassignedChargingExceptionReport(startDate, endDate, isUnassignedReport);
-        }
-        
-        public DataTransferObjects.Person[] RecruitingMetricsReport(System.DateTime startDate, System.DateTime endDate) {
-            return base.Channel.RecruitingMetricsReport(startDate, endDate);
-        }
-        
-        public DataTransferObjects.ProjectFeedback[] ProjectFeedbackReport(
-                    string accountIds, 
-                    string businessGroupIds, 
-                    System.DateTime startDate, 
-                    System.DateTime endDate, 
-                    string projectStatus, 
-                    string projectIds, 
-                    string directorIds, 
-                    string practiceIds, 
-                    bool excludeInternalPractices, 
-                    string personIds, 
-                    string titleIds, 
-                    string reviewStartdateMonths, 
-                    string reviewEnddateMonths, 
-                    string projectmanagerIds, 
-                    string statusIds, 
-                    bool isExport, 
-                    string payTypeIds) {
-            return base.Channel.ProjectFeedbackReport(accountIds, businessGroupIds, startDate, endDate, projectStatus, projectIds, directorIds, practiceIds, excludeInternalPractices, personIds, titleIds, reviewStartdateMonths, reviewEnddateMonths, projectmanagerIds, statusIds, isExport, payTypeIds);
-        }
-        
-        public DataTransferObjects.Reports.BillingReport[] BillingReportByCurrency(System.DateTime startDate, System.DateTime endDate, string practiceIds, string accountIds, string businessUnitIds, string directorIds, string salesPersonIds, string projectManagerIds, string seniorManagerIds) {
-            return base.Channel.BillingReportByCurrency(startDate, endDate, practiceIds, accountIds, businessUnitIds, directorIds, salesPersonIds, projectManagerIds, seniorManagerIds);
-        }
-        
-        public DataTransferObjects.Reports.BillingReport[] BillingReportByHours(System.DateTime startDate, System.DateTime endDate, string practiceIds, string accountIds, string businessUnitIds, string directorIds, string salesPersonIds, string projectManagerIds, string seniorManagerIds) {
-            return base.Channel.BillingReportByHours(startDate, endDate, practiceIds, accountIds, businessUnitIds, directorIds, salesPersonIds, projectManagerIds, seniorManagerIds);
-        }
-        
-        public DataTransferObjects.Reports.ProjectLevelGroupedHours[] NonBillableReport(System.DateTime startDate, System.DateTime endDate, string projectNumber, string directorIds, string businessUnitIds, string practiceIds) {
-            return base.Channel.NonBillableReport(startDate, endDate, projectNumber, directorIds, businessUnitIds, practiceIds);
-        }
-        
-        public DataTransferObjects.Reports.BadgedResourcesByTime[] BadgedResourcesByTimeReport(string payTypes, string personStatusIds, System.DateTime startDate, System.DateTime endDate, int step) {
-            return base.Channel.BadgedResourcesByTimeReport(payTypes, personStatusIds, startDate, endDate, step);
-        }
-        
-        public DataTransferObjects.MSBadge[] ListBadgeResourcesByType(string paytypes, string personStatuses, System.DateTime startDate, System.DateTime endDate, bool isNotBadged, bool isClockNotStart, bool isBlocked, bool isBreak, bool badgedOnProject, bool isBadgedException, bool isNotBadgedException) {
-            return base.Channel.ListBadgeResourcesByType(paytypes, personStatuses, startDate, endDate, isNotBadged, isClockNotStart, isBlocked, isBreak, badgedOnProject, isBadgedException, isNotBadgedException);
-        }
-        
-        public DataTransferObjects.Reports.GroupByPractice[] ResourcesByPracticeReport(string paytypes, string PersonStatuses, string practices, System.DateTime startDate, System.DateTime endDate, int step) {
-            return base.Channel.ResourcesByPracticeReport(paytypes, PersonStatuses, practices, startDate, endDate, step);
-        }
-        
-        public DataTransferObjects.Reports.GroupbyTitle[] ResourcesByTitleReport(string paytypes, string personStatuses, string titles, System.DateTime startDate, System.DateTime endDate, int step) {
-            return base.Channel.ResourcesByTitleReport(paytypes, personStatuses, titles, startDate, endDate, step);
-        }
-        
-        public DataTransferObjects.MSBadge[] GetBadgeRequestNotApprovedList() {
-            return base.Channel.GetBadgeRequestNotApprovedList();
-        }
-        
-        public DataTransferObjects.MSBadge[] GetAllBadgeDetails(string payTypes, string personStatuses) {
-            return base.Channel.GetAllBadgeDetails(payTypes, personStatuses);
-        }
-        
-        public DataTransferObjects.Reports.PersonTimeEntriesTotals UtilizationReport(int personId, System.DateTime startDate, System.DateTime endDate) {
-            return base.Channel.UtilizationReport(personId, startDate, endDate);
-        }
-        
-        public DataTransferObjects.Reports.ManagementMeetingReport[] ManagedServiceReportByPerson(string paytypes, string personStatuses, System.DateTime startDate, System.DateTime endDate) {
-            return base.Channel.ManagedServiceReportByPerson(paytypes, personStatuses, startDate, endDate);
-        }
-        
-        public void SaveManagedParametersByPerson(string userLogin, decimal actualRevenuePerHour, decimal targetRevenuePerHour, decimal hoursUtilization, decimal targetRevenuePerAnnum) {
-            base.Channel.SaveManagedParametersByPerson(userLogin, actualRevenuePerHour, targetRevenuePerHour, hoursUtilization, targetRevenuePerAnnum);
-        }
-        
-        public DataTransferObjects.Reports.RevenueReport GetManagedParametersByPerson(string userLogin) {
-            return base.Channel.GetManagedParametersByPerson(userLogin);
-        }
-        
-        public DataTransferObjects.Reports.GroupbyTitle[] GetAveragePercentagesByTitles(string paytypes, string personStatuses, string titles, System.DateTime startDate, System.DateTime endDate) {
-            return base.Channel.GetAveragePercentagesByTitles(paytypes, personStatuses, titles, startDate, endDate);
-        }
-        
-        public DataTransferObjects.Project[] ProjectsListWithFilters(
-                    string clientIdsList, 
-                    bool showProjected, 
-                    bool showCompleted, 
-                    bool showActive, 
-                    bool showInternal, 
-                    bool showExperimental, 
-                    bool showProposed, 
-                    bool showInactive, 
-                    System.DateTime periodStart, 
-                    System.DateTime periodEnd, 
-                    string salespersonIdsList, 
-                    string ProjectOwnerIdsList, 
-                    string practiceIdsList, 
-                    string projectGroupIdsList, 
-                    string divisionIdsList, 
-                    string channelIdsList, 
-                    string revenueTypeIdsList, 
-                    string offeringIdsList, 
-                    string userLogin) {
-            return base.Channel.ProjectsListWithFilters(clientIdsList, showProjected, showCompleted, showActive, showInternal, showExperimental, showProposed, showInactive, periodStart, periodEnd, salespersonIdsList, ProjectOwnerIdsList, practiceIdsList, projectGroupIdsList, divisionIdsList, channelIdsList, revenueTypeIdsList, offeringIdsList, userLogin);
-        }
-        
-        public DataTransferObjects.Reports.ExpenseSummary[] GetExpenseSummaryGroupedByProject(System.DateTime startDate, System.DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental) {
-            return base.Channel.GetExpenseSummaryGroupedByProject(startDate, endDate, clientIds, divisionIds, practiceIds, projectIds, active, projected, completed, proposed, inActive, experimental);
-        }
-        
-        public DataTransferObjects.Reports.ExpenseSummary[] GetExpenseSummaryGroupedBytype(System.DateTime startDate, System.DateTime endDate, string expenseTypeIds) {
-            return base.Channel.GetExpenseSummaryGroupedBytype(startDate, endDate, expenseTypeIds);
-        }
-        
-        public DataTransferObjects.Reports.ExpenseSummary[] ExpenseDetailReport(System.DateTime startDate, System.DateTime endDate, System.Nullable<int> projectId, System.Nullable<int> expenseTypeId) {
-            return base.Channel.ExpenseDetailReport(startDate, endDate, projectId, expenseTypeId);
-        }
-        
-        public DataTransferObjects.Reports.ExpenseSummary[] DetailedExpenseSummary(System.DateTime startDate, System.DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental, string expenseTypeIds) {
-            return base.Channel.DetailedExpenseSummary(startDate, endDate, clientIds, divisionIds, practiceIds, projectIds, active, projected, completed, proposed, inActive, experimental, expenseTypeIds);
         }
         
         public DataTransferObjects.Reports.TimeEntriesGroupByClientAndProject[] PersonTimeEntriesDetails(int personId, System.DateTime startDate, System.DateTime endDate) {
@@ -541,6 +419,7 @@ namespace PraticeManagement.ReportService {
                     bool showExperimental, 
                     bool showProposed, 
                     bool showInactive, 
+                    bool showAtRisk, 
                     System.DateTime periodStart, 
                     System.DateTime periodEnd, 
                     string salespersonIdsList, 
@@ -554,7 +433,7 @@ namespace PraticeManagement.ReportService {
                     bool IsQuarterColoumnsShown, 
                     bool IsYearToDateColoumnsShown, 
                     bool getFinancialsFromCache) {
-            return base.Channel.GetAttainmentProjectListMultiParameters(clientIds, showProjected, showCompleted, showActive, showInternal, showExperimental, showProposed, showInactive, periodStart, periodEnd, salespersonIdsList, practiceManagerIdsList, practiceIdsList, projectGroupIdsList, includeCurentYearFinancials, excludeInternalPractices, userLogin, IsMonthsColoumnsShown, IsQuarterColoumnsShown, IsYearToDateColoumnsShown, getFinancialsFromCache);
+            return base.Channel.GetAttainmentProjectListMultiParameters(clientIds, showProjected, showCompleted, showActive, showInternal, showExperimental, showProposed, showInactive, showAtRisk, periodStart, periodEnd, salespersonIdsList, practiceManagerIdsList, practiceIdsList, projectGroupIdsList, includeCurentYearFinancials, excludeInternalPractices, userLogin, IsMonthsColoumnsShown, IsQuarterColoumnsShown, IsYearToDateColoumnsShown, getFinancialsFromCache);
         }
         
         public DataTransferObjects.Project[] ProjectAttributionReport(System.DateTime startDate, System.DateTime endDate) {
@@ -563,6 +442,131 @@ namespace PraticeManagement.ReportService {
         
         public DataTransferObjects.Reports.ResourceExceptionReport[] ZeroHourlyRateExceptionReport(System.DateTime startDate, System.DateTime endDate) {
             return base.Channel.ZeroHourlyRateExceptionReport(startDate, endDate);
+        }
+        
+        public DataTransferObjects.Reports.ResourceExceptionReport[] ResourceAssignedOrUnassignedChargingExceptionReport(System.DateTime startDate, System.DateTime endDate, bool isUnassignedReport) {
+            return base.Channel.ResourceAssignedOrUnassignedChargingExceptionReport(startDate, endDate, isUnassignedReport);
+        }
+        
+        public DataTransferObjects.Person[] RecruitingMetricsReport(System.DateTime startDate, System.DateTime endDate) {
+            return base.Channel.RecruitingMetricsReport(startDate, endDate);
+        }
+        
+        public DataTransferObjects.ProjectFeedback[] ProjectFeedbackReport(
+                    string accountIds, 
+                    string businessGroupIds, 
+                    System.DateTime startDate, 
+                    System.DateTime endDate, 
+                    string projectStatus, 
+                    string projectIds, 
+                    string directorIds, 
+                    string practiceIds, 
+                    bool excludeInternalPractices, 
+                    string personIds, 
+                    string titleIds, 
+                    string reviewStartdateMonths, 
+                    string reviewEnddateMonths, 
+                    string projectmanagerIds, 
+                    string statusIds, 
+                    bool isExport, 
+                    string payTypeIds) {
+            return base.Channel.ProjectFeedbackReport(accountIds, businessGroupIds, startDate, endDate, projectStatus, projectIds, directorIds, practiceIds, excludeInternalPractices, personIds, titleIds, reviewStartdateMonths, reviewEnddateMonths, projectmanagerIds, statusIds, isExport, payTypeIds);
+        }
+        
+        public DataTransferObjects.Reports.BillingReport[] BillingReportByCurrency(System.DateTime startDate, System.DateTime endDate, string practiceIds, string accountIds, string businessUnitIds, string directorIds, string salesPersonIds, string projectManagerIds, string seniorManagerIds) {
+            return base.Channel.BillingReportByCurrency(startDate, endDate, practiceIds, accountIds, businessUnitIds, directorIds, salesPersonIds, projectManagerIds, seniorManagerIds);
+        }
+        
+        public DataTransferObjects.Reports.BillingReport[] BillingReportByHours(System.DateTime startDate, System.DateTime endDate, string practiceIds, string accountIds, string businessUnitIds, string directorIds, string salesPersonIds, string projectManagerIds, string seniorManagerIds) {
+            return base.Channel.BillingReportByHours(startDate, endDate, practiceIds, accountIds, businessUnitIds, directorIds, salesPersonIds, projectManagerIds, seniorManagerIds);
+        }
+        
+        public DataTransferObjects.Reports.ProjectLevelGroupedHours[] NonBillableReport(System.DateTime startDate, System.DateTime endDate, string projectNumber, string directorIds, string businessUnitIds, string practiceIds) {
+            return base.Channel.NonBillableReport(startDate, endDate, projectNumber, directorIds, businessUnitIds, practiceIds);
+        }
+        
+        public DataTransferObjects.Reports.BadgedResourcesByTime[] BadgedResourcesByTimeReport(string payTypes, string personStatusIds, System.DateTime startDate, System.DateTime endDate, int step) {
+            return base.Channel.BadgedResourcesByTimeReport(payTypes, personStatusIds, startDate, endDate, step);
+        }
+        
+        public DataTransferObjects.MSBadge[] ListBadgeResourcesByType(string paytypes, string personStatuses, System.DateTime startDate, System.DateTime endDate, bool isNotBadged, bool isClockNotStart, bool isBlocked, bool isBreak, bool badgedOnProject, bool isBadgedException, bool isNotBadgedException) {
+            return base.Channel.ListBadgeResourcesByType(paytypes, personStatuses, startDate, endDate, isNotBadged, isClockNotStart, isBlocked, isBreak, badgedOnProject, isBadgedException, isNotBadgedException);
+        }
+        
+        public DataTransferObjects.Reports.GroupByPractice[] ResourcesByPracticeReport(string paytypes, string PersonStatuses, string practices, System.DateTime startDate, System.DateTime endDate, int step) {
+            return base.Channel.ResourcesByPracticeReport(paytypes, PersonStatuses, practices, startDate, endDate, step);
+        }
+        
+        public DataTransferObjects.Reports.GroupbyTitle[] ResourcesByTitleReport(string paytypes, string personStatuses, string titles, System.DateTime startDate, System.DateTime endDate, int step) {
+            return base.Channel.ResourcesByTitleReport(paytypes, personStatuses, titles, startDate, endDate, step);
+        }
+        
+        public DataTransferObjects.MSBadge[] GetBadgeRequestNotApprovedList() {
+            return base.Channel.GetBadgeRequestNotApprovedList();
+        }
+        
+        public DataTransferObjects.MSBadge[] GetAllBadgeDetails(string payTypes, string personStatuses) {
+            return base.Channel.GetAllBadgeDetails(payTypes, personStatuses);
+        }
+        
+        public DataTransferObjects.Reports.PersonTimeEntriesTotals UtilizationReport(int personId, System.DateTime startDate, System.DateTime endDate) {
+            return base.Channel.UtilizationReport(personId, startDate, endDate);
+        }
+        
+        public DataTransferObjects.Reports.ManagementMeetingReport[] ManagedServiceReportByPerson(string paytypes, string personStatuses, System.DateTime startDate, System.DateTime endDate) {
+            return base.Channel.ManagedServiceReportByPerson(paytypes, personStatuses, startDate, endDate);
+        }
+        
+        public void SaveManagedParametersByPerson(string userLogin, decimal actualRevenuePerHour, decimal targetRevenuePerHour, decimal hoursUtilization, decimal targetRevenuePerAnnum) {
+            base.Channel.SaveManagedParametersByPerson(userLogin, actualRevenuePerHour, targetRevenuePerHour, hoursUtilization, targetRevenuePerAnnum);
+        }
+        
+        public DataTransferObjects.Reports.RevenueReport GetManagedParametersByPerson(string userLogin) {
+            return base.Channel.GetManagedParametersByPerson(userLogin);
+        }
+        
+        public DataTransferObjects.Reports.GroupbyTitle[] GetAveragePercentagesByTitles(string paytypes, string personStatuses, string titles, System.DateTime startDate, System.DateTime endDate) {
+            return base.Channel.GetAveragePercentagesByTitles(paytypes, personStatuses, titles, startDate, endDate);
+        }
+        
+        public DataTransferObjects.Project[] ProjectsListWithFilters(
+                    string clientIdsList, 
+                    bool showProjected, 
+                    bool showCompleted, 
+                    bool showActive, 
+                    bool showInternal, 
+                    bool showExperimental, 
+                    bool showProposed, 
+                    bool showInactive, 
+                    bool showAtRisk, 
+                    System.DateTime periodStart, 
+                    System.DateTime periodEnd, 
+                    string salespersonIdsList, 
+                    string ProjectOwnerIdsList, 
+                    string practiceIdsList, 
+                    string projectGroupIdsList, 
+                    string divisionIdsList, 
+                    string channelIdsList, 
+                    string revenueTypeIdsList, 
+                    string offeringIdsList, 
+                    string userLogin) {
+            return base.Channel.ProjectsListWithFilters(clientIdsList, showProjected, showCompleted, showActive, showInternal, showExperimental, showProposed, showInactive, showAtRisk, periodStart, periodEnd, salespersonIdsList, ProjectOwnerIdsList, practiceIdsList, projectGroupIdsList, divisionIdsList, channelIdsList, revenueTypeIdsList, offeringIdsList, userLogin);
+        }
+        
+        public DataTransferObjects.Reports.ExpenseSummary[] GetExpenseSummaryGroupedByProject(System.DateTime startDate, System.DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental, bool atRisk) {
+            return base.Channel.GetExpenseSummaryGroupedByProject(startDate, endDate, clientIds, divisionIds, practiceIds, projectIds, active, projected, completed, proposed, inActive, experimental, atRisk);
+        }
+        
+        public DataTransferObjects.Reports.ExpenseSummary[] GetExpenseSummaryGroupedBytype(System.DateTime startDate, System.DateTime endDate, string expenseTypeIds) {
+            return base.Channel.GetExpenseSummaryGroupedBytype(startDate, endDate, expenseTypeIds);
+        }
+        
+        public DataTransferObjects.Reports.ExpenseSummary[] ExpenseDetailReport(System.DateTime startDate, System.DateTime endDate, System.Nullable<int> projectId, System.Nullable<int> expenseTypeId) {
+            return base.Channel.ExpenseDetailReport(startDate, endDate, projectId, expenseTypeId);
+        }
+        
+        public DataTransferObjects.Reports.ExpenseSummary[] DetailedExpenseSummary(System.DateTime startDate, System.DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental, bool atRisk, string expenseTypeIds) {
+            return base.Channel.DetailedExpenseSummary(startDate, endDate, clientIds, divisionIds, practiceIds, projectIds, active, projected, completed, proposed, inActive, experimental, atRisk, expenseTypeIds);
         }
     }
 }
