@@ -26,9 +26,9 @@ BEGIN
 			p.Description
 	FROM dbo.v_Project AS p
 	WHERE p.ClientId = @ClientId AND p.IsAllowedToShow = 1 AND ((@IsOnlyEnternalProjects  = 1 AND p.IsInternal = 0) OR @IsOnlyEnternalProjects = 0 )
-		AND ( (@IsOnlyActiveAndProjective = 1 AND @IsOnlyActiveAndInternal = 0 AND p.ProjectStatusId IN (2,3))
-			OR (@IsOnlyActiveAndProjective = 0 AND @IsOnlyActiveAndInternal = 1 AND p.ProjectStatusId IN (3,6))
-			OR (@IsOnlyActiveAndProjective = 1 AND @IsOnlyActiveAndInternal = 1 AND p.ProjectStatusId IN (2,3,6))
+		AND ( (@IsOnlyActiveAndProjective = 1 AND @IsOnlyActiveAndInternal = 0 AND p.ProjectStatusId IN (2,3,8))
+			OR (@IsOnlyActiveAndProjective = 0 AND @IsOnlyActiveAndInternal = 1 AND p.ProjectStatusId IN (3,6,8))
+			OR (@IsOnlyActiveAndProjective = 1 AND @IsOnlyActiveAndInternal = 1 AND p.ProjectStatusId IN (2,3,6,8))
 			OR (@IsOnlyActiveAndInternal = 0 AND @IsOnlyActiveAndProjective = 0)
 			)
 	ORDER BY p.Name
