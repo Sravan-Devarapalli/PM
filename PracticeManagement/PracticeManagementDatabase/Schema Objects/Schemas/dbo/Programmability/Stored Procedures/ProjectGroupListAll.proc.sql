@@ -62,7 +62,7 @@ AS
 										FROM Project AS proj
 										WHERE proj.SalesPersonId = @PersonId)
 						 )
-			ORDER BY Name
+			ORDER BY c.Name
 
 	ELSE 
 			SELECT
