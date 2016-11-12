@@ -24,7 +24,7 @@ BEGIN
 	 (
 		  SELECT PC.ProjectId, MAX(CASE WHEN PC.ReferralScore <> -1 THEN ModifiedDate END) AS ModifiedDate,COUNT(*) AS NumberOfCSATs
 		  FROM dbo.ProjectCSAT PC
-		  INNER JOIN dbo.Project P ON pc.ProjectId=p.ProjectId AND P.ProjectStatusId IN (3,4)
+		  INNER JOIN dbo.Project P ON pc.ProjectId=p.ProjectId AND P.ProjectStatusId IN (3,4,8)
 		  WHERE PC.CompletionDate BETWEEN @StartDate AND @EndDate
 		        AND	(
 						@PracticeIds IS NULL
@@ -105,7 +105,7 @@ BEGIN
 			    CSATReviewer.LastName+', '+ISNULL(CSATReviewer.PreferredFirstName,CSATReviewer.FirstName) AS CSATReviewer,
 				PCSAT.Comments
 		FROM Project P
-		INNER JOIN dbo.Client C ON C.ClientId = P.ClientId AND P.ProjectStatusId IN (3,4) AND p.IsAllowedToShow =1 AND P.ProjectId != 174
+		INNER JOIN dbo.Client C ON C.ClientId = P.ClientId AND P.ProjectStatusId IN (3,4,8) AND p.IsAllowedToShow =1 AND P.ProjectId != 174
 		INNER JOIN dbo.ProjectGroup PG ON PG.GroupId = P.GroupId 
 		INNER JOIN dbo.BusinessGroup BG ON BG.BusinessGroupId = PG.BusinessGroupId
 		INNER JOIN dbo.ProjectStatus PS ON PS.ProjectStatusId = P.ProjectStatusId
