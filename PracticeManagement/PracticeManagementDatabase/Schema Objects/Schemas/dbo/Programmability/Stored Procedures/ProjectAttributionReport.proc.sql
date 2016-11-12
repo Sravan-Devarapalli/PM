@@ -27,7 +27,7 @@ BEGIN
 				P.ClientId,
 				P.GroupId
 		FROM dbo.Attribution AS A
-		INNER JOIN dbo.Project AS P ON P.ProjectId = A.ProjectId AND  P.ProjectStatusId IN (2,3,4) AND @StartDate <= ISNULL(A.EndDate,P.EndDate) AND ISNULL(A.StartDate,P.StartDate) <= @EndDate
+		INNER JOIN dbo.Project AS P ON P.ProjectId = A.ProjectId AND  P.ProjectStatusId IN (2,3,4,8) AND @StartDate <= ISNULL(A.EndDate,P.EndDate) AND ISNULL(A.StartDate,P.StartDate) <= @EndDate
 		LEFT JOIN dbo.Person AS Per ON A.AttributionRecordTypeId = 1 AND Per.PersonId = A.TargetId
 		LEFT JOIN dbo.Practice AS Pr ON A.AttributionRecordTypeId = 2 AND Pr.PracticeId= A.TargetId
 		LEFT JOIN dbo.Pay AS pay ON A.AttributionRecordTypeId = 1 AND pay.Person = Per.PersonId AND A.StartDate <= pay.EndDate-1 AND pay.StartDate <= A.EndDate
