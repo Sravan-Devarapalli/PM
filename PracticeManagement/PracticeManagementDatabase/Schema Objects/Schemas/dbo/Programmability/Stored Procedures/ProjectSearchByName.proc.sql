@@ -23,7 +23,7 @@ BEGIN
 		  FROM dbo.Project AS P
 		  INNER JOIN dbo.ProjectStatus AS PS ON PS.ProjectStatusId = P.ProjectStatusId
 		  INNER JOIN dbo.Client AS C ON C.ClientId = P.ClientId
-		  WHERE  P.ProjectStatusId IN (2,3,4,6) AND P.Name LIKE @SearchText COLLATE SQL_Latin1_General_CP1_CI_AS
+		  WHERE  P.ProjectStatusId IN (2,3,4,6,8) AND P.Name LIKE @SearchText COLLATE SQL_Latin1_General_CP1_CI_AS
 	
 			/*
 			ProjectStatusId	Name
