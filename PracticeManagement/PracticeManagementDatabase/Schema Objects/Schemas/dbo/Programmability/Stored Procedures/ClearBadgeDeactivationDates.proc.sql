@@ -12,7 +12,7 @@ BEGIN
 				JOIN dbo.Milestone MS ON MS.MilestoneId = MP.MilestoneId
 				JOIN dbo.MSBadge M ON M.PersonId = MP.PersonId
 				JOIN dbo.Project P ON P.ProjectId = MS.ProjectId
-				WHERE P.ProjectStatusId IN (1,2,3,4) AND MP.PersonId = @PersonId AND MPE.IsApproved = 1 AND M.DeactivatedDate IS NOT NULL AND (MPE.BadgeStartDate <= M.OrganicBreakEndDate AND M.DeactivatedDate <= MPE.BadgeEndDate)
+				WHERE P.ProjectStatusId IN (1,2,3,4,8) AND MP.PersonId = @PersonId AND MPE.IsApproved = 1 AND M.DeactivatedDate IS NOT NULL AND (MPE.BadgeStartDate <= M.OrganicBreakEndDate AND M.DeactivatedDate <= MPE.BadgeEndDate)
 			  )
 	BEGIN
 
