@@ -128,6 +128,8 @@ namespace PraticeManagement.MilestoneService {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public partial class MilestoneServiceClient : System.ServiceModel.ClientBase<PraticeManagement.MilestoneService.IMilestoneService>, PraticeManagement.MilestoneService.IMilestoneService {
         
+    
+        
         public MilestoneServiceClient(string endpointConfigurationName) : 
                 base(endpointConfigurationName) {
         }
