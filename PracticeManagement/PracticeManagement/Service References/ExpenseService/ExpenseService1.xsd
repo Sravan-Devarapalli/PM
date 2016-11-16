@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://ws60/PracticeManagementService/ExpenseService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/DataTransferObjects" />
+  <xs:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/ExpenseService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/DataTransferObjects" />
   <xs:element name="GetExpenseBasisList">
     <xs:complexType>
       <xs:sequence />
