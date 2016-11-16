@@ -60,6 +60,7 @@ namespace PraticeManagement.VendorService {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public partial class VendorServiceClient : System.ServiceModel.ClientBase<PraticeManagement.VendorService.IVendorService>, PraticeManagement.VendorService.IVendorService {
         
+              
         public VendorServiceClient(string endpointConfigurationName) : 
                 base(endpointConfigurationName) {
         }
