@@ -261,6 +261,7 @@ namespace PraticeManagement.ReportService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public partial class ReportServiceClient : System.ServiceModel.ClientBase<PraticeManagement.ReportService.IReportService>, PraticeManagement.ReportService.IReportService {
+   
         
         public ReportServiceClient(string endpointConfigurationName) : 
                 base(endpointConfigurationName) {
