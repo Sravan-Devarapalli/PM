@@ -35,7 +35,7 @@
     <SccLocalPath>..\..</SccLocalPath>
     <ValidateCasingOnIdentifiers>False</ValidateCasingOnIdentifiers>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9f2f2790-4d08-4c51-ab7e-c8f2bd1456c8}</ProjectGuid>
+    <ProjectGuid>{67cbc824-a49e-4e9b-a947-360f3dfe65c3}</ProjectGuid>
     <GenerateDatabaseFile>False</GenerateDatabaseFile>
     <GenerateCreateScript>False</GenerateCreateScript>
     <TargetLanguage>CS</TargetLanguage>
