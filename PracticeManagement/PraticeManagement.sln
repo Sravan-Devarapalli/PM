@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "ClientDAL\DataAccess.csproj", "{EDB5F24C-B46B-46B3-B7F7-644BC9DA8648}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PracticeManagementService", "PracticeManagementService\PracticeManagementService.csproj", "{7177AF0B-588F-4CD2-A174-5E2488DBD636}"
@@ -12,7 +14,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PracticeManagement", "Pract
 		{7177AF0B-588F-4CD2-A174-5E2488DBD636} = {7177AF0B-588F-4CD2-A174-5E2488DBD636}
 	EndProjectSection
 EndProject
-Project("{C8D11400-126E-41CD-887F-60BD40844F9E}") = "PracticeManagementDatabase", "PracticeManagementDatabase\PracticeManagementDatabase.dbproj", "{67CBC824-A49E-4E9B-A947-360F3DFE65C3}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "PracticeManagementDatabase", "PracticeManagementDatabase\PracticeManagementDatabase.sqlproj", "{67CBC824-A49E-4E9B-A947-360F3DFE65C3}"
 EndProject
 Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "PMWebAzureService", "PMWebAzureService\PMWebAzureService.ccproj", "{194AB1D3-45A9-4B60-B9A0-03CAA749331C}"
 EndProject
@@ -25,43 +27,6 @@ EndProject
 Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "PMAzureSchedular", "PMAzureSchedular\PMAzureSchedular.ccproj", "{243269A9-1061-40B4-886A-4549FE156554}"
 EndProject
 Global
-	GlobalSection(SourceCodeControl) = preSolution
-		SccNumberOfProjects = 11
-		SccProjectName0 = SurroundSCMScci
-		SccLocalPath0 = ..
-		SccProvider0 = MSSCCI:Surround\u0020SCM
-		SccProjectFilePathRelativizedFromConnection0 = PM\\
-		SccProjectUniqueName1 = ClientDAL\\DataAccess.csproj
-		SccLocalPath1 = ..
-		SccProjectFilePathRelativizedFromConnection1 = PM\\ClientDAL\\
-		SccProjectUniqueName2 = PracticeManagementService\\PracticeManagementService.csproj
-		SccLocalPath2 = ..
-		SccProjectFilePathRelativizedFromConnection2 = PM\\PracticeManagementService\\
-		SccProjectUniqueName3 = DataTransferObjects\\DataTransferObjects.csproj
-		SccLocalPath3 = ..
-		SccProjectFilePathRelativizedFromConnection3 = PM\\DataTransferObjects\\
-		SccProjectUniqueName4 = PracticeManagement\\PracticeManagement.csproj
-		SccLocalPath4 = ..
-		SccProjectFilePathRelativizedFromConnection4 = PM\\PracticeManagement\\
-		SccProjectUniqueName5 = PracticeManagementDatabase\\PracticeManagementDatabase.dbproj
-		SccLocalPath5 = ..
-		SccProjectFilePathRelativizedFromConnection5 = PM\\PracticeManagementDatabase\\
-		SccProjectUniqueName6 = PMWebAzureService\\PMWebAzureService.ccproj
-		SccLocalPath6 = ..
-		SccProjectFilePathRelativizedFromConnection6 = PM\\PMWebAzureService\\
-		SccProjectUniqueName7 = DEVAzureService\\DEVAzureService.ccproj
-		SccLocalPath7 = ..
-		SccProjectFilePathRelativizedFromConnection7 = PM\\DEVAzureService\\
-		SccProjectUniqueName8 = UpdatePracticeAndSeniority\\UpdatePracticeAndSeniority.csproj
-		SccLocalPath8 = ..
-		SccProjectFilePathRelativizedFromConnection8 = PM\\UpdatePracticeAndSeniority\\
-		SccProjectUniqueName9 = PMAzureSchedular\\PMAzureSchedular.ccproj
-		SccLocalPath9 = ..
-		SccProjectFilePathRelativizedFromConnection9 = PM\\PMAzureSchedular\\
-		SccProjectUniqueName10 = DEVAzureSchedular\\DEVAzureSchedular.ccproj
-		SccLocalPath10 = ..
-		SccProjectFilePathRelativizedFromConnection10 = PM\\DEVAzureSchedular\\
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -288,6 +253,43 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 11
+		SccProjectName0 = SurroundSCMScci
+		SccLocalPath0 = ..
+		SccProvider0 = MSSCCI:Surround\u0020SCM
+		SccProjectFilePathRelativizedFromConnection0 = PM_New\\
+		SccProjectUniqueName1 = ClientDAL\\DataAccess.csproj
+		SccLocalPath1 = ..
+		SccProjectFilePathRelativizedFromConnection1 = PM_New\\ClientDAL\\
+		SccProjectUniqueName2 = PracticeManagementService\\PracticeManagementService.csproj
+		SccLocalPath2 = ..
+		SccProjectFilePathRelativizedFromConnection2 = PM_New\\PracticeManagementService\\
+		SccProjectUniqueName3 = DataTransferObjects\\DataTransferObjects.csproj
+		SccLocalPath3 = ..
+		SccProjectFilePathRelativizedFromConnection3 = PM_New\\DataTransferObjects\\
+		SccProjectUniqueName4 = PracticeManagement\\PracticeManagement.csproj
+		SccLocalPath4 = ..
+		SccProjectFilePathRelativizedFromConnection4 = PM_New\\PracticeManagement\\
+		SccProjectUniqueName5 = PMWebAzureService\\PMWebAzureService.ccproj
+		SccLocalPath5 = ..
+		SccProjectFilePathRelativizedFromConnection5 = PM_New\\PMWebAzureService\\
+		SccProjectUniqueName6 = DEVAzureService\\DEVAzureService.ccproj
+		SccLocalPath6 = ..
+		SccProjectFilePathRelativizedFromConnection6 = PM_New\\DEVAzureService\\
+		SccProjectUniqueName7 = UpdatePracticeAndSeniority\\UpdatePracticeAndSeniority.csproj
+		SccLocalPath7 = ..
+		SccProjectFilePathRelativizedFromConnection7 = PM_New\\UpdatePracticeAndSeniority\\
+		SccProjectUniqueName8 = PMAzureSchedular\\PMAzureSchedular.ccproj
+		SccLocalPath8 = ..
+		SccProjectFilePathRelativizedFromConnection8 = PM_New\\PMAzureSchedular\\
+		SccProjectUniqueName9 = DEVAzureSchedular\\DEVAzureSchedular.ccproj
+		SccLocalPath9 = ..
+		SccProjectFilePathRelativizedFromConnection9 = PM_New\\DEVAzureSchedular\\
+		SccProjectUniqueName10 = PracticeManagementDatabase\\PracticeManagementDatabase.sqlproj
+		SccLocalPath10 = ..
+		SccProjectFilePathRelativizedFromConnection10 = PM_New\\PracticeManagementDatabase\\
 	EndGlobalSection
 EndGlobal
 
