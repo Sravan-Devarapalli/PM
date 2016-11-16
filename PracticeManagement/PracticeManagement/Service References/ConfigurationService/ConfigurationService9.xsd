@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/DataTransferObjects" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/DataTransferObjects" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://ggku3sys52.ggktech.local/PracticeManagementService/ConfigurationService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
   <xs:complexType name="ArrayOfEmailTemplate">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="EmailTemplate" nillable="true" type="tns:EmailTemplate" />
