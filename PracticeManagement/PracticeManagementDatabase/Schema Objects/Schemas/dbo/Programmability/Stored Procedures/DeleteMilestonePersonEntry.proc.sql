@@ -17,7 +17,8 @@ BEGIN
 		DECLARE @MilestonePersonId   INT,
 				@PersonId INT,
 				@UpdatedBy INT,
-				@ProjectId INT
+				@ProjectId INT,
+				@MilestoneId INT
 
 	SELECT @UpdatedBy = PersonId FROM dbo.Person WHERE Alias = @UserLogin
 	DECLARE @Today DATETIME
@@ -27,7 +28,7 @@ BEGIN
 	FROM dbo.MilestonePersonEntry
 	WHERE Id = @Id
 	
-	SELECT @PersonId= MP.PersonId, @ProjectId = M.ProjectId
+	SELECT @PersonId= MP.PersonId, @ProjectId = M.ProjectId, @MilestoneId =MP.MilestoneId
 	FROM dbo.MilestonePerson MP
 	JOIN dbo.Milestone M ON M.MilestoneId = MP.MilestoneId
 	WHERE MilestonePersonId = @MilestonePersonId
@@ -49,6 +50,17 @@ BEGIN
 	UPDATE dbo.Project
 	SET CreatedDate = @Today
 	WHERE ProjectId = @ProjectId
+
+	IF EXISTS(SELECT 1 FROM Milestone M Where M.MilestoneId = @MilestoneId AND M.IsHourlyAmount = 0 AND M.Amount IS NULL)
+	BEGIN
+		EXEC UpdateFixedMilestoneAmount @MilestoneId= @MilestoneId
+	END
+
+	IF EXISTS(SELECT 1 FROM Milestone M Where M.MilestoneId = @MilestoneId AND M.IsHourlyAmount = 0 )
+	BEGIN
+		EXEC dbo.UpdateFixedFeeMilestoneDiscount @MilestoneId= @MilestoneId
+	END
+
 
 		-- End logging session
 	EXEC dbo.SessionLogUnprepare
