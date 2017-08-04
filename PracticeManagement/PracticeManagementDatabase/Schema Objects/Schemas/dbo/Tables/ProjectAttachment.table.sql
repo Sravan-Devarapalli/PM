@@ -9,3 +9,8 @@
    CONSTRAINT PK_ProjectSOW_Id PRIMARY KEY CLUSTERED(Id),
    CONSTRAINT FK_ProjectSOW_ProjectId FOREIGN KEY(ProjectId) REFERENCES  dbo.Project(ProjectId)
 );
+GO
+
+CREATE NONCLUSTERED INDEX [IX_ProjectAttachment_ProjectId]
+ON [dbo].[ProjectAttachment] ([ProjectId])
+GO
