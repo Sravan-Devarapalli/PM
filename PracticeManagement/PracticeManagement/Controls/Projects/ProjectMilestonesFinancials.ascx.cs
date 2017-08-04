@@ -482,8 +482,14 @@ namespace PraticeManagement.Controls.Projects
             {
                 HostingPage.noMileStones = false;
                 var imgMilestoneDelete = e.Item.FindControl("imgMilestoneDelete") as ImageButton;
+                var imgbtnEdit = e.Item.FindControl("imgbtnEdit") as ImageButton;
                 int milestoneId;
+
+
                 int.TryParse(imgMilestoneDelete.Attributes["MilestoneId"], out milestoneId);
+                imgMilestoneDelete.Visible = imgbtnEdit.Visible = (HostingPage.Project.TierOneExceptionStatus != 1 && HostingPage.Project.TierTwoExceptionStatus != 1);
+                //var lblType = e.Item.FindControl("lblMilestoneType") as Label;
+
                 var milestone = new Milestone { Id = milestoneId };
                 if (milestonesSeniorityAnalyzer.OneWithGreaterSeniorityExists(
                     DataHelper.GetPersonsInMilestone(milestone)))
