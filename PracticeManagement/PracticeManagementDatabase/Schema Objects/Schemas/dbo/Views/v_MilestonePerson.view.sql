@@ -59,7 +59,10 @@ AS
 		   mpe.BadgeStartDate,
 		   mpe.BadgeEndDate,
 		   mpe.IsBadgeException,
-		   mpe.IsApproved
+		   mpe.IsApproved,
+		   mpe.Discount as MilestonePersonDiscount,
+		   mpe.LockDiscount,
+		   mpe.IsNewToBudget
 	  FROM dbo.MilestonePerson AS mp
 	       INNER JOIN dbo.MilestonePersonEntry AS mpe ON mp.MilestonePersonId = mpe.MilestonePersonId
 	       INNER JOIN dbo.v_Milestone AS m ON mp.MilestoneId = m.MilestoneId
