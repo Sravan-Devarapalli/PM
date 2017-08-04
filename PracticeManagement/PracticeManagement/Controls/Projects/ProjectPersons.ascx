@@ -4,79 +4,89 @@
     <asp:GridView ID="gvPeople" runat="server" AutoGenerateColumns="False" EmptyDataText="There is nothing to be displayed here."
         CssClass="CompPerfTable WholeWidth" GridLines="None"
         BackColor="White" DataSourceID="odsMilestonePersons">
-        <AlternatingRowStyle CssClass="alterrow"/>
+        <AlternatingRowStyle CssClass="alterrow" />
         <Columns>
             <asp:TemplateField HeaderText="Person Name">
-                <HeaderStyle CssClass="Width20Percent"/>
+                <HeaderStyle CssClass="Width20Percent" />
                 <HeaderTemplate>
                     <div class="ie-bg">
-                        Person Name</div>
+                        Person Name
+                    </div>
                 </HeaderTemplate>
                 <ItemTemplate>
                     <asp:HyperLink ID="hlPersonName" runat="server" NavigateUrl='<%# GetMilestonePersonRedirectUrl(Eval("Milestone.Id"), Eval("Id")) %>'
                         Text='<%# HttpUtility.HtmlEncode(string.Format("{0}, {1}", Eval("Person.LastName"), Eval("Person.FirstName"))) %>'
                         onclick='<%# "javascript:checkDirty(\"" + PERSON_TARGET + "\", " + string.Format("\"{0}:{1}\"", Eval("Milestone.Id"), Eval("Id")) + ")" %>' />
+                    &nbsp;
+                    <asp:Image ID="imgNewResource" runat="server" AlternateText="New Resource to the budget" ImageUrl="~/Images/resource_add_icon.png" ToolTip="New to Budget" Visible='<%#Eval("Entries[0].IsNewToBudget") %>' CssClass="Width15Px" />
+                    <asp:Image ID="imgUpdateResource" runat="server" AlternateText="Updated Resource to the budget" ImageUrl="~/Images/alert_Icon.png" Visible="false" />
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:TemplateField HeaderText="Role">
-                <HeaderStyle CssClass="Width10Percent"/>
+                <HeaderStyle CssClass="Width10Percent" />
                 <HeaderTemplate>
                     <div class="ie-bg">
-                        Role</div>
+                        Role
+                    </div>
                 </HeaderTemplate>
                 <ItemTemplate>
                     <asp:Label ID="lblPersonRole" runat="server" Text='<%# Eval("Entries[0].Role.Name") %>'></asp:Label>
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:TemplateField>
-                <HeaderStyle CssClass="Width32Percent"/>
+                <HeaderStyle CssClass="Width32Percent" />
                 <HeaderTemplate>
                     <div class="ie-bg">
-                        Milestone Name</div>
+                        Milestone Name
+                    </div>
                 </HeaderTemplate>
                 <ItemTemplate>
                     <asp:Label ID="lblMilestoneName" runat="server" Text=' <%# Eval("Milestone.HtmlEncodedDescription") %>'></asp:Label>
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:TemplateField HeaderText="Start">
-            <ItemStyle CssClass="alignCenter" />
-                <HeaderStyle CssClass="Width8Percent"/>
+                <ItemStyle CssClass="alignCenter" />
+                <HeaderStyle CssClass="Width8Percent" />
                 <HeaderTemplate>
                     <div class="ie-bg">
-                        Start</div>
+                        Start
+                    </div>
                 </HeaderTemplate>
                 <ItemTemplate>
                     <asp:Label ID="lblStartDate0" runat="server" Text='<%# ((DateTime)Eval("Entries[0].StartDate")).ToString("MM/dd/yyyy") %>'></asp:Label>
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:TemplateField HeaderText="End">
-            <ItemStyle CssClass="alignCenter" />
+                <ItemStyle CssClass="alignCenter" />
                 <HeaderStyle CssClass="Width8Percent" />
                 <HeaderTemplate>
                     <div class="ie-bg">
-                        End</div>
+                        End
+                    </div>
                 </HeaderTemplate>
                 <ItemTemplate>
                     <asp:Label ID="lblStartDate1" runat="server" Text='<%# ((DateTime?)Eval("Entries[0].EndDate")).HasValue ? ((DateTime)Eval("Entries[0].EndDate")).ToString("MM/dd/yyyy") : string.Empty %>'></asp:Label>
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:TemplateField>
-            <ItemStyle CssClass="alignCenter" />
-                <HeaderStyle CssClass="Width11Percent TextAlignCenterImp"/>
+                <ItemStyle CssClass="alignCenter" />
+                <HeaderStyle CssClass="Width11Percent TextAlignCenterImp" />
                 <HeaderTemplate>
                     <div class="ie-bg">
-                        Assigned Hours</div>
+                        Assigned Hours
+                    </div>
                 </HeaderTemplate>
                 <ItemTemplate>
                     <asp:Label ID="lblHoursAssigned" runat="server" Text='<%# GetDoubleFormat((decimal)Eval("Entries[0].ProjectedWorkload")) %>'></asp:Label>
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:TemplateField>
-            <ItemStyle CssClass="alignCenter" />
+                <ItemStyle CssClass="alignCenter" />
                 <HeaderStyle CssClass="Width11Percent TextAlignCenterImp" />
                 <HeaderTemplate>
                     <div class="ie-bg">
-                        Assigned Per Day</div>
+                        Assigned Per Day
+                    </div>
                 </HeaderTemplate>
                 <ItemTemplate>
                     <asp:Label ID="lblHoursPerMonth" runat="server" Text='<%# Eval("Entries[0].HoursPerDay") %>'></asp:Label>
@@ -85,9 +95,9 @@
         </Columns>
     </asp:GridView>
 </asp:Panel>
-<asp:ObjectDataSource ID="odsMilestonePersons" runat="server" 
-    SelectMethod="GetMilestonePersonListByProjectWithoutPay" 
-    TypeName="PraticeManagement.Controls.DataHelper" >
+<asp:ObjectDataSource ID="odsMilestonePersons" runat="server"
+    SelectMethod="GetMilestonePersonListByProjectWithoutPay"
+    TypeName="PraticeManagement.Controls.DataHelper">
     <SelectParameters>
         <asp:QueryStringParameter Name="projectId" QueryStringField="id" Type="Int32" />
     </SelectParameters>
