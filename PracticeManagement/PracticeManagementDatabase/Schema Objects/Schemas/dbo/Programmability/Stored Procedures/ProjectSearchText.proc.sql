@@ -159,7 +159,8 @@ AS
 
 
 		-- Search for a project with milestone(s)
-		;WITH FoundProjects AS (
+		SELECT * INTO #FoundProjects FROM
+		(
 		SELECT m.ClientId,
 			   m.ProjectId,
 			   m.MilestoneId,
@@ -249,9 +250,10 @@ AS
 		  AND (@SalespersonIds IS NULL OR P.SalesPersonId IN (SELECT * FROM @SelectedSalespersonsList))
 		  AND (@PersonId is NULL OR projManagers.ProjectAccessId = @PersonId  OR p.SalesPersonId = @PersonId OR projManagers.ProjectAccessId in (SELECT * FROM @ProjectOwnerList)
 								  OR p.ProjectManagerId = @PersonId OR p.ProjectManagerId in (select * from @ProjectOwnerList))
-		)
+		) temp
+
 		SELECT DISTINCT FP.*
-		FROM FoundProjects FP
+		FROM #FoundProjects FP
 		LEFT JOIN ProjectAccess PM ON PM.ProjectId = FP.ProjectId
 		WHERE FP.ProjectId <> @DefaultProjectId
 			AND ( @UserHasHighRoleThanProjectLead IS NULL 
@@ -269,3 +271,4 @@ AS
 			)
 		ORDER BY FP.ProjectName, FP.MilestoneStartDate
 
+		DROP table #FoundProjects
