@@ -301,6 +301,78 @@ namespace PraticeManagement.Controls.Milestones {
         protected global::AjaxControlToolkit.FilteredTextBoxExtender ftetxtAmount;
         
         /// <summary>
+        /// tdDiscountInsert control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell tdDiscountInsert;
+        
+        /// <summary>
+        /// lblDoller control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDoller;
+        
+        /// <summary>
+        /// txtDiscountInsert control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtDiscountInsert;
+        
+        /// <summary>
+        /// lblPercentage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblPercentage;
+        
+        /// <summary>
+        /// cmpDiscount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CompareValidator cmpDiscount;
+        
+        /// <summary>
+        /// tdDiscountLockInsert control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell tdDiscountLockInsert;
+        
+        /// <summary>
+        /// chbDiscountLockInsert control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chbDiscountLockInsert;
+        
+        /// <summary>
+        /// cvDiscountLockInsert control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator cvDiscountLockInsert;
+        
+        /// <summary>
         /// txtHoursInPeriodInsert control.
         /// </summary>
         /// <remarks>
