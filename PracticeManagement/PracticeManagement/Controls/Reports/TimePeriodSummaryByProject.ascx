@@ -2,8 +2,8 @@
     Inherits="PraticeManagement.Controls.Reports.TimePeriodSummaryByProject" %>
 <%@ Register Src="~/Controls/FilteredCheckBoxList.ascx" TagName="FilteredCheckBoxList"
     TagPrefix="uc" %>
-<%@ Register Src="~/Controls/Reports/ByAccount/ByBusinessDevelopment.ascx" TagName="GroupByBusinessDevelopment"
-    TagPrefix="uc" %>
+<%--<%@ Register Src="~/Controls/Reports/ByAccount/ByBusinessDevelopment.ascx" TagName="GroupByBusinessDevelopment"
+    TagPrefix="uc" %>--%>
 <%@ Register Src="~/Controls/Reports/ProjectDetailTabByResource.ascx" TagName="ProjectDetailTabByResource"
     TagPrefix="uc" %>
 <table class="PaddingTenPx TimePeriodSummaryReportHeader">
@@ -28,8 +28,7 @@
                     <td class="Width27Percent">
                         <table class="ReportHeaderTotalsTable">
                             <tr>
-                                <td class="FirstTd">
-                                    Total Actual Hours
+                                <td class="FirstTd">Total Actual Hours
                                 </td>
                             </tr>
                             <tr>
@@ -42,8 +41,7 @@
                     <td class="Width27Percent">
                         <table class="ReportHeaderTotalsTable">
                             <tr>
-                                <td class="FirstTd">
-                                    Avg Hours
+                                <td class="FirstTd">Avg Hours
                                 </td>
                             </tr>
                             <tr>
@@ -56,8 +54,7 @@
                     <td class="Width27Percent vBottom">
                         <table class="ReportHeaderBillAndNonBillTable">
                             <tr>
-                                <td>
-                                    BILLABLE
+                                <td>BILLABLE
                                 </td>
                             </tr>
                             <tr>
@@ -66,8 +63,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>
-                                    NON-BILLABLE
+                                <td>NON-BILLABLE
                                 </td>
                             </tr>
                             <tr>
@@ -90,8 +86,7 @@
                                     </table>
                                     <table>
                                         <tr id="trBillable" runat="server" title="Billable Percentage.">
-                                            <td class="billingGraph">
-                                            </td>
+                                            <td class="billingGraph"></td>
                                         </tr>
                                     </table>
                                 </td>
@@ -111,16 +106,14 @@
                                     </table>
                                     <table>
                                         <tr id="trNonBillable" runat="server" title="Non-Billable Percentage.">
-                                            <td class="nonBillingGraph">
-                                            </td>
+                                            <td class="nonBillingGraph"></td>
                                         </tr>
                                     </table>
                                 </td>
                             </tr>
                         </table>
                     </td>
-                    <td class="Width2Percent">
-                    </td>
+                    <td class="Width2Percent"></td>
                 </tr>
             </table>
         </td>
@@ -129,22 +122,16 @@
 <div class="tab-pane">
     <table class="WholeWidthWithHeight">
         <tr>
-            <td colspan="4" class="Width90Percent">
-            </td>
+            <td colspan="4" class="Width90Percent"></td>
             <td class="textRight Width10Percent padRight5">
                 <table class="textRight WholeWidth">
                     <tr>
-                        <td>
-                            Export:
-                        </td>
-                        <td>
+
+                        <td>Export: &nbsp;
                             <asp:Button ID="btnExportToExcel" runat="server" Text="Excel" OnClick="btnExportToExcel_OnClick"
                                 UseSubmitBehavior="false" ToolTip="Export To Excel" />
                         </td>
-                        <td>
-                            <asp:Button ID="btnExportToPDF" runat="server" Text="PDF" OnClick="btnExportToPDF_OnClick"
-                                Enabled="false" UseSubmitBehavior="false" ToolTip="Export To PDF" />
-                        </td>
+
                     </tr>
                 </table>
             </td>
@@ -163,24 +150,25 @@
                 <table id="tblProjectSummaryByProject" class="tablesorter TimePeriodByproject WholeWidth">
                     <thead>
                         <tr>
-                            <th class="ProjectColoum">
-                                Project
+                            <th class="ProjectColoum">Project
                                 <img alt="Filter" title="Filter" src="../../Images/search_filter.png" runat="server"
                                     id="imgClientFilter" class="FilterImg" />
                                 <AjaxControlToolkit:PopupControlExtender ID="pceClient" runat="server" TargetControlID="imgClientFilter"
                                     PopupControlID="pnlFilterResource" Position="Bottom">
                                 </AjaxControlToolkit:PopupControlExtender>
                             </th>
-                            <th class="Width110Px">
-                                Status
+                            <th class="Width110Px">Status
                                 <img alt="Filter" title="Filter" src="../../Images/search_filter.png" runat="server"
                                     id="imgProjectStatusFilter" class="FilterImg" />
                                 <AjaxControlToolkit:PopupControlExtender ID="pceStatus" runat="server" TargetControlID="imgProjectStatusFilter"
                                     PopupControlID="pnlFilterProjectStatus" Position="Bottom">
                                 </AjaxControlToolkit:PopupControlExtender>
                             </th>
-                            <th class="Width110Px">
-                                Billing
+
+                            <th class="Width110Px">Billing
+                            </th>
+                            <th class="Width125Px">
+                                <asp:Label ID="lblBudgetHours" runat="server" Text="Budget Hours"></asp:Label>
                             </th>
                             <th class="Width125Px">
                                 <asp:Label ID="lblProjectedHours" runat="server" Text="Projected Hours"></asp:Label>
@@ -236,6 +224,9 @@
                 </td>
                 <td>
                     <%# Eval("BillingType")%>
+                </td>
+                <td>
+                    <%# GetDoubleFormat((double)Eval("BudgetHours"))%>
                 </td>
                 <td>
                     <%# GetDoubleFormat((double)Eval("ForecastedHours"))%>
@@ -299,11 +290,10 @@
                                 <table class="WholeWidth">
                                     <tr>
                                         <td class="Width97Percent">
-                                            <uc:GroupByBusinessDevelopment ID="ucGroupByBusinessDevelopment" runat="server" Visible="false" />
+                                            <%--<uc:GroupByBusinessDevelopment ID="ucGroupByBusinessDevelopment" runat="server" Visible="false" />--%>
                                             <uc:ProjectDetailTabByResource ID="ucProjectDetailReport" runat="server" Visible="false" />
                                         </td>
-                                        <td class="Width3Percent">
-                                        </td>
+                                        <td class="Width3Percent"></td>
                                     </tr>
                                 </table>
                             </div>
@@ -340,24 +330,21 @@
 <asp:Panel ID="pnlTotalActualHours" Style="display: none;" runat="server" CssClass="pnlTotal">
     <table>
         <tr>
-            <td class="fontBold">
-                Total Billable:
+            <td class="fontBold">Total Billable:
             </td>
             <td>
                 <asp:Label ID="lblTotalBillablePanlActual" runat="server"></asp:Label>
             </td>
         </tr>
         <tr>
-            <td class="fontBold">
-                Total Non-Billable:
+            <td class="fontBold">Total Non-Billable:
             </td>
             <td>
                 <asp:Label ID="lblTotalNonBillablePanlActual" runat="server"></asp:Label>
             </td>
         </tr>
         <tr>
-            <td class="fontBold padRight15">
-                Total Actual Hours:
+            <td class="fontBold padRight15">Total Actual Hours:
             </td>
             <td>
                 <asp:Label ID="lblTotalActualHours" runat="server"></asp:Label>
@@ -388,26 +375,27 @@
                     ToolTip="Close" Text="X"></asp:Button>
             </td>
         </tr>
-         <tr>
+        <tr>
             <td>
-            <br />
+                <br />
             </td>
         </tr>
         <tr>
             <td>
-            <p>   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For a time period that includes today's date, the Billable Hours Variance is calculated as the number of Billable Hours <b>up to and including today</b> minus the number of Projected Hours <b>up to and including today</b>.</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For a time period that includes today's date, the Billable Hours Variance is calculated as the number of Billable Hours <b>up to and including today</b> minus the number of Projected Hours <b>up to and including today</b>.</p>
             </td>
         </tr>
         <tr>
             <td>
-            <br />
+                <br />
             </td>
         </tr>
         <tr>
             <td>
-            <p>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For historical time periods, the system calculates Billable Hours Variance as Projected
-                Hours minus Actual Hours.</p>
+                <p>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For historical time periods, the system calculates Billable Hours Variance as Projected
+                Hours minus Actual Hours.
+                </p>
             </td>
         </tr>
     </table>
