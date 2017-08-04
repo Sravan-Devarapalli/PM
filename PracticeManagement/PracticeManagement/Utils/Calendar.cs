@@ -223,6 +223,90 @@ namespace PraticeManagement.Utils
 
             return months;
         }
+
+        public static DateTime CurrentQuarterStartDate(DateTime now)
+        {
+            int quater = (int)Math.Ceiling(now.Month / 3.0);
+
+            return QuarterStartDate(now, quater);
+        }
+
+        public static DateTime CurrentQuarterEndDate(DateTime now)
+        {
+            int quater = (int)Math.Ceiling(now.Month / 3.0);
+
+            return QuarterEndDate(now, quater);
+        }
+
+        public static DateTime NextQuarterStartDate(DateTime now)
+        {
+            int quater = (int)Math.Ceiling(now.Month / 3.0)+1;
+            if (quater == 5)
+            {
+                now = now.AddYears(1);
+                quater = 1;
+            }
+
+            return QuarterStartDate(now, quater);
+        }
+
+        public static DateTime NextQuarterEndDate(DateTime now)
+        {
+            int quater = (int)Math.Ceiling(now.Month / 3.0)+1;
+            if (quater == 5)
+            {
+                now = now.AddYears(1);
+                quater = 1;
+            }
+
+            return QuarterEndDate(now, quater);
+        }
+
+        public static DateTime CurrentHalfStartDate(DateTime now)
+        {
+            if (now.Month <= 6)
+            {
+                return new DateTime(now.Year, 1, 1);
+            }
+            else
+            {
+                return new DateTime(now.Year, 7, 1);
+            }
+        }
+        public static DateTime CurrentHalfEndDate(DateTime now)
+        {
+            if (now.Month <= 6)
+            {
+                return new DateTime(now.Year, 6, 30);
+            }
+            else
+            {
+                return new DateTime(now.Year, 12, 31);
+            }
+        }
+
+        public static DateTime NextHalfStartDate(DateTime now)
+        {
+            if (now.Month <= 6)
+            {
+                return new DateTime(now.Year, 7, 1);
+            }
+            else
+            {
+                return new DateTime(now.Year + 1, 1, 1);
+            }
+        }
+        public static DateTime NextHalfEndDate(DateTime now)
+        {
+            if (now.Month <= 6)
+            {
+                return new DateTime(now.Year, 12, 31);
+            }
+            else
+            {
+                return new DateTime(now.Year + 1, 6, 30);
+            }
+        }
     }
 }
 
