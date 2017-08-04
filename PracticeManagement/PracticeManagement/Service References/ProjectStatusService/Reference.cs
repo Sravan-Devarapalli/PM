@@ -27,7 +27,7 @@ namespace PraticeManagement.ProjectStatusService {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public partial class ProjectStatusServiceClient : System.ServiceModel.ClientBase<PraticeManagement.ProjectStatusService.IProjectStatusService>, PraticeManagement.ProjectStatusService.IProjectStatusService {
         
-                
+         
         public ProjectStatusServiceClient(string endpointConfigurationName) : 
                 base(endpointConfigurationName) {
         }
