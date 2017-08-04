@@ -109,7 +109,6 @@ namespace PraticeManagement.Reporting
                     else
                     {
                         var now = Utils.Generic.GetNowWithTimeZone();
-                        DateTime firstDay = new DateTime(now.Year, now.Month, 1);
                         if (selectedVal > 0)
                         {
                             //7
