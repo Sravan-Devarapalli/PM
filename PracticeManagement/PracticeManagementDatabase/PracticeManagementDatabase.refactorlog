@@ -14,4 +14,81 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="RequestId" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="e68892f7-123a-45fe-90f6-d431c60bd43b" ChangeDateTime="11/17/2016 15:03:53">
+    <Property Name="ElementName" Value="[dbo].[Milestone].[IsDiscountAtMilestoneLevel]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Milestone]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="IsDiscountAtMilestone" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="457e880f-f137-4b55-8eed-5b9c81e9e700" ChangeDateTime="11/21/2016 09:44:44">
+    <Property Name="ElementName" Value="[dbo].[ProjectMonthlyExpense].[Expense]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ProjectMonthlyExpense]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ExpenseId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c3815949-0b2b-4dea-aba4-0eebf7aece1d" ChangeDateTime="12/26/2016 07:13:51">
+    <Property Name="ElementName" Value="[dbo].[MarginException].[ApprovalLevel]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[MarginException]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ApprovalLevelId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="7b554db3-55c4-409b-a92f-00e68875b700" ChangeDateTime="12/26/2016 07:15:39">
+    <Property Name="ElementName" Value="[dbo].[MarginExceptionApprovalLevel].[Level]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[MarginExceptionApprovalLevel]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ApprovalLevel" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="a7556653-986a-4def-b676-f58fb9079cc5" ChangeDateTime="12/29/2016 10:38:41">
+    <Property Name="ElementName" Value="[dbo].[MarginExceptionRequest].[Re]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[MarginExceptionRequest]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Requestor" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="8a1dc1ba-c80e-4ca0-9aa0-aeb466e634ae" ChangeDateTime="12/29/2016 10:42:38">
+    <Property Name="ElementName" Value="[dbo].[MarginExceptionResponse].[Project]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[MarginExceptionResponse]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Status" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="a4b3e257-eef4-47ee-8c32-a655ef1b8c81" ChangeDateTime="01/04/2017 09:38:22">
+    <Property Name="ElementName" Value="[dbo].[MarginExceptionRequest].[Status]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[MarginExceptionRequest]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TierOneStatus" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="8dc025cc-6623-4917-a252-6098c6689c6b" ChangeDateTime="02/25/2017 10:20:46">
+    <Property Name="ElementName" Value="[dbo].[ProjectBudgetExpense].[ExpenseId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ProjectBudgetExpense]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Name" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="f550250d-1d6f-48f1-b7b4-4153466498af" ChangeDateTime="04/26/2017 14:30:49">
+    <Property Name="ElementName" Value="[dbo].[MilestonePersonEntry].[DiscountLocked]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[MilestonePersonEntry]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="LockDiscount" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="f45db39b-9c1c-4b68-a6bc-bd511f5cc035" ChangeDateTime="06/21/2017 09:05:09">
+    <Property Name="ElementName" Value="[dbo].[ProjectBudgetPersonEntry].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ProjectBudgetPersonEntry]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ProjectId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="01f0bbd7-1ec5-4d5b-9d90-1e9743e28d37" ChangeDateTime="06/21/2017 10:53:41">
+    <Property Name="ElementName" Value="[dbo].[ProjectBudgetFFMilestoneMonthlyRevenue].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ProjectBudgetFFMilestoneMonthlyRevenue]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ProjectId" />
+  </Operation>
 </Operations>
