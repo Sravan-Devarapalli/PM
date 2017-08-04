@@ -17,14 +17,6 @@ namespace PraticeManagement.Controls.Reports
             get { return ((PraticeManagement.Reporting.ProjectSummaryReport)Page); }
         }
 
-        public FilteredCheckBoxList cblProjectRolesControl
-        {
-            get
-            {
-                return ucProjectSummaryReport.cblProjectRolesControl;
-            }
-        }
-
         public LinkButton LnkbtnSummaryObject
         {
             get
@@ -84,7 +76,7 @@ namespace PraticeManagement.Controls.Reports
             }
             else
             {
-                data = ServiceCallers.Custom.Report(r => r.ProjectSummaryReportByResource(HostingPage.ProjectNumber, HostingPage.MilestoneId, HostingPage.PeriodSelected == "*" ? null : HostingPage.StartDate, HostingPage.PeriodSelected == "*" ? null : HostingPage.EndDate, ucProjectSummaryReport.cblProjectRolesControl.SelectedItemsXmlFormat));
+                data = ServiceCallers.Custom.Report(r => r.ProjectSummaryReportByResource(HostingPage.ProjectNumber, HostingPage.MilestoneId, HostingPage.PeriodSelected == "*" ? null : HostingPage.StartDate, HostingPage.PeriodSelected == "*" ? null : HostingPage.EndDate, null));
             }
             ucProjectSummaryReport.DataBindByResourceSummary(data, isFirstTime);
             PopulateHeaderSection(data.ToList());
@@ -94,12 +86,12 @@ namespace PraticeManagement.Controls.Reports
         {
             ucProjectDetailReport.hdnGroupByControl.Value = "Person";
             ucProjectDetailReport.btnGroupByControl.Text = ucProjectDetailReport.btnGroupByControl.ToolTip = "Group By Date";
-            var data = ServiceCallers.Custom.Report(r => r.ProjectDetailReportByResource(HostingPage.ProjectNumber, HostingPage.MilestoneId, HostingPage.PeriodSelected == "*" ? null : HostingPage.StartDate, HostingPage.PeriodSelected == "*" ? null : HostingPage.EndDate, ucProjectSummaryReport.cblProjectRolesControl.SelectedItemsXmlFormat,false)).ToList();
+            var data = ServiceCallers.Custom.Report(r => r.ProjectDetailReportByResource(HostingPage.ProjectNumber, HostingPage.MilestoneId, HostingPage.PeriodSelected == "*" ? null : HostingPage.StartDate, HostingPage.PeriodSelected == "*" ? null : HostingPage.EndDate, null, false)).ToList();
             ucProjectDetailReport.DataBindByResourceDetail(data);
-            PopulateHeaderSection(data.ToList());
+            PopulateHeaderSection(data.ToList(), true);
         }
 
-        public void PopulateHeaderSection(List<PersonLevelGroupedHours> personLevelGroupedHoursList)
+        public void PopulateHeaderSection(List<PersonLevelGroupedHours> personLevelGroupedHoursList, bool isDetailedReport = false)
         {
             //if (personLevelGroupedHoursList.Count > 0)
             //{
@@ -108,7 +100,7 @@ namespace PraticeManagement.Controls.Reports
             double billableHours = personLevelGroupedHoursList.Sum(p => p.DayTotalHours != null ? p.DayTotalHours.Sum(d => d.BillableHours) : p.BillableHours);
             double nonBillableHours = personLevelGroupedHoursList.Sum(p => p.NonBillableHours);
             double projectedHours = personLevelGroupedHoursList.Sum(p => p.ForecastedHours);
-            double totalEstBillings = personLevelGroupedHoursList.Where(p=> p.EstimatedBillings != -1.00).Sum(p=>p.EstimatedBillings);
+            double totalEstBillings = personLevelGroupedHoursList.Where(p => p.EstimatedBillings != -1.00).Sum(p => p.EstimatedBillings);
             var billablePercent = 0;
             var nonBillablePercent = 0;
             if (billableHours != 0 || nonBillableHours != 0)
@@ -129,7 +121,10 @@ namespace PraticeManagement.Controls.Reports
             ltrlNonBillableHours.Text = nonBillableHours.ToString(Constants.Formatting.DoubleValue);
             ltrlBillablePercent.Text = billablePercent.ToString();
             ltrlNonBillablePercent.Text = nonBillablePercent.ToString();
-            ltrlTotalEstBillings.Text = project.BillableType == "Fixed" ? "FF" : totalEstBillings.ToString(Constants.Formatting.CurrencyExcelReportFormat);
+            if (!isDetailedReport)
+            {
+                ltrlTotalEstBillings.Text = totalEstBillings.ToString(Constants.Formatting.CurrencyExcelReportFormat);
+            }
 
             if (billablePercent == 0 && nonBillablePercent == 0)
             {
