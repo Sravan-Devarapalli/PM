@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ServiceModel;
 using DataTransferObjects;
+using System;
 
 namespace PracticeManagementService
 {
@@ -64,7 +65,7 @@ namespace PracticeManagementService
         List<ColorInformation> GetAllColorsForMargin();
 
         [OperationContract]
-        List<ClientMarginColorInfo> GetClientMarginColorInfo(int clientId);
+        List<ClientMarginColorInfo> GetClientMarginColorInfo(int clientId, DateTime startDate, DateTime endDate, int projectId);
 
         [OperationContract]
         List<Client> ClientListAllWithoutPermissions();
@@ -92,6 +93,22 @@ namespace PracticeManagementService
 
         [OperationContract]
         List<ProjectGroup> GetBusinessUnitsForClients(string clientIds);
+
+        [OperationContract]
+        List<ClientMarginGoal> GetClientMarginGoals(int clientId);
+
+        [OperationContract]
+        void InsertClientMargin(ClientMarginGoal marginGoal, string userAlias);
+
+        [OperationContract]
+        void UpdateClientMarginGoal(ClientMarginGoal marginGoal, string userAlias);
+
+        [OperationContract]
+        void DeleteClientMarginGoal(int id, string userAlias);
+
+        [OperationContract]
+        List<ClientMarginGoalLog> GetMarginGoalLogForClient(int clientId);
+
     }
 }
 
