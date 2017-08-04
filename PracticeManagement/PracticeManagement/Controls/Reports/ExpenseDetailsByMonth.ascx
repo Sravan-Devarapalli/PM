@@ -93,7 +93,7 @@
                             <%# (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.ExpectedAmount).ToString("###,###,###,###,###,##0.##")%>
                         </td>
                         <td class="textCenter hideActCol no-wrap">
-                            <%# (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Amount).ToString("###,###,###,###,###,##0.##")%>
+                            <%#((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Amount!=null? (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Amount).Value.ToString("###,###,###,###,###,##0.##"):string.Empty%>
                         </td>
                         <td class="textCenter hideDiffCol no-wrap">
                             <%#  (((ExpenseSummary)Container.DataItem).Expense.Difference).ToString("###,###,###,###,###,##0.##")%>
@@ -125,7 +125,7 @@
                             <%# (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.ExpectedAmount).ToString("###,###,###,###,###,##0.##")%>
                         </td>
                         <td class="textCenter hideActCol no-wrap">
-                            <%# (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Amount).ToString("###,###,###,###,###,##0.##")%>
+                            <%#((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Amount!=null? (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Amount).Value.ToString("###,###,###,###,###,##0.##"):string.Empty%>
                         </td>
                         <td class="textCenter hideDiffCol no-wrap">
                             <%#(((ExpenseSummary)Container.DataItem).Expense.Difference).ToString("###,###,###,###,###,##0.##")%>
