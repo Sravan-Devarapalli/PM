@@ -1,5 +1,5 @@
-<?xml version="1.0"?>
-<ServiceConfiguration serviceName="DEVAzureService" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="2" osVersion="*">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceConfiguration serviceName="DEVAzureService" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="2" osVersion="*" schemaVersion="2015-04.2.6">
   <Role name="PracticeManagement">
     <Instances count="1" />
     <ConfigurationSettings>
@@ -36,6 +36,7 @@
       <Setting name="senioritySeparationRangeValue" value="19" />
       <Setting name="ShowWithoutDirector" value="true" />
       <Setting name="PopupTimebeforeFormsAuthTimeOutSec" value="60" />
+      <Setting name="DefaultMarginGoal" value="50"/>
       <Setting name="VendorServiceClient" value="http://65.52.17.100:8080/VendorService.svc" />
     </ConfigurationSettings>
   </Role>
