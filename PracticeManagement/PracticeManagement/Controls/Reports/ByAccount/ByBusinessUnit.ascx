@@ -5,72 +5,47 @@
 <div class="tab-pane">
     <table class="WholeWidthWithHeight">
         <tr>
-            <td colspan="4" class="Width90Percent">
-            </td>
+            <td colspan="4" class="Width90Percent"></td>
             <td class="textRight Width10Percent padRight5">
                 <table class="textRight WholeWidth">
                     <tr>
-                        <td>
-                            Export:
-                        </td>
-                        <td>
+                        <td>Export:&nbsp;
                             <asp:Button ID="btnExportToExcel" runat="server" Text="Excel" OnClick="btnExportToExcel_OnClick"
                                 UseSubmitBehavior="false" ToolTip="Export To Excel" />
-                        </td>
-                        <td>
-                            <asp:Button ID="btnExportToPDF" runat="server" Text="PDF" OnClick="btnExportToPDF_OnClick"
-                                Enabled="false" UseSubmitBehavior="false" ToolTip="Export To PDF" />
                         </td>
                     </tr>
                 </table>
             </td>
         </tr>
     </table>
-    <asp:Panel ID="pnlFilterBusinessUnit" Style="display: none;" runat="server">
-        <uc:FilteredCheckBoxList ID="cblBusinessUnits" runat="server" CssClass="Height125PxImp" />
-    </asp:Panel>
-    <asp:Button ID="btnFilterOK" runat="server" OnClick="btnFilterOK_OnClick" Style="display: none;" />
+
     <asp:Repeater ID="repBusinessUnit" runat="server" OnItemDataBound="repBusinessUnit_ItemDataBound">
         <HeaderTemplate>
             <div class="minheight250Px">
                 <table id="tblAccountSummaryByBusinessReport" class="tablesorter PersonSummaryReport WholeWidth zebra">
                     <thead>
                         <tr>
-                            <th class="TextAlignLeftImp Width320PxImp">
-                                Business Unit
-                                <img alt="Filter" title="Filter" src="../../../Images/search_filter.png" class="PosAbsolute"
-                                    runat="server" id="imgBusinessUnitFilter" />
-                                <AjaxControlToolkit:PopupControlExtender ID="pceBusinessUnitFilter" runat="server"
-                                    TargetControlID="imgBusinessUnitFilter" BehaviorID="pceBusinessUnitFilter" PopupControlID="pnlFilterBusinessUnit"
-                                    Position="Bottom">
-                                </AjaxControlToolkit:PopupControlExtender>
+                            <th class="TextAlignLeftImp Width320PxImp">Business Unit
                             </th>
-                            <th class="Width170PxImp">
-                                # of Active Projects
+                            <th class="Width170PxImp"># of Active Projects
                             </th>
-                            <th class="Width170PxImp">
-                                # of Completed Projects
+                            <th class="Width170PxImp"># of Completed Projects
                             </th>
-                            <th class="Width170PxImp">
-                                Projected Hours
+                            <th class="Width170PxImp">Projected Hours
                             </th>
-                            <th class="Width150pxImp">
-                                Billable
+                            <th class="Width150pxImp">Billable
                             </th>
-                            <th class="Width150pxImp">
-                                Non-Billable
+                            <th class="Width150pxImp" id="thNonBillable" runat="server">Non-Billable
                             </th>
-                            <th class="Width150pxImp">
-                                Actual Hours
+                            <th class="Width150pxImp">Actual Hours
                             </th>
-                            <th class="Width100Px">
-                                BD
+                            <th class="Width150pxImp">Budget Hours
                             </th>
-                            <th class="Width150pxImp">
-                                Total BU Hours
+                            <th class="Width150pxImp">ETC Hours
                             </th>
-                            <th class="Width170PxImp">
-                                Billable Hours Variance
+                            <th class="Width150pxImp">Total BU Hours
+                            </th>
+                            <th class="Width170PxImp">Billable Hours Variance
                                 <asp:Image alt="Billable Hours Variance Hint" ImageUrl="~/Images/hint1.png" runat="server"
                                     ID="imgBillableHoursVarianceHint" CssClass="CursorPointer" ToolTip="Billable Hours Variance Calculation" />
                                 <AjaxControlToolkit:ModalPopupExtender ID="mpeBillableUtilization" runat="server"
@@ -78,6 +53,8 @@
                                     BackgroundCssClass="modalBackground" PopupControlID="pnlBillableUtilization"
                                     DropShadow="false" />
                             </th>
+                        
+
                         </tr>
                     </thead>
                     <tbody>
@@ -100,14 +77,17 @@
                 <td>
                     <%# GetDoubleFormat((double)Eval("BillableHours"))%>
                 </td>
-                <td>
+                <td id="tdNonBillable" runat="server">
                     <%# GetDoubleFormat((double)Eval("NonBillableHours"))%>
                 </td>
                 <td>
                     <%# GetDoubleFormat((double)Eval("ActualHours"))%>
                 </td>
-                <td>
-                    <%# GetDoubleFormat((double)Eval("BusinessDevelopmentHours"))%>
+                <td sorttable_customkey='<%# Eval("BudgetHours") %>'>
+                    <%# GetDoubleFormat((double)Eval("BudgetHours"))%>
+                </td>
+                <td sorttable_customkey='<%# Eval("ETCHours") %>'>
+                    <%# GetDoubleFormat((double)Eval("ETCHours"))%>
                 </td>
                 <td>
                     <%# GetDoubleFormat((double)Eval("TotalHours"))%>
@@ -125,6 +105,8 @@
                         </tr>
                     </table>
                 </td>
+             
+
             </tr>
         </ItemTemplate>
         <FooterTemplate>
@@ -157,7 +139,7 @@
         </tr>
         <tr>
             <td>
-            <p>   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For a time period that includes today's date, the Billable Hours Variance is calculated as the number of Billable Hours <b>up to and including today</b> minus the number of Projected Hours <b>up to and including today</b>.</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For a time period that includes today's date, the Billable Hours Variance is calculated as the number of Billable Hours <b>up to and including today</b> minus the number of Projected Hours <b>up to and including today</b>.</p>
             </td>
         </tr>
         <tr>
@@ -169,7 +151,8 @@
             <td>
                 <p>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For historical time periods, the
-                    system calculates Billable Hours Variance as Projected Hours minus Actual Hours.</p>
+                    system calculates Billable Hours Variance as Projected Hours minus Actual Hours.
+                </p>
             </td>
         </tr>
     </table>
