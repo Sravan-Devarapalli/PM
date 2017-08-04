@@ -43,6 +43,10 @@ BEGIN
 				,i.[ReviewerId]
 				,Rev.LastName + ', ' + Rev.FirstName AS [Reviewer]
 				,i.PONumber
+				,CASE WHEN i.ExceptionMargin IS NOT NULL THEN CONVERT(nvarchar(10),i.ExceptionMargin)+'%'
+					  ELSE '' END AS ExceptionMargin
+				,CASE WHEN i.Budget IS NOT NULL THEN '$'+PARSENAME(CONVERT(VARCHAR,CAST(i.Budget AS MONEY),1),2)
+					  ELSE '' END AS 'BudgetAmount'
 		FROM inserted AS i
 		INNER JOIN dbo.Client AS C ON C.ClientId = i.ClientId
 		INNER JOIN dbo.Practice AS prac ON prac.PracticeId = i.PracticeId
