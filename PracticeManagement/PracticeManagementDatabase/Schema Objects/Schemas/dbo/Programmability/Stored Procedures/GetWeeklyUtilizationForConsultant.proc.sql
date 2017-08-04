@@ -30,6 +30,26 @@ AS
 	 b.If ENDDATE is not sat then set ENDDATE to sat of the ENDDATE week.
    4.Get the WeeklyUtlization of the person for the given filters.
    */
+
+ DECLARE  @StartDateLocal DATETIME = @StartDate,
+    @StepLocal INT = @Step,
+    @DaysForwardLocal INT = @DaysForward,
+    @ActivePersonsLocal BIT = @ActivePersons,
+    @ActiveProjectsLocal BIT = @ActiveProjects,
+    @ProjectedPersonsLocal BIT = @ProjectedPersons,
+    @ProjectedProjectsLocal BIT = @ProjectedProjects,
+    @ExperimentalProjectsLocal BIT = @ExperimentalProjects,
+	@ProposedProjectsLocal BIT = @ProposedProjects,
+	@InternalProjectsLocal	BIT = @InternalProjects,
+	@CompletedProjectsLocal	BIT = @CompletedProjects,
+	@AtRiskProjectsLocal BIT = @AtRiskProjects,
+	@TimescaleIdsLocal NVARCHAR(4000) = @TimescaleIds,
+	@PracticeIdsLocal NVARCHAR(4000) = @PracticeIds,
+	@ExcludeInternalPracticesLocal BIT = @ExcludeInternalPractices,
+	@IsSampleReportLocal BIT = @IsSampleReport,
+	@UtilizationTypeLocal BIT = @UtilizationType, -- 0 for only utilization, 1 for project utilization, 2 for hours utilization
+	@IsBadgeIncludedLocal BIT=@IsBadgeIncluded
+
         SET NOCOUNT ON ;
         IF (@IsSampleReport = 1)
         BEGIN
@@ -40,24 +60,24 @@ AS
         END
 
 		DECLARE @EndRange  DATETIME
-		SET @EndRange = DATEADD(dd , @DaysForward, @StartDate) - 1
-		IF(@Step = 7)
+		SET @EndRange = DATEADD(dd , @DaysForward, @StartDateLocal) - 1
+		IF(@StepLocal = 7)
 		BEGIN
-			IF(DATEPART(DW,@StartDate)>0)
+			IF(DATEPART(DW,@StartDateLocal)>0)
 			BEGIN
-				SELECT @StartDate = @StartDate - DATEPART(DW,@StartDate)+1
+				SELECT @StartDateLocal = @StartDateLocal - DATEPART(DW,@StartDateLocal)+1
 			END
-			IF(DATEPART(DW,@StartDate)<7)
+			IF(DATEPART(DW,@StartDateLocal)<7)
 			BEGIN
 				SELECT @EndRange = DATEADD(dd , 7-DATEPART(DW,@EndRange), @EndRange)
 			END
 		END
-		ELSE IF (@Step = 30)
+		ELSE IF (@StepLocal = 30)
 		BEGIN
                 
-			IF(DATEPART(DW,@StartDate)>0)
+			IF(DATEPART(DW,@StartDateLocal)>0)
 			BEGIN
-				SELECT @StartDate = @StartDate - DATEPART(DW,@StartDate)+1
+				SELECT @StartDateLocal = @StartDateLocal - DATEPART(DW,@StartDateLocal)+1
 			END
 			IF(DATEPART(DW,@EndRange)<7)
 			BEGIN
@@ -65,20 +85,20 @@ AS
 			END
 		END
 
-		IF(@UtilizationType = 0)
+		IF(@UtilizationTypeLocal = 0)
 		BEGIN
 			SELECT WUT.PersonId,WUT.WeeklyUtlization,WUT.AvailableHours,WUT.ProjectedHours,WUT.Timescale,WUT.VacationDays
-			FROM dbo.GetWeeklyUtilizationTable(@StartDate,@EndRange, @Step, @ActivePersons, @ActiveProjects, @ProjectedPersons, @ProjectedProjects,@ExperimentalProjects,@ProposedProjects,@InternalProjects,@CompletedProjects,@AtRiskProjects,@TimescaleIds,@PracticeIds,@ExcludeInternalPractices) AS WUT 
+			FROM dbo.GetWeeklyUtilizationTable(@StartDateLocal,@EndRange, @StepLocal, @ActivePersonsLocal, @ActiveProjectsLocal, @ProjectedPersonsLocal, @ProjectedProjectsLocal,@ExperimentalProjectsLocal,@ProposedProjectsLocal,@InternalProjectsLocal,@CompletedProjectsLocal,@AtRiskProjectsLocal,@TimescaleIdsLocal,@PracticeIdsLocal,@ExcludeInternalPracticesLocal) AS WUT 
 			ORDER BY WUT.PersonId,WUT.StartDate
 		END
 		IF(@UtilizationType = 1)
 		BEGIN
 			SELECT WUT.PersonId,WUT.StartDate,WUT.EndDate,WUT.ProjectId,WUT.ProjectName,WUT.ProjectNumber,WUT.WeeklyUtlization,WUT.AvailableHours,WUT.ProjectedHours,WUT.Timescale,WUT.VacationDays
-			FROM dbo.GetWeeklyUtilizationByProjectTable(@StartDate,@EndRange, @Step, @ActivePersons, @ActiveProjects, @ProjectedPersons, @ProjectedProjects,@ExperimentalProjects,@ProposedProjects,@InternalProjects,@CompletedProjects,@AtRiskProjects,@TimescaleIds,@PracticeIds,@ExcludeInternalPractices) AS WUT 
+			FROM dbo.GetWeeklyUtilizationByProjectTable(@StartDateLocal,@EndRange, @StepLocal, @ActivePersonsLocal, @ActiveProjectsLocal, @ProjectedPersonsLocal, @ProjectedProjectsLocal,@ExperimentalProjectsLocal,@ProposedProjectsLocal,@InternalProjectsLocal,@CompletedProjectsLocal,@AtRiskProjectsLocal,@TimescaleIdsLocal,@PracticeIdsLocal,@ExcludeInternalPracticesLocal) AS WUT 
 			ORDER BY WUT.PersonId,WUT.StartDate
 		END
 
-		IF(@IsBadgeIncluded = 1)
+		IF(@IsBadgeIncludedLocal = 1)
 		BEGIN
 
 			SELECT	MP.PersonId,
