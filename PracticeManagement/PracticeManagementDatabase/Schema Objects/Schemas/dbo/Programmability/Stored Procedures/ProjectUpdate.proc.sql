@@ -171,6 +171,18 @@ BEGIN
 			 END
 		END
 
+		IF(@ProjectStatusId <>@PreviousProjectStatusId and @ProjectStatusId=3)
+		BEGIN
+			EXEC [dbo].[UpdateProjectBudget] @ProjectId=@ProjectId, @UserAlias=@UserLogin
+		END
+		ELSE IF(@ProjectStatusId NOT IN(3,4))
+		BEGIN
+			EXEC [dbo].[CleanBudgetRecordsForNonActiveProject] @ProjectId = @ProjectId
+
+			-- Clean Budget Records
+		END
+
+
 		IF @ClientId <> @PreviousClientId OR @ProjectStatusId <> 4
 		BEGIN
 				UPDATE P
