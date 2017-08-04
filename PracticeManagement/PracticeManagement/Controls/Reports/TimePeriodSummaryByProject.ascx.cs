@@ -131,14 +131,6 @@ namespace PraticeManagement.Controls.Reports
             }
         }
 
-        public ByBusinessDevelopment ByBusinessDevelopmentControl
-        {
-            get
-            {
-                return ucGroupByBusinessDevelopment;
-            }
-        }
-
         private PraticeManagement.Reporting.TimePeriodSummaryReport HostingPage
         {
             get { return ((PraticeManagement.Reporting.TimePeriodSummaryReport)Page); }
@@ -241,14 +233,15 @@ namespace PraticeManagement.Controls.Reports
             List<object> rownew;
             List<object> row;
 
-            data.Columns.Add("Account");
+            //data.Columns.Add("Account");
             data.Columns.Add("Account Name");
-            data.Columns.Add("Business Unit");
-            data.Columns.Add("Business Unit Name");
+            //data.Columns.Add("Business Unit");
+            //data.Columns.Add("Business Unit Name");
             data.Columns.Add("Project");
             data.Columns.Add("Project Name");
             data.Columns.Add("Status");
             data.Columns.Add("Billing");
+            data.Columns.Add("Budget Hours");
             data.Columns.Add("Projected Hours");
             data.Columns.Add("Billable");
             data.Columns.Add("Non-Billable");
@@ -258,14 +251,15 @@ namespace PraticeManagement.Controls.Reports
             foreach (var item in report)
             {
                 row = new List<object>();
-                row.Add(item.Project.Client.Code);
+                //row.Add(item.Project.Client.Code);
                 row.Add(item.Project.Client.HtmlEncodedName);
-                row.Add(item.Project.Group.Code);
-                row.Add(item.Project.Group.HtmlEncodedName);
+                //row.Add(item.Project.Group.Code);
+                //row.Add(item.Project.Group.HtmlEncodedName);
                 row.Add(item.Project.ProjectNumber);
                 row.Add(item.Project.HtmlEncodedName);
                 row.Add(item.Project.Status.Name);
                 row.Add(item.BillingType);
+                row.Add(GetDoubleFormat(item.BudgetHours));
                 row.Add(GetDoubleFormat(item.ForecastedHours));
                 row.Add(GetDoubleFormat(item.BillableHours));
                 row.Add(GetDoubleFormat(item.NonBillableHours));
@@ -274,11 +268,6 @@ namespace PraticeManagement.Controls.Reports
                 data.Rows.Add(row.ToArray());
             }
             return data;
-        }
-
-        protected void btnExportToPDF_OnClick(object sender, EventArgs e)
-        {
-
         }
 
         public void PopulateByProjectData(bool isPopulateFilters = true)
@@ -327,29 +316,18 @@ namespace PraticeManagement.Controls.Reports
             var lnkProject = sender as LinkButton;
             SelectedProjectNumber = lnkProject.Attributes["ProjectNumber"];
 
-            var businessDevelopmentProj = ServiceCallers.Custom.Project(p => p.GetBusinessDevelopmentProject());
+            //var businessDevelopmentProj = ServiceCallers.Custom.Project(p => p.GetBusinessDevelopmentProject());
             string totalHours = string.Empty;
-            if (businessDevelopmentProj.Any(p=>p.ProjectNumber.ToUpper() == SelectedProjectNumber.ToUpper()))
-            {
-                HostingPage.AccountId = Convert.ToInt32(lnkProject.Attributes["AccountId"]);
-                HostingPage.BusinessUnitIds = lnkProject.Attributes["GroupId"] + ",";
-                ucGroupByBusinessDevelopment.Visible = true;
-                ucProjectDetailReport.Visible = false;
-                ucGroupByBusinessDevelopment.PopulateByBusinessDevelopment();
-                totalHours = GetDoubleFormat(HostingPage.Total);
-            }
-            else
-            {
-
+           
                 var list = ServiceCallers.Custom.Report(r => r.ProjectDetailReportByResource(SelectedProjectNumber, null,
                      HostingPage.StartDate, HostingPage.EndDate,
                     null,false)).ToList();
 
                 totalHours = GetDoubleFormat(list.Sum(l => l.TotalHours));
-                ucGroupByBusinessDevelopment.Visible = false;
+                //ucGroupByBusinessDevelopment.Visible = false;
                 ucProjectDetailReport.Visible = true;
                 ucProjectDetailReport.DataBindByResourceDetail(list);
-            }
+            //}
 
             ltrlProject.Text = "<b class=\"colorGray\">" +
                 lnkProject.Attributes["ClientName"] + " > " + lnkProject.Attributes["GroupName"] + " > </b><b>" + lnkProject.Text + "</b>";
