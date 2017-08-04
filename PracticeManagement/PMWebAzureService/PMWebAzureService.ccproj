@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>1.3.0</ProductVersion>
+    <ProductVersion>2.9</ProductVersion>
     <ProjectGuid>{194ab1d3-45a9-4b60-b9a0-03caa749331c}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -15,6 +15,8 @@
     <SccProvider>MSSCCI:Surround SCM</SccProvider>
     <SccAuxPath />
     <SccLocalPath>..\..</SccLocalPath>
+    <UseIISExpressByDefault>False</UseIISExpressByDefault>
+    <UseEmulatorExpressByDefault>False</UseEmulatorExpressByDefault>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,9 +49,21 @@
       <RoleName>PracticeManagement</RoleName>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="PracticeManagementContent\" />
+    <Folder Include="PracticeManagementContent\bin" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="PracticeManagementContent\bin\install.cmd">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="PracticeManagementContent\bin\NDP461-KB3102438-Web.exe">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>
-    <CloudExtensionsDir Condition=" '$(CloudExtensionsDir)' == '' ">$(MSBuildExtensionsPath)\Microsoft\Cloud Service\1.0\Visual Studio 10.0\</CloudExtensionsDir>
+    <CloudExtensionsDir Condition=" '$(CloudExtensionsDir)' == '' ">$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Windows Azure Tools\2.9\</CloudExtensionsDir>
   </PropertyGroup>
-  <Import Project="$(CloudExtensionsDir)Microsoft.CloudService.targets" />
+  <Import Project="$(CloudExtensionsDir)Microsoft.WindowsAzure.targets" />
 </Project>
