@@ -170,6 +170,32 @@ namespace DataTransferObjects.Reports
         [DataMember]
         public double EstimatedBillings { get; set; }
 
+        [DataMember]
+        public double BudgetHours { get; set; }
+
+        [DataMember]
+        public double RemainingProjectedHours
+        {
+            get;
+            set;
+        }
+
+        public double ForecastedHoursFromToday
+        {
+            get
+            {
+                return (ForecastedHours - ForecastedHoursUntilToday);
+            }
+        }
+
+        public double ETCHours
+        {
+            get
+            {
+                return (TotalHours + RemainingProjectedHours);
+            }
+        }
+
         public double TotalHours
         {
             get
@@ -343,7 +369,7 @@ namespace DataTransferObjects.Reports
         {
             get
             {
-                return BillRate == -1.00 ? "FF" : BillRate.ToString(Constants.Formatting.CurrencyWithDecimalsFormat);
+                return BillRate.ToString(Constants.Formatting.CurrencyWithDecimalsFormat);
             }
         }
 
@@ -351,7 +377,7 @@ namespace DataTransferObjects.Reports
         {
             get
             {
-                return EstimatedBillings == -1.00 ? "FF" : EstimatedBillings.ToString(Constants.Formatting.CurrencyWithDecimalsFormat);
+                return EstimatedBillings.ToString(Constants.Formatting.CurrencyWithDecimalsFormat);
             }
         }
 
@@ -359,7 +385,7 @@ namespace DataTransferObjects.Reports
         {
             get
             {
-                return BillRate == -1.00 ? "FF" : BillRate.ToString();
+                return BillRate.ToString();
             }
         }
 
@@ -367,7 +393,7 @@ namespace DataTransferObjects.Reports
         {
             get
             {
-                return EstimatedBillings == -1.00 ? "FF" : EstimatedBillings.ToString();
+                return EstimatedBillings.ToString();
             }
         }
 
@@ -436,3 +462,4 @@ namespace DataTransferObjects.Reports
         }
     }
 }
+
