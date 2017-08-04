@@ -21,6 +21,10 @@ namespace DataTransferObjects
         private PracticeManagementCurrency _actualRevenueValue;
         private PracticeManagementCurrency _previousMonthsActualMarginValue;
         private PracticeManagementCurrency _previousMonthsActualRevenueValue;
+        private PracticeManagementCurrency _BudgetMarginValue;
+        private PracticeManagementCurrency _BudgetRevenueValue;
+        private PracticeManagementCurrency _ETCMarginValue;
+        private PracticeManagementCurrency _ETCRevenueValue;
 
         #endregion Fields
 
@@ -45,6 +49,7 @@ namespace DataTransferObjects
             set
             {
                 _actualRevenueValue = value;
+                _actualRevenueValue.DoNotShowDecimals = true;
                 _actualRevenueValue.FormatStyle = NumberFormatStyle.Revenue;
             }
         }
@@ -59,6 +64,7 @@ namespace DataTransferObjects
             set
             {
                 _actualMarginValue = value;
+                _actualMarginValue.DoNotShowDecimals = true;
                 _actualMarginValue.FormatStyle = NumberFormatStyle.Margin;
             }
         }
@@ -70,6 +76,7 @@ namespace DataTransferObjects
             set
             {
                 _previousMonthsActualMarginValue = value;
+                _previousMonthsActualMarginValue.DoNotShowDecimals = true;
                 _previousMonthsActualMarginValue.FormatStyle = NumberFormatStyle.Margin;
             }
         }
@@ -81,7 +88,62 @@ namespace DataTransferObjects
             set
             {
                 _previousMonthsActualRevenueValue = value;
+                _previousMonthsActualRevenueValue.DoNotShowDecimals = true;
                 _previousMonthsActualRevenueValue.FormatStyle = NumberFormatStyle.Revenue;
+            }
+        }
+
+        [DataMember]
+        public PracticeManagementCurrency BudgetRevenue
+        {
+            get { return _BudgetRevenueValue; }
+            set
+            {
+                _BudgetRevenueValue = value;
+                _BudgetRevenueValue.DoNotShowDecimals = true;
+                _BudgetRevenueValue.FormatStyle = NumberFormatStyle.Revenue;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a computed margin.
+        /// </summary>
+        [DataMember]
+        public PracticeManagementCurrency BudgetGrossMargin
+        {
+            get { return _BudgetMarginValue; }
+            set
+            {
+                _BudgetMarginValue = value;
+                _BudgetMarginValue.DoNotShowDecimals = true;
+                _BudgetMarginValue.FormatStyle = NumberFormatStyle.Margin;
+            }
+        }
+
+        [DataMember]
+        public PracticeManagementCurrency EACRevenue
+        {
+            get { return _ETCRevenueValue; }
+            set
+            {
+                _ETCRevenueValue = value;
+                _ETCRevenueValue.DoNotShowDecimals = true;
+                _ETCRevenueValue.FormatStyle = NumberFormatStyle.Revenue;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a computed margin.
+        /// </summary>
+        [DataMember]
+        public PracticeManagementCurrency EACGrossMargin
+        {
+            get { return _ETCMarginValue; }
+            set
+            {
+                _ETCMarginValue = value;
+                _ETCMarginValue.DoNotShowDecimals = true;
+                _ETCMarginValue.FormatStyle = NumberFormatStyle.Margin;
             }
         }
 
@@ -95,6 +157,7 @@ namespace DataTransferObjects
             set
             {
                 _revenueValue = value;
+                _revenueValue.DoNotShowDecimals = true;
                 _revenueValue.FormatStyle = NumberFormatStyle.Revenue;
             }
         }
@@ -109,6 +172,7 @@ namespace DataTransferObjects
             set
             {
                 _revenueNetValue = value;
+                _revenueNetValue.DoNotShowDecimals = true;
                 _revenueNetValue.FormatStyle = NumberFormatStyle.Revenue;
             }
         }
@@ -123,6 +187,7 @@ namespace DataTransferObjects
             set
             {
                 _cogsValue = value;
+                _cogsValue.DoNotShowDecimals = true;
                 _cogsValue.FormatStyle = NumberFormatStyle.Cogs;
             }
         }
@@ -137,8 +202,16 @@ namespace DataTransferObjects
             set
             {
                 _marginValue = value;
+                _marginValue.DoNotShowDecimals = true;
                 _marginValue.FormatStyle = NumberFormatStyle.Margin;
             }
+        }
+
+        [DataMember]
+        public PracticeManagementCurrency MilestonePersonAmount
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -196,6 +269,23 @@ namespace DataTransferObjects
         /// </summary>
         [DataMember]
         public int TimescaleChangeStatus { get; set; }
+
+
+        /// <summary>
+        /// 1- budget, 2-Projected, 3- remaining Projected, 4- Actuals
+        /// </summary>
+        [DataMember]
+        public int FinanceType { get; set; }
+
+        [DataMember]
+        public decimal ActualHours { get; set; }
+
+        [DataMember]
+        public decimal EACHours { get; set; }
+
+        [DataMember]
+        public decimal BudgetHours { get; set; }
+
 
         #endregion Properties
 
