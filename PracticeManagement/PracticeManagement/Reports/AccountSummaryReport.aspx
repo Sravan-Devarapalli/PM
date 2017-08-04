@@ -9,8 +9,6 @@
 <%@ Register Src="~/Controls/Reports/ByAccount/ByBusinessUnit.ascx" TagPrefix="uc"
     TagName="ByBusinessUnit" %>
 <%@ Register Src="~/Controls/Reports/ByAccount/ByProject.ascx" TagPrefix="uc" TagName="ByProject" %>
-<%@ Register Src="~/Controls/Reports/ByAccount/ByBusinessDevelopment.ascx" TagPrefix="uc"
-    TagName="ByBusinessDevelopment" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="title" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="head" runat="server">
@@ -55,55 +53,61 @@
     </script>
     <asp:UpdatePanel ID="upnlBody" runat="server">
         <ContentTemplate>
-            <table class="WholeWidth">
+            <table class="width60PImp">
                 <tr class="height30P">
-                    <td class="vBottom fontBold Width3Percent no-wrap">
-                        &nbsp;Select report parameters:&nbsp;
+                    <td class="vBottom fontBold Width3Percent no-wrap">&nbsp;Select report parameters:&nbsp;
                     </td>
-                    <td>
-                    </td>
-                    <td class="width60P">
-                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>
                 <tr class="height30P">
-                    <td class="ReportFilterLabels">
-                        Account:&nbsp;
+                    <td class="ReportFilterLabels">Account:&nbsp;
                     </td>
                     <td class="textLeft">
                         <asp:DropDownList ID="ddlAccount" runat="server" AutoPostBack="true" CssClass="Width232PxImp"
                             OnSelectedIndexChanged="ddlAccount_SelectedIndexChanged">
                         </asp:DropDownList>
-                         <span class="fontBold">Business Unit:</span> &nbsp;
-                        <pmc:ScrollingDropDown ID="cblProjectGroup" runat="server" SetDirty="false" AllSelectedReturnType="Null"
-                            OnSelectedIndexChanged="cblProjectGroup_OnSelectedIndexChanged" NoItemsType="All"
+                    </td>
+                    <td class="ReportFilterLabels vTop lineHeight30Px Width8Percent">Business Unit:&nbsp;</td>
+                    <td class="textLeft">
+                        <pmc:ScrollingDropDown ID="cblProjectGroup" runat="server" SetDirty="false" AllSelectedReturnType="Null" NoItemsType="All"
                             onclick="scrollingDropdown_onclick('cblProjectGroup','Business Unit')" AutoPostBack="true"
                             DropDownListType="Business Unit" CellPadding="3" CssClass="AccountSummaryBusinessUnitsDiv Width232PxImp" />
                         <ext:ScrollableDropdownExtender ID="sdeProjectGroup" runat="server" TargetControlID="cblProjectGroup"
                             UseAdvanceFeature="true" Width="232px" EditImageUrl="~/Images/Dropdown_Arrow.png">
                         </ext:ScrollableDropdownExtender>
                     </td>
-                    <td>
-                    </td>
+                    <td></td>
                 </tr>
                 <tr class="height30P">
-                    <td class="ReportFilterLabels vTop lineHeight30Px">
-                    Project Status:&nbsp;
+                    <td class="ReportFilterLabels vTop lineHeight30Px">Project Status:&nbsp;
                     </td>
-                   <td class="textLeft Width90Percent">
-                        <pmc:ScrollingDropDown ID="cblProjectStatus" runat="server" SetDirty="false" AllSelectedReturnType="Null"  
-                            OnSelectedIndexChanged="cblProjectStatus_OnSelectedIndexChanged"
+                    <td class="textLeft">
+
+                        <pmc:ScrollingDropDown ID="cblProjectStatus" runat="server" SetDirty="false" AllSelectedReturnType="Null"
                             NoItemsType="All" onclick="scrollingDropdown_onclick('cblProjectStatus','Project Status','es')" AutoPostBack="true" PluralForm="es"
                             DropDownListType="Project Status" CellPadding="3" CssClass="AccountSummaryBusinessUnitsDiv Width232PxImp" />
                         <ext:ScrollableDropdownExtender ID="sdeProjectStatus" runat="server" TargetControlID="cblProjectStatus"
                             UseAdvanceFeature="true" Width="232px" EditImageUrl="~/Images/Dropdown_Arrow.png">
                         </ext:ScrollableDropdownExtender>
                     </td>
-                    <td>
+                    <td id="tdBillingLable" runat="server" class="ReportFilterLabels vTop lineHeight30Px">Billing Type:&nbsp;</td>
+                    <td id="tdBillingType" runat="server">
+                        <pmc:ScrollingDropDown ID="cblBillingType" runat="server" SetDirty="false" AllSelectedReturnType="Null" NoItemsType="All"
+                            onclick="scrollingDropdown_onclick('cblBillingType','Billing Type')" AutoPostBack="true"
+                            DropDownListType="Billing Type" CellPadding="3" CssClass="AccountSummaryBusinessUnitsDiv Width232PxImp" />
+                        <ext:ScrollableDropdownExtender ID="sdeBillingType" runat="server" TargetControlID="cblBillingType"
+                            UseAdvanceFeature="true" Width="232px" EditImageUrl="~/Images/Dropdown_Arrow.png">
+                        </ext:ScrollableDropdownExtender>
+
                     </td>
+                    <td></td>
                 </tr>
+
                 <tr class="height30P">
-                    <td class="ReportFilterLabels">
-                        Range:&nbsp;
+                    <td class="ReportFilterLabels">Range:&nbsp;
                     </td>
                     <td class="textLeft">
                         <asp:DropDownList ID="ddlPeriod" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlPeriod_SelectedIndexChanged"
@@ -120,39 +124,51 @@
                             <asp:ListItem Text="Custom Dates" Value="0"></asp:ListItem>
                         </asp:DropDownList>
                     </td>
-                    <td>
-                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>
                 <tr class="height30P">
-                    <td>
+                    <td class="ReportFilterLabels">
+                        <asp:CheckBox ID="chbShowNonBillable" runat="server" Checked="true" />
+                        &nbsp;
                     </td>
+                    <td class="textLeft">Show Non-Billable Hours
+                       
+
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td><span class="floatright">
+                        <asp:Button ID="btnUpdate" runat="server" OnClick="btnUpdate_Click" Text="View Report" ToolTip="Update" /></span></td>
+                </tr>
+                <tr class="height30P">
+                    <td></td>
                     <td class="textLeft">
                         <asp:HiddenField ID="hdnStartDate" runat="server" Value="" />
                         <asp:HiddenField ID="hdnEndDate" runat="server" Value="" />
                         <asp:Label ID="lblCustomDateRange" runat="server" Text=""></asp:Label>
                         <asp:Image ID="imgCalender" runat="server" ImageUrl="~/Images/calendar.gif" />
                     </td>
-                    <td>
-                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>
                 <tr class="height30P">
-                    <td colspan="2">
-                        &nbsp;
-                    </td>
-                    <td>
-                    </td>
+                    <td colspan="2"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+
                 </tr>
                 <tr class="height30P">
-                    <td colspan="2">
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-                <tr class="ReportBorderBottomByAccount">
-                    <td colspan="3">
-                    </td>
+                    <td colspan="4"></td>
                 </tr>
             </table>
+
+
+
+            <div class="ReportBorderBottomByAccount"></div>
             <AjaxControlToolkit:ModalPopupExtender ID="mpeCustomDates" runat="server" TargetControlID="imgCalender"
                 BackgroundCssClass="modalBackground" PopupControlID="pnlCustomDates" BehaviorID="bhCustomDates"
                 DropShadow="false" />
@@ -210,22 +226,7 @@
                                     <td class="Width21Percent">
                                         <table class="WholeWidth ReportHeaderTotalsTable">
                                             <tr>
-                                                <td class="FirstTd">
-                                                    BD Hours
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="SecondTd">
-                                                    <asp:Literal ID="ltrlBDHours" runat="server"></asp:Literal>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                    <td class="Width21Percent">
-                                        <table class="WholeWidth ReportHeaderTotalsTable">
-                                            <tr>
-                                                <td class="FirstTd no-wrap">
-                                                    Total Projected Hours
+                                                <td class="FirstTd no-wrap">Total Projected Hours
                                                 </td>
                                             </tr>
                                             <tr>
@@ -238,8 +239,7 @@
                                     <td class="Width21Percent">
                                         <table class="WholeWidth ReportHeaderTotalsTable">
                                             <tr>
-                                                <td class="FirstTd no-wrap">
-                                                    Total Actual Hours
+                                                <td class="FirstTd no-wrap">Total Actual Hours
                                                 </td>
                                             </tr>
                                             <tr>
@@ -252,8 +252,7 @@
                                     <td class="Width18Percent vBottom">
                                         <table class="ReportHeaderBillAndNonBillTable">
                                             <tr>
-                                                <td>
-                                                    BILLABLE
+                                                <td>BILLABLE
                                                 </td>
                                             </tr>
                                             <tr>
@@ -262,8 +261,7 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td>
-                                                    NON-BILLABLE
+                                                <td>NON-BILLABLE
                                                 </td>
                                             </tr>
                                             <tr>
@@ -286,8 +284,7 @@
                                                     </table>
                                                     <table>
                                                         <tr id="trBillable" runat="server" title="Billable Percentage.">
-                                                            <td class="billingGraph">
-                                                            </td>
+                                                            <td class="billingGraph"></td>
                                                         </tr>
                                                     </table>
                                                 </td>
@@ -307,16 +304,14 @@
                                                     </table>
                                                     <table>
                                                         <tr id="trNonBillable" runat="server" title="Non-Billable Percentage.">
-                                                            <td class="nonBillingGraph">
-                                                            </td>
+                                                            <td class="nonBillingGraph"></td>
                                                         </tr>
                                                     </table>
                                                 </td>
                                             </tr>
                                         </table>
                                     </td>
-                                    <td class="Width2Percent">
-                                    </td>
+                                    <td class="Width2Percent"></td>
                                 </tr>
                             </table>
                         </td>
@@ -324,40 +319,30 @@
                 </table>
                 <asp:Table ID="tblProjectViewSwitch" runat="server" CssClass="CommonCustomTabStyle AccountSummaryReportCustomTabStyle">
                     <asp:TableRow ID="rowSwitcher" runat="server">
-                        <asp:TableCell ID="cellBusinessUnit" CssClass="SelectedSwitch" runat="server">
-                            <span class="bg"><span>
-                                <asp:LinkButton ID="lnkbtnBusinessUnit" runat="server" Text="Business Unit" CausesValidation="false"
-                                    OnCommand="btnView_Command" CommandArgument="0" ToolTip="Business Unit"></asp:LinkButton></span>
-                            </span>
-                        </asp:TableCell>
-                        <asp:TableCell ID="cellProject" runat="server">
+                        <asp:TableCell ID="cellProject" CssClass="SelectedSwitch" runat="server">
                             <span class="bg"><span>
                                 <asp:LinkButton ID="lnkbtnProject" runat="server" Text="Project" CausesValidation="false"
-                                    OnCommand="btnView_Command" CommandArgument="1" ToolTip="Project"></asp:LinkButton></span>
+                                    OnCommand="btnView_Command" CommandArgument="0" ToolTip="Project"></asp:LinkButton></span>
                             </span>
                         </asp:TableCell>
-                        <asp:TableCell ID="cellBusinessDevelopment" runat="server">
+                        <asp:TableCell ID="cellBusinessUnit" runat="server">
                             <span class="bg"><span>
-                                <asp:LinkButton ID="lnkbtnBusinessDevelopment" runat="server" Text="Business Development"
-                                    CausesValidation="false" OnCommand="btnView_Command" CommandArgument="2" ToolTip="Business Development"></asp:LinkButton></span>
+                                <asp:LinkButton ID="lnkbtnBusinessUnit" runat="server" Text="Business Unit" CausesValidation="false"
+                                    OnCommand="btnView_Command" CommandArgument="1" ToolTip="Business Unit"></asp:LinkButton></span>
                             </span>
                         </asp:TableCell>
+
                     </asp:TableRow>
                 </asp:Table>
                 <asp:MultiView ID="mvAccountReport" runat="server" ActiveViewIndex="0">
-                    <asp:View ID="vwBusinessUnitReport" runat="server">
-                        <asp:Panel ID="pnlBusinessUnitReport" runat="server" CssClass="WholeWidth">
-                            <uc:ByBusinessUnit ID="tpByBusinessUnit" runat="server"></uc:ByBusinessUnit>
-                        </asp:Panel>
-                    </asp:View>
                     <asp:View ID="vwProjectReport" runat="server">
                         <asp:Panel ID="pnlProjectReport" runat="server" CssClass="WholeWidth">
                             <uc:ByProject ID="tpByProject" runat="server"></uc:ByProject>
                         </asp:Panel>
                     </asp:View>
-                    <asp:View ID="vwBusinessDevelopmentReport" runat="server">
-                        <asp:Panel ID="pnlBusinessDevelopmentReport" runat="server" CssClass="WholeWidth">
-                            <uc:ByBusinessDevelopment ID="tpByBusinessDevelopment" runat="server"></uc:ByBusinessDevelopment>
+                    <asp:View ID="vwBusinessUnitReport" runat="server">
+                        <asp:Panel ID="pnlBusinessUnitReport" runat="server" CssClass="WholeWidth">
+                            <uc:ByBusinessUnit ID="tpByBusinessUnit" runat="server"></uc:ByBusinessUnit>
                         </asp:Panel>
                     </asp:View>
                 </asp:MultiView>
@@ -366,7 +351,6 @@
         <Triggers>
             <asp:PostBackTrigger ControlID="tpByProject$btnExportToExcel" />
             <asp:PostBackTrigger ControlID="tpByBusinessUnit$btnExportToExcel" />
-            <asp:PostBackTrigger ControlID="tpByBusinessDevelopment$btnExportToExcel" />
         </Triggers>
     </asp:UpdatePanel>
     <uc:LoadingProgress ID="LoadingProgress1" runat="server" />
