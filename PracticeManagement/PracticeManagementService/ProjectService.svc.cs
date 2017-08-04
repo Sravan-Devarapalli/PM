@@ -37,15 +37,45 @@ namespace PracticeManagementService
             }
         }
 
-        public ComputedFinancials GetProjectsComputedFinancials(int projectId)
+        public List<ComputedFinancials> GetProjectsComputedFinancials(int projectId)
         {
             try
             {
-                return ComputedFinancialsDAL.FinancialsGetByProject(projectId);
+                return ComputedFinancialsDAL.FinancialsSummaryGetByProject(projectId);
             }
             catch (Exception e)
             {
                 string logData = string.Format(Constants.Formatting.ErrorLogMessage, "GetProjectsComputedFinancials", "ProjectService.svc", string.Empty,
+                    HttpUtility.HtmlEncode(e.Message), e.Source, e.InnerException == null ? string.Empty : HttpUtility.HtmlEncode(e.InnerException.Message), e.InnerException == null ? string.Empty : e.InnerException.Source);
+                ActivityLogDAL.ActivityLogInsert(20, logData);
+                throw e;
+            }
+        }
+
+        public ComputedFinancials FinancialsByProject(int projectId)
+        {
+            try
+            {
+                return ComputedFinancialsDAL.FinancialsByProject(projectId);
+            }
+            catch (Exception e)
+            {
+                string logData = string.Format(Constants.Formatting.ErrorLogMessage, "FinancialsByProject", "ProjectService.svc", string.Empty,
+                    HttpUtility.HtmlEncode(e.Message), e.Source, e.InnerException == null ? string.Empty : HttpUtility.HtmlEncode(e.InnerException.Message), e.InnerException == null ? string.Empty : e.InnerException.Source);
+                ActivityLogDAL.ActivityLogInsert(20, logData);
+                throw e;
+            }
+        }
+
+        public ComputedFinancials EACFinancialsByProject(int projectId)
+        {
+            try
+            {
+                return ComputedFinancialsDAL.EACFinancialsByProject(projectId);
+            }
+            catch (Exception e)
+            {
+                string logData = string.Format(Constants.Formatting.ErrorLogMessage, "EACFinancialsByProject", "ProjectService.svc", string.Empty,
                     HttpUtility.HtmlEncode(e.Message), e.Source, e.InnerException == null ? string.Empty : HttpUtility.HtmlEncode(e.InnerException.Message), e.InnerException == null ? string.Empty : e.InnerException.Source);
                 ActivityLogDAL.ActivityLogInsert(20, logData);
                 throw e;
@@ -163,7 +193,7 @@ namespace PracticeManagementService
         /// <summary>
         /// Enlists the requested projects.
         /// </summary>
-        public List<Project> GetProjectListCustom(bool projected, bool completed, bool active, bool experimantal, bool proposed)
+        public List<Project> GetProjectListCustom(bool projected, bool completed, bool active, bool experimantal, bool proposed, bool IsMilestone)
         {
             try
             {
@@ -173,6 +203,7 @@ namespace PracticeManagementService
                 active,
                 experimantal,
                 proposed,
+                IsMilestone,
                 false);
             }
             catch (Exception e)
@@ -227,7 +258,9 @@ namespace PracticeManagementService
             bool excludeInternalPractices,
             string userLogin,
             bool useActuals,
-            bool getFinancialsFromCache)
+            bool getFinancialsFromCache,
+            int? feeType,
+            DateTime? actualEndDate)
         {
             try
             {
@@ -256,7 +289,9 @@ namespace PracticeManagementService
                    excludeInternalPractices,
                    userLogin,
                    useActuals,
-                   getFinancialsFromCache);
+                   getFinancialsFromCache,
+                   feeType,
+                   actualEndDate);
 
                 return result;
             }
@@ -734,6 +769,19 @@ namespace PracticeManagementService
             }
         }
 
+
+        public Project GetProjectShortByProjectNumberForPerson(string projectNumber, string userAlias)
+        {
+            try
+            {
+                return ProjectDAL.GetProjectShortByProjectNumberForPerson(projectNumber, userAlias);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public DateTime GetProjectLastChangeDateFortheGivenStatus(int projectId, int projectStatusId)
         {
             return ProjectDAL.GetProjectLastChangeDateFortheGivenStatus(projectId, projectStatusId);
@@ -1146,6 +1194,58 @@ namespace PracticeManagementService
         public List<Project> GetProjectsForClients(string clientIds)
         {
             return ProjectDAL.GetProjectsForClients(clientIds);
+        }
+
+        public void SendBudgetResetRequest(int projectId, string userAlias, string comments, int resetType, DateTime? budgetToDate, string reasons, string requestorName)
+        {
+            ProjectDAL.SendBudgetResetRequest(projectId, userAlias, comments, resetType, budgetToDate);
+            var project = ProjectDAL.GetProjectByIdShort(projectId);
+            MailUtil.SendBudgetResetRequestMail(project, comments, reasons, resetType, budgetToDate, requestorName);
+        }
+
+        public void ResetProjectBudget(int projectId, string userAlias, int requestId, int resetType, DateTime? budgetToDate, string comments)
+        {
+            ProjectDAL.ResetProjectRequest(projectId, userAlias, requestId, resetType, budgetToDate);
+            var project = ProjectDAL.GetProjectByIdShort(projectId);
+            var toAddress = ProjectDAL.GetBudgetResetToAddress(projectId);
+            MailUtil.SendBudgetResetMail(project, toAddress, comments, resetType, budgetToDate);
+        }
+
+        public void SendProjectBudgetResetDecline(int projectId, string userAlias, int requestId, string comments)
+        {
+            var toAddress = ProjectDAL.SendProjectBudgetResetDecline(userAlias, requestId, comments);
+            var project = ProjectDAL.GetProjectByIdShort(projectId);
+            MailUtil.SendBudgetResetDeclineMail(project, toAddress, comments);
+        }
+
+        public List<MarginExceptionReason> GetAllMarginExceptionReasons()
+        {
+            return ProjectDAL.GetMarginExceptionReasons();
+        }
+
+        public List<ClientMarginException> GetMarginExceptionThresholdsForPeriod(DateTime startDate, DateTime endDate, int clientId)
+        {
+            return ProjectDAL.GetMarginExceptionThresholdsForPeriod(startDate, endDate, clientId);
+        }
+
+        public void SendMarginExceptionRequest(int projectId, string userAlias, decimal targetMargin, string reasons, string comments, string user, bool isTierTwo, decimal targetRevenue, bool isRevenueException)
+        {
+            string toAddress = ProjectDAL.SendMarginExceptionRequest(projectId, userAlias, targetMargin, isTierTwo, targetRevenue, comments, isRevenueException);
+            var project = ProjectDAL.GetProjectByIdShort(projectId);
+
+            MailUtil.SendMarginExceptionRequestMail(project, reasons, comments, toAddress, user);
+        }
+
+        public void SendMarginExceptionResponse(int status, string userAlias, int requestId, string reasons, string comments, string user, int projectId, bool isTierTwo)
+        {
+            string toAddress = ProjectDAL.SendMarginExceptionResponse(status, userAlias, requestId, isTierTwo, comments);
+            var project = ProjectDAL.GetProjectByIdShort(projectId);
+            MailUtil.SendMarginExceptionResponseMail(project, status, reasons, comments, toAddress, user);
+        }
+
+        public ProjectBudgetManagement GetBudgetManagementDataForProject(int projectId, bool isBudgetToDate, DateTime? actualsEndDate)
+        {
+            return ProjectDAL.GetBudgetReportDataForProject(projectId, isBudgetToDate, actualsEndDate);
         }
 
         #endregion IProjectService Members
