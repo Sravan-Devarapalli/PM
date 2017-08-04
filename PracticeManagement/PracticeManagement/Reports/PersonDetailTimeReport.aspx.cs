@@ -55,6 +55,18 @@ namespace PraticeManagement.Reporting
                 return Request.QueryString[PeriodSelectedkey];
             }
         }
+
+        public bool ShowNonBillableHours
+        {
+            get
+            {
+                return chbShowNonBillable.Checked;
+            }
+            set
+            {
+                chbShowNonBillable.Checked = value;
+            }
+        }
         public DateTime? StartDate
         {
             get
@@ -155,11 +167,6 @@ namespace PraticeManagement.Reporting
                         DateTime firstDay = new DateTime(now.Year, now.Month, 1);
                         if (selectedVal > 0)
                         {
-                            //7
-                            //15
-                            //30
-                            //365
-
                             if (selectedVal == 1)
                             {
                                 return Utils.Calendar.QuarterEndDate(now, 1);
@@ -351,7 +358,7 @@ namespace PraticeManagement.Reporting
             dlPersonDiv.Style.Add("display", "none");
             if (!IsPostBack)
             {
-                GetFilterValuesForSession();
+
 
                 bool userIsAdministrator = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.AdministratorRoleName);
                 bool userIsDirector = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.DirectorRoleName);
@@ -385,6 +392,7 @@ namespace PraticeManagement.Reporting
                         ddlPerson.SelectedValue = PersonIdFromQueryString;
                     }
                 }
+                GetFilterValuesForSession();
 
                 lblBillableUtilization.Attributes[OnMouseOver] = string.Format(ShowPanel, lblBillableUtilization.ClientID, pnlBillableUtilizationCalculation.ClientID, 50);
                 lblBillableUtilization.Attributes[OnMouseOut] = string.Format(HidePanel, pnlBillableUtilizationCalculation.ClientID);
@@ -673,6 +681,7 @@ namespace PraticeManagement.Reporting
             filter.ReportPeriod = ddlPeriod.SelectedValue;
             filter.StartDate = diRange.FromDate.Value;
             filter.EndDate = diRange.ToDate.Value;
+            filter.ShowNonBillableHours = ShowNonBillableHours;
             ReportsFilterHelper.SaveFilterValues(ReportName.ByPersonReport, filter);
         }
 
@@ -686,9 +695,14 @@ namespace PraticeManagement.Reporting
                 ddlPeriod.SelectedValue = filters.ReportPeriod;
                 diRange.FromDate = filters.StartDate;
                 diRange.ToDate = filters.EndDate;
+                ShowNonBillableHours = filters.ShowNonBillableHours;
             }
         }
 
+        protected void chbShowNonBillable_CheckedChanged(object sender, EventArgs e)
+        {
+            SwitchView(lnkbtnSummary, 0);
+        }
     }
 }
 
