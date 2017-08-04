@@ -49,6 +49,12 @@ namespace DataTransferObjects
             set;
         }
 
+        public bool DoNotShowDecimals
+        {
+            get;
+            set;
+        }
+
         #endregion Properties
 
         #region Methods
@@ -57,9 +63,9 @@ namespace DataTransferObjects
         {
             decimal absValue = Math.Abs(Value);
             string result =
-                absValue >= SmallFormatLimit ?
+                absValue >= SmallFormatLimit || DoNotShowDecimals ?
                 absValue.ToString(CurrencyLargeDisplayFormat) : absValue.ToString(CurrencySmallDisplayFormat);
-            return "("+result+")";
+            return "(" + result + ")";
         }
 
         /// <summary>
@@ -70,10 +76,10 @@ namespace DataTransferObjects
         {
             decimal absValue = Math.Abs(Value);
             string result =
-                absValue >= SmallFormatLimit ?
+                absValue >= SmallFormatLimit || DoNotShowDecimals ?
                 absValue.ToString(CurrencyLargeDisplayFormat) : absValue.ToString(CurrencySmallDisplayFormat);
 
-            if (Value < 0 || (FormatStyle & NumberFormatStyle.Negative) == NumberFormatStyle.Negative)
+            if (Value < -0.49M || (FormatStyle & NumberFormatStyle.Negative) == NumberFormatStyle.Negative)
             {
                 result = string.Format(CurrencyNegativeFormat, result);
             }
