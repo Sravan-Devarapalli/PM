@@ -109,6 +109,7 @@
   <ItemGroup>
     <Compile Include="ActivityEventSource.cs" />
     <Compile Include="ActivityLogItem.cs" />
+    <Compile Include="ApprovalLevel.cs" />
     <Compile Include="Attribution.cs" />
     <Compile Include="BusinessGroup.cs" />
     <Compile Include="CalendarItem.cs" />
@@ -116,6 +117,10 @@
     <Compile Include="Channel.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="ClientMarginColorInfo.cs" />
+    <Compile Include="ClientMarginException.cs" />
+    <Compile Include="ClientMarginGoal.cs" />
+    <Compile Include="ClientMarginGoalLog.cs" />
+    <Compile Include="ClientMarginThreshold.cs" />
     <Compile Include="CohortAssignment.cs" />
     <Compile Include="ColorInformation.cs" />
     <Compile Include="CompanyLogo.cs" />
@@ -176,10 +181,14 @@
     <Compile Include="Financials\RangeType.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="Lockout.cs" />
+    <Compile Include="MarginExceptionReason.cs" />
+    <Compile Include="MonthlyRevenue.cs" />
     <Compile Include="MSBadge.cs" />
     <Compile Include="Offering.cs" />
+    <Compile Include="OpenTask.cs" />
     <Compile Include="OpurtunityPerson.cs" />
     <Compile Include="Owner.cs" />
+    <Compile Include="PeriodicalExpense.cs" />
     <Compile Include="PersonBadgeHistories.cs" />
     <Compile Include="PersonDivision.cs" />
     <Compile Include="PersonPassword.cs" />
@@ -187,11 +196,14 @@
     <Compile Include="PersonWorkingHoursDetailsWithinThePeriod.cs" />
     <Compile Include="PracticeCapability.cs" />
     <Compile Include="PricingList.cs" />
+    <Compile Include="ProjectBudgetManagement.cs" />
+    <Compile Include="ProjectBudgetResource.cs" />
     <Compile Include="ProjectCSAT.cs" />
     <Compile Include="ProjectDivision.cs" />
     <Compile Include="ProjectFeedback.cs" />
     <Compile Include="ProjectFeedbackMail.cs" />
     <Compile Include="ProjectFeedbackStatus.cs" />
+    <Compile Include="ProjectRevenue.cs" />
     <Compile Include="RecruitingMetrics.cs" />
     <Compile Include="ReportFilterSettings.cs" />
     <Compile Include="Reports\AttainmentBillableutlizationReport.cs" />
@@ -221,11 +233,14 @@
     <Compile Include="Reports\GroupedHours.cs" />
     <Compile Include="Reports\HumanCapital\TerminationPersonsInRange.cs" />
     <Compile Include="Reports\ManagementMeetingReport.cs" />
+    <Compile Include="Reports\PayRate.cs" />
+    <Compile Include="Reports\PersonBudgetComparison.cs" />
     <Compile Include="Reports\PersonLevelGroupedHours.cs" />
     <Compile Include="Reports\PersonLevelPayCheck.cs" />
     <Compile Include="Reports\PersonTimeEntriesTotals.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Reports\ProjectBurnFinancials.cs" />
     <Compile Include="Reports\ProjectLevelGroupedHours.cs" />
     <Compile Include="Reports\GroupByClientAndProject.cs" />
     <Compile Include="Reports\ProjectLevelTimeEntriesHistory.cs" />
