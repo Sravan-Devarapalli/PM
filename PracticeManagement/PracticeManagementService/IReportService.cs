@@ -228,7 +228,25 @@ namespace PracticeManagementService
         List<ExpenseSummary> ExpenseDetailReport(DateTime startDate, DateTime endDate, int? projectId, int? expenseTypeId);
 
         [OperationContract]
-        List<ExpenseSummary> DetailedExpenseSummary(DateTime startDate, DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental,bool atRisk, string expenseTypeIds);
+        List<ExpenseSummary> DetailedExpenseSummary(DateTime startDate, DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental, bool atRisk, string expenseTypeIds);
+
+        [OperationContract]
+        List<Project> GetActiveAndAtRiskProjectsByClient(int clientId, string userLogin);
+
+        [OperationContract]
+        ProjectBurnFinancials GetBurnReportFortheProject(int projectId, DateTime? startDate, DateTime? endDate, int step, DateTime? actualsEndDate);
+
+        [OperationContract]
+        Dictionary<DateTime, ComputedFinancials> GetWeeklyFinancialsForProject(int projectId, DateTime? startDate, DateTime? endDate, int @step, DateTime? actualsEndDate);
+
+        [OperationContract]
+        List<ProjectBudgetResource> GetBurnReportExportDataFortheProject(int projectId, DateTime? startDate, DateTime? endDate, DateTime? actualsEndDate, bool isBudget, bool isProjected, bool isEAC, bool isActual);
+
+        [OperationContract]
+        List<PersonBudgetComparison> GetBudgetComparisonReportForProject(string projectNumber, DateTime? startDate, DateTime? endDate, DateTime? actualsEndDate);
+
+        [OperationContract]
+        List<ExpenseSummary> ReadProjectExpensesByTypeandByMonth(int projectId, int? milestoneId, DateTime? startDate, DateTime? endDate);
     }
 }
 
