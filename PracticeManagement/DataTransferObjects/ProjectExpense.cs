@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using System.Web;
+using System.Collections.Generic;
 
 namespace DataTransferObjects
 {
     /// <summary>
     ///
     /// </summary>
+    /// 
+    [Serializable]
+    [DataContract]
     public class ProjectExpense : IIdNameObject
     {
         [DataMember]
@@ -42,16 +46,34 @@ namespace DataTransferObjects
         public DateTime EndDate { get; set; }
 
         /// <summary>
-        /// Expense $
+        /// Actual Expense $
         /// </summary>
         [DataMember]
-        public decimal Amount { get; set; }
+        public decimal? Amount { get; set; }
 
         /// <summary>
         /// ExpectedAmount $
         /// </summary>
         [DataMember]
         public decimal ExpectedAmount { get; set; }
+
+        /// <summary>
+        /// ProjectedRemainingAmount $
+        /// </summary>
+        [DataMember]
+        public decimal ProjectedRemainingAmount { get; set; }
+
+        [DataMember]
+        public decimal BudgetAmount { get; set; }
+
+      
+        public decimal EACAmount
+        {
+            get
+            {
+                return (Amount != null ? Amount.Value : 0) + ProjectedRemainingAmount;
+            }
+        }
 
         /// <summary>
         /// Reimbursement %
@@ -74,7 +96,14 @@ namespace DataTransferObjects
         {
             get
             {
-                return 0.01M * Amount * Reimbursement;
+                if (Amount != null)
+                {
+                    return 0.01M * Amount.Value * Reimbursement;
+                }
+                else
+                {
+                    return 0;
+                }
             }
         }
 
@@ -90,7 +119,22 @@ namespace DataTransferObjects
         {
             get
             {
-                return ExpectedAmount - Amount;
+                if (Amount != null)
+                {
+                    return ExpectedAmount - Amount.Value;
+                }
+                else
+                {
+                    return ExpectedAmount;
+                }
+            }
+        }
+
+        public decimal DifferencePer
+        {
+            get
+            {
+                return ExpectedAmount != 0 ? Difference / ExpectedAmount : 0;
             }
         }
 
@@ -101,6 +145,12 @@ namespace DataTransferObjects
             set;
         }
 
+        [DataMember]
+        public List<PeriodicalExpense> MonthlyExpense
+        {
+            get;
+            set;
+        }
     }
 }
 
