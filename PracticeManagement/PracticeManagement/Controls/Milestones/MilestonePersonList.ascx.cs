@@ -30,10 +30,12 @@ namespace PraticeManagement.Controls.Milestones
     {
         #region Constants
 
+        private const int DISCOUNT_COLUMN_INDEX = 9;
+        private const int DISCOUNTLOCK_COLUMN_INDEX = 10;
         private const string MILESTONE_PERSON_ID_ARGUMENT = "milestonePersonId";
         private const int AMOUNT_COLUMN_INDEX = 8;
-        private const int MSBADGESTART_COLUMN_INDEX = 11;
-        private const int MSBADGEEND_COLUMN_INDEX = 16;
+        private const int MSBADGESTART_COLUMN_INDEX = 13;
+        private const int MSBADGEEND_COLUMN_INDEX = 18;
         private const string MILESTONE_PERSONS_KEY = "MilestonePersons";
         private const string ADD_MILESTONE_PERSON_ENTRIES_KEY = "ADD_MILESTONE_PERSON_ENTRIES_KEY";
         private const string PERSONSLISTFORMILESTONE_KEY = "PERSONSLISTFORMILESTONE_KEY";
@@ -48,6 +50,7 @@ namespace PraticeManagement.Controls.Milestones
         private const string dpPersonStartInsert = "dpPersonStartInsert";
         private const string dpPersonEndInsert = "dpPersonEndInsert";
         private const string txtAmountInsert = "txtAmountInsert";
+        private const string txtDiscountInsert = "txtDiscountInsert";
         private const string txtHoursPerDayInsert = "txtHoursPerDayInsert";
         private const string txtHoursInPeriodInsert = "txtHoursInPeriodInsert";
         private const string milestoneHasTimeEntries = "Cannot delete milestone person because this person has already entered time for this milestone.";
@@ -519,7 +522,7 @@ namespace PraticeManagement.Controls.Milestones
 
         protected void reqHourlyRevenue_ServerValidate(object sender, ServerValidateEventArgs e)
         {
-            e.IsValid = !Milestone.IsHourlyAmount || !string.IsNullOrEmpty(e.Value);
+            e.IsValid = !string.IsNullOrEmpty(e.Value);
         }
 
         protected void cvMaxRows_ServerValidate(object sender, ServerValidateEventArgs e)
@@ -1279,6 +1282,7 @@ namespace PraticeManagement.Controls.Milestones
         protected void Page_PreRender(object sender, EventArgs e)
         {
             thInsertMilestonePerson.Visible = (MilestonePersonsEntries == null || MilestonePersonsEntries.Count == 0);
+            //HostingPage.dis();
         }
 
         protected override void OnInit(EventArgs e)
@@ -1301,6 +1305,7 @@ namespace PraticeManagement.Controls.Milestones
             }
             StoreRepeterEntriesInObject();
             StoreGridViewEditedEntriesInObject();
+            //HostingPage.dis();
         }
 
         public void GetLatestData()
@@ -1426,7 +1431,8 @@ namespace PraticeManagement.Controls.Milestones
             if (tmp.Count == 0)
             {
                 thInsertMilestonePerson.Visible = true;
-                thHourlyRate.Visible = Milestone.IsHourlyAmount;
+                //thHourlyRate.Visible = Milestone.IsHourlyAmount;
+                thDiscount.Visible = thDiscountLock.Visible = !Milestone.IsHourlyAmount;
                 thBadgeRequired.Visible = thBadgeStart.Visible = thBadgeEnd.Visible = thConsultantEnd.Visible = thBadgeException.Visible = thApprovedOps.Visible = Milestone.Project.Client.Id == 2;
             }
             else
@@ -1434,7 +1440,9 @@ namespace PraticeManagement.Controls.Milestones
                 thInsertMilestonePerson.Visible = false;
             }
             gvMilestonePersonEntries.DataSource = tmp;
-            gvMilestonePersonEntries.Columns[AMOUNT_COLUMN_INDEX].Visible = Milestone.IsHourlyAmount;
+            //gvMilestonePersonEntries.Columns[AMOUNT_COLUMN_INDEX].Visible = Milestone.IsHourlyAmount;
+            gvMilestonePersonEntries.Columns[DISCOUNT_COLUMN_INDEX].Visible = gvMilestonePersonEntries.Columns[DISCOUNTLOCK_COLUMN_INDEX].Visible = !Milestone.IsHourlyAmount;
+
             for (int i = MSBADGESTART_COLUMN_INDEX; i <= MSBADGEEND_COLUMN_INDEX; i++)
                 gvMilestonePersonEntries.Columns[i].Visible = Milestone.Project.Client.Id.Value == 2;
             gvMilestonePersonEntries.DataBind();
@@ -1466,17 +1474,26 @@ namespace PraticeManagement.Controls.Milestones
                 var lblBadgeEnd = e.Row.FindControl("lblBadgeEnd") as Label;
                 var lblBadgeException = e.Row.FindControl("lblBadgeException") as Label;
                 var lblApproved = e.Row.FindControl("lblApproved") as Label;
+                var imgNewResource = e.Row.FindControl("imgNewResource") as Image;
+                var lblDiscount = e.Row.FindControl("lblDiscount") as Label;
+                var lblDiscountLock = e.Row.FindControl("lblDiscountLock") as Label;
 
-                imgMilestonePersonEntryEdit.Visible = imgAdditionalAllocationOfResource.Visible = lnkPersonName.Visible =
-                lblRole.Visible = lblStartDate.Visible = lblEndDate.Visible = lblHoursPerDay.Visible =
-                lblAmount.Visible = lableTargetMargin.Visible = lblHoursInPeriodDay.Visible = imgMilestonePersonDelete.Visible =
-                tblHoursInPeriod1.Visible = lbVacationHoursToolTip.Visible = lblBadgeRequired.Visible = lblBadgeStart.Visible = lblBadgeEnd.Visible = lblBadgeException.Visible = lblApproved.Visible = !entry.IsEditMode;
+                imgCopy.Visible = HostingPage.EnableEdit;
+                imgMilestonePersonEntryEdit.Visible = imgAdditionalAllocationOfResource.Visible = imgMilestonePersonDelete.Visible = !entry.IsEditMode && HostingPage.EnableEdit;
+
+                lnkPersonName.Visible =
+                  lblRole.Visible = lblStartDate.Visible = lblEndDate.Visible = lblHoursPerDay.Visible =
+                  lblAmount.Visible = lableTargetMargin.Visible = lblHoursInPeriodDay.Visible = lblDiscountLock.Visible =
+                  tblHoursInPeriod1.Visible = lbVacationHoursToolTip.Visible = lblBadgeRequired.Visible = lblBadgeStart.Visible = lblBadgeEnd.Visible = lblBadgeException.Visible = lblApproved.Visible = !entry.IsEditMode;
+
+
 
                 if (!entry.IsEditMode && entry.VacationHours > 0)
                 {
                     lbVacationHoursToolTip.Attributes[OnMouseOver] = string.Format(ShowPanel, lbVacationHoursToolTip.ClientID, pnlTimeOffHoursToolTip.ClientID, lblTimeOffHours.ClientID, lblProjectAffectedHours.ClientID, entry.TimeOffHours.ToString("0.00"), entry.VacationHours.ToString("0.00"));
                     lbVacationHoursToolTip.Attributes[OnMouseOut] = string.Format(HidePanel, pnlTimeOffHoursToolTip.ClientID);
                     lbVacationHoursToolTip.Text = "!";
+
                 }
                 else
                 {
@@ -1498,6 +1515,11 @@ namespace PraticeManagement.Controls.Milestones
                 var txtAmount = e.Row.FindControl("txtHoursPerDay") as TextBox;
                 var txtHoursPerDay = e.Row.FindControl("txtAmount") as TextBox;
                 var txtHoursInPeriod = e.Row.FindControl("txtHoursInPeriod") as TextBox;
+                var tblDiscount = e.Row.FindControl("tblDiscount") as HtmlTable;
+                var lblDoller = e.Row.FindControl("lblDoller") as Label;
+                var lblPercentage = e.Row.FindControl("lblPercentage") as Label;
+                var chbDiscountLock = e.Row.FindControl("chbDiscountLock") as CheckBox;
+                var txtDiscount = e.Row.FindControl("txtDiscount") as TextBox;
 
                 var chbBadgeRequired = e.Row.FindControl("chbBadgeRequired") as CheckBox;
                 var chbBadgeException = e.Row.FindControl("chbBadgeException") as CheckBox;
@@ -1525,14 +1547,35 @@ namespace PraticeManagement.Controls.Milestones
                 var custBadgeAfterJuly = e.Row.FindControl("custBadgeAfterJuly") as CustomValidator;
                 var custBadgeInBreakPeriod = e.Row.FindControl("custBadgeInBreakPeriod") as CustomValidator;
                 var custExceptionNotMoreThan18moEndDate = e.Row.FindControl("custExceptionNotMoreThan18moEndDate") as CustomValidator;
-                var custAftertheBreak=e.Row.FindControl("custAftertheBreak") as CustomValidator;
+                var custAftertheBreak = e.Row.FindControl("custAftertheBreak") as CustomValidator;
+
+                lblDiscount.Text = entry.Discount != null ? entry.Discount.Value.ToString() : ""; //GetMilestonePersonDiscount();
+                if (Milestone != null)
+                {
+                    lblDiscount.Text = Milestone.PremiumType == 1 && lblDiscount.Text.Length > 0 ? "$" + lblDiscount.Text : Milestone.PremiumType == 2 && lblDiscount.Text.Length > 0 ? lblDiscount.Text + "%" : string.Empty;
+                }
 
                 imgMilestonePersonEntryUpdate.Visible = imgMilestonePersonEntryCancel.Visible = tblPersonName.Visible =
                 ddlPersonName.Visible = ddlRole.Visible = tblStartDate.Visible = tblEndDate.Visible =
-                tblHoursPerDay.Visible = tblAmount.Visible = tblHoursInPeriod.Visible = chbOpsApproved.Visible = chbBadgeException.Visible = chbBadgeRequired.Visible = tblBadgeStart.Visible = tblBadgeEnd.Visible = entry.IsEditMode;
-
+                tblHoursPerDay.Visible = tblAmount.Visible = tblHoursInPeriod.Visible = chbOpsApproved.Visible = chbBadgeException.Visible = chbBadgeRequired.Visible = tblBadgeStart.Visible = tblBadgeEnd.Visible = tblDiscount.Visible = chbDiscountLock.Visible = entry.IsEditMode;
+                lblDoller.Visible = HostingPage.DiscountType == "1";
+                lblPercentage.Visible = HostingPage.DiscountType == "2";
                 imgAdditionalAllocationOfResource.Attributes["entriesCount"] = entry.ExtendedResourcesRowCount.ToString();
                 imgMilestonePersonDelete.Attributes["IsOriginalResource"] = "false";
+                if (HostingPage.IsAmountAtMilestone && entry.IsEditMode && !chbDiscountLock.Checked)
+                {
+                    tblDiscount.Attributes.Add("style", "display: none");
+                    lblDiscount.Attributes.Add("style", "display: inline");
+                }
+                else if (entry.IsEditMode)
+                {
+                    tblDiscount.Attributes.Add("style", "display: inline");
+                    lblDiscount.Attributes.Add("style", "display: none");
+                }
+                else
+                {
+                    lblDiscount.Attributes.Add("style", "display: inline");
+                }
 
                 if (!entry.IsShowPlusButton)
                 {
@@ -1641,11 +1684,19 @@ namespace PraticeManagement.Controls.Milestones
                         {
                             chbOpsApproved.Checked = entry.EditedEntryValues["chbOpsApproved"].ToLower() == "true";
                         }
+                        if (chbDiscountLock != null)
+                        {
+                            chbDiscountLock.Checked = entry.EditedEntryValues["chbDiscountLock"].ToLower() == "true";
+                        }
+                        if (txtDiscount != null)
+                        {
+                            txtDiscount.Text = entry.EditedEntryValues["txtDiscount"];
+                        }
                     }
                     if (entry.ThisPerson.IsStrawMan)
                     {
                         dpBadgeEnd.EnabledTextBox = dpBadgeStart.EnabledTextBox = chbBadgeException.Enabled = chbOpsApproved.Enabled = chbBadgeRequired.Enabled = lblConsultantsEnd.Visible =
-                        custBadgeAfterJuly.Enabled = custBadgeNotInEmpHistory.Enabled = custExceptionNotMoreThan18moEndDate.Enabled = custBadgeHasMoredays.Enabled = compBadgeEndWithPersonEnd.Enabled = compBadgeStartWithPersonStart.Enabled = reqBadgeStart.Enabled = compBadgeStartType.Enabled = custBadgeStart.Enabled = reqBadgeEnd.Enabled = compBadgeEndType.Enabled = custBlocked.Enabled = custBadgeInBreakPeriod.Enabled = compBadgeEnd.Enabled = custBadgeEnd.Enabled = custAftertheBreak.Enabled= false;
+                        custBadgeAfterJuly.Enabled = custBadgeNotInEmpHistory.Enabled = custExceptionNotMoreThan18moEndDate.Enabled = custBadgeHasMoredays.Enabled = compBadgeEndWithPersonEnd.Enabled = compBadgeStartWithPersonStart.Enabled = reqBadgeStart.Enabled = compBadgeStartType.Enabled = custBadgeStart.Enabled = reqBadgeEnd.Enabled = compBadgeEndType.Enabled = custBlocked.Enabled = custBadgeInBreakPeriod.Enabled = compBadgeEnd.Enabled = custBadgeEnd.Enabled = custAftertheBreak.Enabled = false;
                         dpBadgeStart.ReadOnly = dpBadgeEnd.ReadOnly = true;
                         dpBadgeStart.TextValue = dpBadgeEnd.TextValue = string.Empty;
                     }
@@ -1691,7 +1742,7 @@ namespace PraticeManagement.Controls.Milestones
 
                         lnkPersonName.NavigateUrl = GetMpeRedirectUrl(entry.MilestonePersonId);
                         lnkPersonName.Attributes["PersonId"] = entry.ThisPerson.Id.ToString();
-
+                        imgNewResource.Visible = entry.IsNewToBudget;
                     }
                 }
 
@@ -1714,35 +1765,6 @@ namespace PraticeManagement.Controls.Milestones
                 }
             }
         }
-
-        //protected void dpPersonStart_SelectionChanged(object sender, EventArgs e)
-        //{
-        //    var dpStartDate = sender as DatePicker;
-        //    GridViewRow row = dpStartDate.NamingContainer as GridViewRow;
-        //    var chbBadgeRequired = row.FindControl("chbBadgeRequired") as CheckBox;
-        //    if (chbBadgeRequired.Checked)
-        //        ApprovedByOpsFunctionality(row);
-        //}
-
-        //public void ApprovedByOpsFunctionality(GridViewRow row)
-        //{
-        //    var chbOpsApproved = row.FindControl("chbOpsApproved") as CheckBox;
-        //    var dpPersonStart = row.FindControl("dpPersonStart") as DatePicker;
-        //    var dpPersonEnd = row.FindControl("dpPersonEnd") as DatePicker;
-        //    var dpBadgeStart = row.FindControl("dpBadgeStart") as DatePicker;
-        //    var dpBadgeEnd = row.FindControl("dpBadgeEnd") as DatePicker;
-        //    var oldPersonStartDate = Convert.ToDateTime(dpPersonStart.Attributes["OldValue"]);
-        //    var oldPersonEnddate = Convert.ToDateTime(dpPersonEnd.Attributes["OldValue"]);
-        //    var newPersonStartdate = dpPersonStart.DateValue;
-        //    var newPersonEnddate = dpPersonEnd.DateValue;
-        //    if (oldPersonStartDate != newPersonStartdate || oldPersonEnddate != newPersonEnddate)
-        //    {
-        //        if (oldPersonStartDate > newPersonStartdate || oldPersonEnddate < newPersonEnddate)
-        //            chbOpsApproved.Checked = false;
-        //        dpBadgeStart.DateValue = newPersonStartdate;
-        //        dpBadgeEnd.DateValue = newPersonEnddate;
-        //    }
-        //}
 
         protected void chbBadgeRequired_CheckedChanged(object sender, EventArgs e)
         {
@@ -1797,16 +1819,6 @@ namespace PraticeManagement.Controls.Milestones
                 }
                 if (badgeStart == DateTime.MinValue || lnkPersonName.Attributes["PersonId"] != ddlPersonName.SelectedValue)
                 {
-                    //Person person = GetPersonBySelectedValue(ddlPersonName.SelectedValue);
-                    //if (person != null && !person.IsStrawMan && person.EmploymentHistory != null)
-                    //{
-                    //    if (person.EmploymentHistory.Any(p => p.HireDate <= Milestone.ProjectedDeliveryDate && (!p.TerminationDate.HasValue || (p.TerminationDate.HasValue && Milestone.StartDate <= p.TerminationDate))))
-                    //    {
-                    //        Employment employment = person.EmploymentHistory.First(p => p.HireDate <= Milestone.ProjectedDeliveryDate && (!p.TerminationDate.HasValue || (p.TerminationDate.HasValue && Milestone.StartDate <= p.TerminationDate)));
-                    //        dpBadgeStart.TextValue = Milestone.StartDate < employment.HireDate.Date ? employment.HireDate.Date.ToString(Constants.Formatting.EntryDateFormat) : Milestone.StartDate.ToString(Constants.Formatting.EntryDateFormat);
-                    //        dpBadgeEnd.TextValue = employment.TerminationDate.HasValue ? Milestone.ProjectedDeliveryDate < employment.TerminationDate.Value ? Milestone.ProjectedDeliveryDate.ToString(Constants.Formatting.EntryDateFormat) : employment.TerminationDate.Value.ToString(Constants.Formatting.EntryDateFormat) : Milestone.ProjectedDeliveryDate.ToString(Constants.Formatting.EntryDateFormat);
-                    //    }
-                    //}
                     dpBadgeStart.TextValue = dpPersonStart.TextValue;
                     dpBadgeEnd.TextValue = dpPersonEnd.TextValue;
                 }
@@ -1825,27 +1837,6 @@ namespace PraticeManagement.Controls.Milestones
                 chbBadgeException.Checked = chbOpsApproved.Checked = false;
             }
         }
-
-        //protected void chbOpsApproved_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    var chbOpsApproved = sender as CheckBox;
-        //    var gvRow = chbOpsApproved.NamingContainer as GridViewRow;
-        //    var dpBadgeStart = gvRow.FindControl("dpBadgeStart") as DatePicker;
-        //    var dpBadgeEnd = gvRow.FindControl("dpBadgeEnd") as DatePicker;
-        //    var chbBadgeException = gvRow.FindControl("chbBadgeException") as CheckBox;
-        //    var chbBadgeRequired = gvRow.FindControl("chbBadgeRequired") as CheckBox;
-        //    if (chbOpsApproved.Checked && (!IsAdmin ||
-        //        !IsOperations))
-        //    {
-        //        dpBadgeEnd.EnabledTextBox = dpBadgeStart.EnabledTextBox = chbBadgeException.Enabled = chbBadgeRequired.Enabled = false;
-        //        dpBadgeStart.ReadOnly = dpBadgeEnd.ReadOnly = true;
-        //    }
-        //    else
-        //    {
-        //        dpBadgeEnd.EnabledTextBox = dpBadgeStart.EnabledTextBox = chbBadgeException.Enabled = chbBadgeRequired.Enabled = true;
-        //        dpBadgeStart.ReadOnly = dpBadgeEnd.ReadOnly = false;
-        //    }
-        //}
 
         protected void repPerson_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
@@ -1871,11 +1862,14 @@ namespace PraticeManagement.Controls.Milestones
             DateTime endDate = Milestone.ProjectedDeliveryDate;
 
             var tdAmountInsert = bar.FindControl("tdAmountInsert") as HtmlTableCell;
+            var tdDiscountInsert = bar.FindControl("tdDiscountInsert") as HtmlTableCell;
+            var tdDiscountLockInsert = bar.FindControl("tdDiscountLockInsert") as HtmlTableCell;
             var ddlPerson = bar.FindControl(DDLPERSON_KEY) as DropDownList;
             var ddlRole = bar.FindControl(DDLROLE_KEY) as DropDownList;
             var dpPersonStart = bar.FindControl(dpPersonStartInsert) as DatePicker;
             var dpPersonEnd = bar.FindControl(dpPersonEndInsert) as DatePicker;
             var txtAmount = bar.FindControl(txtAmountInsert) as TextBox;
+            var txtDiscount = bar.FindControl(txtDiscountInsert) as TextBox;
             var txtHoursPerDay = bar.FindControl(txtHoursPerDayInsert) as TextBox;
             var hdnIsFromAddBtn = bar.FindControl("hdnIsFromAddBtn") as HiddenField;
             var dpBadgeStartInsert = bar.FindControl("dpBadgeStartInsert") as DatePicker;
@@ -1883,6 +1877,9 @@ namespace PraticeManagement.Controls.Milestones
             var chbBadgeRequiredInsert = bar.FindControl("chbBadgeRequiredInsert") as CheckBox;
             var chbBadgeExceptionInsert = bar.FindControl("chbBadgeExceptionInsert") as CheckBox;
             var chbOpsApprovedInsert = bar.FindControl("chbOpsApprovedInsert") as CheckBox;
+            var chbDiscountLockInsert = bar.FindControl("chbDiscountLockInsert") as CheckBox;
+            var lblDoller = bar.FindControl("lblDoller") as Label;
+            var lblPercentage = bar.FindControl("lblPercentage") as Label;
 
             var tdBadgeRequired = bar.FindControl("tdBadgeRequired") as HtmlTableCell;
             var tdBadgeStart = bar.FindControl("tdBadgeStart") as HtmlTableCell;
@@ -1927,8 +1924,28 @@ namespace PraticeManagement.Controls.Milestones
                     ddlRole.SelectedValue = repeaterOldValues[e.Item.ItemIndex][DDLROLE_KEY];
             }
 
-            if (tdAmountInsert != null)
-                tdAmountInsert.Visible = Milestone.IsHourlyAmount;
+            //if (tdAmountInsert != null)
+            //    tdAmountInsert.Visible = Milestone.IsHourlyAmount;
+
+            if (tdDiscountInsert != null)
+            {
+                tdDiscountInsert.Visible = !Milestone.IsHourlyAmount;
+            }
+            if (tdDiscountLockInsert != null)
+            {
+                tdDiscountLockInsert.Visible = !Milestone.IsHourlyAmount;
+            }
+
+            if (tdDiscountInsert.Visible && txtDiscount != null)
+            {
+                txtDiscount.Text = repeaterOldValues[e.Item.ItemIndex][txtDiscountInsert];
+                lblDoller.Visible = HostingPage.DiscountType == "1";
+                lblPercentage.Visible = HostingPage.DiscountType == "2";
+            }
+            if (tdDiscountLockInsert.Visible && chbDiscountLockInsert != null)
+            {
+                chbDiscountLockInsert.Checked = repeaterOldValues[e.Item.ItemIndex]["chbDiscountLockInsert"].ToLower() == "true";
+            }
 
             if (tdAmountInsert.Visible && txtAmount != null)
                 txtAmount.Text = repeaterOldValues[e.Item.ItemIndex][txtAmountInsert];
@@ -1996,17 +2013,19 @@ namespace PraticeManagement.Controls.Milestones
                 !Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.DirectorRoleName) &&// #2817: DirectorRoleName is added as per the requirement.
                 !Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.SeniorLeadershipRoleName); // #2913: userIsSeniorLeadership is added as per the requirement.
 
-            btnAddPerson.Visible = gvMilestonePersonEntries.Columns[0].Visible = !isReadOnly;
+            gvMilestonePersonEntries.Columns[0].Visible = !isReadOnly;
+            btnAddPerson.Visible = !isReadOnly && HostingPage.EnableEdit;
+
         }
 
         protected string GetMpeRedirectUrl(object milestonePersonId)
         {
             var mpePageUrl =
                string.Format(
-                      Constants.ApplicationPages.RedirectMilestonePersonIdFormat,
+                      Constants.ApplicationPages.RedirectMilestonePersonIdFormat + "&EnableEdit={3}",
                       Constants.ApplicationPages.MilestonePersonDetail,
                       Milestone.Id.Value,
-                      milestonePersonId);
+                      milestonePersonId, HostingPage.EnableEdit);
 
             var url = Request.Url.AbsoluteUri;
 
@@ -2033,6 +2052,7 @@ namespace PraticeManagement.Controls.Milestones
             {
                 var bar = repItem.FindControl(mpbar) as MilestonePersonBar;
 
+                var txtDiscount = bar.FindControl(txtDiscountInsert) as TextBox;
                 var ddlPerson = bar.FindControl(DDLPERSON_KEY) as DropDownList;
                 var ddlRole = bar.FindControl(DDLROLE_KEY) as DropDownList;
                 var dpPersonStart = bar.FindControl(dpPersonStartInsert) as DatePicker;
@@ -2046,8 +2066,10 @@ namespace PraticeManagement.Controls.Milestones
                 var chbBadgeRequiredInsert = bar.FindControl("chbBadgeRequiredInsert") as CheckBox;
                 var chbBadgeExceptionInsert = bar.FindControl("chbBadgeExceptionInsert") as CheckBox;
                 var chbOpsApprovedInsert = bar.FindControl("chbOpsApprovedInsert") as CheckBox;
+                var chbDiscountLockInsert = bar.FindControl("chbDiscountLockInsert") as CheckBox;
 
                 var dic = new Dictionary<string, string>();
+                dic.Add(txtDiscountInsert, txtDiscount.Text);
                 dic.Add(DDLPERSON_KEY, ddlPerson.SelectedValue);
                 dic.Add(DDLROLE_KEY, ddlRole.SelectedValue);
                 dic.Add(dpPersonStartInsert, dpPersonStart.DateValue.ToString());
@@ -2061,6 +2083,7 @@ namespace PraticeManagement.Controls.Milestones
                 dic.Add("chbOpsApprovedInsert", chbOpsApprovedInsert.Checked.ToString());
                 dic.Add("dpBadgeStartInsert", dpBadgeStartInsert.DateValue.ToString());
                 dic.Add("dpBadgeEndInsert", dpBadgeEndInsert.DateValue.ToString());
+                dic.Add("chbDiscountLockInsert", chbDiscountLockInsert.Checked.ToString());
                 repoldValues.Add(dic);
             }
 
@@ -2091,6 +2114,8 @@ namespace PraticeManagement.Controls.Milestones
                         dic.Add("chbBadgeRequired", mpe.MSBadgeRequired ? "true" : "false");
                         dic.Add("chbBadgeException", mpe.BadgeException ? "true" : "false");
                         dic.Add("chbOpsApproved", mpe.IsApproved ? "true" : "false");
+                        dic.Add("txtDiscount", string.Empty);
+                        dic.Add("chbDiscountLock", mpe.DiscountLocked ? "true" : "false");
 
                         milestonePersonEntries[i].EditedEntryValues = dic;
                     }
@@ -2105,12 +2130,14 @@ namespace PraticeManagement.Controls.Milestones
                         var txtAmount = gvRow.FindControl("txtHoursPerDay") as TextBox;
                         var txtHoursPerDay = gvRow.FindControl("txtAmount") as TextBox;
                         var txtHoursInPeriod = gvRow.FindControl("txtHoursInPeriod") as TextBox;
+                        var txtDiscount = gvRow.FindControl("txtDiscount") as TextBox;
 
                         var chbBadgeRequired = gvRow.FindControl("chbBadgeRequired") as CheckBox;
                         var chbBadgeException = gvRow.FindControl("chbBadgeException") as CheckBox;
                         var chbOpsApproved = gvRow.FindControl("chbOpsApproved") as CheckBox;
                         var dpBadgeEnd = gvRow.FindControl("dpBadgeEnd") as DatePicker;
                         var dpBadgeStart = gvRow.FindControl("dpBadgeStart") as DatePicker;
+                        var chbDiscountLock = gvRow.FindControl("chbDiscountLock") as CheckBox;
 
                         var dic = new Dictionary<string, string>();
                         dic.Add("ddlPersonName", ddlPerson.SelectedValue);
@@ -2120,12 +2147,14 @@ namespace PraticeManagement.Controls.Milestones
                         dic.Add("txtAmount", txtAmount.Text);
                         dic.Add("txtHoursPerDay", txtHoursPerDay.Text);
                         dic.Add("txtHoursInPeriod", txtHoursInPeriod.Text);
+                        dic.Add("txtDiscount", txtDiscount.Text);
 
                         dic.Add("chbBadgeRequired", chbBadgeRequired.Checked ? "true" : "false");
                         dic.Add("chbBadgeException", chbBadgeException.Checked ? "true" : "false");
                         dic.Add("chbOpsApproved", chbOpsApproved.Checked ? "true" : "false");
                         dic.Add("dpBadgeEnd", dpBadgeEnd.TextValue);
                         dic.Add("dpBadgeStart", dpBadgeStart.TextValue);
+                        dic.Add("chbDiscountLock", chbDiscountLock.Checked ? "true" : "false");
                         milestonePersonEntries[i].EditedEntryValues = dic;
                     }
                     else
@@ -2170,16 +2199,24 @@ namespace PraticeManagement.Controls.Milestones
                 dic.Add("chbOpsApprovedInsert", "false");
                 dic.Add("dpBadgeStartInsert", string.Empty);
                 dic.Add("dpBadgeEndInsert", string.Empty);
+                dic.Add(txtDiscountInsert, string.Empty);
+                dic.Add("chbDiscountLockInsert", "false");
             }
+            try
+            {
+                repeaterOldValues.Add(dic);
+                repeaterOldValues = repeaterOldValues;
 
-            repeaterOldValues.Add(dic);
-            repeaterOldValues = repeaterOldValues;
+                AddMilestonePersonEntries.Add(entry);
 
-            AddMilestonePersonEntries.Add(entry);
-
-            AddMilestonePersonEntries = AddMilestonePersonEntries;
-            repPerson.DataSource = AddMilestonePersonEntries;
-            repPerson.DataBind();
+                AddMilestonePersonEntries = AddMilestonePersonEntries;
+                repPerson.DataSource = AddMilestonePersonEntries;
+                repPerson.DataBind();
+            }
+            catch (Exception e)
+            {
+                var a = e.InnerException;
+            }
         }
 
         public void RemoveItemAndDaabindRepeater(int barIndex)
@@ -2196,6 +2233,7 @@ namespace PraticeManagement.Controls.Milestones
             try
             {
                 var bar = repItem.FindControl(mpbar) as MilestonePersonBar;
+                var txtDiscount = bar.FindControl(txtDiscountInsert) as TextBox;
                 var ddlPerson = bar.FindControl(DDLPERSON_KEY) as DropDownList;
                 var ddlRole = bar.FindControl(DDLROLE_KEY) as DropDownList;
                 var dpPersonStart = bar.FindControl(dpPersonStartInsert) as DatePicker;
@@ -2209,6 +2247,7 @@ namespace PraticeManagement.Controls.Milestones
                 var chbBadgeRequiredInsert = bar.FindControl("chbBadgeRequiredInsert") as CheckBox;
                 var chbBadgeExceptionInsert = bar.FindControl("chbBadgeExceptionInsert") as CheckBox;
                 var chbOpsApprovedInsert = bar.FindControl("chbOpsApprovedInsert") as CheckBox;
+                var chbDiscountLockInsert = bar.FindControl("chbDiscountLockInsert") as CheckBox;
 
                 var entry = new MilestonePersonEntry();
                 entry.StartDate = dpPersonStart.DateValue;
@@ -2220,6 +2259,7 @@ namespace PraticeManagement.Controls.Milestones
                 entry.MSBadgeRequired = chbBadgeRequiredInsert.Checked;
                 entry.BadgeException = chbBadgeExceptionInsert.Checked;
                 entry.IsApproved = chbOpsApprovedInsert.Checked;
+                entry.DiscountLocked = chbDiscountLockInsert.Checked;
 
                 Person person = null;
 
@@ -2253,11 +2293,20 @@ namespace PraticeManagement.Controls.Milestones
                     entry.HourlyAmount = decimal.Parse(txtAmount.Text);
                 }
 
+                if (!string.IsNullOrEmpty(txtDiscount.Text))
+                {
+                    entry.Discount = decimal.Parse(txtDiscount.Text);
+                }
+
                 if (String.IsNullOrEmpty(txtHoursPerDay.Text) && String.IsNullOrEmpty(txtHoursInPeriod.Text))
                 {
                     txtHoursPerDay.Text = DEFAULT_NUMBER_HOURS_PER_DAY;
                 }
-
+                entry.IsDiscountAtResourceLevel = HostingPage.IsDiscountAtMilestoneLevel;
+                entry.ParentMilestone = new Milestone()
+                {
+                    Id = HostingPage.Milestone.Id
+                };
 
                 // Flags
 
@@ -2296,9 +2345,8 @@ namespace PraticeManagement.Controls.Milestones
                     var index = MilestonePersonsEntries.FindIndex(entr => entr.ThisPerson.Id == entry.ThisPerson.Id && entr.IsNewEntry == false);
                     var mpersonEntry = MilestonePersonsEntries[index];
 
-
-
                     entry.MilestonePersonId = mpersonEntry.MilestonePersonId;
+                    entry.IsNewToBudget = false;
 
                     if (isSaveCommit)
                     {
@@ -2320,11 +2368,11 @@ namespace PraticeManagement.Controls.Milestones
                         {
                             MilestonePersonEntry mpentry = ServiceCallers.Custom.MilestonePerson(mp => mp.GetMilestonePersonEntry(entryId));
                             MilestonePersonsEntries.Add(mpentry);
-                            MilestonePersonsEntries = GetSortedEntries(MilestonePersonsEntries);
+                            MilestonePersonsEntries = GetSortedEntries(GetMilestonePersons());
                             BindEntriesGrid(MilestonePersonsEntries);
                             HostingPage.Milestone = null;
                             HostingPage.Project = HostingPage.Milestone.Project;
-                            HostingPage.FillComputedFinancials(HostingPage.Milestone);
+                            //HostingPage.FillComputedFinancials(HostingPage.Milestone);
                         }
                     }
 
@@ -2333,6 +2381,8 @@ namespace PraticeManagement.Controls.Milestones
                 {
                     if (isSaveCommit)
                     {
+                        entry.IsNewToBudget = true;
+                        entry.ParentMilestone = new Milestone { Id = HostingPage.MilestoneId };
                         var mPerson = new MilestonePerson()
                         {
                             Milestone = new Milestone()
@@ -2373,12 +2423,13 @@ namespace PraticeManagement.Controls.Milestones
 
                         if (iSDatBindRows)
                         {
-                            MilestonePersonsEntries.Add(mpentry);
-                            MilestonePersonsEntries = GetSortedEntries(MilestonePersonsEntries);
+                            //MilestonePersonsEntries.Add(mpentry);
+                            MilestonePersonsEntries = GetSortedEntries(GetMilestonePersons());
+                            //MilestonePersonsEntries = GetSortedEntries(MilestonePersonsEntries);
                             BindEntriesGrid(MilestonePersonsEntries);
                             HostingPage.Milestone = null;
                             HostingPage.Project = HostingPage.Milestone.Project;
-                            HostingPage.FillComputedFinancials(HostingPage.Milestone);
+                            //HostingPage.FillComputedFinancials(HostingPage.Milestone);
                         }
                     }
                 }
@@ -2389,6 +2440,8 @@ namespace PraticeManagement.Controls.Milestones
                     MilestonePersonsEntries.Add(entry);
                     MilestonePersonsEntries = MilestonePersonsEntries;
                 }
+                HostingPage.dis();
+                HostingPage.UpnlBody.Update();
             }
             catch (Exception ex)
             {
@@ -2438,16 +2491,15 @@ namespace PraticeManagement.Controls.Milestones
 
                 // Delete mPersonEntry 
 
-                ServiceCallers.Custom.MilestonePerson(mp => mp.DeleteMilestonePersonEntry(milestonePersonEntryId, Context.User.Identity.Name));
-                MilestonePersonsEntries.RemoveAt(index);
-                MilestonePersonsEntries = MilestonePersonsEntries;
-                MilestonePersonsEntries = GetSortedEntries(MilestonePersonsEntries);
+                ServiceCallers.Custom.MilestonePerson(mp => mp.DeleteMilestonePersonEntry(milestonePersonEntryId, Context.User.Identity.Name, HostingPage.MilestoneId));
+                MilestonePersonsEntries = GetSortedEntries(GetMilestonePersons()); ;
                 BindEntriesGrid(MilestonePersonsEntries);
 
                 // Get latest data in detail tab
 
                 HostingPage.Milestone = null;
-                HostingPage.FillComputedFinancials(HostingPage.Milestone);
+                HostingPage.dis();
+                HostingPage.UpnlBody.Update();
             }
             catch (Exception ex)
             {
@@ -2490,20 +2542,19 @@ namespace PraticeManagement.Controls.Milestones
                     if ((entry.Role == null && milestonePersonEntryRoleId == null) || (entry.Role != null && milestonePersonEntryRoleId != null && entry.Role.Id == milestonePersonEntryRoleId))
                     {
                         // Delete mPersonEntry 
-                        ServiceCallers.Custom.MilestonePerson(mp => mp.DeleteMilestonePersonEntry(entry.Id, Context.User.Identity.Name));
+                        ServiceCallers.Custom.MilestonePerson(mp => mp.DeleteMilestonePersonEntry(entry.Id, Context.User.Identity.Name, HostingPage.MilestoneId));
                         var index = MilestonePersonsEntries.FindIndex(mpe => mpe.Id == entry.Id);
                         MilestonePersonsEntries.RemoveAt(index);
-                        //MilestonePersonsEntries.Remove(entry);//need to check
                     }
                 }
-                MilestonePersonsEntries = MilestonePersonsEntries;
-                MilestonePersonsEntries = GetSortedEntries(MilestonePersonsEntries);
+                MilestonePersonsEntries = GetSortedEntries(GetMilestonePersons());
                 BindEntriesGrid(MilestonePersonsEntries);
 
                 // Get latest data in detail tab
 
                 HostingPage.Milestone = null;
-                HostingPage.FillComputedFinancials(HostingPage.Milestone);
+                HostingPage.dis();
+                HostingPage.UpnlBody.Update();
             }
             catch (Exception ex)
             {
@@ -2578,6 +2629,8 @@ namespace PraticeManagement.Controls.Milestones
                 var chbOpsApproved = row.FindControl("chbOpsApproved") as CheckBox;
                 var dpBadgeEnd = row.FindControl("dpBadgeEnd") as DatePicker;
                 var dpBadgeStart = row.FindControl("dpBadgeStart") as DatePicker;
+                var txtDiscount = row.FindControl("txtDiscount") as TextBox;
+                var chbDiscountLock = row.FindControl("chbDiscountLock") as CheckBox;
 
                 dic.Add(DDLPERSON_KEY, ddlPersonName.SelectedValue);
                 dic.Add(DDLROLE_KEY, ddlRole.SelectedValue);
@@ -2592,6 +2645,8 @@ namespace PraticeManagement.Controls.Milestones
                 dic.Add("chbOpsApprovedInsert", chbOpsApproved.Checked ? "true" : "false");
                 dic.Add("dpBadgeEndInsert", dpBadgeEnd.DateValue.ToString());
                 dic.Add("dpBadgeStartInsert", dpBadgeStart.DateValue.ToString());
+                dic.Add(txtDiscountInsert, txtDiscount.Text);
+                dic.Add("chbDiscountLock", chbDiscountLock.Checked ? "true" : "false");
             }
             else
             {
@@ -2601,8 +2656,10 @@ namespace PraticeManagement.Controls.Milestones
                 var lblEndDate = row.FindControl("lblEndDate") as Label;
                 var lblHoursPerDay = row.FindControl("lblHoursPerDay") as Label;
                 var lblAmount = row.FindControl("lblAmount") as Label;
+                var lblDiscount = row.FindControl("lblDiscount") as Label;
                 var lblHoursInPeriodDay = row.FindControl("lblHoursInPeriodDay") as Label;
                 var hourlyrate = lblAmount.Text.Replace("$", "");
+                var lblDiscountLock = row.FindControl("lblDiscountLock") as Label;
 
                 var lblBadgeRequired = row.FindControl("lblBadgeRequired") as Label;
                 var lblBadgeStart = row.FindControl("lblBadgeStart") as Label;
@@ -2623,6 +2680,8 @@ namespace PraticeManagement.Controls.Milestones
                 dic.Add("chbOpsApprovedInsert", lblApproved.Text == "Yes" ? "true" : "false");
                 dic.Add("dpBadgeEndInsert", lblBadgeEnd.Text);
                 dic.Add("dpBadgeStartInsert", lblBadgeStart.Text);
+                dic.Add(txtDiscountInsert, lblDiscount.Text);
+                dic.Add("chbDiscountLockInsert", lblDiscountLock.Text == "Yes" ? "true" : "false");
             }
 
             AddRowAndBindRepeater(dic, false);
@@ -2654,6 +2713,8 @@ namespace PraticeManagement.Controls.Milestones
             ImageButton imgMilestonePersonEntryUpdate = sender as ImageButton;
             GridViewRow gvRow = imgMilestonePersonEntryUpdate.NamingContainer as GridViewRow;
             milestonePersonEntryUpdate(gvRow.DataItemIndex, gvRow);
+            HostingPage.dis();
+            HostingPage.UpnlBody.Update();
         }
 
         private void milestonePersonEntryUpdate(int mpeIndex, GridViewRow gvRow = null, bool isValidating = true)
@@ -2718,7 +2779,10 @@ namespace PraticeManagement.Controls.Milestones
                         ProjectedWorkloadWithVacation = entry.ProjectedWorkloadWithVacation,
                         PersonTimeOffList = entry.PersonTimeOffList,
                         VacationDays = entry.VacationDays,
-                        HoursPerDay = entry.HoursPerDay
+                        HoursPerDay = entry.HoursPerDay,
+                        IsNewToBudget = false,
+                        IsDiscountAtResourceLevel = HostingPage.IsDiscountAtMilestoneLevel,
+                        ParentMilestone = new Milestone { Id = HostingPage.MilestoneId }
                     };
 
                     if (entry.IsNewEntry)
@@ -2726,7 +2790,6 @@ namespace PraticeManagement.Controls.Milestones
                         if (!UpdateMilestonePersonEntry(milestonePersonentry, gvMilestonePersonEntries.Rows[gvRow.DataItemIndex], false))
                         {
                             IsErrorOccuredWhileUpdatingRow = true;
-                            //HostingPage.lblResultObject.ShowErrorMessage("Error occured while saving resources.");
                             return;
                         }
                         if (IsSaveCommit)
@@ -2932,11 +2995,12 @@ namespace PraticeManagement.Controls.Milestones
 
                     if (ISDatBindRows)
                     {
-                        MilestonePersonsEntries = GetSortedEntries(MilestonePersonsEntries);
+                        //MilestonePersonsEntries = GetSortedEntries(MilestonePersonsEntries);
+                        MilestonePersonsEntries = GetSortedEntries(GetMilestonePersons());
                         BindEntriesGrid(MilestonePersonsEntries);
                         HostingPage.Milestone = null;
                         HostingPage.Project = HostingPage.Milestone.Project;
-                        HostingPage.FillComputedFinancials(HostingPage.Milestone);
+                        //HostingPage.FillComputedFinancials(HostingPage.Milestone);
                     }
 
 
@@ -2950,6 +3014,7 @@ namespace PraticeManagement.Controls.Milestones
                     if (ShowExceptionPopup)
                         mpeExceptionValidation.Show();
                 }
+
             }
             catch (Exception ex)
             {
@@ -2979,6 +3044,8 @@ namespace PraticeManagement.Controls.Milestones
             var chbOpsApproved = gridViewRow.FindControl("chbOpsApproved") as CheckBox;
             var dpBadgeEnd = gridViewRow.FindControl("dpBadgeEnd") as DatePicker;
             var dpBadgeStart = gridViewRow.FindControl("dpBadgeStart") as DatePicker;
+            var txtDiscount = gridViewRow.FindControl("txtDiscount") as TextBox;
+            var chbDiscountLock = gridViewRow.FindControl("chbDiscountLock") as CheckBox;
 
             if (isRowUpdating)
             {
@@ -3011,6 +3078,7 @@ namespace PraticeManagement.Controls.Milestones
             entry.MSBadgeRequired = chbBadgeRequired.Checked;
             entry.BadgeException = chbBadgeException.Checked;
             entry.IsApproved = chbOpsApproved.Checked;
+            entry.DiscountLocked = chbDiscountLock.Checked;
 
             if (!string.IsNullOrEmpty(ddlPersonName.SelectedValue))
             {
@@ -3036,6 +3104,11 @@ namespace PraticeManagement.Controls.Milestones
             if (!string.IsNullOrEmpty(txtAmount.Text))
             {
                 entry.HourlyAmount = decimal.Parse(txtAmount.Text);
+            }
+
+            if (!string.IsNullOrEmpty(txtDiscount.Text))
+            {
+                entry.Discount = decimal.Parse(txtDiscount.Text);
             }
 
             if (String.IsNullOrEmpty(txtHoursPerDay.Text) && String.IsNullOrEmpty(txtHoursInPeriod.Text))
@@ -3191,7 +3264,6 @@ namespace PraticeManagement.Controls.Milestones
         internal void CopyItemAndDaabindRepeater(int barIndex)
         {
             MilestonePersonEntry mpentry = AddMilestonePersonEntries[barIndex];
-
             AddMilestonePersonEntries.Add(mpentry);
             Dictionary<string, string> dic = repeaterOldValues[barIndex];
             repeaterOldValues.Add(dic);
@@ -3206,11 +3278,8 @@ namespace PraticeManagement.Controls.Milestones
             SaveToTemporaryEntry();
             var result = true;
             var mpersons = new List<MilestonePerson>();
-
-
             if (MilestonePersonsEntries.Any(mpEntry => mpEntry.IsEditMode))
             {
-
                 for (int i = 0; i < MilestonePersonsEntries.Count; i++)
                 {
                     if (MilestonePersonsEntries[i].IsEditMode)
@@ -3239,7 +3308,6 @@ namespace PraticeManagement.Controls.Milestones
 
             if (repPerson.Items.Count > 0)
             {
-
                 bool output = true;
                 foreach (RepeaterItem mpBar in repPerson.Items)
                 {
@@ -3251,7 +3319,6 @@ namespace PraticeManagement.Controls.Milestones
                     }
                 }
             }
-
             GetAndRemoveTemporaryEntry();
             return result;
         }
@@ -3260,10 +3327,8 @@ namespace PraticeManagement.Controls.Milestones
         {
             var result = true;
             var mpersons = new List<MilestonePerson>();
-
             if (MilestonePersonsEntries.Any(mpEntry => mpEntry.IsEditMode))
             {
-
                 for (int i = 0; i < MilestonePersonsEntries.Count; i++)
                 {
                     if (MilestonePersonsEntries[i].IsEditMode)
@@ -3285,7 +3350,6 @@ namespace PraticeManagement.Controls.Milestones
             {
                 if (repPerson.Items.Count > 0)
                 {
-
                     bool output = true;
                     foreach (RepeaterItem mpBar in repPerson.Items)
                     {
@@ -3298,19 +3362,14 @@ namespace PraticeManagement.Controls.Milestones
                     }
                 }
             }
-
-
-
             return result;
         }
 
         protected void imgAdditionalAllocationOfResource_OnClick(object sender, EventArgs e)
         {
             var btn = sender as ImageButton;
-
             var entriesCount = btn.Attributes["entriesCount"];
             int count;
-
             if (!string.IsNullOrEmpty(entriesCount))
             {
                 count = Convert.ToInt32(entriesCount) + 1;
@@ -3319,24 +3378,16 @@ namespace PraticeManagement.Controls.Milestones
             {
                 count = 1;
             }
-
             var gvRow = btn.NamingContainer as GridViewRow;
-
             var entrieslist = MilestonePersonsEntries;
-
             var modifiedEntries = new List<MilestonePersonEntry>();
-
             for (int i = 0; i < entrieslist.Count; i++)
             {
-
                 if (i == gvRow.DataItemIndex)
                 {
                     entrieslist[i].ExtendedResourcesRowCount = count;
                 }
-
                 modifiedEntries.Add(entrieslist[i]);
-
-
                 if (i == gvRow.DataItemIndex)
                 {
                     if (count < 6)
@@ -3352,17 +3403,14 @@ namespace PraticeManagement.Controls.Milestones
                             StartDate = entrieslist[i].EndDate < HostingPage.Milestone.EndDate ? entrieslist[i].EndDate.Value.AddDays(1).Date : entrieslist[i].EndDate.Value.Date,
                             EndDate = HostingPage.Milestone.EndDate
                         };
-
                         modifiedEntries.Add(mpe);
                         StoreGridViewEditedEntriesInObject(i + 1, modifiedEntries);
-
                     }
                 }
-
             }
 
             MilestonePersonsEntries = GetSortedEntries(modifiedEntries);
-
+            //MilestonePersonsEntries = GetSortedEntries(GetMilestonePersons());
             BindEntriesGrid(MilestonePersonsEntries);
         }
 
@@ -3371,7 +3419,7 @@ namespace PraticeManagement.Controls.Milestones
             if (gvMilestonePersonEntries.Rows.Count == 0 && repPerson.Items.Count == 0)
             {
                 thInsertMilestonePerson.Visible = true;
-                thHourlyRate.Visible = Milestone.IsHourlyAmount;
+                //thHourlyRate.Visible = Milestone.IsHourlyAmount;
                 thBadgeRequired.Visible = thBadgeStart.Visible = thBadgeEnd.Visible = thConsultantEnd.Visible = thBadgeException.Visible = thApprovedOps.Visible = Milestone.Project.Client.Id == 2;
 
                 AddRowAndBindRepeater(null, true);
@@ -3402,17 +3450,14 @@ namespace PraticeManagement.Controls.Milestones
 
         private void SaveToTemporaryEntry()
         {
-
             if (MilestonePersonsEntries.Any(mpEntry => mpEntry.IsEditMode))
             {
-
                 for (int i = 0; i < MilestonePersonsEntries.Count; i++)
                 {
                     var mpentry = MilestonePersonsEntries[i];
                     if (mpentry.IsEditMode)
                     {
                         var entry = new MilestonePersonEntry();
-
                         entry.StartDate = mpentry.StartDate;
                         entry.EndDate = mpentry.EndDate;
                         entry.ThisPerson = new Person
@@ -3428,27 +3473,12 @@ namespace PraticeManagement.Controls.Milestones
                         } : null;
 
                         entry.Role = role;
-
                         entry.HourlyAmount = mpentry.HourlyAmount;
                         entry.HoursPerDay = mpentry.HoursPerDay;
                         entry.ProjectedWorkloadWithVacation = mpentry.ProjectedWorkloadWithVacation;
                         entry.PersonTimeOffList = mpentry.PersonTimeOffList;
-
                         mpentry.PreviouslySavedEntry = entry;
                     }
-
-                    //if (mpentry.IsNewEntry && !mpentry.IsShowPlusButton)
-                    //{
-                    //    var gvRow = gvMilestonePersonEntries.Rows[i];
-
-                    //    var index = MilestonePersonsEntries.FindIndex(en => en.Id == mpentry.ShowingPlusButtonEntryId);
-
-
-                    //    var ddlPersonName = gvRow.FindControl("ddlPersonName") as DropDownList;
-                    //    var ddlRoleName = gvRow.FindControl("ddlRole") as DropDownList;
-                    //    ddlPersonName.SelectedValue = mPEntry.ThisPerson.Id.ToString();
-                    //    ddlRoleName.SelectedValue = mPEntry.Role != null ? mPEntry.Role.Id.ToString() : string.Empty;
-                    //}
 
                 }
             }
@@ -3457,16 +3487,12 @@ namespace PraticeManagement.Controls.Milestones
         private void GetAndRemoveTemporaryEntry()
         {
             var entries = MilestonePersonsEntries.Where(mpentry => mpentry.IsRepeaterEntry == false).AsQueryable().ToList();
-
             MilestonePersonsEntries = entries;
-
             if (MilestonePersonsEntries.Any(mpEntry => mpEntry.IsEditMode))
             {
-
                 for (int i = 0; i < MilestonePersonsEntries.Count; i++)
                 {
                     var entry = MilestonePersonsEntries[i];
-
                     if (entry.IsEditMode)
                     {
                         var mpentry = MilestonePersonsEntries[i].PreviouslySavedEntry;
@@ -3486,14 +3512,102 @@ namespace PraticeManagement.Controls.Milestones
                         entry.ProjectedWorkloadWithVacation = mpentry.ProjectedWorkloadWithVacation;
                         entry.PersonTimeOffList = mpentry.PersonTimeOffList;
                     }
-
                     MilestonePersonsEntries[i].PreviouslySavedEntry = null;
                 }
             }
+        }
 
+        protected string GetMilestonePersonDiscount()
+        {
+            return Milestone != null && Milestone.PremiumDiscount != null ? Milestone.PremiumDiscount.Value.ToString("###,###,###,###,##0.##") : string.Empty;
         }
 
         #endregion
+
+        protected void txtDiscount_TextChanged(object sender, EventArgs e)
+        {
+            HostingPage.IsDiscountAtMilestoneLevel = 2;//discount set at milestone resource level
+        }
+
+        protected void cvDiscountLock_ServerValidate(object sender, ServerValidateEventArgs args)
+        {
+            CustomValidator custPerson = sender as CustomValidator;
+            GridViewRow gvRow = custPerson.NamingContainer as GridViewRow;
+            var ddlPerson = gvRow.FindControl("chbDiscountLock") as CheckBox;
+
+            if (HostingPage.IsSaveAllClicked)
+            {
+                var index = MilestonePersonsEntries[gvRow.DataItemIndex].IsShowPlusButton ? gvRow.DataItemIndex : MilestonePersonsEntries.FindIndex(mpe => mpe.Id == MilestonePersonsEntries[gvRow.DataItemIndex].ShowingPlusButtonEntryId);
+                var isStrawMan = MilestonePersonsEntries[index].IsEditMode ? (gvMilestonePersonEntries.Rows[index].FindControl("ddlPersonName") as DropDownList).SelectedItem.Attributes[Constants.Variables.IsStrawMan].ToLowerInvariant() : MilestonePersonsEntries[index].ThisPerson.IsStrawMan.ToString().ToLowerInvariant();
+                if (isStrawMan == "true")
+                {
+                    args.IsValid = true;
+                }
+                else
+                {
+
+                    var _temp = MilestonePersonsEntries.ToList();
+                    var _test = _temp.FindAll(_ => _.IsEditMode == false);
+                    if (_test.Any(_ => _.DiscountLocked == false))
+                    {
+                        args.IsValid = true;
+                    }
+                    else
+                    {
+                        var isOnePersonWithLockExists = new List<bool>();
+                        for (int i = 0; i < MilestonePersonsEntries.Count; i++)
+                        {
+                            if (MilestonePersonsEntries[i].IsEditMode)
+                            {
+                                var gvRowTemp = gvMilestonePersonEntries.Rows[i];
+                                var chbDiscountLock = gvRowTemp.FindControl("chbDiscountLock") as CheckBox;
+                                isOnePersonWithLockExists.Add(chbDiscountLock.Checked);
+                            }
+                        }
+                        args.IsValid = isOnePersonWithLockExists.IndexOf(false) > -1;
+                    }
+
+                    //ValidateDiscountWhenSaveClicked(sender, args);
+                }
+            }
+            else
+            {
+                ValidateDiscountWhenSaveClicked(sender, args);
+            }
+        }
+
+        private void ValidateDiscountWhenSaveClicked(object sender, ServerValidateEventArgs e)
+        {
+            CustomValidator custPerson = sender as CustomValidator;
+            GridViewRow gvRow = custPerson.NamingContainer as GridViewRow;
+            var chbDiscountLock = gvRow.FindControl("chbDiscountLock") as CheckBox;
+            if (chbDiscountLock.Checked && MilestonePersonsEntries != null)
+            {
+                if (MilestonePersonsEntries.Count > 0)
+                {
+                    var _temp = MilestonePersonsEntries.ToList();
+                    _temp.RemoveAt(gvRow.DataItemIndex);
+                    var _entries = _temp.FindAll(_ => _.DiscountLocked == false);
+                    if (_entries != null && _entries.Count > 0)
+                    {
+                        e.IsValid = true;
+                    }
+                    else
+                    {
+                        e.IsValid = false;
+                    }
+                }
+                else
+                {
+                    e.IsValid = false;
+                }
+            }
+            else
+            {
+                e.IsValid = true;
+            }
+        }
+
     }
 }
 
