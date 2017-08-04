@@ -294,16 +294,16 @@ namespace DataAccess
             {
                 clientMarginColorInfo.Add(
                     new ClientMarginColorInfo()
+                    {
+                        ColorInfo = new ColorInformation()
                         {
-                            ColorInfo = new ColorInformation()
-                                {
-                                    ColorId = reader.GetInt32(colorIdIndex),
-                                    ColorValue = reader.GetString(colorValueIndex),
-                                    ColorDescription = reader.GetString(colorDescriptionIndex)
-                                },
-                            StartRange = reader.GetInt32(startRangeIndex),
-                            EndRange = reader.GetInt32(endRangeIndex),
-                        }
+                            ColorId = reader.GetInt32(colorIdIndex),
+                            ColorValue = reader.GetString(colorValueIndex),
+                            ColorDescription = reader.GetString(colorDescriptionIndex)
+                        },
+                        StartRange = reader.GetInt32(startRangeIndex),
+                        EndRange = reader.GetInt32(endRangeIndex),
+                    }
                     );
             }
         }
@@ -377,12 +377,12 @@ namespace DataAccess
             while (reader.Read())
             {
                 quicklinks.Add(new QuickLinks()
-                    {
-                        DashBoardType = (DashBoardType)reader.GetInt32(dashBoardTypeIdIndex),
-                        Id = reader.GetInt32(idIndex),
-                        LinkName = reader.GetString(linkNameIndex),
-                        VirtualPath = reader.GetString(virtualPathIndex)
-                    });
+                {
+                    DashBoardType = (DashBoardType)reader.GetInt32(dashBoardTypeIdIndex),
+                    Id = reader.GetInt32(idIndex),
+                    LinkName = reader.GetString(linkNameIndex),
+                    VirtualPath = reader.GetString(virtualPathIndex)
+                });
             }
         }
 
@@ -726,6 +726,290 @@ namespace DataAccess
                     };
                 }
                 locations.Add(location);
+            }
+        }
+
+        public static List<ClientMarginThreshold> GetMarginThresholds()
+        {
+            var thresholds = new List<ClientMarginThreshold>();
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            {
+                using (var command = new SqlCommand(Constants.ProcedureNames.Configuration.GetMarginThresholds, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandTimeout = connection.ConnectionTimeout;
+
+                    connection.Open();
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        ReadMarginThresholds(reader, thresholds);
+                    }
+                }
+                return thresholds;
+            }
+        }
+
+        private static void ReadMarginThresholds(SqlDataReader reader, List<ClientMarginThreshold> thresholds)
+        {
+            if (!reader.HasRows) return;
+            int idIndex = reader.GetOrdinal(Constants.ColumnNames.Id);
+            int startDateIndex = reader.GetOrdinal(Constants.ColumnNames.StartDateColumn);
+            int endDateDateIndex = reader.GetOrdinal(Constants.ColumnNames.EndDateColumn);
+            int thresholdVarianceIndex = reader.GetOrdinal(Constants.ColumnNames.ThresholdVariance);
+
+            while (reader.Read())
+            {
+                var threshold = new ClientMarginThreshold
+                {
+                    Id = reader.GetInt32(idIndex),
+                    StartDate = reader.GetDateTime(startDateIndex),
+                    EndDate = reader.GetDateTime(endDateDateIndex),
+                    ThresholdVariance = reader.GetInt32(thresholdVarianceIndex)
+                };
+                thresholds.Add(threshold);
+            }
+        }
+
+        public static void InsertMarginThreshold(ClientMarginThreshold threshold)
+        {
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            {
+                using (var command = new SqlCommand(Constants.ProcedureNames.Configuration.InsertMarginThreshold, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandTimeout = connection.ConnectionTimeout;
+
+                    command.Parameters.AddWithValue(Constants.ParameterNames.StartDate, threshold.StartDate);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.EndDate, threshold.EndDate);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.ThresholdVariance, threshold.ThresholdVariance);
+
+                    connection.Open();
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static void UpdateMarginThreshold(ClientMarginThreshold threshold)
+        {
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            {
+                using (var command = new SqlCommand(Constants.ProcedureNames.Configuration.UpdateMarginThreshold, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandTimeout = connection.ConnectionTimeout;
+
+                    command.Parameters.AddWithValue(Constants.ParameterNames.Id, threshold.Id.Value);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.StartDate, threshold.StartDate);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.EndDate, threshold.EndDate);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.ThresholdVariance, threshold.ThresholdVariance);
+
+                    connection.Open();
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static List<ClientMarginException> GetMarginExceptionThresholds()
+        {
+            var thresholds = new List<ClientMarginException>();
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            {
+                using (var command = new SqlCommand(Constants.ProcedureNames.Configuration.GetMarginExceptionThresholds, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandTimeout = connection.ConnectionTimeout;
+
+                    connection.Open();
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        ReadMarginExceptionThresholds(reader, thresholds);
+                    }
+                }
+                return thresholds;
+            }
+        }
+
+        private static void ReadMarginExceptionThresholds(SqlDataReader reader, List<ClientMarginException> thresholds)
+        {
+            if (!reader.HasRows) return;
+            int idIndex = reader.GetOrdinal(Constants.ColumnNames.Id);
+            int startDateIndex = reader.GetOrdinal(Constants.ColumnNames.StartDateColumn);
+            int endDateDateIndex = reader.GetOrdinal(Constants.ColumnNames.EndDateColumn);
+            int approvalLevelIdIndex = reader.GetOrdinal(Constants.ColumnNames.ApprovalLevelId);
+            int approvalLevelIndex = reader.GetOrdinal(Constants.ColumnNames.ApprovalLevel);
+            int marginGoalIndex = reader.GetOrdinal(Constants.ColumnNames.MarginGoal);
+            int revenueIndex = reader.GetOrdinal(Constants.ColumnNames.RevenueColumn);
+
+            while (reader.Read())
+            {
+                var threshold = new ClientMarginException
+                {
+                    Id = reader.GetInt32(idIndex),
+                    StartDate = reader.GetDateTime(startDateIndex),
+                    EndDate = reader.GetDateTime(endDateDateIndex),
+                    Level = new ApprovalLevel
+                    {
+                        Id = reader.GetInt32(approvalLevelIdIndex),
+                        Name = reader.GetString(approvalLevelIndex)
+                    },
+                    MarginThreshold = reader.GetInt32(marginGoalIndex),
+                    Revenue = reader.GetDecimal(revenueIndex)
+                };
+                thresholds.Add(threshold);
+            }
+        }
+
+        public static void InsertMarginExceptionThreshold(ClientMarginException threshold)
+        {
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            {
+                using (var command = new SqlCommand(Constants.ProcedureNames.Configuration.InsertMarginExceptionThreshold, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandTimeout = connection.ConnectionTimeout;
+
+                    command.Parameters.AddWithValue(Constants.ParameterNames.StartDate, threshold.StartDate);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.EndDate, threshold.EndDate);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.ApprovalLevel, threshold.Level.Id);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.MarginGoal, threshold.MarginThreshold);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.Revenue, threshold.Revenue);
+
+                    connection.Open();
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static void UpdateMarginExceptionThreshold(ClientMarginException threshold)
+        {
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            {
+                using (var command = new SqlCommand(Constants.ProcedureNames.Configuration.UpdateMarginExceptionThreshold, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandTimeout = connection.ConnectionTimeout;
+
+                    command.Parameters.AddWithValue(Constants.ParameterNames.Id, threshold.Id.Value);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.StartDate, threshold.StartDate);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.EndDate, threshold.EndDate);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.ApprovalLevel, threshold.Level.Id);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.MarginGoal, threshold.MarginThreshold);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.Revenue, threshold.Revenue);
+
+                    connection.Open();
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static void DeleteMarginThreshold(int id)
+        {
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            {
+                using (var command = new SqlCommand(Constants.ProcedureNames.Configuration.DeleteMarginThreshold, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandTimeout = connection.ConnectionTimeout;
+
+                    command.Parameters.AddWithValue(Constants.ParameterNames.IdParam, id);
+
+                    connection.Open();
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static void DeleteMarginExceptionThreshold(int id)
+        {
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            {
+                using (var command = new SqlCommand(Constants.ProcedureNames.Configuration.DeleteMarginExceptionThreshold, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandTimeout = connection.ConnectionTimeout;
+
+                    command.Parameters.AddWithValue(Constants.ParameterNames.IdParam, id);
+
+                    connection.Open();
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static List<OpenTask> GetOpenTasksForUser(string user)
+        {
+            var tasks = new List<OpenTask>();
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            {
+                using (var command = new SqlCommand(Constants.ProcedureNames.Configuration.GetOpenTasksForUser, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandTimeout = connection.ConnectionTimeout;
+
+                    command.Parameters.AddWithValue(Constants.ParameterNames.UserAlias, user);
+
+                    connection.Open();
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        ReadOpenTasks(reader, tasks);
+                    }
+                }
+                return tasks;
+            }
+        }
+
+        private static void ReadOpenTasks(SqlDataReader reader, List<OpenTask> tasks)
+        {
+            if (!reader.HasRows) return;
+            int projectIdIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectId);
+            int projectNumberIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectNumber);
+            int nameIndex = reader.GetOrdinal(Constants.ColumnNames.Name);
+            int statusIdIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectStatusId);
+            int revenueNetIndex = reader.GetOrdinal(Constants.ColumnNames.RevenueNetColumn);
+            int grossMarginIndex = reader.GetOrdinal(Constants.ColumnNames.GrossMarginColumn);
+            int tierOneStatusIndex = reader.GetOrdinal(Constants.ColumnNames.TierOneStatus);
+            int tierTwoStatusIndex = reader.GetOrdinal(Constants.ColumnNames.TierTwoStatus);
+            int marginGoalIndex = reader.GetOrdinal(Constants.ColumnNames.MarginGoal);
+            int marginThresholdIndex = reader.GetOrdinal(Constants.ColumnNames.MarginThreshold);
+            int RevenueIndex = reader.GetOrdinal(Constants.ColumnNames.RevenueColumn);
+            int ExceptionRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.ExceptionRevenue);
+            int businessTypeIdIndex = reader.GetOrdinal(Constants.ColumnNames.BusinessTypeId);
+
+            while (reader.Read())
+            {
+                var task = new OpenTask()
+                {
+                    Project = new Project
+                    {
+                        Id = reader.GetInt32(projectIdIndex),
+                        ProjectNumber = reader.GetString(projectNumberIndex),
+                        Name = reader.GetString(nameIndex),
+                        Status = new ProjectStatus { Id = reader.GetInt32(statusIdIndex) },
+                        TierOneExceptionStatus = reader.IsDBNull(tierOneStatusIndex) ? 0 : reader.GetInt32(tierOneStatusIndex),
+                        TierTwoExceptionStatus = reader.IsDBNull(tierTwoStatusIndex) ? 0 : reader.GetInt32(tierTwoStatusIndex),
+                        BusinessType = reader.IsDBNull(businessTypeIdIndex) ? (BusinessType)Enum.Parse(typeof(BusinessType), "0") : (BusinessType)Enum.Parse(typeof(BusinessType), reader.GetInt32(businessTypeIdIndex).ToString())
+                    },
+                    Revenue = reader.IsDBNull(RevenueIndex) ? 0M : reader.GetDecimal(RevenueIndex),
+                    RevenueNet = reader.IsDBNull(revenueNetIndex) ? 0M : reader.GetDecimal(revenueNetIndex),
+                    GrossMargin = reader.IsDBNull(grossMarginIndex) ? 0M : reader.GetDecimal(grossMarginIndex),
+                    Threshold = new ClientMarginException
+                    {
+                        MarginGoal = reader.GetInt32(marginGoalIndex),
+                        Revenue = reader.IsDBNull(ExceptionRevenueIndex) ? 0M : reader.GetDecimal(ExceptionRevenueIndex),
+                        MarginThreshold = reader.IsDBNull(marginThresholdIndex) ? 0 : reader.GetInt32(marginThresholdIndex)
+                    }
+                };
+
+                tasks.Add(task);
             }
         }
     }
