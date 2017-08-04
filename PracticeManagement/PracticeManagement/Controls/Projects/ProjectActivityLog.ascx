@@ -5,7 +5,9 @@
 <%@ Register TagPrefix="ext" Assembly="PraticeManagement" Namespace="PraticeManagement.Controls.Generic.ScrollableDropdown" %>
 <%@ Register Src="~/Controls/Generic/Filtering/DateInterval.ascx" TagPrefix="uc"
     TagName="DateInterval" %>
-<script type="text/javascript" language="javascript">
+<script src="../../Scripts/jquery-1.4.1.yui.js"></script>
+<script type="text/javascript">
+
     function EnableResetButtonForDateIntervalChange(sender, args) {
         var btnreset = document.getElementById('<%= btnResetFilter.ClientID %>');
         var hdnResetFilter = document.getElementById('<%= hdnResetFilter.ClientID %>');
@@ -25,7 +27,6 @@
     }
 
     function CheckIfDatesValid() {
-
         txtStartDate = document.getElementById('<%= diRange.ClientID %>_tbFrom');
         txtEndDate = document.getElementById('<%= diRange.ClientID %>_tbTo');
         var startDate = new Date(txtStartDate.value);
@@ -51,32 +52,32 @@
 
     function CheckAndShowCustomDatesPoup(ddlPeriod) {
         imgCalender = document.getElementById('<%= imgCalender.ClientID %>');
-        lblCustomDateRange = document.getElementById('<%= lblCustomDateRange.ClientID %>');
-        if (ddlPeriod.value == '0') {
-            imgCalender.attributes["class"].value = "";
-            lblCustomDateRange.attributes["class"].value = "fontBold";
-            if (imgCalender.fireEvent) {
-                imgCalender.style.display = "";
-                lblCustomDateRange.style.display = "";
-                imgCalender.click();
+            lblCustomDateRange = document.getElementById('<%= lblCustomDateRange.ClientID %>');
+            if (ddlPeriod.value == '0') {
+                imgCalender.attributes["class"].value = "";
+                lblCustomDateRange.attributes["class"].value = "fontBold";
+                if (imgCalender.fireEvent) {
+                    imgCalender.style.display = "";
+                    lblCustomDateRange.style.display = "";
+                    imgCalender.click();
+                }
+                if (document.createEvent) {
+                    var event = document.createEvent('HTMLEvents');
+                    event.initEvent('click', true, true);
+                    imgCalender.dispatchEvent(event);
+                }
             }
-            if (document.createEvent) {
-                var event = document.createEvent('HTMLEvents');
-                event.initEvent('click', true, true);
-                imgCalender.dispatchEvent(event);
+            else {
+                imgCalender.attributes["class"].value = "displayNone";
+                lblCustomDateRange.attributes["class"].value = "displayNone";
+                if (imgCalender.fireEvent) {
+                    imgCalender.style.display = "none";
+                    lblCustomDateRange.style.display = "none";
+                }
             }
         }
-        else {
-            imgCalender.attributes["class"].value = "displayNone";
-            lblCustomDateRange.attributes["class"].value = "displayNone";
-            if (imgCalender.fireEvent) {
-                imgCalender.style.display = "none";
-                lblCustomDateRange.style.display = "none";
-            }
-        }
-    }
-    function ReAssignStartDateEndDates() {
-        hdnStartDate = document.getElementById('<%= hdnStartDate.ClientID %>');
+        function ReAssignStartDateEndDates() {
+            hdnStartDate = document.getElementById('<%= hdnStartDate.ClientID %>');
         hdnEndDate = document.getElementById('<%= hdnEndDate.ClientID %>');
         txtStartDate = document.getElementById('<%= diRange.ClientID %>_tbFrom');
         txtEndDate = document.getElementById('<%= diRange.ClientID %>_tbTo');
@@ -108,21 +109,21 @@
         }
     }
 
-    function disableProjectsDropDown() {
+    <%--   function disableProjectsDropDown() {
 
-        var eventSource = document.getElementById('<%= ddlEventSource.ClientID %>');
-        projectList = document.getElementById('<%= ddlProjects.ClientID %>');
-        if (eventSource != null && projectList != null && eventSource.value != 'undefind') {
-            if ((eventSource.value >= 3 && eventSource.value <= 5) || (eventSource.value >= 21 && eventSource.value <= 27)
-                 || (eventSource.value >= 32 && eventSource.value <= 42)) {
-                projectList.disabled = 'true';
-                projectList[0].selected = 'true';
+            var eventSource = document.getElementById('<%= ddlEventSource.ClientID %>');
+            projectList = document.getElementById('<%= ddlProjects.ClientID %>');
+            if (eventSource != null && projectList != null && eventSource.value != 'undefind') {
+                if ((eventSource.value >= 3 && eventSource.value <= 5) || (eventSource.value >= 21 && eventSource.value <= 27)
+                     || (eventSource.value >= 32 && eventSource.value <= 42)) {
+                    projectList.disabled = 'true';
+                    projectList[0].selected = 'true';
+                }
+                else {
+                    projectList.disabled = '';
+                }
             }
-            else {
-                projectList.disabled = '';
-            }
-        }
-    }
+        }--%>
 
 </script>
 <uc:LoadingProgress ID="lpActivityLog" runat="server" />
@@ -134,7 +135,7 @@
                     <div id="divActivitylog" class="Padding10" runat="server">
                         <table id="tblActivitylog" runat="server" class="no-wrap WholeWidth">
                             <tr>
-                                <td id="tdEventSource" runat="server" class="padLeft0 padRight0">
+                                <%--<td id="tdEventSource" runat="server" class="padLeft0 padRight0">
                                     <asp:Label ID="lblDisplay" runat="server" Text="Show "></asp:Label><asp:DropDownList
                                         ID="ddlEventSource" runat="server" EnableViewState="true">
                                         <asp:ListItem Text="ALL Events" Value="1" Selected="True"></asp:ListItem>
@@ -204,13 +205,12 @@
                                         <asp:ListItem Text="&nbsp; Changed Project Feedback Events" Value="65"></asp:ListItem>
                                         <asp:ListItem Text="&nbsp; Deleted Project Feedback Events" Value="66"></asp:ListItem>
                                     </asp:DropDownList>
-                                </td>
-                                 <td>
-                                 Show Project changes made to&nbsp;
+                                </td>--%>
+                                <td>Show Project changes made to&nbsp;
                                     <pmc:ScrollingDropDown ID="cblFields" runat="server" SetDirty="false" AllSelectedReturnType="Null"
                                         NoItemsType="All" onclick="scrollingDropdown_onclick('cblFields','Field')" DropDownListType="Field"
                                         CellPadding="3" CssClass="AccountSummaryBusinessUnitsDiv" />
-                                    <ext:ScrollableDropdownExtender ID="sdeField" runat="server" TargetControlID="cblFields" 
+                                    <ext:ScrollableDropdownExtender ID="sdeField" runat="server" TargetControlID="cblFields"
                                         UseAdvanceFeature="true" Width="218px" EditImageUrl="~/Images/Dropdown_Arrow.png">
                                     </ext:ScrollableDropdownExtender>
                                 </td>
@@ -238,7 +238,7 @@
                                     <asp:Label ID="lblCustomDateRange" EnableViewState="true" runat="server" Text=""></asp:Label>
                                     <asp:Image ID="imgCalender" EnableViewState="true" runat="server" ImageUrl="~/Images/calendar.gif" />
                                 </td>
-                               
+
                                 <td id="spnPersons" runat="server">
                                     <asp:Label ID="Label1" runat="server" Text="&nbsp;for&nbsp;"></asp:Label><asp:DropDownList
                                         ID="ddlPersonName" runat="server" DataSourceID="odsPersons" DataTextField="PersonLastFirstName"
@@ -247,8 +247,9 @@
                                 </td>
                                 <td id="spnProjects" runat="server">
                                     <asp:Label ID="Label2" runat="server" Text="&nbsp;on "></asp:Label><asp:DropDownList
-                                        ID="ddlProjects" runat="server" DataSourceID="odsProjects" DataTextField="Name"
-                                        DataValueField="Id" OnDataBound="ddlProjects_OnDataBound" />
+                                        ID="ddlProjects" runat="server" />
+                                    <%-- DataSourceID="odsProjects" DataTextField="Name"
+                                        DataValueField="Id" OnDataBound="ddlProjects_OnDataBound" />--%>
                                 </td>
                                 <td id="tdBtnList" runat="server" class="width60PImp">
                                     <table>
@@ -261,7 +262,7 @@
                                                     Visible="false" />
                                             </td>
                                             <td class="WholeWidth textRight">
-                                                <asp:Button ID="btnExcel" runat="server" Text="Export" OnClick="btnExcel_Click" Enabled="false"/>
+                                                <asp:Button ID="btnExcel" runat="server" Text="Export" OnClick="btnExcel_Click" Enabled="false" />
                                             </td>
                                         </tr>
                                     </table>
@@ -273,15 +274,15 @@
                 </td>
             </tr>
             <tr>
-                <td>
-                    &nbsp;
+                <td>&nbsp;
                 </td>
             </tr>
             <tr>
                 <td>
                     <asp:GridView ID="gvActivities" runat="server" AutoGenerateColumns="False" EmptyDataText="No activity for given parameters."
                         DataSourceID="odsActivities" AllowPaging="True" PageSize="20" CssClass="CompPerfTable gvActivitiesActivityLog"
-                        OnRowDataBound="gvActivities_OnRowDataBound" OnDataBound="gvActivities_OnDataBound">
+                        OnRowDataBound="gvActivities_OnRowDataBound"
+                        OnDataBound="gvActivities_OnDataBound">
                         <AlternatingRowStyle CssClass="alterrow" />
                         <PagerSettings Mode="NumericFirstLast" />
                         <PagerStyle CssClass="cssPager" />
@@ -291,27 +292,30 @@
                                 <ItemStyle CssClass="Width10Percent" />
                                 <HeaderTemplate>
                                     <div class="ie-bg">
-                                        Modified date</div>
+                                        Modified date
+                                    </div>
                                 </HeaderTemplate>
                                 <ItemTemplate>
                                     <asp:Label ID="lblCreateDate" runat="server" Text='<%# ((DateTime)Eval("LogDate")).ToString("MM/dd/yyyy") + " " + ((DateTime)Eval("LogDate")).ToShortTimeString() %>' />
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField>
-                                <ItemStyle CssClass="Width10Percent" />
+                                <ItemStyle CssClass="Width15Percent" />
                                 <HeaderTemplate>
                                     <div class="ie-bg">
-                                        Modified by</div>
+                                        Modified by
+                                    </div>
                                 </HeaderTemplate>
                                 <ItemTemplate>
                                     <asp:Label ID="lblUserName" runat="server" Text='<%# GetModifiedByDetails( Eval("Person.Id"), Eval("Person.PersonLastFirstName"), Eval("SystemUser").ToString(), Eval("LogData")) %>' />
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField>
-                                <ItemStyle CssClass="WordWrapActivityLog Width12Percent" />
+                                <ItemStyle CssClass="WordWrapActivityLog Width20Percent" />
                                 <HeaderTemplate>
                                     <div class="ie-bg">
-                                        Activity</div>
+                                        Activity
+                                    </div>
                                 </HeaderTemplate>
                                 <ItemTemplate>
                                     <asp:Label ID="lblActivityType" runat="server" Text='<%# NoNeedToShowActivityType(Eval("ActivityName")) %>'></asp:Label>
@@ -323,7 +327,8 @@
                                 <ItemStyle CssClass="WordWrapActivityLog width77P" />
                                 <HeaderTemplate>
                                     <div class="ie-bg">
-                                        Changes</div>
+                                        Changes
+                                    </div>
                                 </HeaderTemplate>
                                 <ItemTemplate>
                                     <asp:Xml ID="xmlChanges" runat="server" DocumentContent='<%# AddDefaultProjectAndMileStoneInfo(Eval("LogData")) %>'
@@ -332,7 +337,7 @@
                             </asp:TemplateField>
                         </Columns>
                     </asp:GridView>
-                    <asp:ObjectDataSource ID="odsProjects" runat="server" SelectMethod="GetProjectListCustom"
+                    <%--<asp:ObjectDataSource ID="odsProjects" runat="server" SelectMethod="GetProjectListCustom"
                         TypeName="PraticeManagement.ProjectService.ProjectServiceClient">
                         <SelectParameters>
                             <asp:Parameter DefaultValue="true" Name="projected" Type="Boolean" />
@@ -341,7 +346,7 @@
                             <asp:Parameter DefaultValue="true" Name="experimantal" Type="Boolean" />
                             <asp:Parameter DefaultValue="true" Name="proposed" Type="Boolean" />
                         </SelectParameters>
-                    </asp:ObjectDataSource>
+                    </asp:ObjectDataSource>--%>
                     <asp:ObjectDataSource ID="odsPersons" runat="server" SelectMethod="GetAllPersons"
                         TypeName="PraticeManagement.Controls.DataHelper"></asp:ObjectDataSource>
                     <asp:ObjectDataSource ID="odsActivities" runat="server" TypeName="PraticeManagement.Utils.ActivityLogHelper"
@@ -371,6 +376,7 @@
                             <asp:Parameter Name="channel" Type="Boolean" />
                             <asp:Parameter Name="offering" Type="Boolean" />
                             <asp:Parameter Name="revenueType" Type="Boolean" />
+                            <asp:Parameter Name="budget" Type="Boolean" />
                         </SelectParameters>
                     </asp:ObjectDataSource>
                 </td>
@@ -401,6 +407,8 @@
                 </tr>
             </table>
         </asp:Panel>
+
+
     </ContentTemplate>
     <Triggers>
         <asp:AsyncPostBackTrigger ControlID="btnUpdateView" EventName="Click" />
