@@ -8,7 +8,12 @@
     [IsHourlyAmount]        BIT             NOT NULL,
     [IsChargeable]          BIT             NOT NULL,
     [ConsultantsCanAdjust]  BIT             NOT NULL,
-	[IsDefault]				BIT				NOT NULL DEFAULT(0)
+	[IsDefault]				BIT				NOT NULL DEFAULT(0), 
+    [MilestoneType]         INT             NOT NULL DEFAULT 1, 
+    [Discount]              DECIMAL(18, 2)  NULL, 
+    [DiscountType]          INT             NULL DEFAULT 0, 
+    [IsDiscountAtMilestone] INT             NOT NULL DEFAULT 0, 
+    [IsAmountAtMilestone]   BIT             NOT NULL DEFAULT 0 
 );
 
 
