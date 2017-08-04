@@ -1,44 +1,51 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ClientProjects.ascx.cs"
     EnableViewState="true" Inherits="PraticeManagement.Controls.Clients.ClientProjects" %>
-<asp:Repeater ID="repProjects" runat="server" >
+<asp:Repeater ID="repProjects" runat="server">
     <HeaderTemplate>
         <div class="minheight250Px">
             <table id="tblAccountSummaryByProject" class="CompPerfTable WholeWidth BackGroundColorWhite">
                 <thead>
                     <tr>
-                        <th class="CursorPointer color0898E6 fontUnderline">
+                        <th class="CursorPointer">
                             <div class='ie-bg'>
                                 Project Name
                             </div>
                         </th>
-                        <th class="CursorPointer color0898E6 fontUnderline">
+                        <th class="CursorPointer">
                             <div class='ie-bg'>
-                                Business Unit</div>
+                                Business Unit
+                            </div>
                         </th>
-                        
-                        <th class="CursorPointer color0898E6 fontUnderline">
+
+                        <th class="CursorPointer">
                             <div class='ie-bg'>
-                                Start Date</div>
+                                Start Date
+                            </div>
                         </th>
-                        <th class="CursorPointer color0898E6 fontUnderline">
+                        <th class="CursorPointer">
                             <div class='ie-bg'>
-                                End Date</div>
+                                End Date
+                            </div>
                         </th>
-                        <th class="CursorPointer color0898E6 fontUnderline">
+                        <th class="CursorPointer">
                             <div class='ie-bg'>
-                                Division</div>
+                                Division
+                            </div>
                         </th>
-                        <th class="CursorPointer color0898E6 fontUnderline">
+                        <th class="CursorPointer">
                             <div class='ie-bg'>
-                                Practice Area</div>
+                                Practice Area
+                            </div>
                         </th>
-                        <th class="CursorPointer color0898E6 fontUnderline">
+                        <th class="CursorPointer">
                             <div class='ie-bg'>
-                                Status</div>
+                                Status
+                            </div>
                         </th>
-                        <th class="CursorPointer color0898E6 fontUnderline">
+                        <th class="CursorPointer">
                             <div class='ie-bg'>
-                                Billable</div>
+                                Billable
+                            </div>
                         </th>
                     </tr>
                 </thead>
@@ -54,7 +61,7 @@
             <td>
                 <%# Eval("Group.HtmlEncodedName")%>
             </td>
-      
+
             <td class="textCenter">
                 <%# Eval("StartDate") != null ? ((DateTime)Eval("StartDate")).ToString("MM/dd/yyyy") : string.Empty %>
             </td>
@@ -85,8 +92,8 @@
             <td>
                 <%# Eval("Group.HtmlEncodedName")%>
             </td>
-           
-            <td class="textCenter"> 
+
+            <td class="textCenter">
                 <%# Eval("StartDate") != null ? ((DateTime)Eval("StartDate")).ToString("MM/dd/yyyy") : string.Empty %>
             </td>
             <td class="textCenter">
