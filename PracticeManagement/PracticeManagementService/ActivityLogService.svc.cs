@@ -52,6 +52,11 @@ namespace PracticeManagementService
             return ActivityLogDAL.GetDatabaseVersion();
         }
 
+        //public List<ActivityLogItem> GetBudgetActivityLog(int Id)
+        //{
+        //    return ActivityLogDAL.GetBudgetActivityLog(Id);
+        //}
+
         #endregion IActivityLogService Members
     }
 }
