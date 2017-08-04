@@ -20,7 +20,10 @@ AS
 		   mp.Location,
 		   mp.LastName,
 		   mp.FirstName,
-		   mp.EntryId
+		   mp.EntryId,
+		   mp.MilestonePersonDiscount,
+		   mp.LockDiscount,
+		   mp.IsNewToBudget
 	  FROM dbo.v_MilestonePerson AS mp
 	 WHERE mp.MilestonePersonId = @MilestonePersonId
 
