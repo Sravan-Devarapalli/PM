@@ -14,7 +14,10 @@
 	@BadgeEndDate		DATETIME,
 	@IsBadgeException	BIT,
 	@IsApproved			BIT,
-	@RequestDate		DATETIME
+	@RequestDate		DATETIME,
+	@Discount	   DECIMAL(18,2) = NULL,
+	@IsDiscountAtResourceLevel INT =0,
+	@LockDiscount   BIT = 0
 )
 AS
 BEGIN
@@ -45,10 +48,25 @@ BEGIN
 	FROM dbo.Milestone 
 	WHERE MilestoneId = @MilestoneId
 
+	
+
 	SELECT @RequestDate = ISNULL(@RequestDate,@OldRequestDate)	
 
 	UPDATE dbo.MilestonePersonEntry
-	SET  StartDate = @StartDate, EndDate = @EndDate, PersonRoleId=@PersonRoleId, Amount=@Amount, HoursPerDay=@HoursPerDay, IsBadgeRequired = @IsBadgeRequired, BadgeStartDate = @BadgeStartDate, BadgeEndDate = @BadgeEndDate, IsBadgeException = @IsBadgeException, IsApproved = @IsApproved, BadgeRequestDate = @RequestDate, Requester = @UpdatedBy
+	SET  StartDate = @StartDate, 
+		 EndDate = @EndDate, 
+		 PersonRoleId=@PersonRoleId, 
+		 Amount=@Amount,
+		 HoursPerDay=@HoursPerDay,
+		 IsBadgeRequired = @IsBadgeRequired,
+		 BadgeStartDate = @BadgeStartDate, 
+		 BadgeEndDate = @BadgeEndDate, 
+		 IsBadgeException = @IsBadgeException,
+		 IsApproved = @IsApproved,
+		 BadgeRequestDate = @RequestDate,
+		 Requester = @UpdatedBy,
+		 Discount= @Discount,
+		 LockDiscount =@LockDiscount
 	WHERE Id = @Id          
 	     
 	IF (@PersonId IS NOT NULL AND @OldPersonId != @PersonId)
@@ -96,6 +114,21 @@ BEGIN
 	UPDATE dbo.Project
 	SET CreatedDate = @Today
 	WHERE ProjectId = @ProjectId
+
+	IF EXISTS(SELECT 1 FROM Milestone M Where M.MilestoneId = @MilestoneId AND M.IsHourlyAmount = 0 AND M.Amount IS NULL)
+	BEGIN
+		EXEC UpdateFixedMilestoneAmount @MilestoneId= @MilestoneId
+	END
+
+	IF EXISTS(SELECT 1 FROM Milestone M Where M.MilestoneId = @MilestoneId AND M.IsHourlyAmount = 0 )
+	BEGIN
+		EXEC dbo.UpdateFixedFeeMilestoneDiscount @MilestoneId= @MilestoneId
+	END
+
+
+	UPDATE Milestone
+	set IsDiscountAtMilestone=@IsDiscountAtResourceLevel
+	where MilestoneId=@MilestoneId and @IsDiscountAtResourceLevel!=0
 
 	-- End logging session
 	EXEC dbo.SessionLogUnprepare
