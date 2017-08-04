@@ -87,6 +87,14 @@ namespace DataTransferObjects.Reports
                 return HttpUtility.HtmlEncode(HTMLNote).Replace("&lt;br/&gt;", "<br/>");
             }
         }
+
+        public string FormattedBillRate
+        {
+            get
+            {
+                return BillRate == -1.00 ? "FF" : BillRate.ToString(Constants.Formatting.CurrencyWithDecimalsFormat);
+            }
+        }
     }
 }
 
