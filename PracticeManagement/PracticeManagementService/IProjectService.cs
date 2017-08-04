@@ -26,7 +26,13 @@ namespace PracticeManagementService
         /// Projects Computed Financials
         /// </summary>
         [OperationContract]
-        ComputedFinancials GetProjectsComputedFinancials(int projectId);
+        List<ComputedFinancials> GetProjectsComputedFinancials(int projectId);
+
+        [OperationContract]
+        ComputedFinancials FinancialsByProject(int projectId);
+
+        [OperationContract]
+        ComputedFinancials EACFinancialsByProject(int projectId);
 
         /// <summary>
         /// Person Milestone With Financials
@@ -78,7 +84,7 @@ namespace PracticeManagementService
         /// Enlists the requested projects.
         /// </summary>
         [OperationContract]
-        List<Project> GetProjectListCustom(bool projected, bool completed, bool active, bool experimantal, bool proposed);
+        List<Project> GetProjectListCustom(bool projected, bool completed, bool active, bool experimantal, bool proposed, bool IsMilestone);
 
         /// <summary>
         /// Enlists the requested projects.
@@ -124,7 +130,9 @@ namespace PracticeManagementService
             bool excludeInternalPractices,
             string userLogin,
             bool useActuals,
-            bool getFinancialsFromCache);
+            bool getFinancialsFromCache,
+            int? feeType,
+            DateTime? actualsEndDate);
 
         [OperationContract]
         bool IsProjectSummaryCachedToday();
@@ -428,6 +436,32 @@ namespace PracticeManagementService
         [OperationContract]
         List<Project> GetProjectsForClients(string clientIds);
 
+        [OperationContract]
+        void SendBudgetResetRequest(int projectId, string userAlias, string comments, int resetType, DateTime? budgetToDate, string reasons,  string requestorName);
+
+        [OperationContract]
+        void ResetProjectBudget(int projectId, string userAlias, int requestId, int resetType, DateTime? budgetToDate, string comments);
+
+        [OperationContract]
+        void SendProjectBudgetResetDecline(int projectId, string userAlias, int requestId, string comments);
+
+        [OperationContract]
+        List<MarginExceptionReason> GetAllMarginExceptionReasons();
+
+        [OperationContract]
+        List<ClientMarginException> GetMarginExceptionThresholdsForPeriod(DateTime startDate, DateTime endDate, int clientId);
+
+        [OperationContract]
+        void SendMarginExceptionRequest(int projectId, string userAlias, decimal targetMargin, string reasons, string comments, string user, bool isTierTwo, decimal targetRevenue, bool isRevenueException);
+
+        [OperationContract]
+        void SendMarginExceptionResponse(int status, string userAlias, int requestId, string reasons, string comments, string user, int projectId, bool isTierTwo);
+
+        [OperationContract]
+        ProjectBudgetManagement GetBudgetManagementDataForProject(int projectId, bool isBudgetToDate, DateTime? actualsEndDate);
+
+        [OperationContract]
+        Project GetProjectShortByProjectNumberForPerson(string projectNumber, string userAlias);
     }
 }
 
