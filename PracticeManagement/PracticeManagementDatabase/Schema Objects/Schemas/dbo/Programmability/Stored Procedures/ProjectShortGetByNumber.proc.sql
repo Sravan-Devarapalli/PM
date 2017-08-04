@@ -52,6 +52,7 @@ BEGIN
 		   P.Name,
 		   C.Name AS ClientName,
 		   PG.Name AS GroupName,
+		   PS.ProjectStatusId,
 		   PS.Name AS ProjectStatusName,
 		   @ProjectBilling AS BillingType,
 		   p.IsInternal	      
