@@ -13,7 +13,10 @@
 	IsBadgeException	BIT				NULL,
 	IsApproved			BIT				NULL,
 	BadgeRequestDate	DATETIME		NULL,
-	Requester			INT				NULL
+	Requester			INT				NULL, 
+    [Discount]          DECIMAL(18, 2)  NULL, 
+    [IsNewToBudget]     BIT             NOT NULL DEFAULT 0, 
+    [LockDiscount] BIT NOT NULL DEFAULT 0
 );
 
  
