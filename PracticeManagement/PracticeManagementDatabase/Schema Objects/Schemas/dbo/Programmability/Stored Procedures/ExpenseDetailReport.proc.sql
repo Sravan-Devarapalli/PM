@@ -25,7 +25,7 @@ BEGIN
 
 	;WITH ExpensesByMilestone AS (
 		SELECT  pexp.Id as 'ExpenseId',
-				CONVERT(DECIMAL(18,2),SUM(pexp.Amount/((DATEDIFF(dd,pexp.StartDate,pexp.EndDate)+1)))) Expense,
+				CONVERT(DECIMAL(18,2),SUM(ISNULL(pexp.Amount,0)/((DATEDIFF(dd,pexp.StartDate,pexp.EndDate)+1)))) Expense,
 				CONVERT(DECIMAL(18,2),SUM(pexp.ExpectedAmount/((DATEDIFF(dd,pexp.StartDate,pexp.EndDate)+1)))) ExpectedExpenseAmount,
 				C.MonthStartDate AS FinancialDate,
 				C.MonthEndDate AS MonthEnd,
