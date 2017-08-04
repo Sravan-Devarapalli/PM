@@ -60,91 +60,91 @@ namespace PraticeManagement
 
         private const string CLIENT_THRESHOLDS_LIST_KEY = "CLIENT_THRESHOLDS_LIST_KEY";
 
-        private List<ClientMarginColorInfo> ClientMarginColorInfoList
-        {
-            get
-            {
-                if (ViewState[CLIENT_THRESHOLDS_LIST_KEY] != null)
-                {
-                    var output = ViewState[CLIENT_THRESHOLDS_LIST_KEY] as List<ClientMarginColorInfo>;
-                    return output;
-                }
-                var isDeaultMarginInfoEnabled = Convert.ToBoolean(SettingsHelper.GetResourceValueByTypeAndKey(SettingsType.Application, Constants.ResourceKeys.IsDefaultMarginInfoEnabledForAllClientsKey));
+        //private List<ClientMarginColorInfo> ClientMarginColorInfoList
+        //{
+        //    get
+        //    {
+        //        if (ViewState[CLIENT_THRESHOLDS_LIST_KEY] != null)
+        //        {
+        //            var output = ViewState[CLIENT_THRESHOLDS_LIST_KEY] as List<ClientMarginColorInfo>;
+        //            return output;
+        //        }
+        //        var isDeaultMarginInfoEnabled = Convert.ToBoolean(SettingsHelper.GetResourceValueByTypeAndKey(SettingsType.Application, Constants.ResourceKeys.IsDefaultMarginInfoEnabledForAllClientsKey));
 
-                if (ClientId.HasValue)
-                {
-                    var client = GetClient(ClientId.Value);
-                    if (client.IsMarginColorInfoEnabled != null && client.IsMarginColorInfoEnabled.HasValue)
-                    {
-                        using (var serviceClient = new ClientServiceClient())
-                        {
-                            try
-                            {
-                                var result = serviceClient.GetClientMarginColorInfo(ClientId.Value);
+        //        if (ClientId.HasValue)
+        //        {
+        //            var client = GetClient(ClientId.Value);
+        //            if (client.IsMarginColorInfoEnabled != null && client.IsMarginColorInfoEnabled.HasValue)
+        //            {
+        //                using (var serviceClient = new ClientServiceClient())
+        //                {
+        //                    try
+        //                    {
+        //                        var result = serviceClient.GetClientMarginColorInfo(ClientId.Value);
 
-                                if (result != null)
-                                {
-                                    var clientInfoList = result.AsQueryable().ToList();
-                                    ViewState[CLIENT_THRESHOLDS_LIST_KEY] = clientInfoList;
-                                    return clientInfoList;
-                                }
-                                return SetSingleRowDataSource();
-                            }
-                            catch (FaultException<ExceptionDetail>)
-                            {
-                                serviceClient.Abort();
-                                throw;
-                            }
-                        }
-                    }
-                    if (isDeaultMarginInfoEnabled)
-                    {
-                        return SetDefaultClientDataSource();
-                    }
-                }
-                else if (isDeaultMarginInfoEnabled)
-                {
-                    return SetDefaultClientDataSource();
-                }
+        //                        if (result != null)
+        //                        {
+        //                            var clientInfoList = result.AsQueryable().ToList();
+        //                            ViewState[CLIENT_THRESHOLDS_LIST_KEY] = clientInfoList;
+        //                            return clientInfoList;
+        //                        }
+        //                        return SetSingleRowDataSource();
+        //                    }
+        //                    catch (FaultException<ExceptionDetail>)
+        //                    {
+        //                        serviceClient.Abort();
+        //                        throw;
+        //                    }
+        //                }
+        //            }
+        //            if (isDeaultMarginInfoEnabled)
+        //            {
+        //                return SetDefaultClientDataSource();
+        //            }
+        //        }
+        //        else if (isDeaultMarginInfoEnabled)
+        //        {
+        //            return SetDefaultClientDataSource();
+        //        }
 
-                return SetSingleRowDataSource();
-            }
-            set { ViewState[CLIENT_THRESHOLDS_LIST_KEY] = value; }
-        }
+        //        return SetSingleRowDataSource();
+        //    }
+        //    set { ViewState[CLIENT_THRESHOLDS_LIST_KEY] = value; }
+        //}
 
-        private List<ClientMarginColorInfo> SetSingleRowDataSource()
-        {
-            var cmciList = new List<ClientMarginColorInfo>
-            {
-                new ClientMarginColorInfo {ColorInfo = new ColorInformation()}
-            };
-            ViewState[CLIENT_THRESHOLDS_LIST_KEY] = cmciList;
-            return cmciList;
-        }
+        //private List<ClientMarginColorInfo> SetSingleRowDataSource()
+        //{
+        //    var cmciList = new List<ClientMarginColorInfo>
+        //    {
+        //        new ClientMarginColorInfo {ColorInfo = new ColorInformation()}
+        //    };
+        //    ViewState[CLIENT_THRESHOLDS_LIST_KEY] = cmciList;
+        //    return cmciList;
+        //}
 
-        private List<ClientMarginColorInfo> SetDefaultClientDataSource()
-        {
-            var result = SettingsHelper.GetMarginColorInfoDefaults(DefaultGoalType.Client);
-            if (result != null)
-            {
-                var clientInfoList = result.AsQueryable().ToList();
-                ViewState[CLIENT_THRESHOLDS_LIST_KEY] = clientInfoList;
-                return clientInfoList;
-            }
-            return SetSingleRowDataSource();
-        }
+        //private List<ClientMarginColorInfo> SetDefaultClientDataSource()
+        //{
+        //    var result = SettingsHelper.GetMarginColorInfoDefaults(DefaultGoalType.Client);
+        //    if (result != null)
+        //    {
+        //        var clientInfoList = result.AsQueryable().ToList();
+        //        ViewState[CLIENT_THRESHOLDS_LIST_KEY] = clientInfoList;
+        //        return clientInfoList;
+        //    }
+        //    return SetSingleRowDataSource();
+        //}
 
-        private bool IntialchbMarginThresholdsValue
-        {
-            get { return Convert.ToBoolean(ViewState["IntialchbMarginThresholdsValue"]); }
-            set { ViewState["IntialchbMarginThresholdsValue"] = value; }
-        }
+        //private bool IntialchbMarginThresholdsValue
+        //{
+        //    get { return Convert.ToBoolean(ViewState["IntialchbMarginThresholdsValue"]); }
+        //    set { ViewState["IntialchbMarginThresholdsValue"] = value; }
+        //}
 
-        private List<ClientMarginColorInfo> IntialClientMarginColorInfoList
-        {
-            get { return ViewState["IsClientChangedColorSetting"] as List<ClientMarginColorInfo>; }
-            set { ViewState["IsClientChangedColorSetting"] = value; }
-        }
+        //private List<ClientMarginColorInfo> IntialClientMarginColorInfoList
+        //{
+        //    get { return ViewState["IsClientChangedColorSetting"] as List<ClientMarginColorInfo>; }
+        //    set { ViewState["IsClientChangedColorSetting"] = value; }
+        //}
 
         private String ExMessage { get; set; }
 
@@ -171,14 +171,14 @@ namespace PraticeManagement
 
         protected void Page_PreRender(object sender, EventArgs e)
         {
-            if (gvClientThrsholds.Rows.Count == 5)
-            {
-                btnAddThreshold.Enabled = false;
-            }
-            else if (chbMarginThresholds.Checked)
-            {
-                btnAddThreshold.Enabled = true;
-            }
+            //if (gvClientThrsholds.Rows.Count == 5)
+            //{
+            //    btnAddThreshold.Enabled = false;
+            //}
+            //else if (chbMarginThresholds.Checked)
+            //{
+            //    btnAddThreshold.Enabled = true;
+            //}
 
         }
 
@@ -213,51 +213,11 @@ namespace PraticeManagement
             userIsSeniorLeadership =
                  Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.SeniorLeadershipRoleName);// #2913: userIsSeniorLeadership is added as per the requirement.
 
-            if (!userIsAdministrator && !userIsClientDirector && !userIsSeniorLeadership)
+            if (!userIsAdministrator)
             {
-                tpMarginGoals.Visible = false;
+                tpMarginGoal.Visible = false;
             }
 
-        }
-
-        private void DataBindClientThresholds(List<ClientMarginColorInfo> clientMarginColorInfoList)
-        {
-            gvClientThrsholds.DataSource = clientMarginColorInfoList;
-            gvClientThrsholds.DataBind();
-        }
-
-        protected void gvClientThrsholds_RowDataBound(object sender, GridViewRowEventArgs e)
-        {
-            if (e.Row.RowType != DataControlRowType.DataRow)
-            {
-                return;
-            }
-            var clientMarginIfo = e.Row.DataItem as ClientMarginColorInfo;
-
-            if (e.Row.RowType == DataControlRowType.DataRow && (e.Row.RowState & DataControlRowState.Edit) == 0)
-            {
-                var ddlSR = e.Row.FindControl(gvddlStartRange) as DropDownList;
-                var ddlER = e.Row.FindControl(gvddlEndRange) as DropDownList;
-                var ddcolor = e.Row.FindControl(gvddlColor) as DropDownList;
-
-                FillRangeDropdown(ddlSR);
-                FillRangeDropdown(ddlER);
-                DataHelper.FillColorsList(ddcolor, string.Empty);
-
-                ddlSR.SelectedValue = clientMarginIfo.StartRange.ToString();
-                ddlER.SelectedValue = clientMarginIfo.EndRange.ToString();
-
-                if (clientMarginIfo.ColorInfo.ColorId != 0)
-                {
-                    ddcolor.SelectedValue = clientMarginIfo.ColorInfo.ColorId.ToString();
-                    ddcolor.Style["background-color"] = clientMarginIfo.ColorInfo.ColorValue;
-                }
-                else
-                {
-                    ddcolor.SelectedValue = string.Empty;
-                    ddcolor.Attributes["class"] = "BackGroundColorWhite";
-                }
-            }
         }
 
         private void FillRangeDropdown(DropDownList ddlRange)
@@ -289,114 +249,6 @@ namespace PraticeManagement
             }
         }
 
-        protected void cvColors_ServerValidate(object source, ServerValidateEventArgs args)
-        {
-            args.IsValid = true;
-            if (chbMarginThresholds.Checked)
-            {
-                int i = 0;
-                foreach (var item in ClientMarginColorInfoList)
-                {
-                    if (ClientMarginColorInfoList.Any(c => c.ColorInfo.ColorId == ClientMarginColorInfoList[i].ColorInfo.ColorId && c != item && c.ColorInfo.ColorId != 0))
-                    {
-                        args.IsValid = false;
-                        break;
-                    }
-                    i++;
-                }
-            }
-
-        }
-
-        protected void cvClientThresholds_ServerValidate(object source, ServerValidateEventArgs args)
-        {
-
-            args.IsValid = true;
-
-            if ((userIsAdministrator || userIsClientDirector || userIsSeniorLeadership) && chbMarginThresholds.Checked)
-            {
-                if (ClientMarginColorInfoList != null && ClientMarginColorInfoList.Count > 0)
-                {
-                    int start = ClientMarginColorInfoList.Min(m => m.StartRange);
-                    int end = ClientMarginColorInfoList.Max(m => m.EndRange);
-                    if (start != 0 || end < 100)
-                    {
-                        args.IsValid = false;
-                    }
-                    else
-                    {
-                        var temp = ClientMarginColorInfoList.OrderBy(k => k.StartRange).ToList();
-                        for (int i = 0; i < temp.Count; i++)
-                        {
-                            if (i + 1 != temp.Count)
-                            {
-                                if (temp[i].EndRange + 1 != temp[i + 1].StartRange)
-                                {
-                                    args.IsValid = false;
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    args.IsValid = false;
-                }
-            }
-        }
-
-        protected void cvgvddlColor_ServerValidate(object source, ServerValidateEventArgs args)
-        {
-            var cvcolor = source as CustomValidator;
-            var row = cvcolor.NamingContainer as GridViewRow;
-            var ddcolor = row.FindControl(gvddlColor) as DropDownList;
-
-            args.IsValid = true;
-            if (!chbMarginThresholds.Checked) return;
-            if (ddcolor.SelectedIndex != 0) return;
-            args.IsValid = false;
-            cvgvddlColorClone.IsValid = false;
-        }
-
-        protected void cvgvRange_OnServerValidate(object source, ServerValidateEventArgs args)
-        {
-            if (!chbMarginThresholds.Checked) return;
-            var cvgvRange = source as CustomValidator;
-            var row = cvgvRange.NamingContainer as GridViewRow;
-            var ddlSR = row.FindControl(gvddlStartRange) as DropDownList;
-            var ddlER = row.FindControl(gvddlEndRange) as DropDownList;
-
-            args.IsValid = true;
-            var start = Convert.ToInt32(ddlSR.SelectedValue);
-            var end = Convert.ToInt32(ddlER.SelectedValue);
-            if (start <= end) return;
-            args.IsValid = false;
-            cvgvRangeClone.IsValid = false;
-        }
-
-        protected void cvgvOverLapRange_OnServerValidate(object source, ServerValidateEventArgs args)
-        {
-            args.IsValid = true;
-            if (chbMarginThresholds.Checked)
-            {
-                var cvgvOverLapRange = source as CustomValidator;
-                var row = cvgvOverLapRange.NamingContainer as GridViewRow;
-
-                var ddlSR = row.FindControl(gvddlStartRange) as DropDownList;
-                var ddlER = row.FindControl(gvddlEndRange) as DropDownList;
-
-                var start = Convert.ToInt32(ddlSR.SelectedValue);
-                var end = Convert.ToInt32(ddlER.SelectedValue);
-                if (ClientMarginColorInfoList == null) return;
-                var cmciList = ClientMarginColorInfoList.Where((t, i) => i != row.RowIndex).ToList();
-
-                if (!cmciList.Any(k => k.StartRange >= start && k.StartRange <= end)) return;
-                args.IsValid = false;
-                cvgvOverLapRangeClone.IsValid = false;
-            }
-
-        }
-
         protected void custClient_ServerValidate(object source, ServerValidateEventArgs args)
         {
             if (!String.IsNullOrEmpty(ExMessage))
@@ -411,7 +263,7 @@ namespace PraticeManagement
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            GetLatestMarginInfoValues();
+            //GetLatestMarginInfoValues();
             Page.Validate(vsumClient.ValidationGroup);
             if (Page.IsValid)
             {
@@ -433,7 +285,7 @@ namespace PraticeManagement
 
         protected void btnAddProject_Click(object sender, EventArgs e)
         {
-            GetLatestMarginInfoValues();
+            //GetLatestMarginInfoValues();
             Page.Validate(vsumClient.ValidationGroup);
             if (!Page.IsValid) return;
             if (!ClientId.HasValue)
@@ -455,86 +307,7 @@ namespace PraticeManagement
             }
         }
 
-        private void GetLatestMarginInfoValues()
-        {
-            while (ClientMarginColorInfoList.Count > 0)
-            {
-                ClientMarginColorInfoList.RemoveAt(0);
-            }
-
-            foreach (GridViewRow row in gvClientThrsholds.Rows)
-            {
-                var ddlSR = row.FindControl(gvddlStartRange) as DropDownList;
-                var ddlER = row.FindControl(gvddlEndRange) as DropDownList;
-                var ddcolor = row.FindControl(gvddlColor) as DropDownList;
-
-                var start = Convert.ToInt32(ddlSR.SelectedValue);
-                var end = Convert.ToInt32(ddlER.SelectedValue);
-                var colorId = Convert.ToInt32(ddcolor.SelectedValue);
-                var colorValue = ddcolor.SelectedItem.Attributes["colorValue"];
-                var colorDescription = ddcolor.SelectedItem.Attributes["Description"];
-                ClientMarginColorInfoList.Add(
-                    new ClientMarginColorInfo()
-                    {
-                        ColorInfo = new ColorInformation()
-                        {
-                            ColorId = colorId,
-                            ColorValue = colorValue,
-                            ColorDescription = colorDescription
-
-                        },
-                        StartRange = start,
-                        EndRange = end
-                    });
-
-            }
-        }
-
-        protected void btnAddThreshold_OnClick(object sender, EventArgs e)
-        {
-            GetLatestMarginInfoValues();
-            var clientMarginColorInfo = new ClientMarginColorInfo { ColorInfo = new ColorInformation() };
-
-            var end = ClientMarginColorInfoList.Max(m => m.EndRange);
-            if (end != 150)
-            {
-                end = end + 1;
-            }
-            clientMarginColorInfo.StartRange = end;
-            clientMarginColorInfo.EndRange = end;
-
-
-            ClientMarginColorInfoList.Add(clientMarginColorInfo);
-            DataBindClientThresholds(ClientMarginColorInfoList);
-
-        }
-
-        protected void btnDeleteRow_OnClick(object sender, EventArgs e)
-        {
-            GetLatestMarginInfoValues();
-            var imgDelete = sender as ImageButton;
-            var gvRow = imgDelete.NamingContainer as GridViewRow;
-            ClientMarginColorInfoList.RemoveAt(gvRow.RowIndex);
-
-            if (gvClientThrsholds.Rows.Count == 1)
-            {
-                var cmci = new List<ClientMarginColorInfo>
-                {
-                    new ClientMarginColorInfo {ColorInfo = new ColorInformation()}
-                };
-                ClientMarginColorInfoList = cmci;
-            }
-
-            DataBindClientThresholds(ClientMarginColorInfoList);
-        }
-
-        protected void cbMarginThresholds_OnCheckedChanged(object sender, EventArgs e)
-        {
-            GetLatestMarginInfoValues();
-            EnableorDisableClientThrsholdControls(chbMarginThresholds.Checked);
-            DataBindClientThresholds(ClientMarginColorInfoList);
-        }
-
+        
         /// <summary>
         /// Retrieves the data and display them.
         /// </summary>
@@ -556,14 +329,7 @@ namespace PraticeManagement
             {
                 InitActionControls(string.Empty);
                 var IsDeaultMarginInfoEnabled = Convert.ToBoolean(SettingsHelper.GetResourceValueByTypeAndKey(SettingsType.Application, Constants.ResourceKeys.IsDefaultMarginInfoEnabledForAllClientsKey));
-                chbMarginThresholds.Checked = IsDeaultMarginInfoEnabled;
-                EnableorDisableClientThrsholdControls(chbMarginThresholds.Checked);
             }
-
-            IntialchbMarginThresholdsValue = chbMarginThresholds.Checked;
-            var marginInfo = ClientMarginColorInfoList;
-            IntialClientMarginColorInfoList = marginInfo;
-            DataBindClientThresholds(marginInfo);
             LoadAllView();
         }
 
@@ -757,26 +523,26 @@ namespace PraticeManagement
             ddlDefaultTerms.SelectedIndex =
                 ddlDefaultTerms.Items.IndexOf(ddlDefaultTerms.Items.FindByValue(client.DefaultTerms.ToString()));
 
-            if (client.IsMarginColorInfoEnabled != null && client.IsMarginColorInfoEnabled.HasValue)
-            {
-                chbMarginThresholds.Checked = client.IsMarginColorInfoEnabled.Value;
-            }
-            else if (Convert.ToBoolean(SettingsHelper.GetResourceValueByTypeAndKey(SettingsType.Application, Constants.ResourceKeys.IsDefaultMarginInfoEnabledForAllClientsKey)))
-            {
-                chbMarginThresholds.Checked = true;
-            }
-            else
-            {
-                chbMarginThresholds.Checked = false;
-            }
+            //if (client.IsMarginColorInfoEnabled != null && client.IsMarginColorInfoEnabled.HasValue)
+            //{
+            //    chbMarginThresholds.Checked = client.IsMarginColorInfoEnabled.Value;
+            //}
+            //else if (Convert.ToBoolean(SettingsHelper.GetResourceValueByTypeAndKey(SettingsType.Application, Constants.ResourceKeys.IsDefaultMarginInfoEnabledForAllClientsKey)))
+            //{
+            //    chbMarginThresholds.Checked = true;
+            //}
+            //else
+            //{
+            //    chbMarginThresholds.Checked = false;
+            //}
 
-            EnableorDisableClientThrsholdControls(chbMarginThresholds.Checked);
+            //EnableorDisableClientThrsholdControls(chbMarginThresholds.Checked);
         }
 
-        private void EnableorDisableClientThrsholdControls(bool ischbMarginThresholdsChecked)
-        {
-            cvClientThresholds.Enabled = btnAddThreshold.Enabled = gvClientThrsholds.Enabled = ischbMarginThresholdsChecked;
-        }
+        //private void EnableorDisableClientThrsholdControls(bool ischbMarginThresholdsChecked)
+        //{
+        //    cvClientThresholds.Enabled = btnAddThreshold.Enabled = gvClientThrsholds.Enabled = ischbMarginThresholdsChecked;
+        //}
 
         private void PopulateData(Client client)
         {
@@ -800,22 +566,29 @@ namespace PraticeManagement
                     ? int.Parse(ddlDefaultTerms.SelectedValue)
                     : default(int);
 
-            client.IsMarginColorInfoEnabled = chbMarginThresholds.Checked;
+            //client.IsMarginColorInfoEnabled = chbMarginThresholds.Checked;
 
-            client.ClientMarginInfo = ClientMarginColorInfoList;
+            //client.ClientMarginInfo = ClientMarginColorInfoList;
         }
 
         private void LoadAllView()
         {
             switch (tcFilters.ActiveTabIndex)
             {
-                case 0: ucProjects.DisplayProjects();
+                case 0:
+                    ucProjects.DisplayProjects();
                     break;
-                case 1: ucProjectGoups.DisplayGroups(null, true);
+                case 1:
+                    ucProjectGoups.DisplayGroups(null, true);
                     break;
-                case 2: ucBusinessGroups.DisplayGroups(null, true);
+                case 2:
+                    ucBusinessGroups.DisplayGroups(null, true);
                     break;
-                case 3: ucPricingList.DisplayPricingList(null, true);
+                case 3:
+                    ucPricingList.DisplayPricingList(null, true);
+                    break;
+                case 4:
+                    ucMarginGoals.DisplayMarginGoals(true);
                     break;
             }
         }
@@ -854,6 +627,12 @@ namespace PraticeManagement
             ucPricingList.DisplayPricingList(null, true);
             tcFilters.ActiveTabIndex = 3;
         }
+
+        protected void lnkMarginGoal_Click(object sender, EventArgs e)
+        {
+            ucMarginGoals.DisplayMarginGoals(false);
+            tcFilters.ActiveTabIndex = 4;
+        }
         #endregion
 
 
@@ -863,7 +642,7 @@ namespace PraticeManagement
 
         public void RaisePostBackEvent(string eventArgument)
         {
-            GetLatestMarginInfoValues();
+            //GetLatestMarginInfoValues();
             Page.Validate(vsumClient.ValidationGroup);
             if (!Page.IsValid) return;
             var clientId = SaveData();
@@ -894,7 +673,9 @@ namespace PraticeManagement
             }
         }
 
+
         #endregion
+
     }
 }
 
