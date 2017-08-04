@@ -3,6 +3,7 @@
 	@ProjectStatusId INT,
     @CloneMilestones BIT = 1,
     @CloneCommissions BIT = 1,
+	@CloneRevenueType INT = 1,
     @ClonedProjectId INT OUT
 AS 
     BEGIN
@@ -101,33 +102,72 @@ AS
 		SELECT  @ClonedProjectId,PC.CapabilityId
 		FROM    dbo.ProjectCapabilities PC
 	    WHERE   PC.ProjectId = @projectId
-              
-        IF @CloneMilestones = 1 
-            BEGIN
 
-                DECLARE projectMilestone CURSOR
-                    FOR SELECT  MilestoneId
-                        FROM    dbo.Milestone
-                        WHERE   ProjectId = @projectId
+		IF @CloneMilestones = 1
+		BEGIN 
 
-                DECLARE @origMilestoneId INT 
+			IF  @CloneRevenueType =1 --clone projected revenue
+				BEGIN
 
-                OPEN projectMilestone  
-                FETCH NEXT FROM projectMilestone INTO @origMilestoneId  
+					DECLARE projectMilestone CURSOR
+						FOR SELECT  MilestoneId
+							FROM    dbo.Milestone
+							WHERE   ProjectId = @projectId
 
-                WHILE @@FETCH_STATUS = 0 
-                    BEGIN  
+					DECLARE @origMilestoneId INT 
+
+					OPEN projectMilestone  
+					FETCH NEXT FROM projectMilestone INTO @origMilestoneId  
+
+					WHILE @@FETCH_STATUS = 0 
+						BEGIN  
     
-                        EXECUTE dbo.MilestoneClone @MilestoneId = @origMilestoneId,
-                            @CloneDuration = 0, @MilestoneCloneId = 0,
-                            @ProjectId = @ClonedProjectId
+							EXECUTE dbo.MilestoneClone @MilestoneId = @origMilestoneId,
+								@CloneDuration = 0, @MilestoneCloneId = 0,
+								@ProjectId = @ClonedProjectId
 
-                        FETCH NEXT FROM projectMilestone INTO @origMilestoneId  
-                    END  
+							FETCH NEXT FROM projectMilestone INTO @origMilestoneId  
+						END  
 
-                CLOSE projectMilestone  
-                DEALLOCATE projectMilestone
-            END 
+					CLOSE projectMilestone  
+					DEALLOCATE projectMilestone
+				END 
+
+			ELSE IF @CloneRevenueType =2 --clone with budget revenue
+			BEGIN
+
+					DECLARE projectBudgetMilestone CURSOR
+						FOR SELECT  MilestoneId
+							FROM    ProjectBudgetHistory
+							WHERE   ProjectId = @projectId AND IsActive=1 AND MilestoneId IS NOT NULL
+
+					DECLARE @originalMilestoneId INT 
+
+					OPEN projectBudgetMilestone  
+					FETCH NEXT FROM projectBudgetMilestone INTO @originalMilestoneId  
+
+					WHILE @@FETCH_STATUS = 0 
+						BEGIN  
+    
+							EXECUTE dbo.CloneBudgetMilestone @MilestoneId = @originalMilestoneId, @ProjectId = @ClonedProjectId
+
+							FETCH NEXT FROM projectBudgetMilestone INTO @originalMilestoneId  
+						END  
+
+					CLOSE projectBudgetMilestone  
+					DEALLOCATE projectBudgetMilestone
+		   END 
+
+		   ELSE IF  @CloneRevenueType =3 --clone with EAC revenue
+		   BEGIN
+	      
+				 EXEC dbo.CloneProjectWithEAC @OldProjectId = @ProjectId , @NewProjectId = @ClonedProjectId
+
+
+
+		   END
+
+	   END
             
         IF @CloneCommissions = 1 AND @CloneMilestones = 1 
             BEGIN
