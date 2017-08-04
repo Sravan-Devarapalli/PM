@@ -16,16 +16,10 @@
         <td class="Width10Percent padRight5">
             <table class="WholeWidth">
                 <tr>
-                    <td>
-                        Export:
-                    </td>
-                    <td>
+                    
+                    <td>Export:&nbsp;
                         <asp:Button ID="btnExportToExcel" runat="server" Text="Excel" OnClick="btnExportToExcel_OnClick"
                             UseSubmitBehavior="false" ToolTip="Export To Excel" />
-                    </td>
-                    <td>
-                        <asp:Button ID="btnExportToPDF" runat="server" Text="PDF" OnClick="btnExportToPDF_OnClick"
-                            Enabled="false" UseSubmitBehavior="false" ToolTip="Export To PDF" />
                     </td>
                 </tr>
             </table>
