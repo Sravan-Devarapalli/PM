@@ -18,4 +18,6 @@
 	ExcludeInReports	BIT			NULL
 	CONSTRAINT PK_BadgeHistory PRIMARY KEY (Id)
 )
-
+GO
+CREATE NONCLUSTERED INDEX [IX_BadgeHistory_PersonId]
+ON [dbo].[BadgeHistory] ([PersonId],[BadgeStartDate])
