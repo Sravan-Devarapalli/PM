@@ -219,7 +219,9 @@ namespace PraticeManagement.Controls
                                         filterSet.ExcludeInternalPractices,
                                         Thread.CurrentPrincipal.Identity.Name,
                                         filterSet.CalculationsType != 1,
-                                        filterSet.FinancialsFromCache);
+                                        filterSet.FinancialsFromCache,
+                                        filterSet.FeeType,
+                                        filterSet.ActualEndDate);
 
                                 }
                                 else
