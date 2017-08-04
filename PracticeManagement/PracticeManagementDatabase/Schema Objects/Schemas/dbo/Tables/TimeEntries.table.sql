@@ -16,3 +16,9 @@
 );
 
 
+GO
+
+CREATE NONCLUSTERED INDEX [IX_TimeEntries]
+ON [dbo].[TimeEntries] ([MilestonePersonId],[MilestoneDate])
+INCLUDE ([EntryDate],[ModifiedDate],[ActualHours],[ForecastedHours],[TimeTypeId],[ModifiedBy],[Note],[IsReviewed],[IsChargeable],[IsCorrect])
+
