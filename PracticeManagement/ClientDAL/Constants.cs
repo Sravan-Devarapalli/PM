@@ -9,6 +9,66 @@
         /// </summary>
         public class ColumnNames
         {
+            public const string BudgetToDate = "BudgetToDate";
+            public const string IsCOMilestoneExists = "IsCOMilestoneExists";
+            public const string IsDiscountAtMilestone = "IsDiscountAtMilestone";
+            public const string ExceptionRevenue = "ExceptionRevenue";
+            public const string TierTwoStatus = "TierTwoStatus";
+            public const string TierOneStatus = "TierOneStatus";
+            public const string MarginThreshold = "MarginThreshold";
+            public const string RemainingDays = "RemainingDays";
+            public const string TotalProjectDays = "TotalProjectDays";
+            public const string ProjectedRemainingExpense = "ProjectedRemainingExpense";
+            public const string IsAmountAtMilestone = "IsAmountAtMilestone";
+            public const string RemainingProjectedRevenue = "RemainingProjectedRevenue";
+            public const string RemainingProjectedMargin = "RemainingProjectedMargin";
+            public const string ProjectedRevenue = "ProjectedRevenue";
+            public const string ProjectedMargin = "ProjectedMargin";
+            public const string LockDiscount = "LockDiscount";
+            public const string OldStartDate = "OldStartDate";
+            public const string NewStartDate = "NewStartDate";
+            public const string OldEndDate = "OldEndDate";
+            public const string NewEndDate = "NewEndDate";
+            public const string OldMarginGoal = "OldMarginGoal";
+            public const string NewMarginGoal = "NewMarginGoal";
+            public const string Activity = "Activity";
+            public const string RemainingProjectedExpense = "RemainingProjectedExpense";
+            public const string PayRate = "PayRate";
+            public const string RemainingProjectedHours = "RemainingProjectedHours";
+            public const string EACHours = "EACHours";
+            public const string EACRevenue = "EACRevenue";
+            public const string EACMargin = "EACMargin";
+            public const string ProjectedExpense = "ProjectedExpense";
+            public const string ActualExpense = "ActualExpense";
+            public const string BudgetExpense = "BudgetExpense";
+            public const string ProjectedBillRate = "ProjectedBillRate";
+            public const string ActualMargin = "ActualMargin";
+            public const string ActualBillRate = "ActualBillRate";
+            public const string BudgetMargin = "BudgetMargin";
+            public const string BudgetBillRate = "BudgetBillRate";
+            public const string BudgetHours = "BudgetHours";
+            public const string Reason = "Reason";
+            public const string MarginGoal = "MarginGoal";
+            public const string ApprovalLevel = "ApprovalLevel";
+            public const string ApprovalLevelId = "ApprovalLevelId";
+            public const string ThresholdVariance = "ThresholdVariance";
+            public const string ETCRevenue = "ETCRevenue";
+            public const string ETCGrossMargin = "ETCGrossMargin";
+            public const string BudgetGrossMargin = "BudgetGrossMargin";
+            public const string BudgetRevenue = "BudgetRevenue";
+            public const string FinanceType = "FinanceType";
+            public const string EstimatedAmount = "EstimatedAmount";
+            public const string ActualAmount = "ActualAmount";
+            public const string DiscountTypeIndex = "DiscountType";
+            public const string PremiumDiscount = "PremiumDiscount";
+            public const string EnableBudgetRequest = "EnableBudgetRequest";
+            public const string MilestonePersonAmount = "MilestonePersonAmount";
+            public const string IsNewToBudget = "IsNewToBudget";
+            public const string MilestonePersonDiscount = "MilestonePersonDiscount";
+            public const string MilestoneType = "MilestoneType";
+            public const string BudgetResetRequestId = "BudgetResetRequestId";
+            public const string IsBudgetResetPending = "IsBudgetResetPending";
+            public const string Budget = "Budget";
             public const string ExpectedAmount = "ExpectedExpenseAmount";
             public const string ExpenseTypeId = "ExpenseTypeId";
             public const string ExpenseTypeName = "ExpenseTypeName";
@@ -666,6 +726,38 @@
         /// </summary>
         public class ParameterNames
         {
+            public const string IsBudget = "@IsBudget";
+            public const string IsActual = "@IsActual";
+            public const string IsEAC = "@IsEAC";
+            public const string IsProjected = "@IsProjected";
+            public const string IsMilestone = "@IsMilestone";
+            public const string ResetType = "@ResetType";
+            public const string LockDiscount = "@LockDiscount";
+            public const string IsRevenueException = "@IsRevenueException";
+            public const string IsAmountAtMilestone = "@IsAmountAtMilestone";
+            public const string BudgetToDate = "@BudgetToDate";
+            public const string TargetRevenue = "@TargetRevenue";
+            public const string ActualsEndDate = "@ActualsEndDate";
+            public const string ActualsType = "@ActualsPeriod";
+            public const string FeeType = "@FeeType";
+            public const string Margin = "@Margin";
+            public const string TierTwoStatus = "@TierTwoStatus";
+            public const string recipient = "@Recipient";
+            public const string TargetMargin = "@TargetMargin";
+            public const string Revenue = "@Revenue";
+            public const string MarginGoal = "@MarginGoal";
+            public const string ApprovalLevel = "@ApprovalLevel";
+            public const string ThresholdVariance = "@ThresholdVariance";
+            public const string CloneRevenueType = "@CloneRevenueType";
+            public const string IsDiscountAtResourceLevel = "@IsDiscountAtResourceLevel";
+            public const string Budget = "@Budget";
+            public const string EstimatedAmount = "@EstimatedAmount";
+            public const string ActualAmount = "@ActualAmount";
+            public const string IsDiscountAtMilestone = "@IsDiscountAtMilestone";
+            public const string DiscountType = "@DiscountType";
+            public const string IsNewtoBudget = "@IsNewToBudget";
+            public const string MilestoneType = "@MilestoneType";
+            public const string RequestId = "@RequestId";
             public const string ExpenseTypes = "@ExpenseTypes";
             public const string ExpectedAmount = ColumnNames.ExpectedAmount;
             public const string ExpenseTypeId = ColumnNames.ExpenseTypeId;
@@ -1167,6 +1259,7 @@
 
             public class ActivityLog
             {
+                public const string GetBudgetActivityLog = "dbo.GetBudgetActivityLog";
                 public const string ActivityLogRecordPerChangeListByPeriod = "dbo.ActivityLogRecordPerChangeListByPeriod";
                 public const string ActivityLogRecordPerChangeGetCount = "dbo.ActivityLogRecordPerChangeGetCount";
                 public const string ActivityLogListByPeriodProcedure = "dbo.ActivityLogListByPeriod";
@@ -1181,6 +1274,9 @@
 
             public class ComputedFinancials
             {
+                public const string EACFinancialsByProject = "dbo.EACFinancialsByProject";
+                public const string GetMilestoneBudgetFinancials = "dbo.GetMilestoneBudgetFinancials";
+                public const string FinancialSummaryGetByProject = "dbo.FinancialSummaryGetByProject";
                 public const string FinancialsListByProjectPeriod = "dbo.FinancialsListByProjectPeriod";
                 public const string FinancialsListByProjectPeriodTotal = "dbo.FinancialsListByProjectPeriodTotal";
                 public const string FinancialsGetByProject = "dbo.FinancialsGetByProject";
@@ -1200,6 +1296,16 @@
 
             public class Configuration
             {
+                public const string GetOpenTasksForUser = "dbo.GetOpenTasksForUser";
+                public const string DeleteMarginExceptionThreshold = "dbo.DeleteMarginExceptionThreshold";
+                public const string DeleteMarginThreshold = "dbo.DeleteMarginThreshold";
+                public const string UpdateMarginExceptionThreshold = "dbo.UpdateMarginExceptionThreshold";
+                public const string InsertMarginExceptionThreshold = "dbo.InsertMarginExceptionThreshold";
+                public const string UpdateMarginThreshold = "dbo.UpdateMarginThreshold";
+                public const string InsertMarginThreshold = "dbo.InsertMarginThreshold";
+                public const string GetMarginExceptionThresholds = "dbo.GetMarginExceptionThresholds";
+                public const string GetMarginThresholds = "dbo.GetMarginThresholds";
+                public const string GetMarginExceptionApprovalLevels = "dbo.GetMarginExceptionApprovalLevels";
                 public const string GetLocations = "dbo.GetLocations";
                 public const string GetCFDivisions = "dbo.GetCFDivisions";
                 public const string SaveLockoutDetails = "dbo.SaveLockoutDetails";
@@ -1465,6 +1571,13 @@
 
             public class Reports
             {
+                public const string GetEACRevenueForProjects = "dbo.GetEACRevenueForProjects";
+                public const string GetExportDataForBurnReport = "dbo.GetExportDataForBurnReport";
+                public const string GetForecastDataForMilestone = "dbo.GetForecastDataForMilestone";
+                public const string GetProjectExpensesGroupedByMonth = "dbo.GetProjectExpensesGroupedByMonth";
+                public const string ProjectBudgetComaparisonSummary = "dbo.ProjectBudgetComaparisonSummary";
+                public const string GetWeeklyRevenuesForProject = "dbo.GetWeeklyRevenuesForProject";
+                public const string GetBurnReportForProject = "dbo.GetBurnReportForProject";
                 public const string ExpenseSummaryDetails = "dbo.ExpenseSummaryDetails";
                 public const string ExpenseDetailReport = "dbo.ExpenseDetailReport";
                 public const string ExpenseSummaryGroupedByType = "dbo.ExpenseSummaryGroupedByExpenseType";
@@ -1596,6 +1709,18 @@
 
             public class Project
             {
+                public const string GetBudgetRevisionTypeById = "dbo.GetBudgetRevisionTypeById";
+                public const string DeclineProjectBudgetReset = "dbo.DeclineProjectBudgetReset";
+                public const string ProjectShortGetByNumberForPerson = "dbo.ProjectShortGetByNumberForPerson";
+                public const string GetActiveAndAtRiskProjectsByClient = "dbo.GetActiveAndAtRiskProjectsByClient";
+                public const string BudgetManagementByProject = "dbo.BudgetManagementByProject";
+                public const string SendMarginExceptionResponse = "dbo.SendMarginExceptionResponse";
+                public const string SendMarginExceptionRequest = "dbo.SendMarginExceptionRequest";
+                public const string GetMarginExceptionThresholdsForPeriod = "dbo.GetMarginExceptionThresholdsForPeriod";
+                public const string GetMarginExceptionReasons = "dbo.GetMarginExceptionReasons";
+                public const string GetBudgetResetToAddress = "dbo.GetBudgetResetToAddress";
+                public const string UpdateProjectBudget = "dbo.UpdateProjectBudget";
+                public const string SetProjectBudgetResetRequest = "dbo.SetProjectBudgetResetRequest";
                 public const string GetProjectsForClients = "dbo.GetProjectsForClients";
                 public const string GetProjectDivisions = "dbo.GetProjectDivisions";
                 public const string GetChannelById = "dbo.GetChannelById";
@@ -1713,6 +1838,7 @@
 
             public class ProjectExpenses
             {
+                public const string UpdateProjectExpenseActualAmount = "dbo.UpdateProjectExpenseActualAmount";
                 public const string GetById = "dbo.ProjectExpenseGetById";
                 public const string GetAllForMilestone = "dbo.ProjectExpenseGetAllForMilestone";
                 public const string GetAllForProject = "dbo.ProjectExpenseGetAllForProject";
@@ -1720,6 +1846,10 @@
                 public const string Insert = "dbo.ProjectExpenseInsert";
                 public const string Delete = "dbo.ProjectExpenseDelete";
                 public const string GetAllExpenseTypes = "dbo.GetAllExpenseTypes";
+                public const string InsertProjectMonthlyExpenses = "dbo.InsertProjectMonthlyExpenses";
+                public const string UpdateProjectMonthlyExpenses = "dbo.UpdateProjectMonthlyExpenses";
+                public const string DeleteProjectMonthlyExpenses = "dbo.DeleteProjectMonthlyExpenses";
+                public const string GetMonthlyExpensesByExpenseId = "dbo.GetMonthlyExpensesByExpenseId";
             }
 
             #endregion Nested type: ProjectExpenses
@@ -1775,6 +1905,11 @@
 
             public class Client
             {
+                public const string GetClientMarginGoalLog = "dbo.GetClientMarginGoalLog";
+                public const string DeleteMarginGoal = "dbo.DeleteMarginGoal";
+                public const string UpdateMarginGoal = "dbo.UpdateMarginGoal";
+                public const string InsertMarginGoalForClient = "dbo.InsertMarginGoalForClient";
+                public const string GetMarginGoalsForClient = "dbo.GetMarginGoalsForClient";
                 public const string ClientInsertProcedure = "dbo.ClientInsert";
                 public const string ClientUpdateProcedure = "dbo.ClientUpdate";
                 public const string ClientListAllProcedure = "dbo.ClientListAll";
