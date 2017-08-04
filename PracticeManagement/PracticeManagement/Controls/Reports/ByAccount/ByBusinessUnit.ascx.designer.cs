@@ -22,42 +22,6 @@ namespace PraticeManagement.Controls.Reports.ByAccount {
         protected global::System.Web.UI.WebControls.Button btnExportToExcel;
         
         /// <summary>
-        /// btnExportToPDF control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnExportToPDF;
-        
-        /// <summary>
-        /// pnlFilterBusinessUnit control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlFilterBusinessUnit;
-        
-        /// <summary>
-        /// cblBusinessUnits control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::PraticeManagement.Controls.FilteredCheckBoxList cblBusinessUnits;
-        
-        /// <summary>
-        /// btnFilterOK control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnFilterOK;
-        
-        /// <summary>
         /// repBusinessUnit control.
         /// </summary>
         /// <remarks>
