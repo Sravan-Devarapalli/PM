@@ -340,8 +340,34 @@
               </xsl:attribute>
               <xsl:call-template name="DisplayValue" />
             </a>
+
+
+
           </xsl:otherwise>
         </xsl:choose>
+      </xsl:when>
+      <xsl:when test="($rootName = 'Budget' ) and (name() = 'Activity')  and (//NEW_VALUES/@Activity = 'Reset Budget')">
+        <xsl:call-template name="DisplayValue" />
+        <xsl:text>&#160;</xsl:text>
+        <a>
+          <xsl:attribute name="requestId">
+            <!--<xsl:choose>
+              <xsl:when test="$rootName = 'Budget'">
+                <xsl:value-of select="0"/>
+              </xsl:when>
+            </xsl:choose>-->
+            <xsl:text>0</xsl:text>
+          </xsl:attribute>
+
+          <xsl:attribute name="href">
+            <!-- Render an URL to navigate to the Project view -->
+
+            <xsl:text>#</xsl:text>
+
+          </xsl:attribute>
+          <xsl:text>Details</xsl:text>
+
+        </a>
       </xsl:when>
       <xsl:otherwise>
         <xsl:call-template name="DisplayValue" />
@@ -522,7 +548,7 @@
       <xsl:when test="$attrName = 'AttributionType'">Attribution Type</xsl:when>
       <xsl:when test="$attrName = 'CommissionPercentage'">Commission Percentage</xsl:when>
       <xsl:when test="$attrName = 'TargetName'">Target Name</xsl:when>
-      <xsl:when test="$attrName = 'PersonName'">Person</xsl:when> 
+      <xsl:when test="$attrName = 'PersonName'">Person</xsl:when>
       <xsl:when test="$attrName = 'SubstituteDate'">Substitute Date</xsl:when>
       <xsl:when test="$attrName = 'IsRecurring'">Is Recurring</xsl:when>
       <xsl:when test="$attrName = 'HolidayDescription'">Holiday Description</xsl:when>
@@ -547,6 +573,10 @@
       <xsl:when test="$attrName = 'ProjectManager'">Project Manager</xsl:when>
       <xsl:when test="$attrName = 'EngagementManager'">Engagement Manager</xsl:when>
       <xsl:when test="$attrName = 'PayChexID'">ADP ID</xsl:when>
+      <xsl:when test="$attrName = 'BudgetAmount'">Budget Amount</xsl:when>
+      <xsl:when test="$attrName = 'ExceptionMargin'">Exception Margin</xsl:when>
+      <xsl:when test="$attrName = 'ResetType'">Reset Type</xsl:when>
+      <xsl:when test="$attrName = 'BudgetToDate'">Budget to Date</xsl:when>
       <xsl:otherwise>
         <xsl:value-of select="$attrName" />
       </xsl:otherwise>
