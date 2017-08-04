@@ -41,5 +41,6 @@ namespace PracticeManagementService
         /// <returns>Returns database version</returns>
         [OperationContract]
         string GetDatabaseVersion();
+
     }
 }
