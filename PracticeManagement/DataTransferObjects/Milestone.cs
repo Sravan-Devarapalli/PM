@@ -92,6 +92,9 @@ namespace DataTransferObjects
         [DataMember]
         public ComputedFinancials ComputedFinancials { get; set; }
 
+        [DataMember]
+        public ComputedFinancials BudgetFinancials { get; set; }
+
         /// <summary>
         /// Gets or sets a number of expected hours for the <see cref="Milestone"/>.
         /// </summary>
@@ -166,6 +169,50 @@ namespace DataTransferObjects
 
         [DataMember]
         public List<Person> People { get; set; }
+
+        [DataMember]
+        public int milestoneType
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public decimal? PremiumDiscount
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public int PremiumType
+        {
+            //1- dollar, 2- Percentage
+            get;
+            set;
+        }
+
+
+        [DataMember]
+        public int IsDiscountAtMilestoneLevel
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public List<MonthlyRevenue> MonthlyRevenue
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public bool IsAmountAtMilestone
+        {
+            get;
+            set;
+        }
 
         #endregion Properties - Data members
 
@@ -245,10 +292,10 @@ namespace DataTransferObjects
                 for (int i = 0; i <= daysnum; i++)
                 {
                     points.Add(new DatePoint
-                                   {
-                                       Date = StartDate.Add(new TimeSpan(i, 0, 0, 0)),
-                                       Value = null
-                                   });
+                    {
+                        Date = StartDate.Add(new TimeSpan(i, 0, 0, 0)),
+                        Value = null
+                    });
                 }
 
                 return points;
@@ -288,7 +335,7 @@ namespace DataTransferObjects
                                                   : person.EndDate)
                                              && point.Date.DayOfWeek != DayOfWeek.Saturday
                                              && point.Date.DayOfWeek != DayOfWeek.Sunday);
-                        allPointsInRange.ForEach(delegate(DatePoint point)
+                        allPointsInRange.ForEach(delegate (DatePoint point)
                                                      {
                                                          var hours = Convert.ToDouble(mpe.HoursPerDay);
                                                          if (point.Value.HasValue)
@@ -327,4 +374,7 @@ namespace DataTransferObjects
 
         #endregion IActivityPeriod members
     }
+
+
 }
+
