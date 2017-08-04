@@ -22,6 +22,7 @@
       <xs:element minOccurs="0" name="ActiveProjectsCount" type="xs:int" />
       <xs:element minOccurs="0" name="BillableHours" type="xs:double" />
       <xs:element minOccurs="0" name="BillableHoursUntilToday" type="xs:double" />
+      <xs:element minOccurs="0" name="BudgetHours" type="xs:double" />
       <xs:element minOccurs="0" name="BusinessDevelopmentHours" type="xs:double" />
       <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="BusinessUnit" nillable="true" type="q3:ProjectGroup" />
       <xs:element minOccurs="0" name="BusinessUnitTotalHoursPercent" type="xs:int" />
