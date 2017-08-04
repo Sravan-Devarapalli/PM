@@ -14,7 +14,11 @@
 	@IsApproved			BIT = 0,
 	@Location      NVARCHAR(20) = NULL,
 	@UserLogin     NVARCHAR(255),
-	@Id            INT = NULL OUTPUT 
+	@Id            INT = NULL OUTPUT,
+	@Discount	   DECIMAL(18,2)=NULL,
+	@IsNewToBudget  BIT = 0,
+	@IsDiscountAtResourceLevel INT =0,
+	@LockDiscount   BIT = 0
 )
 AS
 	SET NOCOUNT ON
@@ -28,7 +32,9 @@ AS
 	DECLARE @UpdatedBy  INT,
 			@RequestDate DATETIME=NULL,
 			@CurrentPMTime DATETIME,
-			@ProjectId INT
+			@ProjectId INT,
+			@IsNewToBudgetLocal BIT,
+			@MilestoneId INT
 
 	SELECT @ProjectId = M.ProjectId
 	FROM dbo.MilestonePerson MP
@@ -43,9 +49,16 @@ AS
 		SET @RequestDate = @CurrentPMTime
 	END
 
+	--to track if the resource is added after the budget is set
+	IF EXISTS(SELECT 1 FROM dbo.Project WHERE ProjectId=@ProjectId AND ProjectStatusId = 3 AND Budget IS NOT NULL)
+		SET @IsNewToBudgetLocal=CONVERT(bit, 1)
+	ELSE 
+		SET @IsNewToBudgetLocal=CONVERT(bit, 0)
+
+
 	INSERT INTO dbo.MilestonePersonEntry
-	            (MilestonePersonId, StartDate, EndDate, PersonRoleId, Amount,IsBadgeRequired,BadgeStartDate,BadgeEndDate,IsBadgeException,IsApproved,BadgeRequestDate, HoursPerDay, Location,Requester)
-	     VALUES (@MilestonePersonId, @StartDate, @EndDate, @PersonRoleId, @Amount,@IsBadgeRequired,@BadgeStartDate,@BadgeEndDate,@IsBadgeException,@IsApproved,@RequestDate, @HoursPerDay, @Location,@UpdatedBy)
+	            (MilestonePersonId, StartDate, EndDate, PersonRoleId, Amount,IsBadgeRequired,BadgeStartDate,BadgeEndDate,IsBadgeException,IsApproved,BadgeRequestDate, HoursPerDay, Location,Requester, Discount, IsNewToBudget, LockDiscount)
+	     VALUES (@MilestonePersonId, @StartDate, @EndDate, @PersonRoleId, @Amount,@IsBadgeRequired,@BadgeStartDate,@BadgeEndDate,@IsBadgeException,@IsApproved,@RequestDate, @HoursPerDay, @Location,@UpdatedBy, @Discount, @IsNewToBudgetLocal, @LockDiscount)
 
 		SET @Id = SCOPE_IDENTITY()
 	     
@@ -55,6 +68,9 @@ AS
 		SET PersonId = @PersonId
 		WHERE MilestonePersonId = @MilestonePersonId
 	END
+
+	SELECT @MilestoneId = MilestoneId
+	FROM MilestonePerson WHERE MilestonePersonId = @MilestonePersonId
 	
 	IF @MilestonePersonId IS NOT NULL
 	BEGIN
@@ -66,6 +82,24 @@ AS
 	UPDATE dbo.Project
 	SET CreatedDate = @CurrentPMTime
 	WHERE ProjectId = @ProjectId
+
+	-- Update Milestone Amount if the Amount is NULL For Fixed Milestone
+
+	IF EXISTS(SELECT 1 FROM Milestone M Where M.MilestoneId = @MilestoneId AND M.IsHourlyAmount = 0 AND M.Amount IS NULL)
+	BEGIN
+		EXEC UpdateFixedMilestoneAmount @MilestoneId= @MilestoneId
+	END
+
+	IF EXISTS(SELECT 1 FROM Milestone M Where M.MilestoneId = @MilestoneId AND M.IsHourlyAmount = 0 )
+	BEGIN
+		EXEC dbo.UpdateFixedFeeMilestoneDiscount @MilestoneId= @MilestoneId
+	END
+
+
+	UPDATE Milestone
+	set IsDiscountAtMilestone=@IsDiscountAtResourceLevel
+	where MilestoneId=@MilestoneId and @IsDiscountAtResourceLevel!=0
+	 
 
 	-- End logging session
 	EXEC dbo.SessionLogUnprepare
