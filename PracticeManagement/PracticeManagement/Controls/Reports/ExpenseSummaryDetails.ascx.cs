@@ -382,7 +382,7 @@ namespace PraticeManagement.Controls.Reports
                 }
                 if (showActuals)
                 {
-                    row.Add(expense.Expense.Amount.ToString(CurrencyDisplayFormat));
+                    row.Add(expense.Expense.Amount!=null? expense.Expense.Amount.Value.ToString(CurrencyDisplayFormat):0.ToString(CurrencyDisplayFormat));
                 }
                 if (showActuals && showEstimated)
                 {
