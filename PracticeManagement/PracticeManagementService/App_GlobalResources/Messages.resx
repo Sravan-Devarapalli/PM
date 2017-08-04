@@ -207,5 +207,19 @@
   <data name="CompensationChange(rehire)TemplateName" xml:space="preserve">
     <value>Compensation Change(1099-W2) Template</value>
   </data>
+  <data name="BudgetResetMailTemplateName" xml:space="preserve">
+    <value>BudgetResetMailTemplateName</value>
+  </data>
+  <data name="BudgetResetRequestMailTemplateName" xml:space="preserve">
+    <value>BudgetResetRequestMailTemplateName</value>
+  </data>
+  <data name="MarginExceptionRequest" xml:space="preserve">
+    <value>MarginExceptionRequest</value>
+  </data>
+  <data name="MarginExceptionResponse" xml:space="preserve">
+    <value>MarginExceptionResponse</value>
+  </data>
+  <data name="BudgetResetDeclineMailTemplateName" xml:space="preserve">
+    <value>BudgetResetDeclineMailTemplateName</value>
+  </data>
 </root>
-
