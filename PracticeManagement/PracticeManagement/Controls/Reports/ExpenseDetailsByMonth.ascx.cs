@@ -373,7 +373,7 @@ namespace PraticeManagement.Controls.Reports
                 }
                 if (showActuals)
                 {
-                    row.Add(expense.Expense.Amount.ToString(CurrencyDisplayFormat));
+                    row.Add(expense.Expense.Amount != null ? expense.Expense.Amount.Value.ToString(CurrencyDisplayFormat) : 0.ToString(CurrencyDisplayFormat));
                 }
                 if (showActuals && showEstimated)
                 {
@@ -446,7 +446,7 @@ namespace PraticeManagement.Controls.Reports
                     {
                         reportDataInPdfString += String.Format("{2}{0}{3}{0}{4}{0}{5}{0}{6}{0}{7}{0}{8}{0}{9}{0}{10}{0}{11}{1}", ColoumSpliter, RowSpliter, expense.Project.ProjectNumber, expense.Expense.MilestoneName, expense.Expense.HtmlEncodedName,
                        expense.Expense.Type.Name, expense.Expense.StartDate.ToString(Constants.Formatting.EntryDateFormat), expense.Expense.EndDate.ToString(Constants.Formatting.EntryDateFormat),
-                       expense.MonthStartDate.ToString(Constants.Formatting.CompPerfMonthYearFormat), expense.Expense.Amount.ToString(CurrencyDisplayFormat), expense.Expense.Reimbursement, expense.Expense.ReimbursementAmount.ToString(CurrencyDisplayFormat));
+                       expense.MonthStartDate.ToString(Constants.Formatting.CompPerfMonthYearFormat), expense.Expense.Amount!=null ? expense.Expense.Amount.Value.ToString(CurrencyDisplayFormat): 0.ToString(CurrencyDisplayFormat), expense.Expense.Reimbursement, expense.Expense.ReimbursementAmount.ToString(CurrencyDisplayFormat));
                     }
                 }
                 if (HostingPage.ShowEstimatedExpense && !HostingPage.ShowActualExpense)
@@ -468,7 +468,7 @@ namespace PraticeManagement.Controls.Reports
                     {
                         reportDataInPdfString += String.Format("{2}{0}{3}{0}{4}{0}{5}{0}{6}{0}{7}{0}{8}{0}{9}{0}{10}{0}{11}{0}{12}{0}{13}{1}", ColoumSpliter, RowSpliter, expense.Project.ProjectNumber, expense.Expense.MilestoneName, expense.Expense.HtmlEncodedName,
                        expense.Expense.Type.Name, expense.Expense.StartDate.ToString(Constants.Formatting.EntryDateFormat), expense.Expense.EndDate.ToString(Constants.Formatting.EntryDateFormat),
-                       expense.MonthStartDate.ToString(Constants.Formatting.CompPerfMonthYearFormat), expense.Expense.ExpectedAmount.ToString(CurrencyDisplayFormat), expense.Expense.Amount.ToString(CurrencyDisplayFormat), expense.Expense.Difference.ToString(CurrencyDisplayFormat), expense.Expense.Reimbursement, expense.Expense.ReimbursementAmount.ToString(CurrencyDisplayFormat));
+                       expense.MonthStartDate.ToString(Constants.Formatting.CompPerfMonthYearFormat), expense.Expense.ExpectedAmount.ToString(CurrencyDisplayFormat), expense.Expense.Amount!=null? expense.Expense.Amount.Value.ToString(CurrencyDisplayFormat): 0.ToString(CurrencyDisplayFormat), expense.Expense.Difference.ToString(CurrencyDisplayFormat), expense.Expense.Reimbursement, expense.Expense.ReimbursementAmount.ToString(CurrencyDisplayFormat));
                     }
                 }
                 else
@@ -521,7 +521,7 @@ namespace PraticeManagement.Controls.Reports
                     {
                         reportDataInPdfString += String.Format("{2}{0}{3}{0}{4}{0}{5}{0}{6}{0}{7}{0}{8}{0}{9}{0}{10}{0}{11}{1}", ColoumSpliter, RowSpliter, expense.Project.ProjectNumber, expense.Expense.MilestoneName, expense.Expense.HtmlEncodedName,
                        expense.Expense.Type.Name, expense.Expense.StartDate.ToString(Constants.Formatting.EntryDateFormat), expense.Expense.EndDate.ToString(Constants.Formatting.EntryDateFormat),
-                       expense.MonthStartDate.ToString(Constants.Formatting.CompPerfMonthYearFormat), expense.Expense.Amount.ToString(CurrencyDisplayFormat), expense.Expense.Reimbursement, expense.Expense.ReimbursementAmount.ToString(CurrencyDisplayFormat));
+                       expense.MonthStartDate.ToString(Constants.Formatting.CompPerfMonthYearFormat), expense.Expense.Amount!=null? expense.Expense.Amount.Value.ToString(CurrencyDisplayFormat): 0.ToString(CurrencyDisplayFormat), expense.Expense.Reimbursement, expense.Expense.ReimbursementAmount.ToString(CurrencyDisplayFormat));
                     }
                 }
                 if (HostingPage.ShowEstimatedExpense && !HostingPage.ShowActualExpense)
@@ -543,7 +543,7 @@ namespace PraticeManagement.Controls.Reports
                     {
                         reportDataInPdfString += String.Format("{2}{0}{3}{0}{4}{0}{5}{0}{6}{0}{7}{0}{8}{0}{9}{0}{10}{0}{11}{0}{12}{0}{13}{1}", ColoumSpliter, RowSpliter, expense.Project.ProjectNumber, expense.Expense.MilestoneName, expense.Expense.HtmlEncodedName,
                        expense.Expense.Type.Name, expense.Expense.StartDate.ToString(Constants.Formatting.EntryDateFormat), expense.Expense.EndDate.ToString(Constants.Formatting.EntryDateFormat),
-                       expense.MonthStartDate.ToString(Constants.Formatting.CompPerfMonthYearFormat), expense.Expense.ExpectedAmount.ToString(CurrencyDisplayFormat), expense.Expense.Amount.ToString(CurrencyDisplayFormat), expense.Expense.Difference.ToString(CurrencyDisplayFormat), expense.Expense.Reimbursement, expense.Expense.ReimbursementAmount.ToString(CurrencyDisplayFormat));
+                       expense.MonthStartDate.ToString(Constants.Formatting.CompPerfMonthYearFormat), expense.Expense.ExpectedAmount.ToString(CurrencyDisplayFormat), expense.Expense.Amount!=null? expense.Expense.Amount.Value.ToString(CurrencyDisplayFormat): 0.ToString(CurrencyDisplayFormat), expense.Expense.Difference.ToString(CurrencyDisplayFormat), expense.Expense.Reimbursement, expense.Expense.ReimbursementAmount.ToString(CurrencyDisplayFormat));
                     }
                 }
                 else
