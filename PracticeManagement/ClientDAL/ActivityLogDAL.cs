@@ -17,7 +17,7 @@ namespace DataAccess
         #region Constants
 
         private const string ProjectXml = "<Project><NEW_VALUES ProjectId=\"{0}\" ><OLD_VALUES ProjectId=\"{0}\"/> </NEW_VALUES> </Project>";
-        
+
         #endregion
 
         #region Methods
@@ -85,8 +85,15 @@ namespace DataAccess
                 command.Parameters.AddWithValue(Constants.ParameterNames.SalesPerson,
                                      context.SalesPerson);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ProjectOwner,
-                                         context.ProjectOwner);  
-                
+                                         context.ProjectOwner);
+                if (context.RecordPerSingleChange)
+                {
+                    command.Parameters.AddWithValue(Constants.ParameterNames.Budget,
+                                             context.Budget);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.Margin,
+                                             context.Margin);
+                }
+
                 connection.Open();
                 using (var reader = command.ExecuteReader())
                 {
@@ -144,22 +151,29 @@ namespace DataAccess
                                                 context.PracticeAreas);
                 command.Parameters.AddWithValue(Constants.ParameterNames.SowBudget,
                                                 context.SowBudget);
-                    command.Parameters.AddWithValue(Constants.ParameterNames.ClientDirector,
-                                                context.Director);
+                command.Parameters.AddWithValue(Constants.ParameterNames.ClientDirector,
+                                            context.Director);
                 command.Parameters.AddWithValue(Constants.ParameterNames.POAmount,
                                                 context.POAmount);
                 command.Parameters.AddWithValue(Constants.ParameterNames.Capabilities,
                                                 context.Capabilities);
                 command.Parameters.AddWithValue(Constants.ParameterNames.NewOrExtension,
                                                 context.NewOrExtension);
-                    command.Parameters.AddWithValue(Constants.ParameterNames.PONumber,
-                                                context.PONumber);
-                    command.Parameters.AddWithValue(Constants.ParameterNames.ProjectStatus,
-                                                context.ProjectStatus);
-                    command.Parameters.AddWithValue(Constants.ParameterNames.SalesPerson,
-                                         context.SalesPerson);
-                    command.Parameters.AddWithValue(Constants.ParameterNames.ProjectOwner,
-                                             context.ProjectOwner);     
+                command.Parameters.AddWithValue(Constants.ParameterNames.PONumber,
+                                            context.PONumber);
+                command.Parameters.AddWithValue(Constants.ParameterNames.ProjectStatus,
+                                            context.ProjectStatus);
+                command.Parameters.AddWithValue(Constants.ParameterNames.SalesPerson,
+                                     context.SalesPerson);
+                command.Parameters.AddWithValue(Constants.ParameterNames.ProjectOwner,
+                                         context.ProjectOwner);
+                if (context.RecordPerSingleChange)
+                {
+                    command.Parameters.AddWithValue(Constants.ParameterNames.Budget,
+                                        context.Budget);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.Margin,
+                                            context.Margin);
+                }
                 connection.Open();
                 var result = (int)command.ExecuteScalar();
 
@@ -188,42 +202,42 @@ namespace DataAccess
             {
                 var item =
                     new ActivityLogItem
-                        {
-                            // Log data
-                            Id = reader.GetInt32(activityIdIndex),
-                            ActivityTypeId = reader.GetInt32(activityTypeIdIndex),
-                            ActivityName = reader.GetString(activityNameIndex),
-                            SessionId = reader.GetInt32(sessionIdIndex),
-                            LogDate = reader.GetDateTime(logDateIndex),
-                            SystemUser = reader.GetString(systemUserIndex),
-                            Workstation =
+                    {
+                        // Log data
+                        Id = reader.GetInt32(activityIdIndex),
+                        ActivityTypeId = reader.GetInt32(activityTypeIdIndex),
+                        ActivityName = reader.GetString(activityNameIndex),
+                        SessionId = reader.GetInt32(sessionIdIndex),
+                        LogDate = reader.GetDateTime(logDateIndex),
+                        SystemUser = reader.GetString(systemUserIndex),
+                        Workstation =
                                 !reader.IsDBNull(workstationIndex) ? reader.GetString(workstationIndex) : null,
-                            ApplicationName =
+                        ApplicationName =
                                 !reader.IsDBNull(applicationNameIndex)
                                     ? reader.GetString(applicationNameIndex)
                                     : null,
-                            LogData = !reader.IsDBNull(logDataIndex) ? reader.GetString(logDataIndex) : null,
-                            // User's data
-                            Person =
+                        LogData = !reader.IsDBNull(logDataIndex) ? reader.GetString(logDataIndex) : null,
+                        // User's data
+                        Person =
                                 !reader.IsDBNull(userLoginIndex)
                                     ? new Person
-                                        {
-                                            Id =
+                                    {
+                                        Id =
                                                 !reader.IsDBNull(personIdIndex)
                                                     ? (int?)reader.GetInt32(personIdIndex)
                                                     : null,
-                                            Alias = reader.GetString(userLoginIndex),
-                                            FirstName =
+                                        Alias = reader.GetString(userLoginIndex),
+                                        FirstName =
                                                 !reader.IsDBNull(firstNameIndex)
                                                     ? reader.GetString(firstNameIndex)
                                                     : null,
-                                            LastName =
+                                        LastName =
                                                 !reader.IsDBNull(lastNameIndex)
                                                     ? reader.GetString(lastNameIndex)
                                                     : null
-                                        }
+                                    }
                                     : null
-                        };
+                    };
 
                 result.Add(item);
             }
