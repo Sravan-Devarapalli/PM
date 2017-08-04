@@ -52,14 +52,14 @@ AS
 		P.ProjectId,
 		P.StartDate FinancialDate,
 		p.EndDate MonthEnd,
-		ISNULL(pf.Revenue,0)  as 'Revenue',
-		ISNULL(pf.RevenueNet,0)+ISNULL(PE.ReimbursedExpenseSum,0) as 'RevenueNet',
+		Convert(DECIMAL(18,2),ISNULL(pf.Revenue,0)) as 'Revenue',
+		Convert(DECIMAL(18,2),ISNULL(pf.RevenueNet,0)+ISNULL(PE.ReimbursedExpenseSum,0)) as 'RevenueNet',
 		CASE WHEN (pr.IsCompanyInternal = 1) THEN 0
-		ELSE ISNULL(pf.Cogs,0) END AS 'Cogs',
-		ISNULL(pf.GrossMargin,0)+((ISNULL(PE.ReimbursedExpenseSum,0)-ISNULL(PE.ExpenseSum,0)))  as 'GrossMargin',
+		ELSE Convert(DECIMAL(18,2),ISNULL(pf.Cogs,0)) END AS 'Cogs',
+		Convert(DECIMAL(18,2),ISNULL(pf.GrossMargin,0)+((ISNULL(PE.ReimbursedExpenseSum,0)-ISNULL(PE.ExpenseSum,0))))  as 'GrossMargin',
 		ISNULL(pf.Hours,0) Hours,
-		ISNULL(PE.ExpenseSum,0) Expense,
-		ISNULL(PE.ReimbursedExpenseSum,0) ReimbursedExpense
+		Convert(DECIMAL(18,2),ISNULL(PE.ExpenseSum,0)) Expense,
+		Convert(DECIMAL(18,2),ISNULL(PE.ReimbursedExpenseSum,0)) ReimbursedExpense
 	FROM  Project p 
 	JOIN Practice pr ON (pr.PracticeId = p.PracticeId)
 	LEFT JOIN ProjectFinancials pf
