@@ -17,7 +17,8 @@ AS
 	       m.IsHourlyAmount,
 	       m.StartDate,
 	       m.ProjectedDeliveryDate,
-		   P.ProjectStatusId
+		   P.ProjectStatusId,
+		   mpe.HoursPerDay as ActualHoursPerDay
 	  FROM dbo.Project P 
 		   INNER JOIN dbo.[Milestone] AS m ON m.ProjectId=P.ProjectId AND P.IsAdministrative = 0 AND P.ProjectId != 174  AND m.IsDefault = 0
 		   INNER JOIN dbo.MilestonePerson AS mp ON mp.[MilestoneId] = m.[MilestoneId]
