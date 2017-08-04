@@ -31,7 +31,15 @@ namespace PraticeManagement.Controls
         private string channelIdsList;
         private string offeringIdsList;
         private string revenueTypeIdsList;
+        private string dataPointIdsList;
+        private string viewId;
+        private string supressZeroProjects;
         private bool excludeInternalPractices;
+        private string feeTypeIds;
+        private int? feeType;
+        private string level;
+        private DateTime? actualEndDate;
+
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private int? projectOwnerIdValue;
         private string projectOwnerIdsList;
@@ -466,6 +474,48 @@ namespace PraticeManagement.Controls
             set { financialsFromCache = value; }
         }
 
+        public string DataPointsIdsList
+        {
+            get { return dataPointIdsList; }
+            set { dataPointIdsList = value; }
+        }
+
+        public string ViewIdsList
+        {
+            get { return viewId; }
+            set { viewId = value; }
+        }
+
+        public string SupressZeroProjects
+        {
+            get { return supressZeroProjects; }
+            set { supressZeroProjects = value; }
+        }
+
+        public string FeeTypeIds
+        {
+            get { return feeTypeIds; }
+            set { feeTypeIds = value; }
+        }
+
+        public int? FeeType
+        {
+            get { return feeType; }
+            set { feeType = value; }
+        }
+
+        public string Level
+        {
+            get { return level; }
+            set { level = value; }
+        }
+
+        public DateTime? ActualEndDate
+        {
+            get { return actualEndDate; }
+            set { actualEndDate = value; }
+        }
+
         #endregion
 
         #region Construction
@@ -511,10 +561,11 @@ namespace PraticeManagement.Controls
             ProjectGroupIdsList = null;
             SalespersonIdsList = null;
             UseActualTimeEntries = true;
-            CalculationsType = 2;
+            CalculationsType = 4;
             FinancialsFromCache = false;
             IsQuarterColoumnsShown = false;
             IsYearToDateColoumnsShown = false;
+            dataPointIdsList = "1,";
         }
 
         #endregion
@@ -597,13 +648,13 @@ namespace PraticeManagement.Controls
                    Convert.ToInt32(EndMonth) +
                    Convert.ToInt32(EndYear) +
                    Convert.ToInt32(PeriodSelected) +
-                // filters
+                   // filters
                    Convert.ToInt32(ClientId) +
                    Convert.ToInt32(ProjectGroupId) +
                    Convert.ToInt32(ProjectOwnerId) +
                    Convert.ToInt32(PracticeId) +
                    Convert.ToInt32(SalespersonId) +
-                // project status
+                   // project status
                    Convert.ToInt32(ShowActive) +
                    Convert.ToInt32(ShowCompleted) +
                    Convert.ToInt32(ShowExperimental) +
@@ -611,15 +662,15 @@ namespace PraticeManagement.Controls
                    Convert.ToInt32(ShowInternal) +
                    Convert.ToInt32(ShowInactive) +
                    Convert.ToInt32(ShowAtRisk) +
-                // total range
+                   // total range
                    Convert.ToInt32(CalculateRangeSelected) +
                    Convert.ToInt32(TotalOnlySelectedDateWindow) +
                    Convert.ToInt32(ViewSelected) +
-                // UseActuals
+                    // UseActuals
                     Convert.ToInt32(UseActualTimeEntries) +
-                // CalculationType
+                    // CalculationType
                     Convert.ToInt32(CalculationsType != 1) +
-                // FinancialsFromCache
+                    // FinancialsFromCache
                     Convert.ToInt32(FinancialsFromCache) +
                     Convert.ToInt32(IsQuarterColoumnsShown) +
                     Convert.ToInt32(IsYearToDateColoumnsShown);
