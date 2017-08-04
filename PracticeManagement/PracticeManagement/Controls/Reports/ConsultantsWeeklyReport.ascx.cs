@@ -2231,8 +2231,6 @@ namespace PraticeManagement.Controls.Reports
 
         private static string FormatPersonName(Person p)
         {
-            string x = "abc";
-
             return string.Format(
                 NAME_FORMAT,
                 p.LastName,
