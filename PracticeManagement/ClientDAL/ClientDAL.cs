@@ -98,15 +98,6 @@ namespace DataAccess
                         command.ExecuteNonQuery();
                         client.Id = (int)clientIdParameter.Value;
 
-                        if (client.IsMarginColorInfoEnabled.HasValue && client.IsMarginColorInfoEnabled.Value && client.ClientMarginInfo != null)
-                        {
-                            for (int i = 0; i < client.ClientMarginInfo.Count; i++)
-                            {
-                                bool isDeletePreviousMarginInfo = i == 0;
-                                ClientMarginColorInfoInsert(client.Id, client.ClientMarginInfo[i], isDeletePreviousMarginInfo, connection, transaction);
-                            }
-                        }
-
                         transaction.Commit();
                     }
                     catch (Exception ex)
@@ -196,15 +187,6 @@ namespace DataAccess
                         command.Transaction = transaction;
 
                         command.ExecuteNonQuery();
-
-                        if (client.IsMarginColorInfoEnabled.HasValue && client.IsMarginColorInfoEnabled.Value && client.ClientMarginInfo != null)
-                        {
-                            for (int i = 0; i < client.ClientMarginInfo.Count; i++)
-                            {
-                                bool isDeletePreviousMarginInfo = i == 0;
-                                ClientMarginColorInfoInsert(client.Id, client.ClientMarginInfo[i], isDeletePreviousMarginInfo, connection, transaction);
-                            }
-                        }
 
                         transaction.Commit();
                     }
@@ -577,17 +559,17 @@ namespace DataAccess
             {
                 result.Add(
                     new ColorInformation()
-                        {
-                            ColorId = reader.GetInt32(colorIdIndex),
-                            ColorValue = reader.GetString(colorValueIndex),
-                            ColorDescription = reader.GetString(colorDescriptionIndex)
-                        }
+                    {
+                        ColorId = reader.GetInt32(colorIdIndex),
+                        ColorValue = reader.GetString(colorValueIndex),
+                        ColorDescription = reader.GetString(colorDescriptionIndex)
+                    }
 
                     );
             }
         }
 
-        public static List<ClientMarginColorInfo> GetClientMarginColorInfo(int clientId)
+        public static List<ClientMarginColorInfo> GetClientMarginColorInfo(int clientId, DateTime startDate, DateTime endDate, int projectId)
         {
             var clientMarginColorInfo = new List<ClientMarginColorInfo>();
             using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
@@ -597,6 +579,9 @@ namespace DataAccess
                     command.CommandType = CommandType.StoredProcedure;
                     command.CommandTimeout = connection.ConnectionTimeout;
                     command.Parameters.AddWithValue(Constants.ParameterNames.ClientId, clientId);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.StartDateParam, startDate);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.EndDateParam, endDate);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.ProjectIdParam, projectId);
 
                     connection.Open();
                     using (SqlDataReader reader = command.ExecuteReader())
@@ -621,16 +606,16 @@ namespace DataAccess
             {
                 clientMarginColorInfo.Add(
                     new ClientMarginColorInfo()
+                    {
+                        ColorInfo = new ColorInformation()
                         {
-                            ColorInfo = new ColorInformation()
-                                {
-                                    ColorId = reader.GetInt32(colorIdIndex),
-                                    ColorValue = reader.GetString(colorValueIndex),
-                                    ColorDescription = reader.GetString(colorDescriptionIndex)
-                                },
-                            StartRange = reader.GetInt32(startRangeIndex),
-                            EndRange = reader.GetInt32(endRangeIndex),
-                        }
+                            ColorId = reader.GetInt32(colorIdIndex),
+                            ColorValue = reader.GetString(colorValueIndex),
+                            ColorDescription = reader.GetString(colorDescriptionIndex)
+                        },
+                        StartRange = reader.GetDecimal(startRangeIndex),
+                        EndRange = reader.GetDecimal(endRangeIndex),
+                    }
                     );
             }
         }
@@ -791,14 +776,14 @@ namespace DataAccess
             while (reader.Read())
             {
                 PricingList pricinglist = new PricingList
-                    {
-                        ClientId = !reader.IsDBNull(clientIdIndex) ? reader.GetInt32(clientIdIndex) : -1,
-                        Name = !reader.IsDBNull(nameIndex) ? reader.GetString(nameIndex) : string.Empty,
-                        PricingListId = !reader.IsDBNull(pricingListIdIndex) ? reader.GetInt32(pricingListIdIndex) : -1,
-                        InUse = !reader.IsDBNull(inUseIndex) && reader.GetBoolean(inUseIndex),
-                        IsDefault = !reader.IsDBNull(isDefaultIndex) && reader.GetBoolean(isDefaultIndex),
-                        IsActive = !reader.IsDBNull(isActiveIndex) && reader.GetBoolean(isActiveIndex)
-                    };
+                {
+                    ClientId = !reader.IsDBNull(clientIdIndex) ? reader.GetInt32(clientIdIndex) : -1,
+                    Name = !reader.IsDBNull(nameIndex) ? reader.GetString(nameIndex) : string.Empty,
+                    PricingListId = !reader.IsDBNull(pricingListIdIndex) ? reader.GetInt32(pricingListIdIndex) : -1,
+                    InUse = !reader.IsDBNull(inUseIndex) && reader.GetBoolean(inUseIndex),
+                    IsDefault = !reader.IsDBNull(isDefaultIndex) && reader.GetBoolean(isDefaultIndex),
+                    IsActive = !reader.IsDBNull(isActiveIndex) && reader.GetBoolean(isActiveIndex)
+                };
 
                 result.Add(pricinglist);
             }
@@ -893,6 +878,179 @@ namespace DataAccess
                     }
                 };
                 result.Add(group);
+            }
+        }
+
+        public static List<ClientMarginGoal> GetClientMarginGoals(int clientId)
+        {
+            var marginGoals = new List<ClientMarginGoal>();
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            {
+                using (var command = new SqlCommand(Constants.ProcedureNames.Client.GetMarginGoalsForClient, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandTimeout = connection.ConnectionTimeout;
+
+                    command.Parameters.AddWithValue(Constants.ParameterNames.ClientIdParam, clientId);
+
+                    connection.Open();
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        ReadMarginGoals(reader, marginGoals);
+                    }
+                }
+                return marginGoals;
+            }
+        }
+
+        private static void ReadMarginGoals(SqlDataReader reader, List<ClientMarginGoal> marginGoals)
+        {
+            if (!reader.HasRows) return;
+            int idIndex = reader.GetOrdinal(Constants.ColumnNames.Id);
+            int clientIdIndex = reader.GetOrdinal(Constants.ColumnNames.ClientId);
+            int startDateIndex = reader.GetOrdinal(Constants.ColumnNames.StartDateColumn);
+            int endDateDateIndex = reader.GetOrdinal(Constants.ColumnNames.EndDateColumn);
+            int marginGoalIndex = reader.GetOrdinal(Constants.ColumnNames.MarginGoal);
+            int commentsIndex = reader.GetOrdinal(Constants.ColumnNames.Comments);
+
+            while (reader.Read())
+            {
+                var threshold = new ClientMarginGoal
+                {
+                    Id = reader.GetInt32(idIndex),
+                    ClientId = reader.GetInt32(clientIdIndex),
+                    StartDate = reader.GetDateTime(startDateIndex),
+                    EndDate = reader.GetDateTime(endDateDateIndex),
+
+                    MarginGoal = reader.GetInt32(marginGoalIndex),
+                    Comments = reader.GetString(commentsIndex)
+                };
+                marginGoals.Add(threshold);
+            }
+        }
+
+        public static void InsertClientMargin(ClientMarginGoal marginGoal, string userAlias)
+        {
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            {
+                using (var command = new SqlCommand(Constants.ProcedureNames.Client.InsertMarginGoalForClient, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandTimeout = connection.ConnectionTimeout;
+
+                    command.Parameters.AddWithValue(Constants.ParameterNames.StartDate, marginGoal.StartDate);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.EndDate, marginGoal.EndDate);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.ClientIdParam, marginGoal.ClientId);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.MarginGoal, marginGoal.MarginGoal);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.Comments, marginGoal.Comments);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.UserLoginParam, userAlias);
+
+                    connection.Open();
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static void UpdateClientMarginGoal(ClientMarginGoal marginGoal, string userAlias)
+        {
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            {
+                using (var command = new SqlCommand(Constants.ProcedureNames.Client.UpdateMarginGoal, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandTimeout = connection.ConnectionTimeout;
+
+                    command.Parameters.AddWithValue(Constants.ParameterNames.IdParam, marginGoal.Id.Value);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.StartDate, marginGoal.StartDate);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.EndDate, marginGoal.EndDate);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.ClientIdParam, marginGoal.ClientId);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.MarginGoal, marginGoal.MarginGoal);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.Comments, marginGoal.Comments);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.UserLoginParam, userAlias);
+
+                    connection.Open();
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static void DeleteClientMarginGoal(int id, string userAlias)
+        {
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            {
+                using (var command = new SqlCommand(Constants.ProcedureNames.Client.DeleteMarginGoal, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandTimeout = connection.ConnectionTimeout;
+
+                    command.Parameters.AddWithValue(Constants.ParameterNames.IdParam, id);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.UserLoginParam, userAlias);
+
+                    connection.Open();
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static List<ClientMarginGoalLog> GetMarginGoalLogForClient(int clientId)
+        {
+            var marginGoals = new List<ClientMarginGoalLog>();
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            {
+                using (var command = new SqlCommand(Constants.ProcedureNames.Client.GetClientMarginGoalLog, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandTimeout = connection.ConnectionTimeout;
+
+                    command.Parameters.AddWithValue(Constants.ParameterNames.ClientIdParam, clientId);
+
+                    connection.Open();
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        ReadMarginGoalsHistory(reader, marginGoals);
+                    }
+                }
+                return marginGoals;
+            }
+        }
+
+        private static void ReadMarginGoalsHistory(SqlDataReader reader, List<ClientMarginGoalLog> marginGoals)
+        {
+            if (!reader.HasRows) return;
+            int clientIdIndex = reader.GetOrdinal(Constants.ColumnNames.ClientId);
+            int oldStartDateIndex = reader.GetOrdinal(Constants.ColumnNames.OldStartDate);
+            int newStartDateIndex = reader.GetOrdinal(Constants.ColumnNames.NewStartDate);
+            int oldEndDateIndex = reader.GetOrdinal(Constants.ColumnNames.OldEndDate);
+            int newEndDateIndex = reader.GetOrdinal(Constants.ColumnNames.NewEndDate);
+            int oldMarginGoalIndex = reader.GetOrdinal(Constants.ColumnNames.OldMarginGoal);
+            int newMarginGoalIndex = reader.GetOrdinal(Constants.ColumnNames.NewMarginGoal);
+            int activityIndex = reader.GetOrdinal(Constants.ColumnNames.Activity);
+            int logTimeIndex = reader.GetOrdinal(Constants.ColumnNames.LogDate);
+            int commentsIndex = reader.GetOrdinal(Constants.ColumnNames.Comments);
+            int personNameIndex = reader.GetOrdinal(Constants.ColumnNames.PersonName);
+
+            while (reader.Read())
+            {
+                var log = new ClientMarginGoalLog
+                {
+                    ClientId = reader.GetInt32(clientIdIndex),
+                    PersonName = reader.GetString(personNameIndex),
+                    OldStartDate = reader.IsDBNull(oldStartDateIndex) ? null : (DateTime?)reader.GetDateTime(oldStartDateIndex),
+                    NewStartDate = reader.IsDBNull(newStartDateIndex) ? null : (DateTime?)reader.GetDateTime(newStartDateIndex),
+                    OldEndDate = reader.IsDBNull(oldEndDateIndex) ? null : (DateTime?)reader.GetDateTime(oldEndDateIndex),
+                    NewEndDate = reader.IsDBNull(newEndDateIndex) ? null : (DateTime?)reader.GetDateTime(newEndDateIndex),
+                    OldMarginGoal = reader.IsDBNull(oldMarginGoalIndex) ? null : (int?)reader.GetInt32(oldMarginGoalIndex),
+                    NewMarginGoal = reader.IsDBNull(newMarginGoalIndex) ? null : (int?)reader.GetInt32(newMarginGoalIndex),
+                    Acivity = reader.GetInt32(activityIndex),
+                    LogTime = reader.GetDateTime(logTimeIndex),
+                    Comments = reader.GetString(commentsIndex)
+                };
+                marginGoals.Add(log);
             }
         }
     }
