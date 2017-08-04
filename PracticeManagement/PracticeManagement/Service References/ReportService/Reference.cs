@@ -252,6 +252,24 @@ namespace PraticeManagement.ReportService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/DetailedExpenseSummary", ReplyAction="http://tempuri.org/IReportService/DetailedExpenseSummaryResponse")]
         DataTransferObjects.Reports.ExpenseSummary[] DetailedExpenseSummary(System.DateTime startDate, System.DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental, bool atRisk, string expenseTypeIds);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/GetActiveAndAtRiskProjectsByClient", ReplyAction="http://tempuri.org/IReportService/GetActiveAndAtRiskProjectsByClientResponse")]
+        DataTransferObjects.Project[] GetActiveAndAtRiskProjectsByClient(int clientId, string userLogin);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/GetBurnReportFortheProject", ReplyAction="http://tempuri.org/IReportService/GetBurnReportFortheProjectResponse")]
+        DataTransferObjects.Reports.ProjectBurnFinancials GetBurnReportFortheProject(int projectId, System.Nullable<System.DateTime> startDate, System.Nullable<System.DateTime> endDate, int step, System.Nullable<System.DateTime> actualsEndDate);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/GetWeeklyFinancialsForProject", ReplyAction="http://tempuri.org/IReportService/GetWeeklyFinancialsForProjectResponse")]
+        System.Collections.Generic.Dictionary<System.DateTime, DataTransferObjects.ComputedFinancials> GetWeeklyFinancialsForProject(int projectId, System.Nullable<System.DateTime> startDate, System.Nullable<System.DateTime> endDate, int step, System.Nullable<System.DateTime> actualsEndDate);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/GetBurnReportExportDataFortheProject", ReplyAction="http://tempuri.org/IReportService/GetBurnReportExportDataFortheProjectResponse")]
+        DataTransferObjects.ProjectBudgetResource[] GetBurnReportExportDataFortheProject(int projectId, System.Nullable<System.DateTime> startDate, System.Nullable<System.DateTime> endDate, System.Nullable<System.DateTime> actualsEndDate, bool isBudget, bool isProjected, bool isEAC, bool isActual);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/GetBudgetComparisonReportForProject", ReplyAction="http://tempuri.org/IReportService/GetBudgetComparisonReportForProjectResponse")]
+        DataTransferObjects.Reports.PersonBudgetComparison[] GetBudgetComparisonReportForProject(string projectNumber, System.Nullable<System.DateTime> startDate, System.Nullable<System.DateTime> endDate, System.Nullable<System.DateTime> actualsEndDate);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IReportService/ReadProjectExpensesByTypeandByMonth", ReplyAction="http://tempuri.org/IReportService/ReadProjectExpensesByTypeandByMonthResponse")]
+        DataTransferObjects.Reports.ExpenseSummary[] ReadProjectExpensesByTypeandByMonth(int projectId, System.Nullable<int> milestoneId, System.Nullable<System.DateTime> startDate, System.Nullable<System.DateTime> endDate);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -261,7 +279,6 @@ namespace PraticeManagement.ReportService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public partial class ReportServiceClient : System.ServiceModel.ClientBase<PraticeManagement.ReportService.IReportService>, PraticeManagement.ReportService.IReportService {
-   
         
         public ReportServiceClient(string endpointConfigurationName) : 
                 base(endpointConfigurationName) {
@@ -568,6 +585,30 @@ namespace PraticeManagement.ReportService {
         
         public DataTransferObjects.Reports.ExpenseSummary[] DetailedExpenseSummary(System.DateTime startDate, System.DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool completed, bool proposed, bool inActive, bool experimental, bool atRisk, string expenseTypeIds) {
             return base.Channel.DetailedExpenseSummary(startDate, endDate, clientIds, divisionIds, practiceIds, projectIds, active, projected, completed, proposed, inActive, experimental, atRisk, expenseTypeIds);
+        }
+        
+        public DataTransferObjects.Project[] GetActiveAndAtRiskProjectsByClient(int clientId, string userLogin) {
+            return base.Channel.GetActiveAndAtRiskProjectsByClient(clientId, userLogin);
+        }
+        
+        public DataTransferObjects.Reports.ProjectBurnFinancials GetBurnReportFortheProject(int projectId, System.Nullable<System.DateTime> startDate, System.Nullable<System.DateTime> endDate, int step, System.Nullable<System.DateTime> actualsEndDate) {
+            return base.Channel.GetBurnReportFortheProject(projectId, startDate, endDate, step, actualsEndDate);
+        }
+        
+        public System.Collections.Generic.Dictionary<System.DateTime, DataTransferObjects.ComputedFinancials> GetWeeklyFinancialsForProject(int projectId, System.Nullable<System.DateTime> startDate, System.Nullable<System.DateTime> endDate, int step, System.Nullable<System.DateTime> actualsEndDate) {
+            return base.Channel.GetWeeklyFinancialsForProject(projectId, startDate, endDate, step, actualsEndDate);
+        }
+        
+        public DataTransferObjects.ProjectBudgetResource[] GetBurnReportExportDataFortheProject(int projectId, System.Nullable<System.DateTime> startDate, System.Nullable<System.DateTime> endDate, System.Nullable<System.DateTime> actualsEndDate, bool isBudget, bool isProjected, bool isEAC, bool isActual) {
+            return base.Channel.GetBurnReportExportDataFortheProject(projectId, startDate, endDate, actualsEndDate, isBudget, isProjected, isEAC, isActual);
+        }
+        
+        public DataTransferObjects.Reports.PersonBudgetComparison[] GetBudgetComparisonReportForProject(string projectNumber, System.Nullable<System.DateTime> startDate, System.Nullable<System.DateTime> endDate, System.Nullable<System.DateTime> actualsEndDate) {
+            return base.Channel.GetBudgetComparisonReportForProject(projectNumber, startDate, endDate, actualsEndDate);
+        }
+        
+        public DataTransferObjects.Reports.ExpenseSummary[] ReadProjectExpensesByTypeandByMonth(int projectId, System.Nullable<int> milestoneId, System.Nullable<System.DateTime> startDate, System.Nullable<System.DateTime> endDate) {
+            return base.Channel.ReadProjectExpensesByTypeandByMonth(projectId, milestoneId, startDate, endDate);
         }
     }
 }
