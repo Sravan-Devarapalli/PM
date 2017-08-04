@@ -36,6 +36,8 @@ using PraticeManagement.TimeEntryService;
 using PraticeManagement.TimescaleService;
 using PraticeManagement.Utils;
 using PraticeManagement.VendorService;
+using System.Configuration;
+using Microsoft.WindowsAzure.ServiceRuntime;
 
 #endregion using
 
@@ -267,7 +269,7 @@ namespace PraticeManagement.Controls
             var consultants =
                 ReportsHelper.GetConsultantsTimelineReport(
                     startDate, duration, step, activePersons, projectedPersons,
-                    activeProjects, projectedProjects, experimentalProjects, internalProjects, proposedProjects, completedProjects,atRiskProjects,
+                    activeProjects, projectedProjects, experimentalProjects, internalProjects, proposedProjects, completedProjects, atRiskProjects,
                     timescaleIds, practiceIdList, sortId, sortDirection, excludeInternalPractices, utilizationType, includeBadgeStatus, isSampleReport, divisionIds);
 
             return consultants.FindAll(Q => Q.AverageUtilization < avgUtil);
@@ -295,7 +297,7 @@ namespace PraticeManagement.Controls
                 ExperimentalProjects = experimentalProjects,
                 ProposedProjects = proposedProjects,
                 CompletedProjects = completedProjects,
-                AtRiskProjects= atRiskProjects
+                AtRiskProjects = atRiskProjects
             };
 
             var consultants = ServiceCallers.Custom.Person(
@@ -322,7 +324,7 @@ namespace PraticeManagement.Controls
                 IncludeInternalProjects = incInternal,
                 IncludeExperimentalProjects = incExperimental,
                 IncludeProposedProjects = incProposed,
-                IncludeAtRiskProjects= incAtRisk,
+                IncludeAtRiskProjects = incAtRisk,
                 IncludeInactiveProjects = false,
                 IncludeDefaultMileStone = false
             };
@@ -1748,7 +1750,6 @@ namespace PraticeManagement.Controls
                     {
                         string key = GetDescription(item);
                         string value = ((int)item).ToString();
-                        if (value == "0") value = "";
                         list.Add(key, value);
                     }
 
@@ -2381,13 +2382,13 @@ namespace PraticeManagement.Controls
             }
         }
 
-        public static List<ClientMarginColorInfo> GetClientMarginColorInfo(int clientId)
+        public static List<ClientMarginColorInfo> GetClientMarginColorInfo(int clientId, DateTime startDate, DateTime endDate, int projectId)
         {
             using (var serviceClient = new ClientServiceClient())
             {
                 try
                 {
-                    var result = serviceClient.GetClientMarginColorInfo(clientId);
+                    var result = serviceClient.GetClientMarginColorInfo(clientId, startDate, endDate, projectId);
 
                     if (result != null)
                     {
@@ -2513,6 +2514,24 @@ namespace PraticeManagement.Controls
             return opportunities.ToList();
         }
 
+        public static List<OpenTask> GetOpenTasks(string user)
+        {
+            using (var serviceClient = new ConfigurationServiceClient())
+            {
+                try
+                {
+                    var tasks = serviceClient.GetOpenTasksForUser(user);
+
+                    return tasks.ToList();
+                }
+                catch (FaultException<ExceptionDetail> ex)
+                {
+                    serviceClient.Abort();
+                    throw;
+                }
+            }
+        }
+
         public static List<QuickLinks> GetQuickLinksByDashBoardType(DashBoardType dashBoardtype)
         {
             using (var serviceClient = new ConfigurationServiceClient())
@@ -2586,6 +2605,24 @@ namespace PraticeManagement.Controls
                 try
                 {
                     Project[] projects = serviceClient.GetProjectsByClientId(clientId);
+
+                    return projects;
+                }
+                catch (CommunicationException)
+                {
+                    serviceClient.Abort();
+                    throw;
+                }
+            }
+        }
+
+        public static Project[] GetBurnReportProjectByClient(int clientId, string userLogin)
+        {
+            using (var serviceClient = new ReportServiceClient())
+            {
+                try
+                {
+                    Project[] projects = serviceClient.GetActiveAndAtRiskProjectsByClient(clientId, userLogin);
 
                     return projects;
                 }
@@ -2886,7 +2923,7 @@ namespace PraticeManagement.Controls
             string abc = string.Empty;
             foreach (var data in list)
             {
-                abc += string.Format(row, isExpenseType ? data.Project.ProjectNumber + "-" + data.Expense.HtmlEncodedName : data.Expense.HtmlEncodedName, isActual ? data.Expense.Amount.ToString("###,###,###,###,###,##0.##") : data.Expense.ExpectedAmount.ToString("###,###,###,###,###,##0.##"));
+                abc += string.Format(row, isExpenseType ? data.Project.ProjectNumber + "-" + data.Expense.HtmlEncodedName : data.Expense.HtmlEncodedName, isActual ? data.Expense.Amount != null ? data.Expense.Amount.Value.ToString("###,###,###,###,###,##0.##") : string.Empty : data.Expense.ExpectedAmount.ToString("###,###,###,###,###,##0.##"));
             }
             return string.Format(htmlString, abc);
         }
@@ -2895,6 +2932,42 @@ namespace PraticeManagement.Controls
         {
             var projects = ServiceCallers.Custom.Project(p => p.GetProjectsForClients(clientIds));
             FillListDefault(control, "All Projects", projects, false);
+        }
+
+        public static void FillExceptionReasons(ListControl control)
+        {
+            var statuses = ServiceCallers.Custom.Project(p => p.GetAllMarginExceptionReasons());
+            FillListDefault(control, "All Reasons", statuses, false, DefaultIdFieldName, "Reason");
+        }
+
+        public static ClientMarginGoal GetDefaultMargin()
+        {
+            int marginGoal = Convert.ToInt32(GetConfigValueByKey("DefaultMarginGoal"));
+            return new ClientMarginGoal { MarginGoal = marginGoal };
+        }
+
+
+
+
+        private static string GetConfigValueByKey(string key)
+        {
+            var val = string.Empty;
+            try
+            {
+                if (WCFClientUtility.IsWebAzureRole())
+                {
+                    val = RoleEnvironment.GetConfigurationSettingValue(key);
+                }
+                else
+                {
+                    val = ConfigurationManager.AppSettings[key];
+                }
+            }
+            catch
+            {
+                val = string.Empty;
+            }
+            return val;
         }
     }
 }
