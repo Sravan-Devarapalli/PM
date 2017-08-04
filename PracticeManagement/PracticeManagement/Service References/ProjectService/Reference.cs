@@ -25,7 +25,13 @@ namespace PraticeManagement.ProjectService {
         System.DateTime GetProjectLastChangeDateFortheGivenStatus(int projectId, int projectStatusId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectsComputedFinancials", ReplyAction="http://tempuri.org/IProjectService/GetProjectsComputedFinancialsResponse")]
-        DataTransferObjects.ComputedFinancials GetProjectsComputedFinancials(int projectId);
+        DataTransferObjects.ComputedFinancials[] GetProjectsComputedFinancials(int projectId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/FinancialsByProject", ReplyAction="http://tempuri.org/IProjectService/FinancialsByProjectResponse")]
+        DataTransferObjects.ComputedFinancials FinancialsByProject(int projectId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/EACFinancialsByProject", ReplyAction="http://tempuri.org/IProjectService/EACFinancialsByProjectResponse")]
+        DataTransferObjects.ComputedFinancials EACFinancialsByProject(int projectId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectMilestonesFinancials", ReplyAction="http://tempuri.org/IProjectService/GetProjectMilestonesFinancialsResponse")]
         System.Data.DataSet GetProjectMilestonesFinancials(int projectId);
@@ -54,7 +60,7 @@ namespace PraticeManagement.ProjectService {
         int CloneProject(DataTransferObjects.ContextObjects.ProjectCloningContext context);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectListCustom", ReplyAction="http://tempuri.org/IProjectService/GetProjectListCustomResponse")]
-        DataTransferObjects.Project[] GetProjectListCustom(bool projected, bool completed, bool active, bool experimantal, bool proposed);
+        DataTransferObjects.Project[] GetProjectListCustom(bool projected, bool completed, bool active, bool experimantal, bool proposed, bool IsMilestone);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ProjectListAllMultiParameters", ReplyAction="http://tempuri.org/IProjectService/ProjectListAllMultiParametersResponse")]
         DataTransferObjects.Project[] ProjectListAllMultiParameters(
@@ -81,7 +87,9 @@ namespace PraticeManagement.ProjectService {
                     bool excludeInternalPractices, 
                     string userLogin, 
                     bool useActuals, 
-                    bool getFinancialsFromCache);
+                    bool getFinancialsFromCache, 
+                    System.Nullable<int> feeType, 
+                    System.Nullable<System.DateTime> actualsEndDate);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/IsProjectSummaryCachedToday", ReplyAction="http://tempuri.org/IProjectService/IsProjectSummaryCachedTodayResponse")]
         bool IsProjectSummaryCachedToday();
@@ -280,6 +288,36 @@ namespace PraticeManagement.ProjectService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectsForClients", ReplyAction="http://tempuri.org/IProjectService/GetProjectsForClientsResponse")]
         DataTransferObjects.Project[] GetProjectsForClients(string clientIds);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/SendBudgetResetRequest", ReplyAction="http://tempuri.org/IProjectService/SendBudgetResetRequestResponse")]
+        void SendBudgetResetRequest(int projectId, string userAlias, string comments, int resetType, System.Nullable<System.DateTime> budgetToDate, string reasons, string requestorName);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/ResetProjectBudget", ReplyAction="http://tempuri.org/IProjectService/ResetProjectBudgetResponse")]
+        void ResetProjectBudget(int projectId, string userAlias, int requestId, int resetType, System.Nullable<System.DateTime> budgetToDate, string comments);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/SendProjectBudgetResetDecline", ReplyAction="http://tempuri.org/IProjectService/SendProjectBudgetResetDeclineResponse")]
+        void SendProjectBudgetResetDecline(int projectId, string userAlias, int requestId, string comments);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetAllMarginExceptionReasons", ReplyAction="http://tempuri.org/IProjectService/GetAllMarginExceptionReasonsResponse")]
+        DataTransferObjects.MarginExceptionReason[] GetAllMarginExceptionReasons();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetMarginExceptionThresholdsForPeriod", ReplyAction="http://tempuri.org/IProjectService/GetMarginExceptionThresholdsForPeriodResponse")]
+        DataTransferObjects.ClientMarginException[] GetMarginExceptionThresholdsForPeriod(System.DateTime startDate, System.DateTime endDate, int clientId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/SendMarginExceptionRequest", ReplyAction="http://tempuri.org/IProjectService/SendMarginExceptionRequestResponse")]
+        void SendMarginExceptionRequest(int projectId, string userAlias, decimal targetMargin, string reasons, string comments, string user, bool isTierTwo, decimal targetRevenue, bool isRevenueException);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/SendMarginExceptionResponse", ReplyAction="http://tempuri.org/IProjectService/SendMarginExceptionResponseResponse")]
+        void SendMarginExceptionResponse(int status, string userAlias, int requestId, string reasons, string comments, string user, int projectId, bool isTierTwo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetBudgetManagementDataForProject", ReplyAction="http://tempuri.org/IProjectService/GetBudgetManagementDataForProjectResponse")]
+        DataTransferObjects.ProjectBudgetManagement GetBudgetManagementDataForProject(int projectId, bool isBudgetToDate, System.Nullable<System.DateTime> actualsEndDate);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProjectService/GetProjectShortByProjectNumberForPerson", ReplyAction="http://tempuri.org/IProjectService/GetProjectShortByProjectNumberForPersonRespons" +
+            "e")]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClient))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(DataTransferObjects.ProjectsGroupedByClientGroup))]
+        DataTransferObjects.Project GetProjectShortByProjectNumberForPerson(string projectNumber, string userAlias);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -290,7 +328,6 @@ namespace PraticeManagement.ProjectService {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public partial class ProjectServiceClient : System.ServiceModel.ClientBase<PraticeManagement.ProjectService.IProjectService>, PraticeManagement.ProjectService.IProjectService {
         
-    
         public ProjectServiceClient(string endpointConfigurationName) : 
                 base(endpointConfigurationName) {
         }
@@ -315,8 +352,16 @@ namespace PraticeManagement.ProjectService {
             return base.Channel.GetProjectLastChangeDateFortheGivenStatus(projectId, projectStatusId);
         }
         
-        public DataTransferObjects.ComputedFinancials GetProjectsComputedFinancials(int projectId) {
+        public DataTransferObjects.ComputedFinancials[] GetProjectsComputedFinancials(int projectId) {
             return base.Channel.GetProjectsComputedFinancials(projectId);
+        }
+        
+        public DataTransferObjects.ComputedFinancials FinancialsByProject(int projectId) {
+            return base.Channel.FinancialsByProject(projectId);
+        }
+        
+        public DataTransferObjects.ComputedFinancials EACFinancialsByProject(int projectId) {
+            return base.Channel.EACFinancialsByProject(projectId);
         }
         
         public System.Data.DataSet GetProjectMilestonesFinancials(int projectId) {
@@ -351,8 +396,8 @@ namespace PraticeManagement.ProjectService {
             return base.Channel.CloneProject(context);
         }
         
-        public DataTransferObjects.Project[] GetProjectListCustom(bool projected, bool completed, bool active, bool experimantal, bool proposed) {
-            return base.Channel.GetProjectListCustom(projected, completed, active, experimantal, proposed);
+        public DataTransferObjects.Project[] GetProjectListCustom(bool projected, bool completed, bool active, bool experimantal, bool proposed, bool IsMilestone) {
+            return base.Channel.GetProjectListCustom(projected, completed, active, experimantal, proposed, IsMilestone);
         }
         
         public DataTransferObjects.Project[] ProjectListAllMultiParameters(
@@ -379,8 +424,10 @@ namespace PraticeManagement.ProjectService {
                     bool excludeInternalPractices, 
                     string userLogin, 
                     bool useActuals, 
-                    bool getFinancialsFromCache) {
-            return base.Channel.ProjectListAllMultiParameters(clientIds, showProjected, showCompleted, showActive, showInternal, showExperimental, showProposed, showInactive, showAtRisk, periodStart, periodEnd, salespersonIdsList, projectOwnerIdsList, practiceIdsList, divisionIdsList, channelIdsList, revenueTypeIdsList, offeringIdsList, projectGroupIdsList, includeCurentYearFinancials, excludeInternalPractices, userLogin, useActuals, getFinancialsFromCache);
+                    bool getFinancialsFromCache, 
+                    System.Nullable<int> feeType, 
+                    System.Nullable<System.DateTime> actualsEndDate) {
+            return base.Channel.ProjectListAllMultiParameters(clientIds, showProjected, showCompleted, showActive, showInternal, showExperimental, showProposed, showInactive, showAtRisk, periodStart, periodEnd, salespersonIdsList, projectOwnerIdsList, practiceIdsList, divisionIdsList, channelIdsList, revenueTypeIdsList, offeringIdsList, projectGroupIdsList, includeCurentYearFinancials, excludeInternalPractices, userLogin, useActuals, getFinancialsFromCache, feeType, actualsEndDate);
         }
         
         public bool IsProjectSummaryCachedToday() {
@@ -620,6 +667,42 @@ namespace PraticeManagement.ProjectService {
         
         public DataTransferObjects.Project[] GetProjectsForClients(string clientIds) {
             return base.Channel.GetProjectsForClients(clientIds);
+        }
+        
+        public void SendBudgetResetRequest(int projectId, string userAlias, string comments, int resetType, System.Nullable<System.DateTime> budgetToDate, string reasons, string requestorName) {
+            base.Channel.SendBudgetResetRequest(projectId, userAlias, comments, resetType, budgetToDate, reasons, requestorName);
+        }
+        
+        public void ResetProjectBudget(int projectId, string userAlias, int requestId, int resetType, System.Nullable<System.DateTime> budgetToDate, string comments) {
+            base.Channel.ResetProjectBudget(projectId, userAlias, requestId, resetType, budgetToDate, comments);
+        }
+        
+        public void SendProjectBudgetResetDecline(int projectId, string userAlias, int requestId, string comments) {
+            base.Channel.SendProjectBudgetResetDecline(projectId, userAlias, requestId, comments);
+        }
+        
+        public DataTransferObjects.MarginExceptionReason[] GetAllMarginExceptionReasons() {
+            return base.Channel.GetAllMarginExceptionReasons();
+        }
+        
+        public DataTransferObjects.ClientMarginException[] GetMarginExceptionThresholdsForPeriod(System.DateTime startDate, System.DateTime endDate, int clientId) {
+            return base.Channel.GetMarginExceptionThresholdsForPeriod(startDate, endDate, clientId);
+        }
+        
+        public void SendMarginExceptionRequest(int projectId, string userAlias, decimal targetMargin, string reasons, string comments, string user, bool isTierTwo, decimal targetRevenue, bool isRevenueException) {
+            base.Channel.SendMarginExceptionRequest(projectId, userAlias, targetMargin, reasons, comments, user, isTierTwo, targetRevenue, isRevenueException);
+        }
+        
+        public void SendMarginExceptionResponse(int status, string userAlias, int requestId, string reasons, string comments, string user, int projectId, bool isTierTwo) {
+            base.Channel.SendMarginExceptionResponse(status, userAlias, requestId, reasons, comments, user, projectId, isTierTwo);
+        }
+        
+        public DataTransferObjects.ProjectBudgetManagement GetBudgetManagementDataForProject(int projectId, bool isBudgetToDate, System.Nullable<System.DateTime> actualsEndDate) {
+            return base.Channel.GetBudgetManagementDataForProject(projectId, isBudgetToDate, actualsEndDate);
+        }
+        
+        public DataTransferObjects.Project GetProjectShortByProjectNumberForPerson(string projectNumber, string userAlias) {
+            return base.Channel.GetProjectShortByProjectNumberForPerson(projectNumber, userAlias);
         }
     }
 }
