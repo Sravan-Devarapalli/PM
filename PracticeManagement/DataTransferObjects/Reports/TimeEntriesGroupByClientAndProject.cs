@@ -55,6 +55,30 @@ namespace DataTransferObjects.Reports
             set;
         }
 
+        [DataMember]
+        public double BudgetHours
+        {
+            get;
+            set;
+        }
+
+        public double ForecastedHoursFromToday
+        {
+            get
+            {
+                return (ProjectedHours - ProjectedHoursUntilToday);
+            }
+        }
+
+        public double ETCHours
+        {
+            get
+            {
+                return (TotalHours + ForecastedHoursFromToday);
+            }
+        }
+
+
         public int ProjectTotalHoursPercent
         {
             get
@@ -125,3 +149,4 @@ namespace DataTransferObjects.Reports
         }
     }
 }
+
