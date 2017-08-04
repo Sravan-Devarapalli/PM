@@ -155,20 +155,17 @@
         <ContentTemplate>
             <table class="WholeWidth">
                 <tr>
-                    <td class="height30P vBottom fontBold">
-                        2.&nbsp;Select report parameters:
+                    <td class="height30P vBottom fontBold">2.&nbsp;Select report parameters:
                     </td>
                 </tr>
             </table>
             <table class="WholeWidth Height160Px">
                 <tr>
-                    <td id="tdFirst" runat="server" class="Width65Percent">
-                    </td>
+                    <td id="tdFirst" runat="server" class="Width65Percent"></td>
                     <td class="ReportTdSecond" id="tdSecond" runat="server">
                         <table class="ReportParametersTable">
                             <tr>
-                                <td class="FirstTd">
-                                    Person:&nbsp;
+                                <td class="FirstTd">Person:&nbsp;
                                 </td>
                                 <td class="SecondTd">
                                     <table>
@@ -186,17 +183,14 @@
                             </tr>
                         </table>
                     </td>
-                    <td id="tdThird" runat="server" class="Width0Percent">
-                    </td>
+                    <td id="tdThird" runat="server" class="Width0Percent"></td>
                 </tr>
                 <tr>
-                    <td>
-                    </td>
+                    <td></td>
                     <td class="ReportTdSecond">
                         <table class="ReportParametersTable">
                             <tr>
-                                <td class="FirstTd">
-                                    Range:&nbsp;
+                                <td class="FirstTd">Range:&nbsp;
                                 </td>
                                 <td class="SecondTd">
                                     <asp:DropDownList ID="ddlPeriod" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlPeriod_SelectedIndexChanged">
@@ -220,17 +214,14 @@
                             </tr>
                         </table>
                     </td>
-                    <td>
-                    </td>
+                    <td></td>
                 </tr>
                 <tr>
-                    <td>
-                    </td>
+                    <td></td>
                     <td class="ReportTdSecond">
                         <table class="ReportParametersTable">
                             <tr>
-                                <td class="FirstTd">
-                                </td>
+                                <td class="FirstTd"></td>
                                 <td class="SecondTd">
                                     <asp:HiddenField ID="hdnStartDate" runat="server" Value="" />
                                     <asp:HiddenField ID="hdnEndDate" runat="server" Value="" />
@@ -240,22 +231,26 @@
                             </tr>
                         </table>
                     </td>
-                    <td>
-                    </td>
+                    <td></td>
                 </tr>
                 <tr>
-                    <td colspan="3" class="Height30Px">
-                        &nbsp;&nbsp;
+                    <td></td>
+                    <td class="ReportTdSecond">
+                        <table class="ReportParametersTable">
+                            <tr>
+                                <td class="FirstTd">
+                                    <asp:CheckBox ID="chbShowNonBillable" runat="server" Checked="true" AutoPostBack="true" OnCheckedChanged="chbShowNonBillable_CheckedChanged" />
+                                </td>
+                                <td class="SecondTd">Show Non-Billable Hours
+                                </td>
+                            </tr>
+                        </table>
                     </td>
+                    <td></td>
                 </tr>
+
                 <tr>
-                    <td colspan="3" class="Height30Px">
-                        &nbsp;&nbsp;
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="3" class="ReportBorderBottom">
-                    </td>
+                    <td colspan="3" class="ReportBorderBottom"></td>
                 </tr>
             </table>
             <AjaxControlToolkit:ModalPopupExtender ID="mpeCustomDates" runat="server" TargetControlID="imgCalender"
@@ -315,8 +310,7 @@
                                     <td class="Width27Percent">
                                         <table class="ReportHeaderTotalsTable">
                                             <tr>
-                                                <td class="FirstTd">
-                                                    Total Actual Hours
+                                                <td class="FirstTd">Total Actual Hours
                                                 </td>
                                             </tr>
                                             <tr>
@@ -329,8 +323,7 @@
                                     <td class="Width27Percent">
                                         <table class="ReportHeaderTotalsTable">
                                             <tr>
-                                                <td class="FirstTd">
-                                                    Billable Utilization
+                                                <td class="FirstTd">Billable Utilization
                                                 </td>
                                             </tr>
                                             <tr>
@@ -345,8 +338,7 @@
                                     <td class="Width27Percent vBottom">
                                         <table class="ReportHeaderBillAndNonBillTable">
                                             <tr>
-                                                <td>
-                                                    BILLABLE
+                                                <td>BILLABLE
                                                 </td>
                                             </tr>
                                             <tr>
@@ -355,8 +347,7 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td>
-                                                    NON-BILLABLE
+                                                <td>NON-BILLABLE
                                                 </td>
                                             </tr>
                                             <tr>
@@ -379,8 +370,7 @@
                                                     </table>
                                                     <table>
                                                         <tr id="trBillable" runat="server" title="Billable Percentage.">
-                                                            <td class="billingGraph">
-                                                            </td>
+                                                            <td class="billingGraph"></td>
                                                         </tr>
                                                     </table>
                                                 </td>
@@ -400,16 +390,14 @@
                                                     </table>
                                                     <table>
                                                         <tr id="trNonBillable" runat="server" title="Non-Billable Percentage.">
-                                                            <td class="nonBillingGraph">
-                                                            </td>
+                                                            <td class="nonBillingGraph"></td>
                                                         </tr>
                                                     </table>
                                                 </td>
                                             </tr>
                                         </table>
                                     </td>
-                                    <td class="Width2Percent">
-                                    </td>
+                                    <td class="Width2Percent"></td>
                                 </tr>
                             </table>
                         </td>
@@ -450,8 +438,7 @@
             <asp:Panel ID="pnlPersonSearch" runat="server" CssClass="popUp PersonSearch" Style="display: none;">
                 <table class="WholeWidth">
                     <tr class="PopUpHeader">
-                        <th colspan="2">
-                            Person Search
+                        <th colspan="2">Person Search
                             <asp:Button ID="btnclose" runat="server" CssClass="mini-report-closeNew" ToolTip="Close"
                                 UseSubmitBehavior="false" OnClientClick="return btnClose_OnClientClick('mpePersonSearch');"
                                 Text="X"></asp:Button>
@@ -529,53 +516,41 @@
                 runat="server" Style="display: none;">
                 <table>
                     <tr class="vTop font15PxImp PaddingBottom5Imp">
-                        <th class="Width50Percent">
-                            Variables
+                        <th class="Width50Percent">Variables
                         </th>
-                        <th class="Width10Percent">
+                        <th class="Width10Percent"></th>
+                        <th class="Width20Percent">Calculation
                         </th>
-                        <th class="Width20Percent">
-                            Calculation
-                        </th>
-                        <th class="Width5Percent">
-                        </th>
-                        <th class="Width15Percent">
-                            Billable Utilization&nbsp;%
+                        <th class="Width5Percent"></th>
+                        <th class="Width15Percent">Billable Utilization&nbsp;%
                         </th>
                     </tr>
                     <tr>
-                        <td class="Width50Percent TextAlignLeft">
-                            # of total hours billed to a client project(s) during the specified period
-                        </td> 
+                        <td class="Width50Percent TextAlignLeft"># of total hours billed to a client project(s) during the specified period
+                        </td>
                         <td class="Width10Percent vBottom textCenter">
                             <asp:Label ID="lblTotalBillableHours" runat="server"></asp:Label>
                         </td>
                         <td class="Width20Percent vBottom textCenter">
                             <asp:Label ID="lblTotalBillableHoursInBold" runat="server" CssClass="font15PxImp"></asp:Label>
                         </td>
-                        <td class="Width5Percent">
-                        </td>
-                        <td class="Width15Percent">
-                        </td>
+                        <td class="Width5Percent"></td>
+                        <td class="Width15Percent"></td>
                     </tr>
                     <tr>
-                        <td class="Width50Percent">
-                        </td>
-                        <td class="Width10Percent">
-                        </td>
+                        <td class="Width50Percent"></td>
+                        <td class="Width10Percent"></td>
                         <td class="Width20Percent">
                             <hr class="hrArritionCalculation" />
                         </td>
-                        <td class="Width5Percent textCenter">
-                            =
+                        <td class="Width5Percent textCenter">=
                         </td>
                         <td class="Width15Percent textCenter">
                             <asp:Label ID="lblBillableUtilizationPercentage" runat="server" CssClass="font15PxImp"></asp:Label>
                         </td>
                     </tr>
                     <tr>
-                        <td class="Width50Percent TextAlignLeft PaddingBottom10Imp">
-                            # of total available hours in specified time period
+                        <td class="Width50Percent TextAlignLeft PaddingBottom10Imp"># of total available hours in specified time period
                         </td>
                         <td class="Width10Percent textCenter">
                             <asp:Label ID="lblTotalAvailableHours" runat="server"></asp:Label>
@@ -583,10 +558,8 @@
                         <td class="Width20Percent vTop textCenter">
                             <asp:Label ID="lblTotalAvailableHoursInBold" runat="server" CssClass="font15PxImp"></asp:Label>
                         </td>
-                        <td class="Width5Percent">
-                        </td>
-                        <td class="Width15Percent">
-                        </td>
+                        <td class="Width5Percent"></td>
+                        <td class="Width15Percent"></td>
                     </tr>
                 </table>
             </asp:Panel>
@@ -604,12 +577,9 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="Width20Percent">
-                        </td>
-                        <td class="Width2Percent">
-                        </td>
-                        <td class="Width78Percent textCenter vBottom">
-                            # of hours billed to a client project(s) during specified time period
+                        <td class="Width20Percent"></td>
+                        <td class="Width2Percent"></td>
+                        <td class="Width78Percent textCenter vBottom"># of hours billed to a client project(s) during specified time period
                         </td>
                     </tr>
                     <tr>
@@ -618,19 +588,15 @@
                                 Billable Utilization Calculation:
                             </label>
                         </td>
-                        <td class="Width2Percent">
-                        </td>
+                        <td class="Width2Percent"></td>
                         <td class="Width73Percent textCenter">
                             <hr class="WholeWidth hrArrition" />
                         </td>
                     </tr>
                     <tr>
-                        <td class="Width20Percent">
-                        </td>
-                        <td class="Width2Percent">
-                        </td>
-                        <td class="Width78Percent textCenter vTop">
-                            # of available hours in specified time period
+                        <td class="Width20Percent"></td>
+                        <td class="Width2Percent"></td>
+                        <td class="Width78Percent textCenter vTop"># of available hours in specified time period
                         </td>
                     </tr>
                     <tr>
