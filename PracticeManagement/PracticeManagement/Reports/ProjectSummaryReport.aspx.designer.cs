@@ -148,6 +148,15 @@ namespace PraticeManagement.Reporting {
         protected global::System.Web.UI.WebControls.DropDownList ddlView;
         
         /// <summary>
+        /// chbShowNonBillable control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chbShowNonBillable;
+        
+        /// <summary>
         /// msgError control.
         /// </summary>
         /// <remarks>
