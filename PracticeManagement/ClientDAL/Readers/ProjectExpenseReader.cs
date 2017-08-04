@@ -56,8 +56,8 @@ namespace DataAccess.Readers
             {
                 Id = Reader.GetInt32(_idIndex),
                 Name = Reader.GetString(_nameIndex),
-                Amount = Reader.GetDecimal(_amountIndex),
-                ExpectedAmount=Reader.GetDecimal(_expectedAmount),
+                Amount = Reader.IsDBNull(_amountIndex) ? null : (decimal?)Reader.GetDecimal(_amountIndex),
+                ExpectedAmount = Reader.GetDecimal(_expectedAmount),
                 Reimbursement = Reader.GetDecimal(_reimbIndex),
                 ProjectId = Reader.GetInt32(_projectIndex),
                 StartDate = Reader.GetDateTime(_startDateIndex),
