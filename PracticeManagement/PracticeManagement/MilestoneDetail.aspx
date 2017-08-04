@@ -5,17 +5,12 @@
 <%@ Register Src="~/Controls/ActivityLogControl.ascx" TagPrefix="uc" TagName="ActivityLogControl" %>
 <%@ Register TagPrefix="asp" Namespace="PraticeManagement.Controls.Generic.Buttons"
     Assembly="PraticeManagement" %>
+
 <%@ Register Src="Controls/ProjectInfo.ascx" TagName="ProjectInfo" TagPrefix="uc1" %>
 <%@ Register Src="Controls/DatePicker.ascx" TagName="DatePicker" TagPrefix="uc2" %>
 <%@ Register Src="~/Controls/Generic/Notes.ascx" TagName="Notes" TagPrefix="uc" %>
-<%@ Register Src="Controls/MilestonePersons/MilestonePersonActivity.ascx" TagName="Activity"
-    TagPrefix="mp" %>
 <%@ Register Src="Controls/Milestones/MilestoneExpenses.ascx" TagName="Expenses"
     TagPrefix="m" %>
-<%@ Register Src="Controls/MilestonePersons/CumulativeDailyActivity.ascx" TagName="Cumulative"
-    TagPrefix="mp" %>
-<%@ Register Src="Controls/MilestonePersons/CumulativeActivity.ascx" TagName="CumulativeTotal"
-    TagPrefix="mp" %>
 <%@ Register TagPrefix="ext" Assembly="PraticeManagement" Namespace="PraticeManagement.Controls.Generic.ElementDisabler" %>
 <%@ Register TagPrefix="uc" TagName="MessageLabel" Src="~/Controls/MessageLabel.ascx" %>
 <%@ Register Src="~/Controls/Milestones/MilestonePersonList.ascx" TagName="MilestonePersonList"
@@ -29,315 +24,19 @@
     Milestone Details
 </asp:Content>
 <asp:Content ID="cntBody" ContentPlaceHolderID="body" runat="server">
+
     <script type="text/javascript">
-        function checkDirty(mpId) {
-            if (showDialod()) {
-                __doPostBack('__Page', mpId);
-                return true;
-            }
-            return false;
-        }
-        function dtpStartDate_OnClientChange(dtp) {
-            var index = dtp.id.indexOf('dpPerson');
-            var row = dtp.id.substring(0, index);
-            var chbBadgeRequired = document.getElementById(row + 'chbBadgeRequired');
-            var chbOpsApproved = document.getElementById(row + 'chbOpsApproved');
-            var dpPersonStart = document.getElementById(row + 'dpPersonStart_txtDate');
-            var dpPersonEnd = document.getElementById(row + 'dpPersonEnd_txtDate');
-            var dpBadgeStart = document.getElementById(row + 'dpBadgeStart_txtDate');
-            var dpBadgeEnd = document.getElementById(row + 'dpBadgeEnd_txtDate');
-            var hdnStartDateValue = document.getElementById(row + 'hdnStartDateValue');
-            var hdnEndDateValue = document.getElementById(row + 'hdnEndDateValue');
-            var hdnApproved = document.getElementById(row + 'hdnApproved');
-            var hdnPersonId = document.getElementById(row + 'hdnPersonId');
-            var ddlPersonName = document.getElementById(row + 'ddlPersonName');
-            if (hdnPersonId.value != ddlPersonName.value)
-                return;
-            var oldPersonStartDate = new Date(hdnStartDateValue.value);
-            var oldPersonEnddate = new Date(hdnEndDateValue.value);
-            var newPersonStartdate = new Date(dpPersonStart.value);
-            var newPersonEnddate = new Date(dpPersonEnd.value);
-            var previousApproved = hdnApproved.value == 'Yes';
-            if (chbBadgeRequired.checked) {
-                if (oldPersonStartDate != newPersonStartdate || oldPersonEnddate != newPersonEnddate) {
-                    dpBadgeStart.value = dpPersonStart.value;
-                    dpBadgeEnd.value = dpPersonEnd.value;
-                    dtpBadgeStartDate_OnClientChange(dpBadgeStart);
-                }
-                else {
-                    chbOpsApproved.checked = previousApproved;
-                }
-            }
-        }
 
-        function dtpBadgeStartDate_OnClientChange(dtp) {
-            var index = dtp.id.indexOf('dpBadge');
-            var row = dtp.id.substring(0, index);
-            var chbBadgeRequired = document.getElementById(row + 'chbBadgeRequired');
-            var chbOpsApproved = document.getElementById(row + 'chbOpsApproved');
-            var dpBadgeStart = document.getElementById(row + 'dpBadgeStart_txtDate');
-            var dpBadgeEnd = document.getElementById(row + 'dpBadgeEnd_txtDate');
-            var hdnStartDateValue = document.getElementById(row + 'hdnBadgeStartDateValue');
-            var hdnEndDateValue = document.getElementById(row + 'hdnBadgeEndDateValue');
-            var hdnApproved = document.getElementById(row + 'hdnApproved');
-            var hdnApprovedChange = document.getElementById(row + 'hdnApprovedChange');
-            var hdnPersonId = document.getElementById(row + 'hdnPersonId');
-            var ddlPersonName = document.getElementById(row + 'ddlPersonName');
-            if (hdnPersonId.value != ddlPersonName.value)
-                return;
-            var oldPersonStartDate = new Date(hdnStartDateValue.value);
-            var oldPersonEnddate = new Date(hdnEndDateValue.value);
-            var newPersonStartdate = new Date(dpBadgeStart.value);
-            var newPersonEnddate = new Date(dpBadgeEnd.value);
-            var previousApproved = hdnApproved.value == 'Yes';
-            if (chbBadgeRequired.checked) {
-                if (oldPersonStartDate != newPersonStartdate || oldPersonEnddate != newPersonEnddate) {
-                    if (oldPersonStartDate > newPersonStartdate || oldPersonEnddate < newPersonEnddate) {
-                        hdnApprovedChange.value = 'false';
-                        chbOpsApproved.checked = false;
-                    }
-                    else {
-                        hdnApprovedChange.value = 'true';
-                        chbOpsApproved.checked = previousApproved;
-                    }
-                }
-                else {
-                    chbOpsApproved.checked = previousApproved;
-                }
-            }
-        }
-
-        function dtpStartDateInsert_OnClientChange(dtp) {
-            var index = dtp.id.indexOf('dpPerson');
-            var row = dtp.id.substring(0, index);
-            var chbBadgeRequired = document.getElementById(row + 'chbBadgeRequiredInsert');
-            var dpPersonStart = document.getElementById(row + 'dpPersonStartInsert_txtDate');
-            var dpPersonEnd = document.getElementById(row + 'dpPersonEndInsert_txtDate');
-            var dpBadgeStart = document.getElementById(row + 'dpBadgeStartInsert_txtDate');
-            var dpBadgeEnd = document.getElementById(row + 'dpBadgeEndInsert_txtDate');
-            if (chbBadgeRequired.checked) {
-                dpBadgeStart.value = dpPersonStart.value;
-                dpBadgeEnd.value = dpPersonEnd.value;
-            }
-        }
-
-        function ShowConfirmDialogForStartDate(chb) {
-            if (confirm("Are you sure you want to Cancel Changes?")) {
-                var btnCancelSaving = document.getElementById("<%= btnCancelSaving.ClientID %>");
-                btnCancelSaving.click();
-            }
-            else {
-                chb.checked = false;
-                document.getElementById("<%= rbtnRemovePersonsStartDate.ClientID %>").checked = true;
-
-            }
-
-        }
-
-        function ShowConfirmDialogForEndDate(chb) {
-            if (confirm("Are you sure you want to Cancel Changes?")) {
-                var btnCancelSaving = document.getElementById("<%= btnCancelSaving.ClientID %>");
-                btnCancelSaving.click();
-            }
-            else {
-                chb.checked = false;
-                document.getElementById("<%= rbtnRemovePersonsEndDate.ClientID %>").checked = true;
-            }
-
-        }
-
-        function SetTooltipsForallDropDowns() {
-            var optionList = document.getElementsByTagName('option');
-
-            for (var i = 0; i < optionList.length; ++i) {
-
-                optionList[i].title = optionList[i].innerHTML;
-            }
-
-        }
-
-        function SetWrapText(str) {
-            for (var i = 30; i < str.length; i = i + 10) {
-                str = str.slice(0, i) + "<wbr />" + str.slice(i, str.length);
-            }
-            return str;
-        }
-
-        function GetWrappedText(childObj) {
-            if (childObj != null) {
-
-                for (var i = 0; i < childObj.children.length; i++) {
-                    if (childObj.children[i] != null) {
-                        if (childObj.children[i].children.length == 0) {
-                            if (childObj.children[i].innerHTML != null && childObj.children[i].innerHTML != "undefined" && childObj.children[i].innerHTML.length > 70) {
-                                childObj.children[i].innerHTML = SetWrapText(childObj.children[i].innerHTML);
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
-
-        function ModifyInnerTextToWrapText() {
-            if (navigator.userAgent.indexOf(" Firefox/") > -1) {
-                var tbl = $("table[id*='gvActivities']");
-                if (tbl != null && tbl.length > 0) {
-                    var gvActivitiesclientId = tbl[0].id;
-                    var lastTds = $('#' + gvActivitiesclientId + ' tr td:nth-child(3)');
-
-                    for (var i = 0; i < lastTds.length; i++) {
-                        GetWrappedText(lastTds[i]);
-                    }
-                }
-            }
-        }
-
-        function ChangeActiveViewIndex(cntrl) {
-            var mpEntryId = cntrl.attributes["mpEntryId"].value;
-            var hdnEditEntryIdIndex = document.getElementById("<%= hdnEditEntryIdIndex.ClientID %>");
-            hdnEditEntryIdIndex.value = mpEntryId;
-            return true;
-        }
-
-        function CheckIfDatesValid() {
-
-            txtStartDate = document.getElementById('<%= activityLog.ClientID %>_diRange_tbFrom');
-            txtEndDate = document.getElementById('<%= activityLog.ClientID %>_diRange_tbTo');
-            var startDate = new Date(txtStartDate.value);
-            var endDate = new Date(txtEndDate.value);
-            if (txtStartDate.value != '' && txtEndDate.value != ''
-            && startDate <= endDate) {
-                var btnCustDatesClose = document.getElementById('<%= activityLog.ClientID %>_btnCustDatesClose');
-                hdnStartDate = document.getElementById('<%= activityLog.ClientID %>_hdnStartDate');
-                hdnEndDate = document.getElementById('<%= activityLog.ClientID %>_hdnEndDate');
-                lblCustomDateRange = document.getElementById('<%= activityLog.ClientID %>_lblCustomDateRange');
-                var startDate = new Date(txtStartDate.value);
-                var endDate = new Date(txtEndDate.value);
-                var startDateStr = startDate.format("MM/dd/yyyy");
-                var endDateStr = endDate.format("MM/dd/yyyy");
-                hdnStartDate.value = startDateStr;
-                hdnEndDate.value = endDateStr;
-                lblCustomDateRange.innerHTML = '(' + startDateStr + '&nbsp;-&nbsp;' + endDateStr + ')';
-                btnCustDatesClose.click();
-
-            }
-            return false;
-        }
-
-        function CheckAndShowCustomDatesPoup(ddlPeriod) {
-            imgCalender = document.getElementById('<%= activityLog.ClientID %>_imgCalender');
-            lblCustomDateRange = document.getElementById('<%= activityLog.ClientID %>_lblCustomDateRange');
-            if (ddlPeriod.value == '0') {
-                imgCalender.attributes["class"].value = "";
-                lblCustomDateRange.attributes["class"].value = "fontBold";
-                if (imgCalender.fireEvent) {
-                    imgCalender.style.display = "";
-                    lblCustomDateRange.style.display = "";
-                    imgCalender.click();
-                }
-                if (document.createEvent) {
-                    var event = document.createEvent('HTMLEvents');
-                    event.initEvent('click', true, true);
-                    imgCalender.dispatchEvent(event);
-                }
-            }
-            else {
-                imgCalender.attributes["class"].value = "displayNone";
-                lblCustomDateRange.attributes["class"].value = "displayNone";
-                if (imgCalender.fireEvent) {
-                    imgCalender.style.display = "none";
-                    lblCustomDateRange.style.display = "none";
-                }
-            }
-        }
-        function ReAssignStartDateEndDates() {
-            hdnStartDate = document.getElementById('<%= activityLog.ClientID %>_hdnStartDate');
-            hdnEndDate = document.getElementById('<%= activityLog.ClientID %>_hdnEndDate');
-            txtStartDate = document.getElementById('<%= activityLog.ClientID %>_diRange_tbFrom');
-            txtEndDate = document.getElementById('<%= activityLog.ClientID %>_diRange_tbTo');
-            hdnStartDateCalExtenderBehaviourId = document.getElementById('<%= activityLog.ClientID %>_hdnStartDateCalExtenderBehaviourId');
-            hdnEndDateCalExtenderBehaviourId = document.getElementById('<%= activityLog.ClientID %>_hdnEndDateCalExtenderBehaviourId');
-
-            var endDateCalExtender = $find(hdnEndDateCalExtenderBehaviourId.value);
-            var startDateCalExtender = $find(hdnStartDateCalExtenderBehaviourId.value);
-            if (startDateCalExtender != null) {
-                startDateCalExtender.set_selectedDate(hdnStartDate.value);
-            }
-            if (endDateCalExtender != null) {
-                endDateCalExtender.set_selectedDate(hdnEndDate.value);
-            }
-            CheckIfDatesValid();
-        }
-
-        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(endRequestHandle);
-
-        function endRequestHandle(sender, Args) {
-            var activityLog = document.getElementById('<%= activityLog.ClientID%>');
-            if (activityLog != null) {
-                imgCalender = document.getElementById('<%= activityLog.ClientID %>_imgCalender');
-                lblCustomDateRange = document.getElementById('<%= activityLog.ClientID %>_lblCustomDateRange');
-                ddlPeriod = document.getElementById('<%=  activityLog.ClientID %>_ddlPeriod');
-                if (imgCalender.fireEvent && ddlPeriod.value != '0') {
-                    imgCalender.style.display = "none";
-                    lblCustomDateRange.style.display = "none";
-                }
-            }
-        }
-
-        //milestonePersonList.ascx
-        function imgMilestonePersonDelete_OnClientClick(imgDelete) {
-            var hdMilestonePersonEntryId = document.getElementById('<%= MilestonePersonEntryListControl.ClientID%>' + '_hdMilestonePersonEntryId');
-            var btnDeleteAllPersonEntries = document.getElementById('<%= MilestonePersonEntryListControl.ClientID%>' + '_btnDeleteAllPersonEntries');
-            var btnDeletePersonEntry = document.getElementById('<%= MilestonePersonEntryListControl.ClientID%>' + '_btnDeletePersonEntry');
-            var trDeleteOriginalEntry = document.getElementById('trDeleteOriginalEntry');
-            var trDeleteExtendedEntry = document.getElementById('trDeleteExtendedEntry');
-            var IsOriginalResource = imgDelete.getAttribute("IsOriginalResource");
-            hdMilestonePersonEntryId.value = imgDelete.getAttribute("MilestonePersonEntryId");
-
-            if (IsOriginalResource == 'false') {
-                btnDeleteAllPersonEntries.style.display = "none";
-                btnDeletePersonEntry.value = "   OK   ";
-                trDeleteOriginalEntry.style.display = "none";
-                trDeleteExtendedEntry.style.display = "block";
-            }
-            else {
-                btnDeleteAllPersonEntries.style.display = "block";
-                btnDeletePersonEntry.value = "Delete";
-                trDeleteOriginalEntry.style.display = "block";
-                trDeleteExtendedEntry.style.display = "none";
-            }
-
-            $find('mpeDeleteMileStonePersons').show();
-            return false;
-        }
-        function btnClose_OnClientClick() {
-            $find('mpeDeleteMileStonePersons').hide();
-            return false;
-        }
-
-        function ShowPanel(object, displaypnl, lblTimeOffHoursId, lblProjectAffectedHoursId, TimeOffHours, ProjectAffectedHours) {
-            var lblTimeOffHours = document.getElementById(lblTimeOffHoursId);
-            var lblProjectAffectedHours = document.getElementById(lblProjectAffectedHoursId);
-            lblTimeOffHours.innerHTML = TimeOffHours;
-            lblProjectAffectedHours.innerHTML = ProjectAffectedHours;
-            var obj = $("#" + object);
-            var displayPanel = $("#" + displaypnl);
-
-            iptop = obj.offset().top + obj[0].offsetHeight;
-            ipleft = obj.offset().left - 70;
-            displayPanel.offset({ top: iptop, left: ipleft });
-            displayPanel.show();
-            displayPanel.offset({ top: iptop, left: ipleft });
-        }
-
-        function HidePanel(hiddenpnl) {
-
-            var displayPanel = $("#" + hiddenpnl);
-            displayPanel.hide();
-        }
+        var rbtnRemovePersonsStartDateId = "<%= rbtnRemovePersonsStartDate.ClientID %>";
+        var btnCancelSavingId = "<%= btnCancelSaving.ClientID %>";
+        var rbtnRemovePersonsEndDateId = "<%= rbtnRemovePersonsEndDate.ClientID %>";
+        var hdnEditEntryIdIndexId = "<%= hdnEditEntryIdIndex.ClientID %>";
+        var activityLogId = "<%= activityLog.ClientID %>";
+        var MilestonePersonEntryListControlId = '<%= MilestonePersonEntryListControl.ClientID%>'
     </script>
-    <asp:UpdatePanel ID="upnlBody" runat="server">
+    <script src="Scripts/MilestoneDetail.js" type="text/javascript"></script>
+
+    <asp:UpdatePanel ID="upnlBody" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="false">
         <ContentTemplate>
             <table class="WholeWidth">
                 <tr>
@@ -346,8 +45,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        &nbsp;
+                    <td>&nbsp;
                     </td>
                 </tr>
                 <tr>
@@ -382,8 +80,7 @@
             <div class="MileStoneDetailBasicInfo">
                 <table>
                     <tr>
-                        <td>
-                            Milestone Name
+                        <td>Milestone Name
                             <asp:TextBox ID="txtMilestoneName" runat="server" onchange="setDirty();"></asp:TextBox>
                             <asp:RequiredFieldValidator ID="reqMilestoneName" runat="server" ControlToValidate="txtMilestoneName"
                                 ErrorMessage="The Milestone Name is required." ToolTip="The Milestone Name is required."
@@ -396,8 +93,7 @@
                         <td>
                             <table>
                                 <tr>
-                                    <td>
-                                        From
+                                    <td>From&nbsp;
                                     </td>
                                     <td>
                                         <uc2:DatePicker ID="dtpPeriodFrom" runat="server" ValidationGroup="Milestone" OnSelectionChanged="dtpPeriod_SelectionChanged" />
@@ -413,8 +109,7 @@
                                             Text="*" EnableClientScript="false" SetFocusOnError="true" Display="Dynamic"
                                             Operator="DataTypeCheck" Type="Date" ValidationGroup="Milestone"></asp:CompareValidator>
                                     </td>
-                                    <td>
-                                        &nbsp;to&nbsp;
+                                    <td>&nbsp;to&nbsp;
                                     </td>
                                     <td>
                                         <uc2:DatePicker ID="dtpPeriodTo" runat="server" ValidationGroup="Milestone" OnSelectionChanged="dtpPeriod_SelectionChanged" />
@@ -440,13 +135,21 @@
                         </td>
                     </tr>
                     <tr>
+                        <td style="padding-top: 5px">Milestone Type&nbsp;&nbsp;
+                            <asp:DropDownList ID="ddlMilestoneType" runat="server" onchange="setDirty();">
+                                <asp:ListItem Text="General" Value="1" Selected="True"></asp:ListItem>
+                                <asp:ListItem Text="Change Order" Value="2"></asp:ListItem>
+                            </asp:DropDownList>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
                         <td>
                             <table>
                                 <tr>
-                                    <td rowspan="2" class="vMiddle">
-                                        Revenue
+                                    <td rowspan="2" class="vMiddle">Revenue
                                     </td>
-                                    <td colspan="3">
+                                    <td colspan="4">
                                         <asp:RadioButton ID="rbtnHourlyRevenue" runat="server" AutoPostBack="true" Checked="true"
                                             GroupName="Revenue" OnCheckedChanged="Revenue_CheckedChanged" onclick="setDirty();"
                                             Text="Hourly - Set hourly rate when you add people to this milestone" />
@@ -455,20 +158,25 @@
                                 <tr>
                                     <td>
                                         <asp:RadioButton ID="rbtnFixedRevenue" runat="server" AutoPostBack="true" GroupName="Revenue"
-                                            OnCheckedChanged="Revenue_CheckedChanged" onclick="setDirty();" Text="Fixed Milestone Payment of" />
+                                            OnCheckedChanged="Revenue_CheckedChanged" onclick="setDirty();" Text="Fixed Fee" />
+                                    </td>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$
                                     </td>
                                     <td>
-                                        $
-                                    </td>
-                                    <td>
-                                        <asp:TextBox ID="txtFixedRevenue" runat="server" onchange="setDirty();"></asp:TextBox>
-                                        <asp:RequiredFieldValidator ID="reqFixedRevenue" runat="server" ControlToValidate="txtFixedRevenue"
-                                            Display="Dynamic" EnableClientScript="false" ErrorMessage="The Revenue is required."
-                                            SetFocusOnError="true" Text="*" ToolTip="The Revenue is required." ValidationGroup="Milestone"></asp:RequiredFieldValidator>
+                                        <asp:TextBox ID="txtFixedRevenue" runat="server" CssClass="Width100Px" onchange="setDirty();" AutoPostBack="true" OnTextChanged="txtFixedRevenue_TextChanged"></asp:TextBox>
+
                                         <asp:CompareValidator ID="compFixedRevenue" runat="server" ControlToValidate="txtFixedRevenue"
                                             Display="Dynamic" EnableClientScript="false" ErrorMessage="A number with 2 decimal digits is allowed for the Revenue."
                                             Operator="DataTypeCheck" SetFocusOnError="true" Text="*" ToolTip="A number with 2 decimal digits is allowed for the Revenue."
                                             Type="Currency" ValidationGroup="Milestone"></asp:CompareValidator>
+
+                                    </td>
+                                    <td>
+                                        <asp:CheckBox ID="chbLockFFAmount" runat="server" Text="Lock FF Total" class="FFLock-checkbox" />
+                                    </td>
+                                    <td>
+                                        <asp:ImageButton ID="lnkbtnMonthlyRevenue" ImageUrl="~/Images/FF_Revenue_Schedule.png" runat="server" CssClass="MonthlyRevenue" OnClick="lnkMonthlyRevenue_Click" ToolTip="Monthly Revenues" />
+                                        <asp:HiddenField ID="hdnUpdateOnlyMonthlyRevenue" Value="false" runat="server" />
                                     </td>
                                 </tr>
                             </table>
@@ -489,7 +197,48 @@
                         </td>
                     </tr>
                 </table>
+
+                <table>
+                    <tr>
+                        <td style="width: 400px; white-space: nowrap">
+                            <div id="FixedMilestoneDetails" runat="server">
+                                <table style="margin-left: 65px; margin-top: 5px;">
+                                    <tr>
+                                        <td>Discount/Premium &nbsp;&nbsp;
+                                            <asp:Label ID="lblDoller" runat="server" Text="$" />
+                                            <asp:TextBox ID="txtMilestoneDiscount" runat="server" onchange="setDirty();" CssClass="Width100Px" AutoPostBack="true" OnTextChanged="txtDiscount_TextChanged"></asp:TextBox>
+                                            <asp:Label ID="lblMilestoneDiscount" runat="server" class="lblDis"></asp:Label>
+                                            <asp:CompareValidator ID="cmpDiscount" runat="server" ControlToValidate="txtMilestoneDiscount"
+                                                Display="Dynamic" EnableClientScript="false" ErrorMessage="A number with 2 decimal digits is allowed for the Discount."
+                                                Operator="DataTypeCheck" SetFocusOnError="true" Text="*" ToolTip="A number with 2 decimal digits is allowed for the Discount."
+                                                Type="Currency" ValidationGroup="Milestone"></asp:CompareValidator>
+                                            <asp:Label ID="lblPercentage" runat="server" Text="%" />
+                                            <asp:DropDownList ID="ddlDiscountType" runat="server" onchange="ConvertDiscountUnits(); setDirty();" AutoPostBack="false">
+                                                <asp:ListItem Text="Dollar" Value="1" Selected="True"></asp:ListItem>
+                                                <asp:ListItem Text="Percentage" Value="2"></asp:ListItem>
+                                            </asp:DropDownList>
+                                        </td>
+                                        <td style="padding-left: 30px;">Blended Rate by Resource&nbsp;&nbsp;
+                                            <asp:Label ID="lblBlendedRate" runat="server"></asp:Label>
+                                        </td>
+                                        <td style="padding-left: 20px;"></td>
+                                    </tr>
+
+                                </table>
+                            </div>
+                        </td>
+                        <td>
+                            <a href="https://logic20201.sharepoint.com/Sales/RatesCard/Forms/AllItems.aspx" target="_blank">View Rate Cards</a>
+                        </td>
+                    </tr>
+                </table>
+
             </div>
+        </ContentTemplate>
+    </asp:UpdatePanel>
+
+    <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+        <ContentTemplate>
             <asp:Table ID="tblMilestoneDetailTabViewSwitch" runat="server" CssClass="CommonCustomTabStyle">
                 <asp:TableRow ID="rowSwitcher" runat="server">
                     <asp:TableCell ID="cellFinancials" runat="server" CssClass="SelectedSwitch">
@@ -516,34 +265,17 @@
                                 OnCommand="btnView_Command" CommandArgument="3"></asp:LinkButton></span>
                         </span>
                     </asp:TableCell>
-                    <asp:TableCell ID="cellDailyActivity" runat="server">
-                        <span class="bg"><span>
-                            <asp:LinkButton ID="btnDailyActivity" runat="server" Text="Daily Activity" CausesValidation="false"
-                                OnCommand="btnView_Command" CommandArgument="4"></asp:LinkButton></span>
-                        </span>
-                    </asp:TableCell>
-                    <asp:TableCell ID="cellCumulativeActivity" runat="server">
-                        <span class="bg"><span>
-                            <asp:LinkButton ID="btnCumulativeActivity" runat="server" Text="Cumulative Activity"
-                                CausesValidation="false" OnCommand="btnView_Command" CommandArgument="5"></asp:LinkButton></span>
-                        </span>
-                    </asp:TableCell>
-                    <asp:TableCell ID="cellActivitySummary" runat="server">
-                        <span class="bg"><span>
-                            <asp:LinkButton ID="btnActivitySummary" runat="server" Text="Activity Summary" CausesValidation="false"
-                                OnCommand="btnView_Command" CommandArgument="6"></asp:LinkButton></span>
-                        </span>
-                    </asp:TableCell>
+
                     <asp:TableCell ID="cellHistory" runat="server">
                         <span class="bg"><span>
                             <asp:LinkButton ID="btnHistory" runat="server" Text="History" CausesValidation="false"
-                                OnCommand="btnView_Command" CommandArgument="7"></asp:LinkButton></span>
+                                OnCommand="btnView_Command" CommandArgument="4"></asp:LinkButton></span>
                         </span>
                     </asp:TableCell>
                     <asp:TableCell ID="cellTools" runat="server">
                         <span class="bg"><span>
                             <asp:LinkButton ID="btnTools" runat="server" Text="Tools" CausesValidation="false"
-                                OnCommand="btnView_Command" CommandArgument="8"></asp:LinkButton></span>
+                                OnCommand="btnView_Command" CommandArgument="5"></asp:LinkButton></span>
                         </span>
                     </asp:TableCell>
                 </asp:TableRow>
@@ -551,87 +283,194 @@
             <asp:MultiView ID="mvMilestoneDetailTab" runat="server" ActiveViewIndex="0">
                 <asp:View ID="vwFinancials" runat="server">
                     <asp:Panel ID="pnlFinancials" runat="server" CssClass="tab-pane">
-                        <table class="alterrow">
+                        <table class="alterrow CompPerfTable">
+                            <tr class="ie-bg">
+                                <th>&nbsp;
+                                </th>
+                                <th class="padLeft20 borderLeftGrey">Budget
+                                </th>
+                                <th>&nbsp;
+                                </th>
+                                <th class="padLeft20 borderLeftGrey">Projected<br />
+                                    (Total)
+                                </th>
+
+                                <th>&nbsp;
+                                </th>
+                                <th class="borderLeftGrey">Budget to Projected<br />
+                                    variance
+                                </th>
+
+                            </tr>
                             <tr>
-                                <td>
-                                    Estimated Services Revenue
+                                <td class="Padding2">Services Revenue
                                 </td>
-                                <td class="textRight">
-                                    <asp:Label ID="lblTotalRevenue" runat="server" class="fontBold"></asp:Label>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblBudgetRevenue" runat="server" CssClass="Revenue"> -</asp:Label>
+                                </td>
+                                <td>&nbsp;
+                                </td>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblTotalRevenue" runat="server" CssClass="Revenue">-</asp:Label>
+                                </td>
+                                <td>&nbsp;
+                                </td>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblVarcRevenue" runat="server" CssClass="Revenue"> -</asp:Label>
                                 </td>
                             </tr>
                             <tr>
-                                <td>
-                                    Reimbursed Expenses
+                                <td class="Padding2">Reimbursed Expenses
                                 </td>
-                                <td class="textRight">
-                                    <asp:Label ID="lblReimbursedExpenses" runat="server" class="fontBold"></asp:Label>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblBudgetReimExpenses" runat="server" Font-Bold="true"> -</asp:Label>
+                                </td>
+                                <td>&nbsp;
+                                </td>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblReimbursedExpenses" runat="server" Font-Bold="true"> -</asp:Label>
+                                </td>
+                                <td>&nbsp;
+                                </td>
+
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblVarcReimExpenses" runat="server" Font-Bold="true"> -</asp:Label>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td class="Padding2">Account Discount (<asp:Label ID="lblClientDiscount" runat="server"></asp:Label>%)
+                                </td>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblBudgetDiscount" CssClass="Revenue" runat="server"> -</asp:Label>
+                                </td>
+                                <td>&nbsp;
+                                </td>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblClientDiscountAmount" CssClass="Revenue" runat="server">-</asp:Label>
+                                </td>
+                                <td>&nbsp;
+                                </td>
+
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblVarcDiscount" CssClass="Revenue" runat="server"> -</asp:Label>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td class="Padding2">Revenue net of discounts
+                                </td>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblBudgetRevenueNet" CssClass="Revenue" runat="server">-</asp:Label>
+                                </td>
+                                <td>&nbsp;
+                                </td>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblTotalRevenueNet" CssClass="Revenue" runat="server"> -</asp:Label>
+                                </td>
+                                <td>&nbsp;
+                                </td>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblVarRevenueNet" CssClass="Revenue" runat="server"> -</asp:Label>
                                 </td>
                             </tr>
                             <tr>
-                                <td>
-                                    Account discount (<asp:Label ID="lblClientDiscount" runat="server"></asp:Label>
-                                    &nbsp;%)
+                                <td class="Padding2">Resource Expenses
                                 </td>
-                                <td class="textRight">
-                                    <asp:Label ID="lblClientDiscountAmount" runat="server" class="fontBold"></asp:Label>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblBudgetCogs" runat="server" CssClass="Cogs"> -</asp:Label>
                                 </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Revenue net of Discounts
+                                <td>&nbsp;
                                 </td>
-                                <td class="textRight">
-                                    <asp:Label ID="lblTotalRevenueNet" runat="server" class="fontBold"></asp:Label>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblTotalCogs" runat="server" CssClass="Cogs"> -</asp:Label>
                                 </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    COGS
+                                <td>&nbsp;
                                 </td>
-                                <td class="textRight">
-                                    <asp:Label ID="lblTotalCogs" runat="server" class="fontBold"></asp:Label>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblVarcCogs" runat="server" CssClass="Cogs"> -</asp:Label>
                                 </td>
                             </tr>
                             <tr>
-                                <td>
-                                    Total Project Expenses
+                                <td class="Padding2">Other Expenses
                                 </td>
-                                <td class="textRight">
-                                    <asp:Label ID="lblExpenses" runat="server" class="fontBold" />
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblBudgetExpense" runat="server" Font-Bold="true"> -</asp:Label>
                                 </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Contribution Margin
+                                <td>&nbsp;
                                 </td>
-                                <td class="textRight no-wrap">
-                                    <table>
-                                        <tr>
-                                            <td>
-                                                <asp:Label ID="lblTotalMargin" runat="server" class="fontBold" />
-                                            </td>
-                                            <td id="tdTargetMargin" runat="server">
-                                                &nbsp;(<asp:Label ID="lblTargetMargin" runat="server" />)
-                                            </td>
-                                        </tr>
-                                    </table>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblExpenses" runat="server" Font-Bold="true">-</asp:Label>
+                                </td>
+                                <td>&nbsp;
+                                </td>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblVarcExpenses" runat="server" Font-Bold="true"> -</asp:Label>
                                 </td>
                             </tr>
                             <tr>
-                                <td>
-                                    Net Margin
+                                <td class="Padding2">Total Expenses
                                 </td>
-                                <td class="textRight">
-                                    <asp:Label ID="lblFinalMilestoneMargin" runat="server" class="fontBold"></asp:Label>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblBudgetTotalExpenes" runat="server" Font-Bold="true"> -</asp:Label>
                                 </td>
+                                <td>&nbsp;
+                                </td>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblTotalExpenses" runat="server" Font-Bold="true"> -</asp:Label>
+                                </td>
+                                <td>&nbsp;
+                                </td>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblVarcTotalExpenses" runat="server" Font-Bold="true"> -</asp:Label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="Padding2">Contribution Margin
+                                </td>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblBudgetGrossMargin" CssClass="Margin" runat="server"> -</asp:Label>
+                                </td>
+                                <td>&nbsp;
+                                </td>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblTotalMargin" CssClass="Margin" runat="server"> -</asp:Label>
+                                </td>
+                                <td>&nbsp;
+                                </td>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblVarcGrossMargin" CssClass="Margin" runat="server"> -</asp:Label>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td class="Padding2">Contribution Margin%
+                                </td>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblBudgetMarginPerc" runat="server">-</asp:Label>
+                                </td>
+                                <td>&nbsp;
+                                </td>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblTargetMargin" runat="server">-</asp:Label>
+                                </td>
+                                <td>&nbsp;
+                                </td>
+                                <td class="textRightImp borderLeftGrey">
+                                    <asp:Label ID="lblVarcMarginPerc" runat="server">-</asp:Label>
+                                </td>
+
                             </tr>
                         </table>
                     </asp:Panel>
                 </asp:View>
                 <asp:View ID="vwDetails" runat="server">
-                    <asp:Panel ID="pnlDetails" runat="server" CssClass="tab-pane" Style="overflow: auto;
-                        margin-bottom: 5px;">
+                    <asp:Panel ID="pnlDetails" runat="server" CssClass="tab-pane" Style="overflow: auto; margin-bottom: 5px;">
+                        <div class="floatright">
+                            <asp:Button ID="btnExportToExcel" runat="server" Text="Excel" OnClick="btnExportToExcel_Click"
+                                Enabled="true" UseSubmitBehavior="false" ToolTip="Export To Excel" />
+                        </div>
+                        <br />
                         <asp:GridView EnableViewState="false" ID="gvPeople" runat="server" AutoGenerateColumns="False"
                             EmptyDataText="There is nothing to be displayed." OnRowDataBound="gvPeople_RowDataBound"
                             ShowFooter="true" CssClass="CompPerfTable MileStoneDetailPageDetailTab" OnDataBound="gvPeople_OnDataBound">
@@ -653,7 +492,8 @@
                                 <asp:TemplateField>
                                     <HeaderTemplate>
                                         <div class="ie-bg no-wrap">
-                                            Person Name</div>
+                                            Person Name
+                                        </div>
                                     </HeaderTemplate>
                                     <ItemTemplate>
                                         <asp:HyperLink ID="btnPersonLink" runat="server" NavigateUrl='<%# GetMpeRedirectUrl(Eval("Id")) %>'
@@ -664,7 +504,8 @@
                                 <asp:TemplateField>
                                     <HeaderTemplate>
                                         <div class="ie-bg no-wrap">
-                                            Role</div>
+                                            Role
+                                        </div>
                                     </HeaderTemplate>
                                     <ItemTemplate>
                                         <asp:Label ID="lblPersonRole" runat="server" CssClass="spacing" Text='<%# Eval("Entries[0].Role.Name") %>'></asp:Label>
@@ -673,7 +514,8 @@
                                 <asp:TemplateField>
                                     <HeaderTemplate>
                                         <div class="ie-bg no-wrap">
-                                            Start Date</div>
+                                            Start Date
+                                        </div>
                                     </HeaderTemplate>
                                     <ItemTemplate>
                                         <asp:Label ID="lblStartDate" runat="server" CssClass="spacing" Text='<%# ((DateTime)Eval("Entries[0].StartDate")).ToString("MM/dd/yyyy") %>'></asp:Label>
@@ -682,30 +524,36 @@
                                 <asp:TemplateField>
                                     <HeaderTemplate>
                                         <div class="ie-bg no-wrap">
-                                            End Date</div>
+                                            End Date
+                                        </div>
                                     </HeaderTemplate>
                                     <ItemTemplate>
                                         <asp:Label ID="lblEndDate" runat="server" CssClass="spacing" Text='<%# ((DateTime?)Eval("Entries[0].EndDate")).HasValue ? ((DateTime)Eval("Entries[0].EndDate")).ToString("MM/dd/yyyy") : string.Empty %>'></asp:Label>
                                     </ItemTemplate>
-                                </asp:TemplateField>
-                                <asp:TemplateField>
-                                    <ItemStyle CssClass="textRight" />
-                                    <HeaderTemplate>
-                                        <div class="ie-bg no-wrap">
-                                            Eff. Bill Rate</div>
-                                    </HeaderTemplate>
-                                    <ItemTemplate>
-                                        <asp:Label ID="lblEffectiveBillRate" runat="server" CssClass="spacing" Text='<%# Eval("Entries[0].ComputedFinancials.BillRateMinusDiscount")%>'></asp:Label>
-                                    </ItemTemplate>
                                     <FooterTemplate>
-                                        Totals by months
+                                        Totals by </br>months
                                     </FooterTemplate>
                                 </asp:TemplateField>
                                 <asp:TemplateField>
                                     <ItemStyle CssClass="textRight" />
                                     <HeaderTemplate>
                                         <div class="ie-bg no-wrap">
-                                            &#931 Hours</div>
+                                            Eff. Bill Rate
+                                        </div>
+                                    </HeaderTemplate>
+                                    <ItemTemplate>
+                                        <asp:Label ID="lblEffectiveBillRate" runat="server" CssClass="spacing" Text='<%# Eval("Entries[0].ComputedFinancials.BillRateMinusDiscount")%>'></asp:Label>
+                                    </ItemTemplate>
+                                    <FooterTemplate>
+                                        <span class="fl-right">Totals by</br> Milestone</span>
+                                    </FooterTemplate>
+                                </asp:TemplateField>
+                                <asp:TemplateField>
+                                    <ItemStyle CssClass="textRight" />
+                                    <HeaderTemplate>
+                                        <div class="ie-bg no-wrap">
+                                            &#931 Hours
+                                        </div>
                                     </HeaderTemplate>
                                     <ItemTemplate>
                                         <asp:Label ID="lblTotalHours" runat="server" Text='<%# Eval("Entries[0].ComputedFinancials.HoursBilled") %>'></asp:Label>
@@ -716,7 +564,8 @@
                                     <ItemStyle CssClass="textRight fontBold" />
                                     <HeaderTemplate>
                                         <div class="ie-bg no-wrap">
-                                            Revenue</div>
+                                            Revenue
+                                        </div>
                                     </HeaderTemplate>
                                     <ItemTemplate>
                                         <asp:Label ID="lblRevenueContribution" runat="server" Text='<%# Eval("Entries[0].ComputedFinancials.Revenue") %>'></asp:Label>
@@ -726,45 +575,24 @@
                                     <ItemStyle CssClass="textRight fontBold" />
                                     <HeaderTemplate>
                                         <div class="ie-bg no-wrap">
-                                            Margin</div>
+                                            Margin
+                                        </div>
                                     </HeaderTemplate>
                                     <ItemTemplate>
                                         <asp:Label ID="lblMarginContribution" runat="server" Text='<%# GetText(Eval("Entries[0].ComputedFinancials.GrossMargin"), (DataTransferObjects.Person)Eval("Person") ) %>'></asp:Label>
                                     </ItemTemplate>
                                 </asp:TemplateField>
-                                <asp:TemplateField>
-                                    <ItemStyle CssClass="textRight fontBold" />
-                                    <HeaderTemplate>
-                                        <div class="ie-bg no-wrap">
-                                            &#931 Revenue</div>
-                                    </HeaderTemplate>
-                                    <ItemTemplate>
-                                        <asp:Label ID="lblTotalRevenue" runat="server" Text='<%# Eval("Entries[0].ComputedFinancials.Revenue") %>'></asp:Label>
-                                    </ItemTemplate>
-                                    <FooterStyle CssClass="vTop" />
-                                </asp:TemplateField>
-                                <asp:TemplateField>
-                                    <HeaderTemplate>
-                                        <div class="ie-bg no-wrap">
-                                            &#931 Contribution Margin</div>
-                                        </th>
-                                    </HeaderTemplate>
-                                    <ItemStyle CssClass="textRight fontBold" />
-                                    <ItemTemplate>
-                                        <asp:Label ID="lblTotalMargin" runat="server" Text='<%# GetText(Eval("Entries[0].ComputedFinancials.GrossMargin"), (DataTransferObjects.Person)Eval("Person") ) %>'></asp:Label>
-                                    </ItemTemplate>
-                                    <FooterStyle CssClass="textRight" />
-                                </asp:TemplateField>
+
                             </Columns>
                         </asp:GridView>
                     </asp:Panel>
                 </asp:View>
                 <asp:View ID="vwResources" OnActivate="vwResources_OnActivate" runat="server">
                     <asp:Panel ID="pnlResources" runat="server" CssClass="tab-pane">
-                        <asp:UpdatePanel ID="upnlMilestonePersons" ChildrenAsTriggers="true" runat="server">
+                        <asp:UpdatePanel ID="upnlMilestonePersons" UpdateMode="Conditional" ChildrenAsTriggers="false" runat="server">
                             <ContentTemplate>
                                 <% if (IsShowResources)
-                                   { %>
+                                    { %>
                                 <uc:MilestonePersonList runat="server" ID="MilestonePersonEntryListControl"></uc:MilestonePersonList>
                                 <% } %>
                             </ContentTemplate>
@@ -776,24 +604,7 @@
                         <m:Expenses ID="milestoneExpenses" runat="server" />
                     </asp:Panel>
                 </asp:View>
-                <asp:View ID="vwDaily" runat="server">
-                    <asp:Panel ID="pnlDaily" runat="server" CssClass="tab-pane">
-                        <% if (IsShowResources)
-                           { %>
-                        <mp:Activity ID="mpaDaily" runat="server" />
-                        <% } %>
-                    </asp:Panel>
-                </asp:View>
-                <asp:View ID="vwCumulativeActivity" runat="server">
-                    <asp:Panel ID="plnCumulativeActivity" runat="server" CssClass="tab-pane">
-                        <mp:Cumulative ID="mpaCumulative" runat="server" />
-                    </asp:Panel>
-                </asp:View>
-                <asp:View ID="vwActivitySummary" runat="server">
-                    <asp:Panel ID="pnlActivitySummary" runat="server" CssClass="tab-pane">
-                        <mp:CumulativeTotal ID="mpaTotal" runat="server" />
-                    </asp:Panel>
-                </asp:View>
+
                 <asp:View ID="vwHistory" runat="server">
                     <asp:Panel ID="pnlHistory" runat="server" CssClass="tab-pane">
                         <uc:Notes ID="nMilestone" runat="server" Target="Milestone" OnNoteAdded="nMilestone_OnNoteAdded" />
@@ -809,8 +620,7 @@
                                     <asp:Panel ID="pnlMoveMilestone" runat="server">
                                         <table>
                                             <tr>
-                                                <td>
-                                                    Move milestone
+                                                <td>Move milestone
                                                 </td>
                                             </tr>
                                             <tr>
@@ -830,8 +640,7 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td>
-                                                    days. (e.g. 3 or -3)
+                                                <td>days. (e.g. 3 or -3)
                                                 </td>
                                             </tr>
                                             <tr>
@@ -857,8 +666,7 @@
                                     <asp:Panel ID="pnlCloneMilestone" runat="server">
                                         <table>
                                             <tr>
-                                                <td>
-                                                    Duration
+                                                <td>Duration
                                                 </td>
                                             </tr>
                                             <tr>
@@ -878,13 +686,11 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td>
-                                                    days. (e.g. 3)
+                                                <td>days. (e.g. 3)
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="height19Px">
-                                                </td>
+                                                <td class="height19Px"></td>
                                             </tr>
                                             <tr>
                                                 <td>
@@ -965,8 +771,7 @@
             <asp:Panel ID="pnlPopup" runat="server" CssClass="popUp" Style="display: none;">
                 <table class="WholeWidth">
                     <tr class="PopUpHeader">
-                        <th colspan="2">
-                            Attention!
+                        <th colspan="2">Attention!
                             <asp:Button ID="btnClose" runat="server" CssClass="mini-report-closeNew" ToolTip="Cancel Changes"
                                 OnClick="btnCancel_OnClick" Text="X"></asp:Button>
                         </th>
@@ -978,11 +783,13 @@
                                     <td>
                                         <p>
                                             You are attempting to change the milestone start/end date, but there is already
-                                            time entered for the days you are skipping.</p>
+                                            time entered for the days you are skipping.
+                                        </p>
                                         <br />
                                         <p>
                                             You will need to reassign the time entries to a new milestone before you are allowed
-                                            to change this date.</p>
+                                            to change this date.
+                                        </p>
                                     </td>
                                 </tr>
                             </table>
@@ -1080,8 +887,7 @@
             <asp:Panel ID="pnlAttribution" runat="server" CssClass="popUp yScrollAuto" Style="display: none;">
                 <table class="WholeWidth">
                     <tr class="PopUpHeader">
-                        <th colspan="2">
-                            Attention!
+                        <th colspan="2">Attention!
                         </th>
                     </tr>
                     <tr id="trAttributionRecord" runat="server">
@@ -1089,7 +895,8 @@
                             <p>
                                 &nbsp;&nbsp;&nbsp; This action cannot be done as the following attribution records
                                 have the person start date and end date out of the project's start date and project's
-                                end date in commissions tab.</p>
+                                end date in commissions tab.
+                            </p>
                             <br />
                         </td>
                     </tr>
@@ -1117,7 +924,8 @@
                         <td>
                             <asp:Repeater runat="server" ID="repSalesPersons">
                                 <HeaderTemplate>
-                                    &nbsp;&nbsp;Sales Attribution:</HeaderTemplate>
+                                    &nbsp;&nbsp;Sales Attribution:
+                                </HeaderTemplate>
                                 <ItemTemplate>
                                     <br />
                                     &nbsp;&nbsp;&nbsp;&nbsp; <b>
@@ -1175,15 +983,13 @@
             <asp:Panel ID="pnlApprovedByOps" runat="server" CssClass="popUp" Style="display: none;">
                 <table class="WholeWidth">
                     <tr class="PopUpHeader">
-                        <th>
-                            Attention!
+                        <th>Attention!
                             <asp:Button ID="Button1" runat="server" CssClass="mini-report-closeNew" ToolTip="Cancel Changes"
                                 OnClick="btnCancel_OnClick" Text="X"></asp:Button>
                         </th>
                     </tr>
                     <tr>
-                        <td style="padding: 10px;">
-                            “Approved by Ops” has been unchecked as person badge dates are changed with change
+                        <td style="padding: 10px;">“Approved by Ops” has been unchecked as person badge dates are changed with change
                             in milestone dates. Request for Operations for the approval has been sent.
                         </td>
                     </tr>
@@ -1204,15 +1010,13 @@
             <asp:Panel ID="pnlMilestoneDatesConflict" runat="server" CssClass="popUp" Style="display: none;">
                 <table class="WholeWidth">
                     <tr class="PopUpHeader">
-                        <th>
-                            Attention!
+                        <th>Attention!
                             <asp:Button ID="btnCancel" runat="server" CssClass="mini-report-closeNew" ToolTip="Cancel Changes"
                                 OnClick="btnCancel_OnClick" Text="X"></asp:Button>
                         </th>
                     </tr>
                     <tr>
-                        <td style="padding: 10px;">
-                            Milestone cannot be moved as the following people are assigned to projects which
+                        <td style="padding: 10px;">Milestone cannot be moved as the following people are assigned to projects which
                             are after 18-Month End date.
                         </td>
                     </tr>
@@ -1223,17 +1027,13 @@
                                     <table class="border1Px WholeWidth">
                                         <thead>
                                             <tr class="textLeft border1Px Height25Px">
-                                                <th class="paddingLeft5pxImp">
-                                                    Person
+                                                <th class="paddingLeft5pxImp">Person
                                                 </th>
-                                                <th class="borderLeft paddingLeft5pxImp">
-                                                    Project
+                                                <th class="borderLeft paddingLeft5pxImp">Project
                                                 </th>
-                                                <th class="borderLeft paddingLeft5pxImp">
-                                                    Badge Start Date
+                                                <th class="borderLeft paddingLeft5pxImp">Badge Start Date
                                                 </th>
-                                                <th class="borderLeft paddingLeft5pxImp">
-                                                    Badge End Date
+                                                <th class="borderLeft paddingLeft5pxImp">Badge End Date
                                                 </th>
                                             </tr>
                                         </thead>
@@ -1268,8 +1068,114 @@
                     </tr>
                 </table>
             </asp:Panel>
+            <asp:HiddenField ID="hdnCanShowMonthlyRevenue" Value="false" runat="server" />
+            <AjaxControlToolkit:ModalPopupExtender ID="mpeMonthlyRevenue" runat="server"
+                TargetControlID="hdnCanShowMonthlyRevenue"
+                BackgroundCssClass="modalBackground" PopupControlID="pnlMonthlyRevenue"
+                DropShadow="false" />
+            <asp:Panel ID="pnlMonthlyRevenue" Style="display: none;"
+                runat="server" CssClass="Expense_MonthlyExpensePnl">
+                <table class="WholeWidth Padding5">
+                    <tr>
+                        <td class="WholeWidth">
+                            <table class="WholeWidthWithHeight">
+                                <tr class="bgColor_F5FAFF">
+                                    <td class="MonthlyRevenue_Name">
+                                        <asp:Label ID="lblMilestoneName" runat="server"></asp:Label>
+                                    </td>
+                                    <td class="MonthlyRevenue_Name">
+                                        <asp:Label ID="lblPeriod" runat="server"></asp:Label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="WholeWidth" colspan="2">
+                                        <div>
+                                            <asp:Repeater ID="repMonthlyRevenue" runat="server">
+                                                <HeaderTemplate>
+                                                    <div>
+                                                        <table id="tblMonthlyRevenue" class="tablesorter TimePeriodByproject WholeWidth ">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="MonthlyRevenue_Name no-wrap">Month
+                                                                    </th>
+                                                                    <th class="MonthlyRevenue_Name no-wrap">Revenue
+                                                                        <asp:CustomValidator ID="cvRevenueSum" runat="server"
+                                                                            ErrorMessage="The sum of monthly revenues should be equal to Milestone revenue"
+                                                                            ToolTip="The sum of monthly revenues should be equal to Milestone revenue" Text="*"
+                                                                            EnableClientScript="false" SetFocusOnError="true"></asp:CustomValidator>
+                                                                    </th>
+
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                </HeaderTemplate>
+                                                <ItemTemplate>
+                                                    <tr runat="server" id="repItem">
+                                                        <td>
+                                                            <asp:Label ID="lblMonth" runat="server" StartDate='<%#Eval("StartDate") %>' EndDate='<%#Eval("EndDate") %>' Text=' <%# ((DateTime)Eval("StartDate")).ToString("MMM-yy")%>'
+                                                                MilestoneId='<%#Eval("MilestoneId") %>' RevenueId='<%#Eval("Id") %>'></asp:Label>
+                                                        </td>
+                                                        <td class="no-wrap">
+                                                            <asp:TextBox ID="txtMonthRevenue" runat="server" Text='<%# ((Decimal)Eval("Amount")).ToString("##############0.##")%>'></asp:TextBox>
+                                                            <asp:RequiredFieldValidator ID="valReqEstExpense" ValidationGroup="MonthlyRevenue"
+                                                                runat="server" ControlToValidate="txtMonthRevenue" ErrorMessage="Expected Expense amount is required"
+                                                                Text="*" />
+                                                            <asp:RangeValidator ID="valRangeEstExpense" ValidationGroup="MonthlyRevenue" runat="server"
+                                                                ControlToValidate="txtMonthRevenue" Type="Double" MinimumValue="0.01" MaximumValue="1000000000"
+                                                                ErrorMessage="Expected Amount should be positive real" Text="*" />
+                                                        </td>
+                                                    </tr>
+                                                </ItemTemplate>
+                                                <AlternatingItemTemplate>
+                                                    <tr runat="server" id="repAltItem">
+                                                        <td>
+                                                            <asp:Label ID="lblMonth" runat="server" StartDate='<%#Eval("StartDate") %>' EndDate='<%#Eval("EndDate") %>' Text=' <%# ((DateTime)Eval("StartDate")).ToString("MMM-yy")%>'
+                                                                MilestoneId='<%#Eval("MilestoneId") %>' RevenueId='<%#Eval("Id") %>'></asp:Label>
+                                                        </td>
+                                                        <td class="no-wrap">
+                                                            <asp:TextBox ID="txtMonthRevenue" runat="server" Text='<%# ((Decimal)Eval("Amount")).ToString("##############0.##")%>'></asp:TextBox>
+                                                            <asp:RequiredFieldValidator ID="valReqEstExpense" ValidationGroup="MonthlyRevenue"
+                                                                runat="server" ControlToValidate="txtMonthRevenue" ErrorMessage="Revenue amount is required"
+                                                                Text="*" />
+                                                            <asp:RangeValidator ID="valRangeEstExpense" ValidationGroup="MonthlyRevenue" runat="server"
+                                                                ControlToValidate="txtMonthRevenue" Type="Double" MinimumValue="0.01" MaximumValue="1000000000"
+                                                                ErrorMessage="Revenue Amount should be positive real" Text="*" />
+                                                        </td>
+
+                                                    </tr>
+                                                </AlternatingItemTemplate>
+                                                <FooterTemplate>
+                                                    </tbody></table></div>
+                                                </FooterTemplate>
+                                            </asp:Repeater>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <asp:ValidationSummary ID="vsMonthlyRevenue" ValidationGroup="MonthlyRevenue"
+                                            runat="server" />
+                                        <asp:Label ID="lblSumError" runat="server" ForeColor="Red" Visible="false" Text="The sum of monthly revenues should be equal to Milestone revenue"></asp:Label>
+                                    </td>
+                                </tr>
+                                <tr class="bgColor_F5FAFF" style="text-align: center">
+                                    <td colspan="2">
+                                        <asp:Button ID="btnCancelMonthlyRevenue" Text="Cancel" ToolTip="Cancel" runat="server" OnClick="btnCancelMonthlyRevenue_Click" />
+                                        <asp:Button ID="btnSaveMonthlyRevenue" Text="Save" ToolTip="Save" runat="server" OnClick="btnSaveMonthlyRevenue_Click" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </asp:Panel>
+
             <uc:LoadingProgress ID="lpOpportunityDetails" runat="server" />
         </ContentTemplate>
+        <Triggers>
+            <asp:PostBackTrigger ControlID="btnExportToExcel" />
+        </Triggers>
     </asp:UpdatePanel>
+
 </asp:Content>
 
