@@ -225,7 +225,7 @@ namespace PraticeManagement.Config
             var clientMarginColorInfo = new ClientMarginColorInfo();
             clientMarginColorInfo.ColorInfo = new ColorInformation();
 
-            int end = ClientGoalDefaultMarginColorInfoList.Max(m => m.EndRange);
+            decimal end = ClientGoalDefaultMarginColorInfoList.Max(m => m.EndRange);
             if (end != 150)
             {
                 end = end + 1;
@@ -318,8 +318,8 @@ namespace PraticeManagement.Config
             {
                 if (ClientGoalDefaultMarginColorInfoList != null && ClientGoalDefaultMarginColorInfoList.Count > 0)
                 {
-                    int start = ClientGoalDefaultMarginColorInfoList.Min(m => m.StartRange);
-                    int end = ClientGoalDefaultMarginColorInfoList.Max(m => m.EndRange);
+                    decimal start = ClientGoalDefaultMarginColorInfoList.Min(m => m.StartRange);
+                    decimal end = ClientGoalDefaultMarginColorInfoList.Max(m => m.EndRange);
                     if (start != 0 || end < 100)
                     {
                         args.IsValid = false;
@@ -544,8 +544,8 @@ namespace PraticeManagement.Config
             {
                 if (PersonMarginColorInfoList != null && PersonMarginColorInfoList.Count > 0)
                 {
-                    int start = PersonMarginColorInfoList.Min(m => m.StartRange);
-                    int end = PersonMarginColorInfoList.Max(m => m.EndRange);
+                    decimal start = PersonMarginColorInfoList.Min(m => m.StartRange);
+                    decimal end = PersonMarginColorInfoList.Max(m => m.EndRange);
                     if (start != 0 || end < 100)
                     {
                         args.IsValid = false;
@@ -683,7 +683,7 @@ namespace PraticeManagement.Config
             var clientMarginColorInfo = new ClientMarginColorInfo();
             clientMarginColorInfo.ColorInfo = new ColorInformation();
 
-            int end = PersonMarginColorInfoList.Max(m => m.EndRange);
+            decimal end = PersonMarginColorInfoList.Max(m => m.EndRange);
             if (end != 150)
             {
                 end = end + 1;
