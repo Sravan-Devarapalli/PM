@@ -267,6 +267,34 @@ namespace DataTransferObjects
             set;
         }
 
+        [DataMember]
+        public decimal? Discount
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public bool DiscountLocked
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public bool IsNewToBudget
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public int IsDiscountAtResourceLevel {
+            //1- milestone level, 2- resource level
+            get;
+            set;
+        }
+
         #endregion Properties
 
         #region Constructor
