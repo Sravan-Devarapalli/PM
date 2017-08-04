@@ -67,11 +67,34 @@ namespace DataTransferObjects.Reports
             set;
         }
 
+        [DataMember]
+        public double BudgetHours
+        {
+            get;
+            set;
+        }
+
         public double TotalHours
         {
             get
             {
                 return BillableHours + NonBillableHours;
+            }
+        }
+
+        public double ForecastedHoursFromToday
+        {
+            get
+            {
+                return (ForecastedHours - ForecastedHoursUntilToday);
+            }
+        }
+
+        public double ETCHours
+        {
+            get
+            {
+                return (TotalHours + ForecastedHoursFromToday);
             }
         }
 
@@ -95,7 +118,15 @@ namespace DataTransferObjects.Reports
         {
             get
             {
-                return (BillableHoursUntilToday - ForecastedHoursUntilToday);
+                return (BillableHoursUntilToday - ForecastedHoursUntilToday); 
+            }
+        }
+
+        public double BudgetHoursVariance
+        {
+            get
+            {
+                return (BudgetHours > 0 ? BudgetHours - ForecastedHours : 0);
             }
         }
 
