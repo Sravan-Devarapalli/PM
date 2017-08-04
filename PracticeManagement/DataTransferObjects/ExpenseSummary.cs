@@ -39,6 +39,20 @@ namespace DataTransferObjects.Reports
         }
 
         [DataMember]
+        public Dictionary<DateTime, decimal> MonthlyBudgetExpenses
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public Dictionary<DateTime, decimal> MonthlyEACExpenses
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
         public ExpenseType Type
         {
             get;
