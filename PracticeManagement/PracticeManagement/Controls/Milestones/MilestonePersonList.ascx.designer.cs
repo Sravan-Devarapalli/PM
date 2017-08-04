@@ -157,6 +157,24 @@ namespace PraticeManagement.Controls.Milestones {
         protected global::System.Web.UI.HtmlControls.HtmlTableCell thHourlyRate;
         
         /// <summary>
+        /// thDiscount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell thDiscount;
+        
+        /// <summary>
+        /// thDiscountLock control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell thDiscountLock;
+        
+        /// <summary>
         /// thBadgeRequired control.
         /// </summary>
         /// <remarks>
