@@ -8,6 +8,10 @@
       <xsd:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/DataTransferObjects.ContextObjects" />
       <xsd:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?xsd=xsd4" />
       <xsd:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xsd:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/DataTransferObjects.Financials" />
+      <xsd:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?xsd=xsd7" namespace="http://schemas.datacontract.org/2004/07/DataTransferObjects.CornerStone" />
+      <xsd:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?xsd=xsd8" namespace="http://schemas.datacontract.org/2004/07/DataTransferObjects.Skills" />
+      <xsd:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?xsd=xsd9" namespace="http://schemas.datacontract.org/2004/07/DataTransferObjects.TimeEntry" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="IConfigurationService_GetAllEmailTemplates_InputMessage">
@@ -190,6 +194,60 @@
   <wsdl:message name="IConfigurationService_GetLocations_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetLocationsResponse" />
   </wsdl:message>
+  <wsdl:message name="IConfigurationService_GetMarginThresholds_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMarginThresholds" />
+  </wsdl:message>
+  <wsdl:message name="IConfigurationService_GetMarginThresholds_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMarginThresholdsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IConfigurationService_GetMarginExceptionThresholds_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMarginExceptionThresholds" />
+  </wsdl:message>
+  <wsdl:message name="IConfigurationService_GetMarginExceptionThresholds_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMarginExceptionThresholdsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IConfigurationService_InsertMarginThreshold_InputMessage">
+    <wsdl:part name="parameters" element="tns:InsertMarginThreshold" />
+  </wsdl:message>
+  <wsdl:message name="IConfigurationService_InsertMarginThreshold_OutputMessage">
+    <wsdl:part name="parameters" element="tns:InsertMarginThresholdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IConfigurationService_UpdateMarginThreshold_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateMarginThreshold" />
+  </wsdl:message>
+  <wsdl:message name="IConfigurationService_UpdateMarginThreshold_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateMarginThresholdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IConfigurationService_InsertMarginExceptionThreshold_InputMessage">
+    <wsdl:part name="parameters" element="tns:InsertMarginExceptionThreshold" />
+  </wsdl:message>
+  <wsdl:message name="IConfigurationService_InsertMarginExceptionThreshold_OutputMessage">
+    <wsdl:part name="parameters" element="tns:InsertMarginExceptionThresholdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IConfigurationService_UpdateMarginExceptionThreshold_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateMarginExceptionThreshold" />
+  </wsdl:message>
+  <wsdl:message name="IConfigurationService_UpdateMarginExceptionThreshold_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateMarginExceptionThresholdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IConfigurationService_DeleteMarginThreshold_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteMarginThreshold" />
+  </wsdl:message>
+  <wsdl:message name="IConfigurationService_DeleteMarginThreshold_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteMarginThresholdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IConfigurationService_DeleteMarginExceptionThreshold_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteMarginExceptionThreshold" />
+  </wsdl:message>
+  <wsdl:message name="IConfigurationService_DeleteMarginExceptionThreshold_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteMarginExceptionThresholdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IConfigurationService_GetOpenTasksForUser_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetOpenTasksForUser" />
+  </wsdl:message>
+  <wsdl:message name="IConfigurationService_GetOpenTasksForUser_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetOpenTasksForUserResponse" />
+  </wsdl:message>
   <wsdl:portType name="IConfigurationService">
     <wsdl:operation name="GetAllEmailTemplates">
       <wsdl:input wsaw:Action="http://tempuri.org/IConfigurationService/GetAllEmailTemplates" message="tns:IConfigurationService_GetAllEmailTemplates_InputMessage" />
@@ -310,6 +368,42 @@
     <wsdl:operation name="GetLocations">
       <wsdl:input wsaw:Action="http://tempuri.org/IConfigurationService/GetLocations" message="tns:IConfigurationService_GetLocations_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IConfigurationService/GetLocationsResponse" message="tns:IConfigurationService_GetLocations_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMarginThresholds">
+      <wsdl:input wsaw:Action="http://tempuri.org/IConfigurationService/GetMarginThresholds" message="tns:IConfigurationService_GetMarginThresholds_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IConfigurationService/GetMarginThresholdsResponse" message="tns:IConfigurationService_GetMarginThresholds_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMarginExceptionThresholds">
+      <wsdl:input wsaw:Action="http://tempuri.org/IConfigurationService/GetMarginExceptionThresholds" message="tns:IConfigurationService_GetMarginExceptionThresholds_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IConfigurationService/GetMarginExceptionThresholdsResponse" message="tns:IConfigurationService_GetMarginExceptionThresholds_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="InsertMarginThreshold">
+      <wsdl:input wsaw:Action="http://tempuri.org/IConfigurationService/InsertMarginThreshold" message="tns:IConfigurationService_InsertMarginThreshold_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IConfigurationService/InsertMarginThresholdResponse" message="tns:IConfigurationService_InsertMarginThreshold_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateMarginThreshold">
+      <wsdl:input wsaw:Action="http://tempuri.org/IConfigurationService/UpdateMarginThreshold" message="tns:IConfigurationService_UpdateMarginThreshold_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IConfigurationService/UpdateMarginThresholdResponse" message="tns:IConfigurationService_UpdateMarginThreshold_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="InsertMarginExceptionThreshold">
+      <wsdl:input wsaw:Action="http://tempuri.org/IConfigurationService/InsertMarginExceptionThreshold" message="tns:IConfigurationService_InsertMarginExceptionThreshold_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IConfigurationService/InsertMarginExceptionThresholdResponse" message="tns:IConfigurationService_InsertMarginExceptionThreshold_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateMarginExceptionThreshold">
+      <wsdl:input wsaw:Action="http://tempuri.org/IConfigurationService/UpdateMarginExceptionThreshold" message="tns:IConfigurationService_UpdateMarginExceptionThreshold_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IConfigurationService/UpdateMarginExceptionThresholdResponse" message="tns:IConfigurationService_UpdateMarginExceptionThreshold_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteMarginThreshold">
+      <wsdl:input wsaw:Action="http://tempuri.org/IConfigurationService/DeleteMarginThreshold" message="tns:IConfigurationService_DeleteMarginThreshold_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IConfigurationService/DeleteMarginThresholdResponse" message="tns:IConfigurationService_DeleteMarginThreshold_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteMarginExceptionThreshold">
+      <wsdl:input wsaw:Action="http://tempuri.org/IConfigurationService/DeleteMarginExceptionThreshold" message="tns:IConfigurationService_DeleteMarginExceptionThreshold_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IConfigurationService/DeleteMarginExceptionThresholdResponse" message="tns:IConfigurationService_DeleteMarginExceptionThreshold_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetOpenTasksForUser">
+      <wsdl:input wsaw:Action="http://tempuri.org/IConfigurationService/GetOpenTasksForUser" message="tns:IConfigurationService_GetOpenTasksForUser_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IConfigurationService/GetOpenTasksForUserResponse" message="tns:IConfigurationService_GetOpenTasksForUser_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_IConfigurationService" type="tns:IConfigurationService">
@@ -577,6 +671,87 @@
     </wsdl:operation>
     <wsdl:operation name="GetLocations">
       <soap:operation soapAction="http://tempuri.org/IConfigurationService/GetLocations" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMarginThresholds">
+      <soap:operation soapAction="http://tempuri.org/IConfigurationService/GetMarginThresholds" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMarginExceptionThresholds">
+      <soap:operation soapAction="http://tempuri.org/IConfigurationService/GetMarginExceptionThresholds" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InsertMarginThreshold">
+      <soap:operation soapAction="http://tempuri.org/IConfigurationService/InsertMarginThreshold" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateMarginThreshold">
+      <soap:operation soapAction="http://tempuri.org/IConfigurationService/UpdateMarginThreshold" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InsertMarginExceptionThreshold">
+      <soap:operation soapAction="http://tempuri.org/IConfigurationService/InsertMarginExceptionThreshold" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateMarginExceptionThreshold">
+      <soap:operation soapAction="http://tempuri.org/IConfigurationService/UpdateMarginExceptionThreshold" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteMarginThreshold">
+      <soap:operation soapAction="http://tempuri.org/IConfigurationService/DeleteMarginThreshold" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteMarginExceptionThreshold">
+      <soap:operation soapAction="http://tempuri.org/IConfigurationService/DeleteMarginExceptionThreshold" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOpenTasksForUser">
+      <soap:operation soapAction="http://tempuri.org/IConfigurationService/GetOpenTasksForUser" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
