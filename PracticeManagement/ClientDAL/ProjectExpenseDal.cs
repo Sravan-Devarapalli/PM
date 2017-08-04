@@ -82,7 +82,7 @@ namespace DataAccess
         private static void InitPropertiesNoId(SqlCommand command, ProjectExpense entity)
         {
             command.Parameters.AddWithValue(Constants.ParameterNames.ExpenseName, entity.Name);
-            command.Parameters.AddWithValue(Constants.ParameterNames.ExpenseAmount, entity.Amount);
+            command.Parameters.AddWithValue(Constants.ParameterNames.ExpenseAmount, entity.Amount == null ? DBNull.Value : (object)entity.Amount.Value);
             command.Parameters.AddWithValue(Constants.ParameterNames.ExpenseReimbursement, entity.Reimbursement);
             command.Parameters.AddWithValue(Constants.ParameterNames.StartDate, entity.StartDate);
             command.Parameters.AddWithValue(Constants.ParameterNames.EndDate, entity.EndDate);
@@ -158,6 +158,173 @@ namespace DataAccess
                         Name = reader.GetString(nameIndex),
                     };
                     result.Add(expenseType);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static void InsertProjectMonthlyExpenses(int expenseId, List<PeriodicalExpense> monthlyExpenses)
+        {
+            DeleteProjectMonthlyExpenses(expenseId);
+            if (monthlyExpenses != null && monthlyExpenses.Count > 0)
+            {
+                foreach (var monthlyExpense in monthlyExpenses)
+                {
+                    using (SqlConnection connection = new SqlConnection(DataSourceHelper.DataConnection))
+                    using (SqlCommand command = new SqlCommand(Constants.ProcedureNames.ProjectExpenses.InsertProjectMonthlyExpenses, connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.CommandTimeout = connection.ConnectionTimeout;
+
+                        command.Parameters.AddWithValue(Constants.ParameterNames.ExpenseId, expenseId);
+                        command.Parameters.AddWithValue(Constants.ParameterNames.StartDate, monthlyExpense.StartDate);
+                        command.Parameters.AddWithValue(Constants.ParameterNames.EndDate, monthlyExpense.EndDate);
+                        command.Parameters.AddWithValue(Constants.ParameterNames.EstimatedAmount, monthlyExpense.EstimatedExpense);
+                        command.Parameters.AddWithValue(Constants.ParameterNames.ActualAmount, monthlyExpense.ActualExpense == null ? DBNull.Value : (object)monthlyExpense.ActualExpense.Value);
+
+                        connection.Open();
+                        try
+                        {
+                            command.ExecuteNonQuery();
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception(ex.Message);
+                        }
+                        connection.Close();
+                    }
+                }
+            }
+        }
+
+        public static void DeleteProjectMonthlyExpenses(int expenseId)
+        {
+
+            using (SqlConnection connection = new SqlConnection(DataSourceHelper.DataConnection))
+            using (SqlCommand command = new SqlCommand(Constants.ProcedureNames.ProjectExpenses.DeleteProjectMonthlyExpenses, connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = connection.ConnectionTimeout;
+
+                command.Parameters.AddWithValue(Constants.ParameterNames.ExpenseId, expenseId);
+
+                connection.Open();
+                try
+                {
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+
+                }
+                connection.Close();
+            }
+        }
+
+
+
+
+        public static void UpdateProjectMonthlyExpenses(int expenseId, List<PeriodicalExpense> monthlyExpenses)
+        {
+            if (monthlyExpenses != null && monthlyExpenses.Count > 0)
+            {
+                foreach (var monthlyExpense in monthlyExpenses)
+                {
+                    using (SqlConnection connection = new SqlConnection(DataSourceHelper.DataConnection))
+                    using (SqlCommand command = new SqlCommand(Constants.ProcedureNames.ProjectExpenses.UpdateProjectMonthlyExpenses, connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.CommandTimeout = connection.ConnectionTimeout;
+
+                        command.Parameters.AddWithValue(Constants.ParameterNames.ExpenseId, expenseId);
+                        command.Parameters.AddWithValue(Constants.ParameterNames.Id, monthlyExpense.Id);
+                        command.Parameters.AddWithValue(Constants.ParameterNames.StartDate, monthlyExpense.StartDate);
+                        command.Parameters.AddWithValue(Constants.ParameterNames.EndDate, monthlyExpense.EndDate);
+                        command.Parameters.AddWithValue(Constants.ParameterNames.EstimatedAmount, monthlyExpense.EstimatedExpense);
+                        command.Parameters.AddWithValue(Constants.ParameterNames.ActualAmount, monthlyExpense.ActualExpense == null ? DBNull.Value : (object)monthlyExpense.ActualExpense.Value);
+
+                        connection.Open();
+                        try
+                        {
+                            command.ExecuteNonQuery();
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception(ex.Message);
+                        }
+                        connection.Close();
+                    }
+                }
+
+                using (SqlConnection connection = new SqlConnection(DataSourceHelper.DataConnection))
+                using (SqlCommand command = new SqlCommand(Constants.ProcedureNames.ProjectExpenses.UpdateProjectExpenseActualAmount, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandTimeout = connection.ConnectionTimeout;
+
+                    command.Parameters.AddWithValue(Constants.ParameterNames.ExpenseId, expenseId);
+                    connection.Open();
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.Message);
+                    }
+                    connection.Close();
+                }
+            }
+        }
+
+        public static List<PeriodicalExpense> GetMonthlyExpensesForProjectExpense(int expenseId)
+        {
+            var result = new List<PeriodicalExpense>();
+            using (SqlConnection connection = new SqlConnection(DataSourceHelper.DataConnection))
+            using (SqlCommand command = new SqlCommand(Constants.ProcedureNames.ProjectExpenses.GetMonthlyExpensesByExpenseId, connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = connection.ConnectionTimeout;
+
+                command.Parameters.AddWithValue(Constants.ParameterNames.ExpenseId, expenseId);
+
+                connection.Open();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    ReadMonthlyExpenses(reader, result);
+                    return result;
+                }
+            }
+        }
+
+        private static void ReadMonthlyExpenses(SqlDataReader reader, List<PeriodicalExpense> result)
+        {
+            try
+            {
+                if (!reader.HasRows) return;
+                int idIndex = reader.GetOrdinal(Constants.ColumnNames.Id);
+                int expenseIdIndex = reader.GetOrdinal(Constants.ColumnNames.ExpenseId);
+                int startDateIndex = reader.GetOrdinal(Constants.ColumnNames.StartDate);
+                int endDateIndex = reader.GetOrdinal(Constants.ColumnNames.EndDate);
+                int estimatedAmountIndex = reader.GetOrdinal(Constants.ColumnNames.EstimatedAmount);
+                int actualAmountIndex = reader.GetOrdinal(Constants.ColumnNames.ActualAmount);
+
+                while (reader.Read())
+                {
+                    var monthExpense = new PeriodicalExpense()
+                    {
+                        Id = reader.GetInt32(idIndex),
+                        ProjectExpenseId = reader.GetInt32(expenseIdIndex),
+                        StartDate = reader.GetDateTime(startDateIndex),
+                        EndDate = reader.GetDateTime(endDateIndex),
+                        EstimatedExpense = reader.GetDecimal(estimatedAmountIndex),
+                        ActualExpense = reader.IsDBNull(actualAmountIndex) ? null : (decimal?)reader.GetDecimal(actualAmountIndex)
+                    };
+                    result.Add(monthExpense);
                 }
             }
             catch (Exception ex)
