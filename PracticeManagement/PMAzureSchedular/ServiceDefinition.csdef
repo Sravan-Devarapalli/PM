@@ -16,8 +16,7 @@
         </Environment>
       </Task>
     </Startup>
-    <Imports>
-    </Imports>
+    <Imports></Imports>
     <ConfigurationSettings>
       <Setting name="Environment" />
       <Setting name="DBConnection" />
@@ -43,6 +42,6 @@
       <Setting name="FTPUploadTime" />
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
     </ConfigurationSettings>
-
   </WorkerRole>
 </ServiceDefinition>
+
