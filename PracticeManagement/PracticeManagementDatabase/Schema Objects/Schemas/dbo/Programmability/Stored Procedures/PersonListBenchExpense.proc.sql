@@ -81,9 +81,7 @@ AS
 	SELECT ResultId 
 	FROM [dbo].[ConvertStringListIntoTable] (@TimeScaleIdsLocal)
 
-	;WITH  CTEFinancials
-	AS
-	(
+	
 		SELECT 
 			   ISNULL(CASE
 				   WHEN pay.Timescale IN (1, 3)
@@ -126,7 +124,7 @@ AS
 						   P.PersonId,
 						   cal.Date,
 						   pay.Timescale
-
+		into #CTEFinancials
 		FROM Person P		
 		INNER JOIN dbo.PersonCalendarAuto AS cal 
 				ON  P.PersonId = cal.PersonId
@@ -155,10 +153,8 @@ AS
 					pay.BonusAmount,
 					pay.VacationDays,
 					HY.HoursInYear 
-	),
-	CTEFLHRDaily
-	AS
-	(
+
+	
 		SELECT 
 			CASE WHEN (HourlyRate+OverHeadAmount+BonusRate+VacationRate) >HourlyRate+MLFOverheadRate
 				 THEN (HourlyRate+OverHeadAmount+BonusRate+VacationRate)
@@ -173,14 +169,12 @@ AS
 			MIN(C.Date) OVER (PARTITION BY PersonId, C.MonthStartDate, (CASE WHEN Timescale != 2 THEN 1 ELSE 2 END )) TimeScaleMinDate,
 			MAX(C.Date) OVER(PARTITION BY PersonId, C.MonthStartDate) MonthMaxDate,
 			MIN(C.Date) OVER(PARTITION BY PersonId, C.MonthStartDate) MonthMinDate
-		FROM CTEFinancials CTE
+		INTO #CTEFLHRDaily
+		FROM #CTEFinancials CTE
 		INNER JOIN dbo.Calendar C ON CTE.Date = C.Date
-	)
-	,
 	
-	CTEFLHRAndBenchHoursDaily
-	AS
-	(
+	
+	
 		SELECT  f.FLHR,
 				f.HourlyRate,
 				f.PersonId,
@@ -192,7 +186,8 @@ AS
 				f.MonthMaxDate,
 				f.MonthMinDate,
 				8 - SUM(ISNULL(Temp.HoursPerDay,0)) BenchHours		
-		FROM CTEFLHRDaily f
+		INTO #CTEFLHRAndBenchHoursDaily
+		FROM #CTEFLHRDaily f
 		LEFT JOIN(
 					SELECT MP.PersonId,
 							MPE.StartDate,
@@ -226,12 +221,9 @@ AS
 				f.MonthMaxDate,
 				f.MonthMinDate		
  
-	)
-	,
+	
 
-CTEMonthlyFinancials
-AS
-(
+
 	SELECT FLHRD.PersonId,
 			P.LastName,
 			ISNULL(P.PreferredFirstName,P.FirstName) AS FirstName,
@@ -255,7 +247,8 @@ AS
 			TimeScaleMinDate,
 			MonthMaxDate,
 			MonthMinDate
-	FROM CTEFLHRAndBenchHoursDaily FLHRD
+	INTO #CTEMonthlyFinancials
+	FROM #CTEFLHRAndBenchHoursDaily FLHRD
 	INNER JOIN dbo.Calendar C ON FLHRD.Date = C.Date
 	INNER JOIN Person P ON FLHRD.PersonId = P.PersonId
 	LEFT JOIN Practice pr ON P.DefaultPractice = pr.PracticeId
@@ -280,7 +273,7 @@ AS
 				MonthMinDate
 	HAVING (SUM(ISNULL(FLHRD.BenchHours,0)) > 0 OR @IncludeZeroCostEmployeesLocal = 1)
 	
-)
+
 
 SELECT  PersonId,
 		LastName,
@@ -306,8 +299,8 @@ SELECT  PersonId,
 			
 FROM 
 (SELECT DISTINCT MF1.*
-FROM CTEMonthlyFinancials MF1
-JOIN CTEMonthlyFinancials MF2
+FROM #CTEMonthlyFinancials MF1
+JOIN #CTEMonthlyFinancials MF2
 ON MF1.PersonId = MF2.PersonId  AND MF2.RowNumber = 1
 		AND (MF2.Margin < 0.0 OR @IncludeZeroCostEmployeesLocal = 1)
 WHERE MF1.RowNumber = 1
@@ -333,4 +326,7 @@ ProjectStatusId	Name
 5				Experimental
 	*/
 
-
+drop table #CTEFinancials
+drop table #CTEFLHRDaily
+drop table #CTEFLHRAndBenchHoursDaily
+drop table #CTEMonthlyFinancials
