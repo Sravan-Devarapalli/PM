@@ -26,7 +26,7 @@ namespace DataAccess
         /// <param name="endDate">A period end.</param>
         /// <returns>The list of the <see cref="ComputedFinancials"/> objects.</returns>
         public static void LoadFinancialsPeriodForProjects(
-            List<Project> projects, DateTime startDate, DateTime endDate, bool useActuals)
+            List<Project> projects, DateTime startDate, DateTime endDate, bool useActuals, DateTime? actualEndDate)
         {
             using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
             using (var command = new SqlCommand(
@@ -39,10 +39,11 @@ namespace DataAccess
                 command.Parameters.AddWithValue(Constants.ParameterNames.StartDateParam, startDate);
                 command.Parameters.AddWithValue(Constants.ParameterNames.EndDateParam, endDate);
                 command.Parameters.AddWithValue(Constants.ParameterNames.UseActualsParam, useActuals);
+                command.Parameters.AddWithValue(Constants.ParameterNames.ActualsEndDate, actualEndDate == null ? DBNull.Value : (object)actualEndDate);
 
                 connection.Open();
 
-                projects.ForEach(delegate(Project project)
+                projects.ForEach(delegate (Project project)
                                      {
                                          if (project.ProjectedFinancialsByMonth == null)
                                              project.ProjectedFinancialsByMonth =
@@ -115,7 +116,7 @@ namespace DataAccess
 
                 if (!isAttainmentReport)
                 {
-                    projects.ForEach(delegate(Project project)
+                    projects.ForEach(delegate (Project project)
                     {
                         if (project.ProjectedFinancialsByMonth == null)
                             project.ProjectedFinancialsByMonth =
@@ -129,7 +130,7 @@ namespace DataAccess
                 }
                 else
                 {
-                    projects.ForEach(delegate(Project project)
+                    projects.ForEach(delegate (Project project)
                     {
                         if (project.ProjectedFinancialsByRange == null)
                             project.ProjectedFinancialsByRange =
@@ -254,7 +255,29 @@ namespace DataAccess
         /// </summary>
         /// <param name="projectId">An ID of the project to retrive the data for.</param>
         /// <returns>The <see cref="ComputedFinancials"/> object.</returns>
-        public static ComputedFinancials FinancialsGetByProject(int projectId)
+        public static List<ComputedFinancials> FinancialsSummaryGetByProject(int projectId)
+        {
+
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            using (var command = new SqlCommand(
+                Constants.ProcedureNames.ComputedFinancials.FinancialSummaryGetByProject, connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = connection.ConnectionTimeout;
+
+                command.Parameters.AddWithValue(Constants.ParameterNames.ProjectIdParam, projectId);
+
+                connection.Open();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    var result = new List<ComputedFinancials>();
+                    ReadFinancialSummary(reader, result);
+                    return result;
+                }
+            }
+        }
+
+        public static ComputedFinancials FinancialsByProject(int projectId)
         {
             using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
             using (var command = new SqlCommand(
@@ -276,6 +299,132 @@ namespace DataAccess
                     }
                     return null;
                 }
+            }
+        }
+
+
+        public static ComputedFinancials EACFinancialsByProject(int projectId)
+        {
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            using (var command = new SqlCommand(
+                Constants.ProcedureNames.ComputedFinancials.EACFinancialsByProject, connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = connection.ConnectionTimeout;
+
+                command.Parameters.AddWithValue(Constants.ParameterNames.ProjectIdParam, projectId);
+
+                connection.Open();
+                ComputedFinancials result = null;
+                using (SqlDataReader reader = command.ExecuteReader(CommandBehavior.SingleRow))
+                {
+                    if (reader.HasRows)
+                    {
+                        result = new ComputedFinancials();
+                        ReadFinancialsByProject(reader, result);
+                    }
+                    return result;
+                }
+            }
+        }
+
+        private static void ReadFinancialsByProject(SqlDataReader reader, ComputedFinancials result)
+        {
+
+            if (!reader.HasRows) return;
+
+            int revenueIndex = reader.GetOrdinal(Constants.ColumnNames.RevenueColumn);
+            int revenueNetIndex = reader.GetOrdinal(Constants.ColumnNames.RevenueNetColumn);
+            int grossMarginIndex = reader.GetOrdinal(Constants.ColumnNames.GrossMarginColumn);
+
+            while (reader.Read())
+            {
+                result.Revenue = reader.GetDecimal(revenueIndex);
+                result.RevenueNet = reader.GetDecimal(revenueNetIndex);
+                result.GrossMargin = reader.GetDecimal(grossMarginIndex);
+            }
+        }
+
+
+        public static ComputedFinancials BudgetFinancialsGetByMilestone(int milestoneId)
+        {
+
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            using (var command = new SqlCommand(
+                Constants.ProcedureNames.ComputedFinancials.GetMilestoneBudgetFinancials, connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = connection.ConnectionTimeout;
+
+                command.Parameters.AddWithValue(Constants.ParameterNames.MilestoneIdParam, milestoneId);
+
+                connection.Open();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    var result = new List<ComputedFinancials>();
+                    ReadFinancialSummary(reader, result);
+                    return result.FirstOrDefault();
+                }
+            }
+        }
+
+        private static void ReadFinancialSummary(SqlDataReader reader, List<ComputedFinancials> result)
+        {
+
+            if (!reader.HasRows) return;
+
+            int revenueIndex = reader.GetOrdinal(Constants.ColumnNames.RevenueColumn);
+            int revenueNetIndex = reader.GetOrdinal(Constants.ColumnNames.RevenueNetColumn);
+            int cogsIndex = reader.GetOrdinal(Constants.ColumnNames.CogsColumn);
+            int grossMarginIndex = reader.GetOrdinal(Constants.ColumnNames.GrossMarginColumn);
+
+            int expenseIndex;
+            int expenseReimbIndex;
+            int MilestonePersonAmount;
+            int financeTypeIndex;
+
+
+            try
+            {
+                financeTypeIndex = reader.GetOrdinal(Constants.ColumnNames.FinanceType);
+            }
+            catch
+            {
+                financeTypeIndex = -1;
+            }
+
+
+            try
+            {
+                MilestonePersonAmount = reader.GetOrdinal(Constants.ColumnNames.MilestonePersonAmount);
+            }
+            catch
+            {
+                MilestonePersonAmount = -1;
+            }
+
+            try
+            {
+                expenseIndex = reader.GetOrdinal(Constants.ColumnNames.Expense);
+                expenseReimbIndex = reader.GetOrdinal(Constants.ColumnNames.ReimbursedExpense);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                expenseIndex = -1;
+                expenseReimbIndex = -1;
+            }
+
+            while (reader.Read())
+            {
+                ComputedFinancials financial = new ComputedFinancials();
+                financial.Revenue = reader.GetDecimal(revenueIndex);
+                financial.RevenueNet = reader.GetDecimal(revenueNetIndex);
+                financial.Cogs = reader.GetDecimal(cogsIndex);
+                financial.GrossMargin = reader.GetDecimal(grossMarginIndex);
+                financial.Expenses = expenseIndex < 0 ? 0 : reader.GetDecimal(expenseIndex);
+                financial.ReimbursedExpenses = expenseReimbIndex < 0 ? 0 : reader.GetDecimal(expenseReimbIndex);
+                financial.FinanceType = financeTypeIndex > -1 && !reader.IsDBNull(financeTypeIndex) ? reader.GetInt32(financeTypeIndex) : 0;
+                result.Add(financial);
             }
         }
 
@@ -451,15 +600,51 @@ namespace DataAccess
             if (!reader.HasRows) return;
             int financialDateIndex = reader.GetOrdinal(Constants.ColumnNames.FinancialDateColumn);
             int revenueIndex = reader.GetOrdinal(Constants.ColumnNames.RevenueColumn);
-            int revenueNetIndex = reader.GetOrdinal(Constants.ColumnNames.RevenueNetColumn);
-            int cogsIndex = reader.GetOrdinal(Constants.ColumnNames.CogsColumn);
+            int revenueNetIndex = -1;
+            int cogsIndex = -1;
             int grossMarginIndex = reader.GetOrdinal(Constants.ColumnNames.GrossMarginColumn);
-            int hoursIndex = reader.GetOrdinal(Constants.ColumnNames.HoursColumn);
+            int hoursIndex = -1;
             int projectIdIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectId);
             int actualRevenueIndex = -1;
             int actualGrossMarginIndex = -1;
             int previousMonthsActualRevenueIndex = -1;
             int previousMonthsActualGrossMarginIndex = -1;
+            int budgetRevenueIndex = -1;
+            int budgetGrossMarginIndex = -1;
+            int ETCRevenueIndex = -1;
+            int ETCGrossMarginIndex = -1;
+
+            try
+            {
+                revenueNetIndex = reader.GetOrdinal(Constants.ColumnNames.RevenueNetColumn);
+            }
+            catch { }
+
+            try
+            {
+                cogsIndex = reader.GetOrdinal(Constants.ColumnNames.CogsColumn);
+            }
+            catch { }
+
+            try
+            {
+                hoursIndex = reader.GetOrdinal(Constants.ColumnNames.HoursColumn);
+            }
+            catch { }
+
+            try
+            {
+                budgetRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.BudgetRevenue);
+                budgetGrossMarginIndex = reader.GetOrdinal(Constants.ColumnNames.BudgetGrossMargin);
+            }
+            catch { }
+
+            try
+            {
+                ETCRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.ETCRevenue);
+                ETCGrossMarginIndex = reader.GetOrdinal(Constants.ColumnNames.ETCGrossMargin);
+            }
+            catch { }
 
             try
             {
@@ -492,9 +677,14 @@ namespace DataAccess
                         actualRevenueIndex,
                         actualGrossMarginIndex,
                         previousMonthsActualRevenueIndex,
-                        previousMonthsActualGrossMarginIndex);
+                        previousMonthsActualGrossMarginIndex,
+                        ETCRevenueIndex: ETCRevenueIndex,
+                        ETCGrossMarginIndex: ETCGrossMarginIndex,
+                        BudgetRevenueIndex: budgetRevenueIndex,
+                        BudgetGrossMarginIndex: budgetGrossMarginIndex);
 
                 var i = projects.IndexOf(project);
+
                 projects[i].ProjectedFinancialsByMonth.Add(financials.FinancialDate.Value, financials);
             }
         }
@@ -567,12 +757,12 @@ namespace DataAccess
             if (reader.HasRows)
                 while (reader.Read())
                     return new MilestonePersonComputedFinancials
-                               {
-                                   ProjectDiscount = GetDecimalValueFromReader(reader, projectDiscountIndex),
-                                   GrossHourlyBillRate = GetDecimalValueFromReader(reader, grossHourlyBillRateIndex),
-                                   HoursInPeriod = GetDecimalValueFromReader(reader, hoursInPeriodIndex),
-                                   LoadedHourlyPayRate = GetDecimalValueFromReader(reader, loadedHourlyPayRateIndex)
-                               };
+                    {
+                        ProjectDiscount = GetDecimalValueFromReader(reader, projectDiscountIndex),
+                        GrossHourlyBillRate = GetDecimalValueFromReader(reader, grossHourlyBillRateIndex),
+                        HoursInPeriod = GetDecimalValueFromReader(reader, hoursInPeriodIndex),
+                        LoadedHourlyPayRate = GetDecimalValueFromReader(reader, loadedHourlyPayRateIndex)
+                    };
 
             return null;
         }
@@ -622,9 +812,9 @@ namespace DataAccess
                 yield return
                     new KeyValuePair<MilestonePerson, ComputedFinancials>(
                         new MilestonePerson()
-                            {
-                                Person = new Person() { Id = reader.GetInt32(personIdIndex) },
-                                Entries = new List<MilestonePersonEntry>(1)
+                        {
+                            Person = new Person() { Id = reader.GetInt32(personIdIndex) },
+                            Entries = new List<MilestonePersonEntry>(1)
                                     {
                                         new MilestonePersonEntry{
                                             Id = reader.GetInt32(milestonePersonEntryIdIndex),
@@ -632,7 +822,7 @@ namespace DataAccess
                                             EndDate =  reader.GetDateTime(endDateIndex)
                                         }
                                     }
-                            },
+                        },
                         ReadComputedFinancials(
                             reader,
                             financialDateIndex,
@@ -649,7 +839,7 @@ namespace DataAccess
         private static IEnumerable<ComputedFinancials> ReadFinancialsByOne(DbDataReader reader)
         {
             if (!reader.HasRows) yield break;
-            int financialDateIndex = reader.GetOrdinal(Constants.ColumnNames.FinancialDateColumn);
+            int financialDateIndex;
             int revenueIndex = reader.GetOrdinal(Constants.ColumnNames.RevenueColumn);
             int revenueNetIndex = reader.GetOrdinal(Constants.ColumnNames.RevenueNetColumn);
             int cogsIndex = reader.GetOrdinal(Constants.ColumnNames.CogsColumn);
@@ -658,6 +848,35 @@ namespace DataAccess
 
             int expenseIndex;
             int expenseReimbIndex;
+            int MilestonePersonAmount;
+            int financeTypeIndex;
+
+            try
+            {
+                financeTypeIndex = reader.GetOrdinal(Constants.ColumnNames.FinanceType);
+            }
+            catch
+            {
+                financeTypeIndex = -1;
+            }
+
+            try
+            {
+                financialDateIndex = reader.GetOrdinal(Constants.ColumnNames.FinancialDateColumn);
+            }
+            catch
+            {
+                financialDateIndex = -1;
+            }
+
+            try
+            {
+                MilestonePersonAmount = reader.GetOrdinal(Constants.ColumnNames.MilestonePersonAmount);
+            }
+            catch
+            {
+                MilestonePersonAmount = -1;
+            }
 
             try
             {
@@ -682,7 +901,9 @@ namespace DataAccess
                         grossMarginIndex,
                         hoursIndex,
                         expenseIndex,
-                        expenseReimbIndex);
+                        expenseReimbIndex,
+                        milestonePersonAmountIndex: MilestonePersonAmount,
+                        financeTypeIndex: financeTypeIndex);
             }
         }
 
@@ -699,23 +920,37 @@ namespace DataAccess
             int actualRevenueIndex = -1,
             int actualGrossMarginIndex = -1,
             int previousRevenueIndex = -1,
-            int previousGrossMarginIndex = -1)
+            int previousGrossMarginIndex = -1,
+            int milestonePersonAmountIndex = -1,
+            int financeTypeIndex = -1,
+            int budgetRevenueIndex = -1,
+            int budgetGrossMargin = -1,
+            int ETCRevenueIndex = -1,
+            int ETCGrossMarginIndex = -1,
+            int BudgetRevenueIndex = -1,
+            int BudgetGrossMarginIndex = -1)
         {
             return new ComputedFinancials
-                       {
-                           FinancialDate = reader.IsDBNull(financialDateIndex) ? (DateTime?)null : reader.GetDateTime(financialDateIndex),
-                           Revenue = reader.GetDecimal(revenueIndex),
-                           RevenueNet = reader.GetDecimal(revenueNetIndex),
-                           Cogs = reader.GetDecimal(cogsIndex),
-                           GrossMargin = reader.GetDecimal(grossMarginIndex),
-                           HoursBilled = reader.GetDecimal(hoursIndex),
-                           Expenses = expenseIndex < 0 ? 0 : reader.GetDecimal(expenseIndex),
-                           ReimbursedExpenses = expenseReimbIndex < 0 ? 0 : reader.GetDecimal(expenseReimbIndex),
-                           ActualRevenue = actualRevenueIndex > -1 && !reader.IsDBNull(actualRevenueIndex) ? reader.GetDecimal(actualRevenueIndex) : 0M,
-                           ActualGrossMargin = actualGrossMarginIndex > -1 && !reader.IsDBNull(actualGrossMarginIndex) ? reader.GetDecimal(actualGrossMarginIndex) : 0M,
-                           PreviousMonthsActualRevenueValue = previousRevenueIndex > -1 && !reader.IsDBNull(previousRevenueIndex) ? reader.GetDecimal(previousRevenueIndex) : 0M,
-                           PreviousMonthsActualMarginValue = previousGrossMarginIndex > -1 && !reader.IsDBNull(previousGrossMarginIndex) ? reader.GetDecimal(previousGrossMarginIndex) : 0M
-                       };
+            {
+                FinancialDate = financialDateIndex > -1 && !reader.IsDBNull(financialDateIndex) ? reader.GetDateTime(financialDateIndex) : (DateTime?)null,
+                Revenue = reader.GetDecimal(revenueIndex),
+                RevenueNet = revenueNetIndex > -1 ? reader.GetDecimal(revenueNetIndex) : 0,
+                Cogs = cogsIndex > -1 && !reader.IsDBNull(cogsIndex) ? reader.GetDecimal(cogsIndex) : 0M,
+                GrossMargin = reader.GetDecimal(grossMarginIndex),
+                HoursBilled = hoursIndex > -1 ? reader.GetDecimal(hoursIndex) : 0,
+                Expenses = expenseIndex < 0 ? 0 : reader.GetDecimal(expenseIndex),
+                ReimbursedExpenses = expenseReimbIndex < 0 ? 0 : reader.GetDecimal(expenseReimbIndex),
+                ActualRevenue = actualRevenueIndex > -1 && !reader.IsDBNull(actualRevenueIndex) ? reader.GetDecimal(actualRevenueIndex) : 0M,
+                ActualGrossMargin = actualGrossMarginIndex > -1 && !reader.IsDBNull(actualGrossMarginIndex) ? reader.GetDecimal(actualGrossMarginIndex) : 0M,
+                PreviousMonthsActualRevenueValue = previousRevenueIndex > -1 && !reader.IsDBNull(previousRevenueIndex) ? reader.GetDecimal(previousRevenueIndex) : 0M,
+                PreviousMonthsActualMarginValue = previousGrossMarginIndex > -1 && !reader.IsDBNull(previousGrossMarginIndex) ? reader.GetDecimal(previousGrossMarginIndex) : 0M,
+                MilestonePersonAmount = milestonePersonAmountIndex > -1 && !reader.IsDBNull(milestonePersonAmountIndex) ? reader.GetDecimal(milestonePersonAmountIndex) : 0M,
+                FinanceType = financeTypeIndex > -1 && !reader.IsDBNull(financeTypeIndex) ? reader.GetInt32(financeTypeIndex) : 0,
+                EACRevenue = ETCRevenueIndex > -1 && !reader.IsDBNull(ETCRevenueIndex) ? reader.GetDecimal(ETCRevenueIndex) : 0M,
+                EACGrossMargin = ETCGrossMarginIndex > -1 && !reader.IsDBNull(ETCGrossMarginIndex) ? reader.GetDecimal(ETCGrossMarginIndex) : 0M,
+                BudgetRevenue = BudgetRevenueIndex > -1 && !reader.IsDBNull(BudgetRevenueIndex) ? reader.GetDecimal(BudgetRevenueIndex) : 0M,
+                BudgetGrossMargin = BudgetGrossMarginIndex > -1 && !reader.IsDBNull(BudgetGrossMarginIndex) ? reader.GetDecimal(BudgetGrossMarginIndex) : 0M
+            };
         }
 
         private static void ReadPersonStats(DbDataReader reader, List<PersonStats> result)
@@ -730,13 +965,13 @@ namespace DataAccess
             while (reader.Read())
             {
                 var stats = new PersonStats
-                    {
-                        Date = reader.GetDateTime(dateIndex),
-                        Revenue = reader.GetDecimal(revenueIndex),
-                        VirtualConsultants = reader.GetDecimal(virtualConsultantsIndex),
-                        EmployeesCount = reader.GetInt32(employeesNumberIndex),
-                        ConsultantsCount = reader.GetInt32(consultantsNumberIndex)
-                    };
+                {
+                    Date = reader.GetDateTime(dateIndex),
+                    Revenue = reader.GetDecimal(revenueIndex),
+                    VirtualConsultants = reader.GetDecimal(virtualConsultantsIndex),
+                    EmployeesCount = reader.GetInt32(employeesNumberIndex),
+                    ConsultantsCount = reader.GetInt32(consultantsNumberIndex)
+                };
 
                 result.Add(stats);
             }
