@@ -21,11 +21,11 @@
     <MetadataSource Address="http://localhost/PracticeManagementService/ProjectStatusService.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="ProjectStatusService1.wsdl" MetadataType="Wsdl" ID="367d8cc1-26dc-4a84-85fc-1a3923b0089e" SourceId="1" SourceUrl="http://ws60/PracticeManagementService/ProjectStatusService.svc?wsdl" />
-    <MetadataFile FileName="ProjectStatusService1.disco" MetadataType="Disco" ID="875afdca-65f6-4ec2-aaca-6bc97dade191" SourceId="1" SourceUrl="http://ws60/PracticeManagementService/ProjectStatusService.svc?disco" />
-    <MetadataFile FileName="ProjectStatusService3.xsd" MetadataType="Schema" ID="ab30e706-b768-4c88-82e9-dd618344fe02" SourceId="1" SourceUrl="http://ws60/PracticeManagementService/ProjectStatusService.svc?xsd=xsd2" />
-    <MetadataFile FileName="ProjectStatusService4.xsd" MetadataType="Schema" ID="8aa54d54-7c5c-4684-b963-420d7b5c8493" SourceId="1" SourceUrl="http://ws60/PracticeManagementService/ProjectStatusService.svc?xsd=xsd1" />
-    <MetadataFile FileName="ProjectStatusService5.xsd" MetadataType="Schema" ID="5ec99d24-7084-4b94-9d1f-36184469a827" SourceId="1" SourceUrl="http://ws60/PracticeManagementService/ProjectStatusService.svc?xsd=xsd0" />
+    <MetadataFile FileName="ProjectStatusService1.wsdl" MetadataType="Wsdl" ID="efc9a7bb-5a62-4be4-aedd-62a3707e8c77" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ProjectStatusService.svc?wsdl" />
+    <MetadataFile FileName="ProjectStatusService3.xsd" MetadataType="Schema" ID="4a5c148a-904f-4750-a85d-1bc5c045a870" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ProjectStatusService.svc?xsd=xsd2" />
+    <MetadataFile FileName="ProjectStatusService4.xsd" MetadataType="Schema" ID="3b71a430-6c86-448f-8d8a-92542fbfecc7" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ProjectStatusService.svc?xsd=xsd1" />
+    <MetadataFile FileName="ProjectStatusService1.disco" MetadataType="Disco" ID="c12eae8a-a2a9-412b-a88b-418c4e8020f8" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ProjectStatusService.svc?disco" />
+    <MetadataFile FileName="ProjectStatusService5.xsd" MetadataType="Schema" ID="861ee748-9ebc-4ffe-a49b-2da57df3626a" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ProjectStatusService.svc?xsd=xsd0" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
