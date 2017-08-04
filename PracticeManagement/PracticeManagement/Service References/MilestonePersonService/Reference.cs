@@ -72,7 +72,7 @@ namespace PraticeManagement.MilestonePersonService {
         DataTransferObjects.MilestonePerson[] GetMilestonePersonsDetailsByMileStoneId(int milestoneId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMilestonePersonService/DeleteMilestonePersonEntry", ReplyAction="http://tempuri.org/IMilestonePersonService/DeleteMilestonePersonEntryResponse")]
-        void DeleteMilestonePersonEntry(int milestonePersonEntryId, string userName);
+        void DeleteMilestonePersonEntry(int milestonePersonEntryId, string userName, System.Nullable<int> milestoneId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMilestonePersonService/UpdateMilestonePersonEntry", ReplyAction="http://tempuri.org/IMilestonePersonService/UpdateMilestonePersonEntryResponse")]
         int UpdateMilestonePersonEntry(DataTransferObjects.MilestonePersonEntry entry, string userName);
@@ -102,7 +102,7 @@ namespace PraticeManagement.MilestonePersonService {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public partial class MilestonePersonServiceClient : System.ServiceModel.ClientBase<PraticeManagement.MilestonePersonService.IMilestonePersonService>, PraticeManagement.MilestonePersonService.IMilestonePersonService {
         
-              
+        
         public MilestonePersonServiceClient(string endpointConfigurationName) : 
                 base(endpointConfigurationName) {
         }
@@ -175,8 +175,8 @@ namespace PraticeManagement.MilestonePersonService {
             return base.Channel.GetMilestonePersonsDetailsByMileStoneId(milestoneId);
         }
         
-        public void DeleteMilestonePersonEntry(int milestonePersonEntryId, string userName) {
-            base.Channel.DeleteMilestonePersonEntry(milestonePersonEntryId, userName);
+        public void DeleteMilestonePersonEntry(int milestonePersonEntryId, string userName, System.Nullable<int> milestoneId) {
+            base.Channel.DeleteMilestonePersonEntry(milestonePersonEntryId, userName, milestoneId);
         }
         
         public int UpdateMilestonePersonEntry(DataTransferObjects.MilestonePersonEntry entry, string userName) {
