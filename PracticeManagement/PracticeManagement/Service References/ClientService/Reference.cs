@@ -43,7 +43,7 @@ namespace PraticeManagement.ClientService {
         DataTransferObjects.ColorInformation[] GetAllColorsForMargin();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://www.logic2020.com/IClientService/GetClientMarginColorInfo", ReplyAction="http://www.logic2020.com/IClientService/GetClientMarginColorInfoResponse")]
-        DataTransferObjects.ClientMarginColorInfo[] GetClientMarginColorInfo(int clientId);
+        DataTransferObjects.ClientMarginColorInfo[] GetClientMarginColorInfo(int clientId, System.DateTime startDate, System.DateTime endDate, int projectId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://www.logic2020.com/IClientService/ClientListAllWithoutPermissions", ReplyAction="http://www.logic2020.com/IClientService/ClientListAllWithoutPermissionsResponse")]
         DataTransferObjects.Client[] ClientListAllWithoutPermissions();
@@ -71,6 +71,21 @@ namespace PraticeManagement.ClientService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://www.logic2020.com/IClientService/GetBusinessUnitsForClients", ReplyAction="http://www.logic2020.com/IClientService/GetBusinessUnitsForClientsResponse")]
         DataTransferObjects.ProjectGroup[] GetBusinessUnitsForClients(string clientIds);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://www.logic2020.com/IClientService/GetClientMarginGoals", ReplyAction="http://www.logic2020.com/IClientService/GetClientMarginGoalsResponse")]
+        DataTransferObjects.ClientMarginGoal[] GetClientMarginGoals(int clientId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://www.logic2020.com/IClientService/InsertClientMargin", ReplyAction="http://www.logic2020.com/IClientService/InsertClientMarginResponse")]
+        void InsertClientMargin(DataTransferObjects.ClientMarginGoal marginGoal, string userAlias);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://www.logic2020.com/IClientService/UpdateClientMarginGoal", ReplyAction="http://www.logic2020.com/IClientService/UpdateClientMarginGoalResponse")]
+        void UpdateClientMarginGoal(DataTransferObjects.ClientMarginGoal marginGoal, string userAlias);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://www.logic2020.com/IClientService/DeleteClientMarginGoal", ReplyAction="http://www.logic2020.com/IClientService/DeleteClientMarginGoalResponse")]
+        void DeleteClientMarginGoal(int id, string userAlias);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://www.logic2020.com/IClientService/GetMarginGoalLogForClient", ReplyAction="http://www.logic2020.com/IClientService/GetMarginGoalLogForClientResponse")]
+        DataTransferObjects.ClientMarginGoalLog[] GetMarginGoalLogForClient(int clientId);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -81,7 +96,6 @@ namespace PraticeManagement.ClientService {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public partial class ClientServiceClient : System.ServiceModel.ClientBase<PraticeManagement.ClientService.IClientService>, PraticeManagement.ClientService.IClientService {
         
-      
         public ClientServiceClient(string endpointConfigurationName) : 
                 base(endpointConfigurationName) {
         }
@@ -134,8 +148,8 @@ namespace PraticeManagement.ClientService {
             return base.Channel.GetAllColorsForMargin();
         }
         
-        public DataTransferObjects.ClientMarginColorInfo[] GetClientMarginColorInfo(int clientId) {
-            return base.Channel.GetClientMarginColorInfo(clientId);
+        public DataTransferObjects.ClientMarginColorInfo[] GetClientMarginColorInfo(int clientId, System.DateTime startDate, System.DateTime endDate, int projectId) {
+            return base.Channel.GetClientMarginColorInfo(clientId, startDate, endDate, projectId);
         }
         
         public DataTransferObjects.Client[] ClientListAllWithoutPermissions() {
@@ -172,6 +186,26 @@ namespace PraticeManagement.ClientService {
         
         public DataTransferObjects.ProjectGroup[] GetBusinessUnitsForClients(string clientIds) {
             return base.Channel.GetBusinessUnitsForClients(clientIds);
+        }
+        
+        public DataTransferObjects.ClientMarginGoal[] GetClientMarginGoals(int clientId) {
+            return base.Channel.GetClientMarginGoals(clientId);
+        }
+        
+        public void InsertClientMargin(DataTransferObjects.ClientMarginGoal marginGoal, string userAlias) {
+            base.Channel.InsertClientMargin(marginGoal, userAlias);
+        }
+        
+        public void UpdateClientMarginGoal(DataTransferObjects.ClientMarginGoal marginGoal, string userAlias) {
+            base.Channel.UpdateClientMarginGoal(marginGoal, userAlias);
+        }
+        
+        public void DeleteClientMarginGoal(int id, string userAlias) {
+            base.Channel.DeleteClientMarginGoal(id, userAlias);
+        }
+        
+        public DataTransferObjects.ClientMarginGoalLog[] GetMarginGoalLogForClient(int clientId) {
+            return base.Channel.GetMarginGoalLogForClient(clientId);
         }
     }
 }
