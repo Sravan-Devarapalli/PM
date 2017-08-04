@@ -60,16 +60,12 @@ namespace PraticeManagement.Controls.Reports
                 CellStyles dataDateCellStyle = new CellStyles();
                 dataDateCellStyle.DataFormat = "mm/dd/yy;@";
 
-                CellStyles[] dataCellStylearray = { dataCellStyle,
-                                                    dataCellStyle, 
+                CellStyles[] dataCellStylearray = { 
                                                     dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle, 
                                                     dataCellStyle,
-                                                    dataCellStyle,
-                                                    dataCellStyle,
-                                                    dataCellStyle, 
                                                     dataCellStyle,
                                                     dataDateCellStyle,
                                                     dataCellStyle,
@@ -397,20 +393,14 @@ namespace PraticeManagement.Controls.Reports
         public DataTable PrepareDataTable(List<TimeEntriesGroupByClientAndProject> report)
         {
             DataTable data = new DataTable();
-            List<object> rownew;
             List<object> row;
 
-            data.Columns.Add("Account");
             data.Columns.Add("Account Name");
-            data.Columns.Add("Business Unit");
             data.Columns.Add("Business Unit Name");
             data.Columns.Add("Project");
             data.Columns.Add("Project Name");
             data.Columns.Add("Status");
             data.Columns.Add("Billing");
-            data.Columns.Add("Phase");
-            data.Columns.Add("Work Type");
-            data.Columns.Add("Work Type Name");
             data.Columns.Add("Date");
             data.Columns.Add("Billable Hours");
             data.Columns.Add("Non-Billable Hours");
@@ -425,17 +415,12 @@ namespace PraticeManagement.Controls.Reports
                     foreach (var byWorkType in byDateList.DayTotalHoursList)
                     {
                         row = new List<object>();
-                        row.Add(timeEntriesGroupByClientAndProject.Client.Code);
                         row.Add(timeEntriesGroupByClientAndProject.Client.HtmlEncodedName);
-                        row.Add(timeEntriesGroupByClientAndProject.Project.Group.Code);
                         row.Add(timeEntriesGroupByClientAndProject.Project.Group.HtmlEncodedName);
                         row.Add(timeEntriesGroupByClientAndProject.Project.ProjectNumber);
                         row.Add(timeEntriesGroupByClientAndProject.Project.HtmlEncodedName);
                         row.Add(timeEntriesGroupByClientAndProject.Project.Status.Name);
                         row.Add(timeEntriesGroupByClientAndProject.BillableType);
-                        row.Add("01");
-                        row.Add(byWorkType.TimeType.Code);
-                        row.Add(byWorkType.TimeType.Name);
                         row.Add(byDateList.Date);
                         row.Add(byWorkType.BillableHours);
                         row.Add(byWorkType.NonBillableHours);
@@ -446,11 +431,6 @@ namespace PraticeManagement.Controls.Reports
                 }
             }
             return data;
-        }
-
-        protected void btnExportToPDF_OnClick(object sender, EventArgs e)
-        {
-
         }
 
         protected void btnGroupBy_OnClick(object sender, EventArgs e)
