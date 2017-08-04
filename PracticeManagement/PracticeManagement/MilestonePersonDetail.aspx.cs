@@ -28,7 +28,7 @@ namespace PraticeManagement
         private const string MILESTONE_PERSON_ID_ARGUMENT = "milestonePersonId";
         private const int AMOUNT_COLUMN_INDEX = 4;
         private const string MILESTONE_PERSON_KEY = "MilestonePerson";
-       
+
         private const string BUTTON_INSERT_ID = "btnInsert";
         private const string DuplPersonName = "The specified person is already assigned on this milestone.";
         private const string lblTargetMargin = "lblTargetMargin";
@@ -129,9 +129,9 @@ namespace PraticeManagement
                 {
                     ViewState[MILESTONE_PERSON_KEY] =
                         new MilestonePerson
-                            {
-                                Entries = new List<MilestonePersonEntry>()
-                            };
+                        {
+                            Entries = new List<MilestonePersonEntry>()
+                        };
                 }
 
                 return ViewState[MILESTONE_PERSON_KEY] as MilestonePerson;
@@ -180,6 +180,14 @@ namespace PraticeManagement
                 }
 
                 return null;
+            }
+        }
+
+        private bool EnableEdit
+        {
+            get
+            {
+                return Request.QueryString["EnableEdit"] == "True";
             }
         }
 
@@ -268,7 +276,7 @@ namespace PraticeManagement
             }
         }
 
-        public bool IsPersonInRange(Person person,MilestonePersonEntry entry)
+        public bool IsPersonInRange(Person person, MilestonePersonEntry entry)
         {
             return person.EmploymentHistory.Any(empHistory => empHistory.HireDate <= entry.StartDate && (!empHistory.TerminationDate.HasValue || empHistory.TerminationDate.Value >= entry.EndDate.Value));
         }
@@ -303,7 +311,7 @@ namespace PraticeManagement
 
                 CustomValidator custPerson = sender as CustomValidator;
                 GridViewRow gvRow = custPerson.NamingContainer as GridViewRow;
-                
+
                 var personId = hdnPersonId.Value;
 
                 DateTime startDate = dpPersonStart.DateValue;
@@ -405,6 +413,7 @@ namespace PraticeManagement
                 ;
             btnDelete.Visible = btnSave.Visible && SelectedMilestonePersonId.HasValue;
 
+            btnDelete.Visible = btnSave.Visible = EnableEdit;
             if (gvMilestonePersonEntries.FooterRow != null && gvMilestonePersonEntries.FooterRow.Cells[0].Visible)
             {
                 var btnInsert =
@@ -488,6 +497,7 @@ namespace PraticeManagement
                 else
                 {
                     var ddlRole = e.Row.FindControl("ddlRole") as DropDownList;
+
                     if (ddlRole != null)
                     {
                         DataHelper.FillPersonRoleList(ddlRole, string.Empty);
@@ -514,12 +524,22 @@ namespace PraticeManagement
             }
             if (e.Row.RowType == DataControlRowType.Footer)
             {
+                var btnInsert = e.Row.FindControl("btnInsert") as LinkButton;
+
+                btnInsert.Visible = EnableEdit;
                 for (int i = 0; i < e.Row.Cells.Count - 1; i++)
                 {
                     e.Row.Cells[i].Visible = false;
                 }
                 e.Row.Cells[e.Row.Cells.Count - 1].ColumnSpan = e.Row.Cells.Count;
                 e.Row.Cells[e.Row.Cells.Count - 1].HorizontalAlign = HorizontalAlign.Right;
+            }
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                var btnEdit = e.Row.FindControl("btnEdit") as LinkButton;
+                var btnDelete = e.Row.FindControl("btnDelete") as LinkButton;
+
+                btnEdit.Visible = btnDelete.Visible = EnableEdit;
             }
         }
 
@@ -540,13 +560,13 @@ namespace PraticeManagement
             lblResultMessage.ClearMessage();
         }
 
-        private bool CheckFeedbackExists(int milestonePersonId,DateTime? startDate,DateTime? endDate)
+        private bool CheckFeedbackExists(int milestonePersonId, DateTime? startDate, DateTime? endDate)
         {
             using (var serviceClient = new ProjectServiceClient())
             {
                 try
                 {
-                    return serviceClient.CheckIfFeedbackExists(milestonePersonId, null,startDate,endDate);
+                    return serviceClient.CheckIfFeedbackExists(milestonePersonId, null, startDate, endDate);
                 }
                 catch (CommunicationException)
                 {
@@ -567,7 +587,7 @@ namespace PraticeManagement
                 lblResultMessage.ShowErrorMessage(milestoneHasTimeEntries);
                 return;
             }
-            else if (CheckFeedbackExists(entry.MilestonePersonId,entry.StartDate,entry.EndDate))
+            else if (CheckFeedbackExists(entry.MilestonePersonId, entry.StartDate, entry.EndDate))
             {
                 lblResultMessage.ShowErrorMessage(milestoneHasFeedbackEntries);
                 return;
@@ -753,19 +773,19 @@ namespace PraticeManagement
 
             if (!string.IsNullOrEmpty(hdnPersonId.Value))
                 entry.ThisPerson = new Person
-                                       {
-                                           Id = int.Parse(hdnPersonId.Value)
-                                       };
+                {
+                    Id = int.Parse(hdnPersonId.Value)
+                };
 
             // Role
             if (!string.IsNullOrEmpty(ddlRole.SelectedValue))
             {
                 entry.Role =
                     new PersonRole
-                        {
-                            Id = int.Parse(ddlRole.SelectedValue),
-                            Name = ddlRole.SelectedItem.Text
-                        };
+                    {
+                        Id = int.Parse(ddlRole.SelectedValue),
+                        Name = ddlRole.SelectedItem.Text
+                    };
             }
             else
                 entry.Role = null;
