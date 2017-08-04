@@ -21,7 +21,6 @@
                 var btn = document.getElementById('<%= btnSearchAll.ClientID %>');
                 btn.click();
             }
-
         }
 
         function mpeQuicklink_OnCancelScript() {
@@ -58,6 +57,50 @@
             var ddlSearchType = document.getElementById('<%= ddlSearchType.ClientID %>');
             ddlSearchType_onchange(ddlSearchType);
             changeAlternateitemsForCBL('<%=cblQuickLinks.ClientID %>');
+
+            loadOpenTasks();
+        }
+
+        function loadOpenTasks() {
+            if ($('input[type=hidden][id$=_hdnOpenTasks]').val() == '') {
+                $.ajax({
+                    url: window.location.href + '/GetOpenTasks',
+                    type: "POST",
+                    data: '',
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        if (data && data.d) {
+                            if (data.d.length > 0) {
+                                $(data.d).each(function (index, item) {
+                                    var string = "<tr><td>";
+                                    string += '<a href="ProjectDetail.aspx?id=' + item.split('|')[0] + '&amp;returnTo=%7e%2fReports%2fProjectsList.aspx" target="_blank" tabindex="-1">' + item.split('|')[1] + '</a>';
+                                    string += "</td></tr>";
+                                    $('#openTasks').append(string);
+                                });
+                            }
+                            else {
+                                $('#openTasks').html('No Tasks to display');
+                            }
+                        }
+                        else {
+                            $('table[id$=_tblOpenTasks]').hide();
+                        }
+                    },
+                    error: function (data){
+                        $('#openTasks').html('An error occured');
+                    },
+                    complete: function () {
+                        $('input[type=hidden][id$=_hdnOpenTasks]').val(encodeURI($('table[id$=_tblOpenTasks]').html()));
+                        $('.loadingProgressClientSideCall').hide();
+                    }
+                });
+
+            }
+            else {
+                $('table[id$=_tblOpenTasks]').html(decodeURI($('input[type=hidden][id$=_hdnOpenTasks]').val()));
+                $('.loadingProgressClientSideCall').hide();
+            }
         }
 
         Sys.WebForms.PageRequestManager.getInstance().add_endRequest(endRequestHandle);
@@ -135,15 +178,15 @@
         }
 
 
-            
+
     </script>
+    <asp:HiddenField ID="hdnOpenTasks" runat="server" Value="" />
     <asp:UpdatePanel ID="upnlDashBoard" runat="server">
         <ContentTemplate>
             <table class="CompPerfTable DashboardPageHeaderTable">
                 <tr>
                     <td class="FirstTd">
-                        <h1>
-                            Practice Management Announcements</h1>
+                        <h1>Practice Management Announcements</h1>
                         <table class="WholeWidth">
                             <tr>
                                 <td align="right" class="SecondTd">
@@ -154,8 +197,7 @@
                         </table>
                         <table class="WholeWidth">
                             <tr>
-                                <td class="ThirdTd">
-                                </td>
+                                <td class="ThirdTd"></td>
                                 <td class="FourthTd">
                                     <asp:Panel ID="pnlHtmlAnnounceMent" CssClass="ApplyStyleForDashBoardLists FirstPanel"
                                         runat="server">
@@ -188,8 +230,7 @@
                                     <asp:Panel ID="pnlDashBoard" class="ThirdPanel" runat="server">
                                         <table class="WholeWidth">
                                             <tr>
-                                                <td align="center">
-                                                    Go to
+                                                <td align="center">Go to
                                                     <asp:DropDownList ID="ddlDashBoardType" AutoPostBack="true" OnSelectedIndexChanged="ddlDashBoardType_OnSelectedIndexChanged"
                                                         runat="server">
                                                     </asp:DropDownList>
@@ -199,8 +240,7 @@
                                         </table>
                                     </asp:Panel>
                                     <asp:Panel ID="pnlSearchSection" class="Padding5" runat="server">
-                                        <h1 class="WholeWidth textCenter">
-                                            Search</h1>
+                                        <h1 class="WholeWidth textCenter">Search</h1>
                                         <table class="CompPerfTable WholeWidth">
                                             <tr>
                                                 <td align="right" class="PaddingTop5">
@@ -235,15 +275,13 @@
                                 </td>
                             </tr>
                         </table>
-                        <table class="WholeWidth Border2px">
+                        <table class="WholeWidth Border2px xScrollAuto" style="max-height: 10px">
                             <tr>
                                 <td class="WholeWidth">
-                                    <h1 class="textCenter WholeWidth">
-                                        Quick Links</h1>
+                                    <h1 class="textCenter WholeWidth">Quick Links</h1>
                                     <table class="WholeWidth">
                                         <tr>
-                                            <td class="Width5Percent PaddingTop5">
-                                            </td>
+                                            <td class="Width5Percent PaddingTop5"></td>
                                             <td class="Width90Percent PaddingTop5">
                                                 <asp:Panel ID="pnlQuickLinks" CssClass="WholeWidth bgColorWhite" runat="server">
                                                     <table class="WholeWidth border1Px">
@@ -292,8 +330,29 @@
                                                     </tr>
                                                 </table>
                                             </td>
-                                            <td class="Width5Percent PaddingTop5">
+                                            <td class="Width5Percent PaddingTop5"></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                        <table id="tblOpenTasks" runat="server" class="WholeWidth Border2px  xScrollAuto" style="max-height: 10px">
+                            <tr>
+                                <td class="WholeWidth">
+                                    <h1 class="textCenter WholeWidth">Open Tasks</h1>
+                                    <table class="WholeWidth">
+                                        <tr>
+                                            <td class="Width5Percent PaddingTop5"></td>
+                                            <td class="Width90Percent PaddingTop5">
+                                                <asp:Panel ID="Panel1" CssClass="bgColorWhite border1Px openTasksPanel" runat="server">
+                                                    <span class="loadingProgressClientSideCall">
+                                                        <img alt="loading..." src="Images/loading.gif" />
+                                                    </span>
+                                                    <table id="openTasks" class="repQuickLinks openTasks">                                                                                                      
+                                                    </table>
+                                                </asp:Panel>
                                             </td>
+                                            <td class="Width5Percent PaddingTop5"></td>
                                         </tr>
                                     </table>
                                 </td>
@@ -323,7 +382,7 @@
                                 </asp:CheckBoxList>
                             </div>
                             <div class="cblQuickLinksClearButtonDiv">
-                                <input type="button" value="Clear All" onclick="javascript:ClearQuickLinks();" />
+                                <input type="button" value="Clear All" onclick="javascript: ClearQuickLinks();" />
                             </div>
                             <br />
                             <table class="Width356Px">
@@ -354,6 +413,7 @@
 <asp:Content ID="cntFooter" runat="server" ContentPlaceHolderID="footer">
     <div class="version">
         Version.
-        <asp:Label ID="lblCurrentVersion" runat="server"></asp:Label></div>
+        <asp:Label ID="lblCurrentVersion" runat="server"></asp:Label>
+    </div>
 </asp:Content>
 
