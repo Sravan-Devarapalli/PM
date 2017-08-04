@@ -72,13 +72,17 @@
             <HeaderStyle CssClass="BackImageMilestoneDetail" />
             <HeaderTemplate>
                 <div class="ie-bg no-wrap Height30PxImp" style="white-space: normal">
-                    Person</div>
+                    Person
+                </div>
             </HeaderTemplate>
             <ItemStyle CssClass="Width14Percent textLeft WS-Normal" />
             <ItemTemplate>
                 <asp:HyperLink ID="lnkPersonName" runat="server" NavigateUrl='<%# GetMpeRedirectUrl((Eval("MilestonePersonId"))) %>'
                     PersonId='<%# Eval("ThisPerson.Id") %>' onclick="return checkDirtyWithRedirect(this.href);"
                     CssClass="Width98Percent" Text='<%# HttpUtility.HtmlEncode(string.Format("{0}, {1}", Eval("ThisPerson.LastName"), Eval("ThisPerson.FirstName"))) %>' />
+
+                <asp:Image ID="imgNewResource" runat="server" AlternateText="New Resource to the budget" ImageUrl="~/Images/resource_add_icon.png" ToolTip="New to Budget" CssClass="Width15Px" Visible="false" />
+                <asp:Image ID="imgUpdateResource" runat="server" AlternateText="New Resource to the budget" ImageUrl="~/Images/alert_Icon.png" Visible="false" />
                 <table class="WholeWidth" id="tblPersonName" runat="server" visible="false">
                     <tr>
                         <td class="Width85Percent">
@@ -110,7 +114,8 @@
             <HeaderStyle CssClass="BackImageMilestoneDetail" />
             <HeaderTemplate>
                 <div class="ie-bg no-wrap Height30PxImp" style="white-space: normal">
-                    Role</div>
+                    Role
+                </div>
             </HeaderTemplate>
             <ItemStyle CssClass="Width7Percent" />
             <ItemTemplate>
@@ -123,7 +128,8 @@
             <HeaderStyle CssClass="BackImageMilestoneDetail" />
             <HeaderTemplate>
                 <div class="ie-bg Height30PxImp" style="white-space: normal">
-                    Start Date</div>
+                    Start Date
+                </div>
             </HeaderTemplate>
             <ItemStyle CssClass="Width7Percent" />
             <ItemTemplate>
@@ -131,7 +137,7 @@
                 <table class="WholeWidth" id="tblStartDate" runat="server" visible="false">
                     <tr>
                         <td class="Width85Percent">
-                            <asp:HiddenField ID="hdnStartDateValue" runat="server" Value='<%# Eval("StartDate") %>' />
+                            <asp:HiddenField ID="hdnStartDateValue" runat="server" Value='<%# Eval("StartDate")%>' />
                             <uc2:DatePicker ID="dpPersonStart" runat="server" ValidationGroup="<%# GetValidationGroup(Container) %>"
                                 OnClientChange="dtpStartDate_OnClientChange(this);" TextBoxWidth="95%" AutoPostBack="false"
                                 DateValue='<%# Eval("StartDate") %>' OldValue='<%# Eval("StartDate") %>' />
@@ -172,7 +178,8 @@
             <HeaderStyle CssClass="BackImageMilestoneDetail" />
             <HeaderTemplate>
                 <div class="ie-bg Height30PxImp" style="white-space: normal">
-                    End Date</div>
+                    End Date
+                </div>
             </HeaderTemplate>
             <ItemStyle CssClass="Width7Percent" />
             <ItemTemplate>
@@ -215,7 +222,8 @@
             <HeaderStyle CssClass="BackImageMilestoneDetail" />
             <HeaderTemplate>
                 <div class="ie-bg Height30PxImp" style="white-space: normal">
-                    Hours per day</div>
+                    Hours per day
+                </div>
             </HeaderTemplate>
             <ItemStyle CssClass="Width6Percent" />
             <ItemTemplate>
@@ -249,7 +257,8 @@
             <HeaderStyle CssClass="BackImageMilestoneDetail" />
             <HeaderTemplate>
                 <div class="ie-bg Height30PxImp" style="white-space: normal">
-                    Hourly Rate</div>
+                    Hourly Rate
+                </div>
             </HeaderTemplate>
             <ItemStyle CssClass="Width6Percent" />
             <ItemTemplate>
@@ -281,7 +290,64 @@
             <HeaderStyle CssClass="BackImageMilestoneDetail" />
             <HeaderTemplate>
                 <div class="ie-bg Height30PxImp" style="white-space: normal">
-                    Margin %</div>
+                    Discount<br />
+                    Premium
+                </div>
+            </HeaderTemplate>
+            <ItemStyle CssClass="Width5PercentImp" />
+            <ItemTemplate>
+
+                <asp:Label ID="lblDiscount" runat="server"></asp:Label>
+                <table class="WholeWidth" id="tblDiscount" runat="server" visible="false">
+                    <tr>
+                        <td class="Width85Percent">
+                            <asp:Label ID="lblDoller" runat="server" Text="$" Visible="false" />
+                            <asp:TextBox ID="txtDiscount" runat="server" CssClass="Width80Percent" Text='<%# Eval("Discount") != null ? Eval("Discount") : "" %>'
+                                AutoPostBack="true" OnTextChanged="txtDiscount_TextChanged"></asp:TextBox>
+                            <asp:Label ID="lblPercentage" runat="server" Text="%" Visible="false" />
+                        </td>
+                        <td class="Width15Percent">
+                            <asp:CompareValidator ID="cmpDiscount" runat="server" ControlToValidate="txtDiscount"
+                                Display="Dynamic" EnableClientScript="false" ErrorMessage="A number with 2 decimal digits is allowed for the Discount."
+                                Operator="DataTypeCheck" SetFocusOnError="true" Text="*" ToolTip="A number with 2 decimal digits is allowed for the Discount."
+                                Type="Currency" ValidationGroup="<%# GetValidationGroup(Container) %>"></asp:CompareValidator>
+
+                        </td>
+                    </tr>
+                </table>
+            </ItemTemplate>
+        </asp:TemplateField>
+
+        <asp:TemplateField>
+            <HeaderStyle CssClass="BackImageMilestoneDetail" />
+            <HeaderTemplate>
+                <div class="ie-bg Height30PxImp" style="white-space: normal">
+                    D/P<br />
+                    Locked
+                </div>
+            </HeaderTemplate>
+            <ItemStyle CssClass="Width5PercentImp" />
+            <ItemTemplate>
+
+                <asp:Label ID="lblDiscountLock" runat="server" Text='<%# (bool)Eval("DiscountLocked") ? "Yes" : "No" %>'></asp:Label>
+                <asp:CheckBox ID="chbDiscountLock" runat="server" Visible="false" Checked='<%# Eval("DiscountLocked") %>'
+                    PreviouslyChecked='<%# Eval("DiscountLocked") %>' />
+
+                <asp:CustomValidator ID="cvDiscountLock" runat="server"
+                    ErrorMessage="At least one user must remained unlocked for the equation to balance between individual (locked) discount/premium and top-line Revenue/Discount"
+                    ToolTip="At least one user must remained unlocked for the equation to balance between individual (locked) discount/premium and top-line Revenue/Discount"
+                    Text="*" EnableClientScript="false" SetFocusOnError="true" Display="Dynamic"
+                    ValidateEmptyText="false" ValidationGroup="<%# GetValidationGroup(Container) %>"
+                    OnServerValidate="cvDiscountLock_ServerValidate"></asp:CustomValidator>
+            </ItemTemplate>
+        </asp:TemplateField>
+
+        <asp:TemplateField>
+            <HeaderStyle CssClass="BackImageMilestoneDetail" />
+            <HeaderTemplate>
+                <div class="ie-bg Height30PxImp" style="white-space: normal">
+                    Margin %
+                </div>
             </HeaderTemplate>
             <ItemStyle CssClass="Width6Percent textRight" />
             <ItemTemplate>
@@ -293,7 +359,8 @@
             <HeaderStyle CssClass="BackImageMilestoneDetail" />
             <HeaderTemplate>
                 <div class="ie-bg Height30PxImp" style="white-space: normal">
-                    Total Hours</div>
+                    Total Hours
+                </div>
             </HeaderTemplate>
             <ItemStyle CssClass="Width6Percent" />
             <ItemTemplate>
@@ -357,9 +424,10 @@
             <HeaderStyle CssClass="BackImageMilestoneDetail" />
             <HeaderTemplate>
                 <div class="ie-bg Height30PxImp" style="white-space: normal">
-                    Badge Start</div>
+                    Badge Start
+                </div>
             </HeaderTemplate>
-            <ItemStyle CssClass="Width7Percent" />
+            <ItemStyle CssClass="Width6PercentImp" />
             <ItemTemplate>
                 <asp:Label ID="lblBadgeStart" runat="server" Text='<%# Eval("BadgeStartDate") != null ? ((DateTime?)Eval("BadgeStartDate")).Value.ToString("MM/dd/yyyy") : string.Empty %>'></asp:Label>
                 <table class="WholeWidth" id="tblBadgeStart" runat="server" visible="false">
@@ -405,9 +473,10 @@
             <HeaderStyle CssClass="BackImageMilestoneDetail" />
             <HeaderTemplate>
                 <div class="ie-bg Height30PxImp" style="white-space: normal">
-                    Badge End</div>
+                    Badge End
+                </div>
             </HeaderTemplate>
-            <ItemStyle CssClass="Width7Percent" />
+            <ItemStyle CssClass="Width6PercentImp" />
             <ItemTemplate>
                 <asp:Label ID="lblBadgeEnd" runat="server" Text='<%# Eval("BadgeEndDate") != null ? ((DateTime?)Eval("BadgeEndDate")).Value.ToString("MM/dd/yyyy") : string.Empty %>'></asp:Label>
                 <table class="WholeWidth" id="tblBadgeEnd" runat="server" visible="false">
@@ -470,7 +539,8 @@
             <HeaderStyle CssClass="BackImageMilestoneDetail" />
             <HeaderTemplate>
                 <div class="ie-bg Height30PxImp" style="white-space: normal">
-                    Consultant 18mos End</div>
+                    Consultant 18mos End
+                </div>
             </HeaderTemplate>
             <ItemStyle CssClass="Width5Percent" />
             <ItemTemplate>
@@ -543,12 +613,10 @@
     TargetControlID="hdMpePopupDeleteMileStonePersons" CancelControlID="btnCancel"
     BehaviorID="mpeDeleteMileStonePersons" BackgroundCssClass="modalBackground" PopupControlID="pnlDeleteMileStonePersons"
     DropShadow="false" />
-<asp:Panel ID="pnlDeleteMileStonePersons" runat="server" CssClass="popUp" Style="display: none;
-    min-width: 300px !important;">
+<asp:Panel ID="pnlDeleteMileStonePersons" runat="server" CssClass="popUp" Style="display: none; min-width: 300px !important;">
     <table class="WholeWidth">
         <tr class="PopUpHeader">
-            <th>
-                Attention!
+            <th>Attention!
                 <asp:Button ID="btnClose" runat="server" CssClass="mini-report-closeNew" ToolTip="Cancel Changes"
                     OnClientClick="return btnClose_OnClientClick();" Text="X"></asp:Button>
             </th>
@@ -557,15 +625,13 @@
             <td class="Padding10 padBottom15">
                 <table>
                     <tr id="trDeleteOriginalEntry">
-                        <td>
-                            Clicking "Delete" will result in deleting only this entry.<br />
+                        <td>Clicking "Delete" will result in deleting only this entry.<br />
                             <br />
                             Clicking "Delete All" will result in deleting all the extensions for this entry.
                         </td>
                     </tr>
                     <tr id="trDeleteExtendedEntry">
-                        <td class="padLeft30">
-                            Are you sure you want to delete this Entry?
+                        <td class="padLeft30">Are you sure you want to delete this Entry?
                         </td>
                     </tr>
                 </table>
@@ -594,79 +660,105 @@
 <asp:Panel ID="pnlInsertMilestonePerson" runat="server">
     <table class="CompPerfTable MileStoneDetailPageResourcesTab">
         <tr id="thInsertMilestonePerson" runat="server" visible="false">
-            <th class="Width2Percent">
-                <div class="ie-bg">
+            <th class="Width2Percent BackImageMilestoneDetail">
+                <div class="ie-bg Height30PxImp">
                     &nbsp;
                 </div>
             </th>
-            <th class="Width3Percent">
-                <div class="ie-bg">
+            <th class="Width2Percent BackImageMilestoneDetail">
+                <div class="ie-bg Height30PxImp">
                     &nbsp;
                 </div>
             </th>
-            <th class="Width2Percent">
-                <div class="ie-bg">
+            <th class="Width2Percent BackImageMilestoneDetail">
+                <div class="ie-bg Height30PxImp">
                     &nbsp;
                 </div>
             </th>
-            <th class="Width14Percent">
-                <div class="ie-bg no-wrap">
-                    Person</div>
+            <th class="Width14Percent BackImageMilestoneDetail">
+                <div class="ie-bg no-wrap Height30PxImp">
+                    Person
+                </div>
             </th>
-            <th class="Width7Percent">
-                <div class="ie-bg no-wrap">
-                    Role</div>
+            <th class="Width7Percent BackImageMilestoneDetail">
+                <div class="ie-bg no-wrap Height30PxImp">
+                    Role
+                </div>
             </th>
-            <th class="Width7Percent">
-                <div class="ie-bg no-wrap">
-                    Start Date</div>
+            <th class="Width7Percent BackImageMilestoneDetail">
+                <div class="ie-bg no-wrap Height30PxImp">
+                    Start Date
+                </div>
             </th>
-            <th class="Width7Percent">
-                <div class="ie-bg no-wrap">
-                    End Date</div>
+            <th class="Width7Percent BackImageMilestoneDetail">
+                <div class="ie-bg no-wrap Height30PxImp">
+                    End Date
+                </div>
             </th>
-            <th class="Width6Percent">
-                <div class="ie-bg no-wrap">
-                    Hours per day</div>
+            <th class="Width6Percent BackImageMilestoneDetail">
+                <div class="ie-bg no-wrap Height30PxImp">
+                    Hours per day
+                </div>
             </th>
-            <th id="thHourlyRate" runat="server" class="Width6Percent">
-                <div class="ie-bg no-wrap">
-                    Hourly Rate</div>
+            <th id="thHourlyRate" runat="server" class="Width6Percent BackImageMilestoneDetail">
+                <div class="ie-bg no-wrap Height30PxImp">
+                    Hourly Rate
+                </div>
             </th>
-            <th class="Width6Percent">
-                <div class="ie-bg no-wrap">
-                    Margin %</div>
+            <th id="thDiscount" runat="server" class="Width6Percent BackImageMilestoneDetail">
+                <div class="ie-bg no-wrap Height30PxImp">
+                    Discount<br />
+                    Premium
+                </div>
             </th>
-            <th class="Width6Percent">
-                <div class="ie-bg no-wrap">
-                    Total Hours</div>
+            <th id="thDiscountLock" runat="server" class="Width6Percent BackImageMilestoneDetail">
+                <div class="ie-bg no-wrap Height30PxImp">
+                    D/P<br />
+                    Locked
+                </div>
             </th>
-            <th id="thBadgeRequired" runat="server" class="Width4Percent">
-                <div class="ie-bg no-wrap">
-                    MS Badge Required?</div>
+            <th class="Width6Percent BackImageMilestoneDetail">
+                <div class="ie-bg no-wrap Height30PxImp">
+                    Margin %
+                </div>
             </th>
-            <th id="thBadgeStart" runat="server" class="Width7Percent">
-                <div class="ie-bg no-wrap">
-                    Badge Start</div>
+            <th class="Width6Percent BackImageMilestoneDetail">
+                <div class="ie-bg no-wrap Height30PxImp">
+                    Total Hours
+                </div>
             </th>
-            <th id="thBadgeEnd" runat="server" class="Width7Percent">
-                <div class="ie-bg no-wrap">
-                    Badge End</div>
+            <th id="thBadgeRequired" runat="server" class="Width4Percent BackImageMilestoneDetail">
+                <div class="ie-bg no-wrap Height30PxImp">
+                    MS Badge Required?
+                </div>
             </th>
-            <th id="thConsultantEnd" runat="server" class="Width5Percent">
-                <div class="ie-bg no-wrap">
-                    Consultant 18mos End</div>
+            <th id="thBadgeStart" runat="server" class="Width7Percent BackImageMilestoneDetail">
+                <div class="ie-bg no-wrap Height30PxImp">
+                    Badge Start
+                </div>
             </th>
-            <th id="thBadgeException" runat="server" class="Width4Percent">
-                <div class="ie-bg no-wrap">
-                    Badge Exception</div>
+            <th id="thBadgeEnd" runat="server" class="Width7Percent BackImageMilestoneDetail">
+                <div class="ie-bg no-wrap Height30PxImp">
+                    Badge End
+                </div>
             </th>
-            <th id="thApprovedOps" runat="server" class="Width4Percent">
-                <div class="ie-bg no-wrap">
-                    Approved by Ops</div>
+            <th id="thConsultantEnd" runat="server" class="Width5Percent BackImageMilestoneDetail">
+                <div class="ie-bg no-wrap Height30PxImp">
+                    Consultant 18mos End
+                </div>
             </th>
-            <th class="Width3Percent">
-                <div class="ie-bg">
+            <th id="thBadgeException" runat="server" class="Width4Percent BackImageMilestoneDetail">
+                <div class="ie-bg no-wrap Height30PxImp">
+                    Badge Exception
+                </div>
+            </th>
+            <th id="thApprovedOps" runat="server" class="Width4Percent BackImageMilestoneDetail">
+                <div class="ie-bg no-wrap Height30PxImp">
+                    Approved by Ops
+                </div>
+            </th>
+            <th class="Width3Percent BackImageMilestoneDetail">
+                <div class="ie-bg Height30PxImp">
                     &nbsp;
                 </div>
             </th>
@@ -709,8 +801,7 @@
     Style="display: none;">
     <table class="WholeWidth">
         <tr class="PopUpHeader">
-            <th>
-                Attention!
+            <th>Attention!
             </th>
         </tr>
         <tr>
@@ -734,13 +825,11 @@
     Style="display: none;">
     <table class="WholeWidth">
         <tr class="PopUpHeader">
-            <th>
-                Attention!
+            <th>Attention!
             </th>
         </tr>
         <tr>
-            <td class="Padding10 colorRed">
-                Requested badge exception will shorten the person’s 18-month clock. See Operations
+            <td class="Padding10 colorRed">Requested badge exception will shorten the person’s 18-month clock. See Operations
                 and uncheck exception box.
             </td>
         </tr>
