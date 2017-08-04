@@ -10,6 +10,7 @@
       <xsd:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/MilestoneService.svc?xsd=xsd5" namespace="http://schemas.datacontract.org/2004/07/DataTransferObjects.CornerStone" />
       <xsd:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/MilestoneService.svc?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/DataTransferObjects.Skills" />
       <xsd:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/MilestoneService.svc?xsd=xsd7" namespace="http://schemas.datacontract.org/2004/07/DataTransferObjects.TimeEntry" />
+      <xsd:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/MilestoneService.svc?xsd=xsd8" namespace="http://schemas.datacontract.org/2004/07/DataTransferObjects.Reports" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="IMilestoneService_SaveDefaultMilestone_InputMessage">
@@ -204,6 +205,36 @@
   <wsdl:message name="IMilestoneService_GetAllExpenseTypesList_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetAllExpenseTypesListResponse" />
   </wsdl:message>
+  <wsdl:message name="IMilestoneService_GetMonthlyExpensesByExpenseId_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMonthlyExpensesByExpenseId" />
+  </wsdl:message>
+  <wsdl:message name="IMilestoneService_GetMonthlyExpensesByExpenseId_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMonthlyExpensesByExpenseIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMilestoneService_SaveMonthlyExpenses_InputMessage">
+    <wsdl:part name="parameters" element="tns:SaveMonthlyExpenses" />
+  </wsdl:message>
+  <wsdl:message name="IMilestoneService_SaveMonthlyExpenses_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SaveMonthlyExpensesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMilestoneService_SaveMonthlyRevenueForFixedMilestone_InputMessage">
+    <wsdl:part name="parameters" element="tns:SaveMonthlyRevenueForFixedMilestone" />
+  </wsdl:message>
+  <wsdl:message name="IMilestoneService_SaveMonthlyRevenueForFixedMilestone_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SaveMonthlyRevenueForFixedMilestoneResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMilestoneService_GetMonthlyRevenuesForMilestone_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMonthlyRevenuesForMilestone" />
+  </wsdl:message>
+  <wsdl:message name="IMilestoneService_GetMonthlyRevenuesForMilestone_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMonthlyRevenuesForMilestoneResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMilestoneService_GetForecastDataForMilestone_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetForecastDataForMilestone" />
+  </wsdl:message>
+  <wsdl:message name="IMilestoneService_GetForecastDataForMilestone_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetForecastDataForMilestoneResponse" />
+  </wsdl:message>
   <wsdl:portType name="IMilestoneService">
     <wsdl:operation name="SaveDefaultMilestone">
       <wsdl:input wsaw:Action="http://tempuri.org/IMilestoneService/SaveDefaultMilestone" message="tns:IMilestoneService_SaveDefaultMilestone_InputMessage" />
@@ -332,6 +363,26 @@
     <wsdl:operation name="GetAllExpenseTypesList">
       <wsdl:input wsaw:Action="http://tempuri.org/IMilestoneService/GetAllExpenseTypesList" message="tns:IMilestoneService_GetAllExpenseTypesList_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IMilestoneService/GetAllExpenseTypesListResponse" message="tns:IMilestoneService_GetAllExpenseTypesList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMonthlyExpensesByExpenseId">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMilestoneService/GetMonthlyExpensesByExpenseId" message="tns:IMilestoneService_GetMonthlyExpensesByExpenseId_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMilestoneService/GetMonthlyExpensesByExpenseIdResponse" message="tns:IMilestoneService_GetMonthlyExpensesByExpenseId_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SaveMonthlyExpenses">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMilestoneService/SaveMonthlyExpenses" message="tns:IMilestoneService_SaveMonthlyExpenses_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMilestoneService/SaveMonthlyExpensesResponse" message="tns:IMilestoneService_SaveMonthlyExpenses_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SaveMonthlyRevenueForFixedMilestone">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMilestoneService/SaveMonthlyRevenueForFixedMilestone" message="tns:IMilestoneService_SaveMonthlyRevenueForFixedMilestone_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMilestoneService/SaveMonthlyRevenueForFixedMilestoneResponse" message="tns:IMilestoneService_SaveMonthlyRevenueForFixedMilestone_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMonthlyRevenuesForMilestone">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMilestoneService/GetMonthlyRevenuesForMilestone" message="tns:IMilestoneService_GetMonthlyRevenuesForMilestone_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMilestoneService/GetMonthlyRevenuesForMilestoneResponse" message="tns:IMilestoneService_GetMonthlyRevenuesForMilestone_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetForecastDataForMilestone">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMilestoneService/GetForecastDataForMilestone" message="tns:IMilestoneService_GetForecastDataForMilestone_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMilestoneService/GetForecastDataForMilestoneResponse" message="tns:IMilestoneService_GetForecastDataForMilestone_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_IMilestoneService" type="tns:IMilestoneService">
@@ -617,6 +668,51 @@
     </wsdl:operation>
     <wsdl:operation name="GetAllExpenseTypesList">
       <soap:operation soapAction="http://tempuri.org/IMilestoneService/GetAllExpenseTypesList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMonthlyExpensesByExpenseId">
+      <soap:operation soapAction="http://tempuri.org/IMilestoneService/GetMonthlyExpensesByExpenseId" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SaveMonthlyExpenses">
+      <soap:operation soapAction="http://tempuri.org/IMilestoneService/SaveMonthlyExpenses" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SaveMonthlyRevenueForFixedMilestone">
+      <soap:operation soapAction="http://tempuri.org/IMilestoneService/SaveMonthlyRevenueForFixedMilestone" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMonthlyRevenuesForMilestone">
+      <soap:operation soapAction="http://tempuri.org/IMilestoneService/GetMonthlyRevenuesForMilestone" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetForecastDataForMilestone">
+      <soap:operation soapAction="http://tempuri.org/IMilestoneService/GetForecastDataForMilestone" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
