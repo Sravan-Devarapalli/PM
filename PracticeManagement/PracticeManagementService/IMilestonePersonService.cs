@@ -107,7 +107,7 @@ namespace PracticeManagementService
         List<MilestonePerson> GetMilestonePersonsDetailsByMileStoneId(int milestoneId);
 
         [OperationContract]
-        void DeleteMilestonePersonEntry(int milestonePersonEntryId, string userName);
+        void DeleteMilestonePersonEntry(int milestonePersonEntryId, string userName, int? milestoneId);
 
         [OperationContract]
         int UpdateMilestonePersonEntry(MilestonePersonEntry entry, string userName);
