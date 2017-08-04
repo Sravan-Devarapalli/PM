@@ -256,6 +256,7 @@ namespace DataAccess
             int projectedHoursIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectedHours);
             int billableHoursUntilTodayIndex = reader.GetOrdinal(Constants.ColumnNames.BillableHoursUntilToday);
             int projectedHoursUntilTodayIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectedHoursUntilToday);
+            int budgetHoursIndex = reader.GetOrdinal(Constants.ColumnNames.BudgetHours);
 
             while (reader.Read())
             {
@@ -288,7 +289,8 @@ namespace DataAccess
                     BillableType = reader.GetString(billingTypeIndex),
                     ProjectedHours = !reader.IsDBNull(projectedHoursIndex) ? Convert.ToDouble(reader.GetDecimal(projectedHoursIndex)) : 0d,
                     ProjectedHoursUntilToday = !reader.IsDBNull(projectedHoursUntilTodayIndex) ? Convert.ToDouble(reader.GetDecimal(projectedHoursUntilTodayIndex)) : 0d,
-                    BillableHoursUntilToday = reader.GetDouble(billableHoursUntilTodayIndex)
+                    BillableHoursUntilToday = reader.GetDouble(billableHoursUntilTodayIndex),
+                    BudgetHours = !reader.IsDBNull(budgetHoursIndex) ? Convert.ToDouble(reader.GetDecimal(budgetHoursIndex)) : 0d,
                 };
 
                 result.Add(ptd);
@@ -543,6 +545,16 @@ namespace DataAccess
             int forecastedHoursIndex;
             int estimatedBillingsIndex;
             int isBusinessDevelopmentIndex;
+            int budgetHoursIndex;
+
+            try
+            {
+                budgetHoursIndex = reader.GetOrdinal(Constants.ColumnNames.BudgetHours);
+            }
+            catch
+            {
+                budgetHoursIndex = -1;
+            }
 
             try
             {
@@ -635,6 +647,10 @@ namespace DataAccess
                 {
                     plgh.EstimatedBillings = reader.GetDouble(estimatedBillingsIndex);
                 }
+                if (budgetHoursIndex > -1)
+                {
+                    plgh.BudgetHours = Convert.ToDouble(reader.GetDecimal(budgetHoursIndex));
+                }
 
                 result.Add(plgh);
             }
@@ -724,6 +740,15 @@ namespace DataAccess
             int projectsCountIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectsCount);
             int projectedHoursIndex = reader.GetOrdinal(Constants.ColumnNames.ForecastedHours);
             int forecastedHoursUntilTodayIndex = reader.GetOrdinal(Constants.ColumnNames.ForecastedHoursUntilToday);
+            int budgetHoursIndex;
+            try
+            {
+                budgetHoursIndex = reader.GetOrdinal(Constants.ColumnNames.BudgetHours);
+            }
+            catch
+            {
+                budgetHoursIndex = -1;
+            }
 
 
 
@@ -758,6 +783,11 @@ namespace DataAccess
                     ProjectsCount = !reader.IsDBNull(projectsCountIndex) ? reader.GetInt32(projectsCountIndex) : 0,
                     BusinessUnit = pg
                 };
+
+                if (budgetHoursIndex > -1)
+                {
+                    buLGH.BudgetHours = reader.GetDouble(budgetHoursIndex);
+                }
 
                 result.Add(buLGH);
             }
@@ -1085,6 +1115,7 @@ namespace DataAccess
                 command.Parameters.AddWithValue(Constants.ParameterNames.MilestoneId, milestoneId.HasValue ? (object)milestoneId : DBNull.Value);
                 command.Parameters.AddWithValue(Constants.ParameterNames.StartDateParam, startDate.HasValue ? (object)startDate : DBNull.Value);
                 command.Parameters.AddWithValue(Constants.ParameterNames.EndDateParam, endDate.HasValue ? (object)endDate : DBNull.Value);
+                //command.Parameters.AddWithValue(Constants.ParameterNames.ActualsEndDate, actualsEndDate.HasValue ? (object)actualsEndDate : DBNull.Value);
                 if (personRoleNames != null)
                 {
                     command.Parameters.AddWithValue(Constants.ParameterNames.PersonRoleNamesParam, personRoleNames);
@@ -1119,6 +1150,8 @@ namespace DataAccess
             int EmployeeNumberIndex = reader.GetOrdinal(Constants.ColumnNames.EmployeeNumber);
             int billRateIndex = reader.GetOrdinal(Constants.ColumnNames.BillRate);
             int estimatedBillingsIndex = reader.GetOrdinal(Constants.ColumnNames.EstimatedBillings);
+            int budgetHoursIndex = reader.GetOrdinal(Constants.ColumnNames.BudgetHours);
+            int remainingProjectedHoursIndex = reader.GetOrdinal(Constants.ColumnNames.RemainingProjectedHours);
 
             while (reader.Read())
             {
@@ -1140,9 +1173,10 @@ namespace DataAccess
                 PLGH.BillingType = reader.GetString(billingTypeIndex);
                 PLGH.Person = person;
                 PLGH.ForecastedHours = Convert.ToDouble(reader[forecastedHoursIndex]);
-                PLGH.BillRate = PLGH.BillingType == "Fixed" ? -1 : Convert.ToDouble(reader[billRateIndex]);
-                PLGH.EstimatedBillings = PLGH.BillingType == "Fixed" ? -1 : Convert.ToDouble(reader[estimatedBillingsIndex]);
-
+                PLGH.BillRate = reader.IsDBNull(billRateIndex) ? 0 : Convert.ToDouble(reader[billRateIndex]);
+                PLGH.EstimatedBillings = reader.IsDBNull(estimatedBillingsIndex) ? 0 : Convert.ToDouble(reader[estimatedBillingsIndex]);
+                PLGH.RemainingProjectedHours = Convert.ToDouble(reader[remainingProjectedHoursIndex]);
+                PLGH.BudgetHours = !reader.IsDBNull(budgetHoursIndex) ? Convert.ToDouble(reader[budgetHoursIndex]) : 0d;
                 result.Add(PLGH);
             }
         }
@@ -1158,6 +1192,7 @@ namespace DataAccess
                 command.Parameters.AddWithValue(Constants.ParameterNames.StartDateParam, startDate.HasValue ? (object)startDate : DBNull.Value);
                 command.Parameters.AddWithValue(Constants.ParameterNames.EndDateParam, endDate.HasValue ? (object)endDate : DBNull.Value);
                 command.Parameters.AddWithValue(Constants.ParameterNames.IsExport, isExport);
+                //command.Parameters.AddWithValue(Constants.ParameterNames.ActualsEndDate, actualsEndDate.HasValue ? (object)actualsEndDate : DBNull.Value);
                 if (personRoleNames != null)
                 {
                     command.Parameters.AddWithValue(Constants.ParameterNames.PersonRoleNamesParam, personRoleNames);
@@ -1255,9 +1290,10 @@ namespace DataAccess
                 if (result.Any(r => r.Person.Id == personId))
                 {
                     PLGH = result.First(r => r.Person.Id == personId);
+
                     if (dt != null)
                         PLGH.AddDayTotalHours(dt);
-                    PLGH.EstimatedBillings += ((!reader.IsDBNull(billableHoursIndex) ? reader.GetDouble(billableHoursIndex) : 0d) * Convert.ToDouble(reader[billRateIndex]));
+                    PLGH.EstimatedBillings += ((reader.GetString(billingTypeIndex) == "Fixed" && !reader.IsDBNull(forecastedHoursDailyIndex) ? Convert.ToDouble(reader.GetDecimal(forecastedHoursDailyIndex)) : !reader.IsDBNull(billableHoursIndex) ? reader.GetDouble(billableHoursIndex) : 0d) * Convert.ToDouble(reader[billRateIndex]));
                 }
                 else
                 {
@@ -1274,7 +1310,7 @@ namespace DataAccess
                     PLGH.Person = person;
                     PLGH.TimeEntrySectionId = !reader.IsDBNull(timeEntrySectionIdIndex) ? reader.GetInt32(timeEntrySectionIdIndex) : 0;
                     PLGH.ForecastedHours = Convert.ToDouble(reader[forecastedHoursIndex]);
-                    PLGH.EstimatedBillings = ((!reader.IsDBNull(billableHoursIndex) ? reader.GetDouble(billableHoursIndex) : 0d) * Convert.ToDouble(reader[billRateIndex]));
+                    PLGH.EstimatedBillings += ((reader.GetString(billingTypeIndex) == "Fixed" && !reader.IsDBNull(forecastedHoursDailyIndex) ? Convert.ToDouble(reader.GetDecimal(forecastedHoursDailyIndex)) : !reader.IsDBNull(billableHoursIndex) ? reader.GetDouble(billableHoursIndex) : 0d) * Convert.ToDouble(reader[billRateIndex]));
                     if (dt != null)
                     {
                         PLGH.DayTotalHours = new List<TimeEntriesGroupByDate>()
@@ -1298,6 +1334,7 @@ namespace DataAccess
                 command.Parameters.AddWithValue(Constants.ParameterNames.StartDateParam, startDate.HasValue ? (object)startDate : DBNull.Value);
                 command.Parameters.AddWithValue(Constants.ParameterNames.EndDateParam, endDate.HasValue ? (object)endDate : DBNull.Value);
                 command.Parameters.AddWithValue(Constants.ParameterNames.CategoryNamesParam, categoryNames ?? (Object)DBNull.Value);
+                //command.Parameters.AddWithValue(Constants.ParameterNames.ActualsEndDate, actualsEndDate.HasValue ? (object)actualsEndDate : DBNull.Value);
 
                 command.CommandTimeout = connection.ConnectionTimeout;
 
@@ -1355,6 +1392,34 @@ namespace DataAccess
             };
 
             return project;
+        }
+
+        public static List<Project> GetActiveAndAtRiskProjectsByClient(int clientId, string userLogin)
+        {
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            using (var command = new SqlCommand(Constants.ProcedureNames.Project.GetActiveAndAtRiskProjectsByClient, connection))
+            {
+                command.Parameters.AddWithValue(Constants.ParameterNames.ClientId, clientId);
+                command.Parameters.AddWithValue(Constants.ParameterNames.UserLoginParam, userLogin);
+                command.CommandTimeout = connection.ConnectionTimeout;
+
+                command.CommandType = CommandType.StoredProcedure;
+                connection.Open();
+
+                var result = new List<Project>();
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (!reader.HasRows) return result;
+                    while (reader.Read())
+                    {
+                        var proj = ReadProject(reader);
+                        result.Add(proj);
+                    }
+                }
+
+                return result;
+            }
         }
 
         public static List<Milestone> GetMilestonesForProject(string projectNumber)
@@ -2853,7 +2918,7 @@ namespace DataAccess
 
                 connection.Open();
 
-                projects.ForEach(delegate(Project project)
+                projects.ForEach(delegate (Project project)
                 {
                     if (project.ProjectedFinancialsByRange == null)
                         project.ProjectedFinancialsByRange =
@@ -5243,33 +5308,33 @@ namespace DataAccess
                 while (reader.Read())
                 {
                     var title = new Title()
-                            {
-                                TitleId = !reader.IsDBNull(titleIdIndex) ? reader.GetInt32(titleIdIndex) : -1,
-                                TitleName = !reader.IsDBNull(titleIndex) ? reader.GetString(titleIndex) : string.Empty
-                            };
+                    {
+                        TitleId = !reader.IsDBNull(titleIdIndex) ? reader.GetInt32(titleIdIndex) : -1,
+                        TitleName = !reader.IsDBNull(titleIndex) ? reader.GetString(titleIndex) : string.Empty
+                    };
                     var person = new Person()
+                    {
+                        Id = reader.GetInt32(personIdIndex),
+                        LastName = reader.GetString(lastNameIndex),
+                        FirstName = reader.GetString(firstNameIndex),
+                        CurrentPay = new Pay()
                         {
-                            Id = reader.GetInt32(personIdIndex),
-                            LastName = reader.GetString(lastNameIndex),
-                            FirstName = reader.GetString(firstNameIndex),
-                            CurrentPay = new Pay()
-                            {
-                                TimescaleName = reader.GetString(timescaleIndex)
-                            },
-                            Title = title,
-                            Badge = new MSBadge()
-                            {
-                                BadgeStartDate = !reader.IsDBNull(badgeStartDateIndex) ? (DateTime?)reader.GetDateTime(badgeStartDateIndex) : null,
-                                BadgeEndDate = !reader.IsDBNull(badgeEndDateIndex) ? (DateTime?)reader.GetDateTime(badgeEndDateIndex) : null,
-                                BlockStartDate = !reader.IsDBNull(blockStartDateIndex) ? (DateTime?)reader.GetDateTime(blockStartDateIndex) : null,
-                                BlockEndDate = !reader.IsDBNull(blockEndDateIndex) ? (DateTime?)reader.GetDateTime(blockEndDateIndex) : null,
-                                PlannedEndDate = !reader.IsDBNull(restartDateIndex) ? (DateTime?)reader.GetDateTime(restartDateIndex) : null,
-                                BadgeDuration = reader.IsDBNull(badgeDurationIndex) ? 0 : reader.GetInt32(badgeDurationIndex),
-                                IsMSManagedService = reader.GetBoolean(manageServiceContractIndex),
-                                BreakStartDate = !reader.IsDBNull(breakStartDateIndex) ? (DateTime?)reader.GetDateTime(breakStartDateIndex) : null,
-                                BreakEndDate = !reader.IsDBNull(breakEndDateIndex) ? (DateTime?)reader.GetDateTime(breakEndDateIndex) : null
-                            }
-                        };
+                            TimescaleName = reader.GetString(timescaleIndex)
+                        },
+                        Title = title,
+                        Badge = new MSBadge()
+                        {
+                            BadgeStartDate = !reader.IsDBNull(badgeStartDateIndex) ? (DateTime?)reader.GetDateTime(badgeStartDateIndex) : null,
+                            BadgeEndDate = !reader.IsDBNull(badgeEndDateIndex) ? (DateTime?)reader.GetDateTime(badgeEndDateIndex) : null,
+                            BlockStartDate = !reader.IsDBNull(blockStartDateIndex) ? (DateTime?)reader.GetDateTime(blockStartDateIndex) : null,
+                            BlockEndDate = !reader.IsDBNull(blockEndDateIndex) ? (DateTime?)reader.GetDateTime(blockEndDateIndex) : null,
+                            PlannedEndDate = !reader.IsDBNull(restartDateIndex) ? (DateTime?)reader.GetDateTime(restartDateIndex) : null,
+                            BadgeDuration = reader.IsDBNull(badgeDurationIndex) ? 0 : reader.GetInt32(badgeDurationIndex),
+                            IsMSManagedService = reader.GetBoolean(manageServiceContractIndex),
+                            BreakStartDate = !reader.IsDBNull(breakStartDateIndex) ? (DateTime?)reader.GetDateTime(breakStartDateIndex) : null,
+                            BreakEndDate = !reader.IsDBNull(breakEndDateIndex) ? (DateTime?)reader.GetDateTime(breakEndDateIndex) : null
+                        }
+                    };
                     var managementMeetingReport = new ManagementMeetingReport()
                     {
                         Person = person,
@@ -5485,9 +5550,50 @@ namespace DataAccess
                     connection.Open();
                     SqlDataReader reader = command.ExecuteReader();
                     ReadProjects(reader, projectList);
+                    GetEACForProjects(projectList);
                 }
+
             }
             return projectList;
+        }
+
+        private static void GetEACForProjects(List<Project> projects)
+        {
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            {
+                using (var command = new SqlCommand(Constants.ProcedureNames.Reports.GetEACRevenueForProjects, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandTimeout = connection.ConnectionTimeout;
+                    command.Parameters.AddWithValue(Constants.ParameterNames.ProjectIdParam, DataTransferObjects.Utils.Generic.IdsListToString(projects));
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    try
+                    {
+                        if (reader.HasRows)
+                        {
+                            int projectIdIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectIdColumn);
+                            int EACRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.EACRevenue);
+                            while (reader.Read())
+                            {
+                                int id = reader.GetInt32(projectIdIndex);
+
+                                var project = projects.Find(_ => _.Id == id);
+                                var indexOfProject = projects.IndexOf(project);
+
+                                if (EACRevenueIndex >= 0)
+                                {
+                                    projects[indexOfProject].ETC = !reader.IsDBNull(EACRevenueIndex) ? (int?)reader.GetInt32(EACRevenueIndex) : null;
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        throw e;
+                    }
+                }
+            }
         }
 
         private static void ReadProjects(SqlDataReader reader, List<Project> resultList)
@@ -5529,6 +5635,13 @@ namespace DataAccess
                 int previousProjectNumberIndex = -1;
                 int previousProjectIdIndex = -1;
                 int outsourceIdIndex = -1;
+                int budgetIndex = -1;
+                try
+                {
+                    budgetIndex = reader.GetOrdinal(Constants.ColumnNames.Budget);
+                }
+                catch { }
+
                 try
                 {
                     outsourceIdIndex = reader.GetOrdinal(Constants.ColumnNames.OutsourceId);
@@ -5543,41 +5656,41 @@ namespace DataAccess
                 while (reader.Read())
                 {
                     var project = new Project
-                      {
-                          Id = reader.GetInt32(projectIdIndex),
-                          Name = reader.GetString(nameIndex),
-                          StartDate = !reader.IsDBNull(startDateIndex) ? (DateTime?)reader.GetDateTime(startDateIndex) : null,
-                          EndDate = !reader.IsDBNull(endDateIndex) ? (DateTime?)reader.GetDateTime(endDateIndex) : null,
-                          ProjectNumber = reader.GetString(projectNumberIndex),
-                          Practice = new Practice() { Id = reader.GetInt32(practiceIdIndex), Name = reader.GetString(practiceNameIndex) },
-                          Capabilities = !reader.IsDBNull(projectCapabilitiesIndex) ? reader.GetString(projectCapabilitiesIndex).Replace(";", ", ").TrimEnd(new char[] { ',', ' ' }) : string.Empty,
-                          Group = new ProjectGroup()
-                          {
-                              Id = !reader.IsDBNull(businessUnitIDIndex) ? reader.GetInt32(businessUnitIDIndex) : -1,
-                              Name = !reader.IsDBNull(businessUnitNameIndex) ? reader.GetString(businessUnitNameIndex) : string.Empty
-                          },
-                          BusinessGroup = new BusinessGroup()
-                          {
-                              Id = !reader.IsDBNull(businessGroupIdIndex) ? reader.GetInt32(businessGroupIdIndex) : -1,
-                              Name = !reader.IsDBNull(businessGroupNameIndex) ? reader.GetString(businessGroupNameIndex) : string.Empty
-                          },
-                          Client = new Client()
-                          {
-                              Id = reader.GetInt32(clientIdIndex),
-                              Name = reader.GetString(clientNameIndex)
-                          },
-                          Status = new ProjectStatus()
-                          {
-                              Id = reader.GetInt32(projectStatusIdIndex),
-                              Name = reader.GetString(projectStatusNameIndex)
-                          },
-                          ProjectManagerId = !reader.IsDBNull(projectManagerIdIndex) ? reader.GetInt32(projectManagerIdIndex) : -1,
-                          ProjectManagerNames = !reader.IsDBNull(projectManagerNameIndex) ? reader.GetString(projectManagerNameIndex) : string.Empty,
-                          ExecutiveInChargeId = !reader.IsDBNull(executiveInChargeIdIndex) ? reader.GetInt32(executiveInChargeIdIndex) : -1,
-                          ExecutiveInChargeName = !reader.IsDBNull(executiveInChargeNameIndex) ? reader.GetString(executiveInChargeNameIndex) : string.Empty,
-                          ProjectCapabilityIds = !reader.IsDBNull(projectCapabilityIdsIndex) ? reader.GetString(projectCapabilityIdsIndex).Replace(";", ", ").TrimEnd(new char[] { ',', ' ' }) : string.Empty,
-                          IsClientTimeEntryRequired = reader.GetBoolean(isClientTimeEntryRequiredIndex)
-                      };
+                    {
+                        Id = reader.GetInt32(projectIdIndex),
+                        Name = reader.GetString(nameIndex),
+                        StartDate = !reader.IsDBNull(startDateIndex) ? (DateTime?)reader.GetDateTime(startDateIndex) : null,
+                        EndDate = !reader.IsDBNull(endDateIndex) ? (DateTime?)reader.GetDateTime(endDateIndex) : null,
+                        ProjectNumber = reader.GetString(projectNumberIndex),
+                        Practice = new Practice() { Id = reader.GetInt32(practiceIdIndex), Name = reader.GetString(practiceNameIndex) },
+                        Capabilities = !reader.IsDBNull(projectCapabilitiesIndex) ? reader.GetString(projectCapabilitiesIndex).Replace(";", ", ").TrimEnd(new char[] { ',', ' ' }) : string.Empty,
+                        Group = new ProjectGroup()
+                        {
+                            Id = !reader.IsDBNull(businessUnitIDIndex) ? reader.GetInt32(businessUnitIDIndex) : -1,
+                            Name = !reader.IsDBNull(businessUnitNameIndex) ? reader.GetString(businessUnitNameIndex) : string.Empty
+                        },
+                        BusinessGroup = new BusinessGroup()
+                        {
+                            Id = !reader.IsDBNull(businessGroupIdIndex) ? reader.GetInt32(businessGroupIdIndex) : -1,
+                            Name = !reader.IsDBNull(businessGroupNameIndex) ? reader.GetString(businessGroupNameIndex) : string.Empty
+                        },
+                        Client = new Client()
+                        {
+                            Id = reader.GetInt32(clientIdIndex),
+                            Name = reader.GetString(clientNameIndex)
+                        },
+                        Status = new ProjectStatus()
+                        {
+                            Id = reader.GetInt32(projectStatusIdIndex),
+                            Name = reader.GetString(projectStatusNameIndex)
+                        },
+                        ProjectManagerId = !reader.IsDBNull(projectManagerIdIndex) ? reader.GetInt32(projectManagerIdIndex) : -1,
+                        ProjectManagerNames = !reader.IsDBNull(projectManagerNameIndex) ? reader.GetString(projectManagerNameIndex) : string.Empty,
+                        ExecutiveInChargeId = !reader.IsDBNull(executiveInChargeIdIndex) ? reader.GetInt32(executiveInChargeIdIndex) : -1,
+                        ExecutiveInChargeName = !reader.IsDBNull(executiveInChargeNameIndex) ? reader.GetString(executiveInChargeNameIndex) : string.Empty,
+                        ProjectCapabilityIds = !reader.IsDBNull(projectCapabilityIdsIndex) ? reader.GetString(projectCapabilityIdsIndex).Replace(";", ", ").TrimEnd(new char[] { ',', ' ' }) : string.Empty,
+                        IsClientTimeEntryRequired = reader.GetBoolean(isClientTimeEntryRequiredIndex)
+                    };
 
                     if (!reader.IsDBNull(divisionNameIndex))
                     {
@@ -5626,7 +5739,10 @@ namespace DataAccess
                     {
                         project.OutsourceId = reader.GetInt32(outsourceIdIndex);
                     }
-
+                    if (budgetIndex >= 0)
+                    {
+                        project.Budget = !reader.IsDBNull(budgetIndex) ? (int?)reader.GetInt32(budgetIndex) : null;
+                    }
                     resultList.Add(project);
                 }
             }
@@ -5637,7 +5753,7 @@ namespace DataAccess
         }
 
 
-        public static List<ExpenseSummary> GetExpenseSummaryGroupedByProject(DateTime startDate, DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool Completed, bool proposed, bool inActive, bool experimental,bool atRisk)
+        public static List<ExpenseSummary> GetExpenseSummaryGroupedByProject(DateTime startDate, DateTime endDate, string clientIds, string divisionIds, string practiceIds, string projectIds, bool active, bool projected, bool Completed, bool proposed, bool inActive, bool experimental, bool atRisk)
         {
             using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
             using (var command = new SqlCommand(Constants.ProcedureNames.Reports.ExpenseSummaryGroupedByProject, connection))
@@ -6047,6 +6163,986 @@ namespace DataAccess
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+
+        public static List<ProjectBudgetResource> GetBurnReportExportDataFortheProject(int projectId, DateTime? startDate, DateTime? endDate, DateTime? actualsEndDate, bool isBudget, bool isProjected, bool isEAC, bool isActual)
+        {
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            using (var command = new SqlCommand(Constants.ProcedureNames.Reports.GetExportDataForBurnReport, connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = connection.ConnectionTimeout;
+                command.Parameters.AddWithValue(Constants.ParameterNames.ProjectId, projectId);
+                command.Parameters.AddWithValue(Constants.ParameterNames.StartDate, startDate == null ? (object)DBNull.Value : startDate);
+                command.Parameters.AddWithValue(Constants.ParameterNames.EndDate, endDate == null ? (object)DBNull.Value : endDate);
+                command.Parameters.AddWithValue(Constants.ParameterNames.ActualsEndDate, actualsEndDate == null ? (object)DBNull.Value : actualsEndDate);
+                command.Parameters.AddWithValue(Constants.ParameterNames.IsBudget,isBudget);
+                command.Parameters.AddWithValue(Constants.ParameterNames.IsActual, isActual);
+                command.Parameters.AddWithValue(Constants.ParameterNames.IsEAC, isEAC);
+                command.Parameters.AddWithValue(Constants.ParameterNames.IsProjected, isProjected);
+
+                var projectResourceFinancials = new List<ProjectBudgetResource>();
+
+                connection.Open();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    ReadResourceProjectedByWeek(reader, projectResourceFinancials);
+                }
+
+                return projectResourceFinancials;
+            }
+        }
+
+        private static void ReadResourceProjectedByWeek(SqlDataReader reader, List<ProjectBudgetResource> projectFinancials)
+        {
+            if (!reader.HasRows) return;
+            int projectIdIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectIdColumn);
+            int PersonIdIndex = reader.GetOrdinal(Constants.ColumnNames.PersonId);
+            int firstNameIndex = reader.GetOrdinal(Constants.ColumnNames.FirstName);
+            int lastNameIndex = reader.GetOrdinal(Constants.ColumnNames.LastName);
+            int billRateIndex = reader.GetOrdinal(Constants.ColumnNames.BillRate);
+            int startDateIndex = reader.GetOrdinal(Constants.ColumnNames.StartDate);
+            int endDateIndex = reader.GetOrdinal(Constants.ColumnNames.EndDate);
+            int roleIdIndex = reader.GetOrdinal(Constants.ColumnNames.PersonRoleId);
+            int roleNameIndex = reader.GetOrdinal(Constants.ColumnNames.PersonRoleName);
+            int ActualHoursIndex = reader.GetOrdinal(Constants.ColumnNames.ActualHours);
+            int ActualMarginIndex = reader.GetOrdinal(Constants.ColumnNames.ActualMargin);
+            int ActualRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.ActualRevenue);
+            int projectedHoursIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectedHours);
+            int projectedRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectedRevenue);
+            int projectedMarginIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectedMargin);
+            int EACHoursIndex = reader.GetOrdinal(Constants.ColumnNames.EACHours);
+            int EACRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.EACRevenue);
+            int EACMarginIndex = reader.GetOrdinal(Constants.ColumnNames.EACMargin);
+            int budgetHoursIndex = reader.GetOrdinal(Constants.ColumnNames.BudgetHours);
+            int budgetMarginIndex = reader.GetOrdinal(Constants.ColumnNames.BudgetMargin);
+            int budgetRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.BudgetRevenue);
+
+            while (reader.Read())
+            {
+                int personId = reader.GetInt32(PersonIdIndex);
+                int? roleId = reader.IsDBNull(roleIdIndex) ? null : (int?)reader.GetInt32(roleIdIndex);
+                decimal? billRate = reader.IsDBNull(billRateIndex) ? null : (decimal?)reader.GetDecimal(billRateIndex);
+                ProjectBudgetResource resource = null;
+                if (projectFinancials.Any(r => r.Person.Id == personId && (r.BillRate == null || billRate == null || r.BillRate == billRate)))
+                {
+                    resource = projectFinancials.FirstOrDefault(r => r.Person.Id == personId && (r.BillRate == null || billRate == null || r.BillRate == billRate));
+                }
+                else
+                {
+                    resource = new ProjectBudgetResource()
+                    {
+                        ProjectId = reader.GetInt32(projectIdIndex),
+                        Person = new Person
+                        {
+                            Id = reader.GetInt32(PersonIdIndex),
+                            FirstName = reader.GetString(firstNameIndex),
+                            LastName = reader.GetString(lastNameIndex)
+                        },
+                        BillRate = billRate
+                    };
+                    projectFinancials.Add(resource);
+                    resource = projectFinancials.FirstOrDefault(r => r.Person.Id == personId && r.BillRate == billRate);
+                }
+
+                if (resource != null)
+                {
+                    if (resource.BillRate == null && billRate != null)
+                    {
+                        resource.BillRate = billRate;
+                    }
+
+                    if (resource.Role == null && roleId != null)
+                    {
+                        resource.Role = new PersonRole
+                        {
+                            Id = roleId.Value,
+                            Name = reader.GetString(roleNameIndex)
+                        };
+                    }
+                    var startDateKey = reader.GetDateTime(startDateIndex);
+                    if (resource.WeeklyFinancials == null)
+                    {
+                        resource.WeeklyFinancials = new Dictionary<DateTime, ComputedFinancials>();
+                    }
+                    var fi = new ComputedFinancials();
+                    if (resource.WeeklyFinancials.Any(_ => _.Key == startDateKey))
+                    {
+                        fi = resource.WeeklyFinancials[startDateKey];
+                    }
+
+                    fi.ActualHours = reader.GetDecimal(ActualHoursIndex);
+                    fi.ActualGrossMargin = reader.GetDecimal(ActualMarginIndex);
+                    fi.ActualRevenue = reader.GetDecimal(ActualRevenueIndex);
+
+                    fi.HoursBilled = reader.GetDecimal(projectedHoursIndex);
+                    fi.GrossMargin = reader.GetDecimal(projectedMarginIndex);
+                    fi.Revenue = reader.GetDecimal(projectedRevenueIndex);
+
+                    fi.EACHours = reader.GetDecimal(EACHoursIndex) ;
+                    fi.EACGrossMargin = reader.GetDecimal(EACMarginIndex);
+                    fi.EACRevenue = reader.GetDecimal(EACRevenueIndex);
+
+                    fi.BudgetRevenue = reader.GetDecimal(budgetRevenueIndex);
+                    fi.BudgetGrossMargin = reader.GetDecimal(budgetMarginIndex);
+                    fi.BudgetHours = reader.GetDecimal(budgetHoursIndex);
+
+                    if (resource.WeeklyFinancials.Any(_ => _.Key == startDateKey))
+                    {
+                        resource.WeeklyFinancials.Remove(startDateKey);
+                    }
+                    resource.WeeklyFinancials.Add(startDateKey, fi);
+                }
+            }
+        }
+
+        public static ProjectBurnFinancials GetBurnReportFortheProject(int projectId, DateTime? startDate, DateTime? endDate, int step, DateTime? actualsEndDate)
+        {
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            using (var command = new SqlCommand(Constants.ProcedureNames.Reports.GetBurnReportForProject, connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = connection.ConnectionTimeout;
+                command.Parameters.AddWithValue(Constants.ParameterNames.ProjectId, projectId);
+                command.Parameters.AddWithValue(Constants.ParameterNames.StartDate, startDate == null ? (object)DBNull.Value : startDate);
+                command.Parameters.AddWithValue(Constants.ParameterNames.EndDate, endDate == null ? (object)DBNull.Value : endDate);
+                command.Parameters.AddWithValue(Constants.ParameterNames.ActualsEndDate, actualsEndDate == null ? (object)DBNull.Value : actualsEndDate);
+
+                var projectFinancials = new ProjectBurnFinancials();
+
+                connection.Open();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    projectFinancials.Resources = new List<ProjectBudgetResource>();
+                    ReadBurnReportBudgetResourceData(reader, projectFinancials);
+                    reader.NextResult();
+                    ReadBurnReportResourceData(reader, projectFinancials);
+                    reader.NextResult();
+                    projectFinancials.Expenses = new List<ProjectExpense>();
+                    ReadProjectExpenses(reader, projectFinancials.Expenses);
+                    reader.NextResult();
+                    ReadProjectDetails(reader, projectFinancials);
+                }
+                return projectFinancials;
+            }
+        }
+
+        private static void ReadBurnReportBudgetResourceData(SqlDataReader reader, ProjectBurnFinancials projectFinancials)
+        {
+            if (!reader.HasRows) return;
+            int projectIdIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectIdColumn);
+            int PersonIdIndex = reader.GetOrdinal(Constants.ColumnNames.PersonId);
+            int firstNameIndex = reader.GetOrdinal(Constants.ColumnNames.FirstName);
+            int lastNameIndex = reader.GetOrdinal(Constants.ColumnNames.LastName);
+            int budgetHoursIndex = reader.GetOrdinal(Constants.ColumnNames.BudgetHours);
+            int budgetMarginIndex = reader.GetOrdinal(Constants.ColumnNames.BudgetMargin);
+            int budgetRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.BudgetRevenue);
+
+            while (reader.Read())
+            {
+                ProjectBudgetResource resource = null;
+                int personId = reader.GetInt32(PersonIdIndex);
+                if (projectFinancials.Resources.Any(r => r.Person.Id == personId))
+                {
+                    resource = projectFinancials.Resources.FirstOrDefault(r => r.Person.Id == personId);
+                }
+                else
+                {
+                    resource = new ProjectBudgetResource()
+                    {
+                        ProjectId = reader.GetInt32(projectIdIndex),
+                        Person = new Person
+                        {
+                            Id = reader.GetInt32(PersonIdIndex),
+                            FirstName = reader.GetString(firstNameIndex),
+                            LastName = reader.GetString(lastNameIndex)
+                        }
+                    };
+                    projectFinancials.Resources.Add(resource);
+                    resource = projectFinancials.Resources.FirstOrDefault(r => r.Person.Id == personId);
+                }
+                if (resource != null)
+                {
+                    if (resource.Budget == null)
+                    {
+                        resource.Budget = new ProjectRevenue();
+                    }
+                    if (resource.Actuals == null)
+                    {
+                        resource.Actuals = new ProjectRevenue();
+                    }
+                    if (resource.Projected == null)
+                    {
+                        resource.Projected = new ProjectRevenue();
+                    }
+                    if (resource.ProjectedRemaining == null)
+                    {
+                        resource.ProjectedRemaining = new ProjectRevenue();
+                    }
+                    if (resource.EAC == null)
+                    {
+                        resource.EAC = new ProjectRevenue();
+                    }
+                    resource.Budget.Hours = reader.GetDecimal(budgetHoursIndex);
+                    resource.Budget.Margin = reader.GetDecimal(budgetMarginIndex);
+                    resource.Budget.Revenue = reader.GetDecimal(budgetRevenueIndex);
+                }
+            }
+        }
+
+        private static void ReadProjectDetails(SqlDataReader reader, ProjectBurnFinancials projectFinancials)
+        {
+            if (!reader.HasRows) return;
+            int projectIdIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectIdColumn);
+            int budgetIndex = reader.GetOrdinal(Constants.ColumnNames.Budget);
+            int marginGoalIndex = reader.GetOrdinal(Constants.ColumnNames.MarginGoal);
+            int projectTotalDaysIndex = reader.GetOrdinal(Constants.ColumnNames.TotalProjectDays);
+            int remainingDaysIndex = reader.GetOrdinal(Constants.ColumnNames.RemainingDays);
+
+            while (reader.Read())
+            {
+                projectFinancials.ProjectId = reader.GetInt32(projectIdIndex);
+                projectFinancials.MarginGoal = reader.GetDecimal(marginGoalIndex);
+                projectFinancials.BudgetAmount = reader.IsDBNull(budgetIndex) ? null : (int?)reader.GetInt32(budgetIndex);
+                projectFinancials.TotalProjectDays = reader.GetInt32(projectTotalDaysIndex);
+                projectFinancials.RemainingDays = reader.GetInt32(remainingDaysIndex);
+            }
+        }
+
+        private static void ReadBurnReportResourceData(SqlDataReader reader, ProjectBurnFinancials projectFinancials)
+        {
+            if (!reader.HasRows) return;
+            int projectIdIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectIdColumn);
+            int PersonIdIndex = reader.GetOrdinal(Constants.ColumnNames.PersonId);
+            int firstNameIndex = reader.GetOrdinal(Constants.ColumnNames.FirstName);
+            int lastNameIndex = reader.GetOrdinal(Constants.ColumnNames.LastName);
+            int ActualHoursIndex = reader.GetOrdinal(Constants.ColumnNames.ActualHours);
+            int ActualMarginIndex = reader.GetOrdinal(Constants.ColumnNames.ActualMargin);
+            int ActualRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.ActualRevenue);
+            int projectedHoursIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectedHours);
+            int projectedRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectedRevenue);
+            int projectedMarginIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectedMargin);
+            int remProjectedHoursIndex = reader.GetOrdinal(Constants.ColumnNames.RemainingProjectedHours);
+            int remProjectedRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.RemainingProjectedRevenue);
+            int remProjectedMarginIndex = reader.GetOrdinal(Constants.ColumnNames.RemainingProjectedMargin);
+            int EACHoursIndex = reader.GetOrdinal(Constants.ColumnNames.EACHours);
+            int EACRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.EACRevenue);
+            int EACMarginIndex = reader.GetOrdinal(Constants.ColumnNames.EACMargin);
+
+            var resources = new List<ProjectBudgetResource>();
+
+            while (reader.Read())
+            {
+
+                ProjectBudgetResource resource = null;
+                int personId = reader.GetInt32(PersonIdIndex);
+                if (projectFinancials.Resources.Any(r => r.Person.Id == personId))
+                {
+                    resource = projectFinancials.Resources.FirstOrDefault(r => r.Person.Id == personId);
+                }
+                else
+                {
+                    resource = new ProjectBudgetResource()
+                    {
+                        ProjectId = reader.GetInt32(projectIdIndex),
+                        Person = new Person
+                        {
+                            Id = reader.GetInt32(PersonIdIndex),
+                            FirstName = reader.GetString(firstNameIndex),
+                            LastName = reader.GetString(lastNameIndex)
+                        }
+                    };
+                    projectFinancials.Resources.Add(resource);
+                    resource = projectFinancials.Resources.FirstOrDefault(r => r.Person.Id == personId);
+                }
+                if (resource != null)
+                {
+                    if (resource.Budget == null)
+                    {
+                        resource.Budget = new ProjectRevenue();
+                    }
+                    if (resource.Actuals == null)
+                    {
+                        resource.Actuals = new ProjectRevenue();
+                    }
+                    if (resource.Projected == null)
+                    {
+                        resource.Projected = new ProjectRevenue();
+                    }
+                    if (resource.ProjectedRemaining == null)
+                    {
+                        resource.ProjectedRemaining = new ProjectRevenue();
+                    }
+
+                    if (resource.EAC == null)
+                    {
+                        resource.EAC = new ProjectRevenue();
+                    }
+                    resource.Actuals.Hours = reader.GetDecimal(ActualHoursIndex);
+                    resource.Actuals.Margin = reader.GetDecimal(ActualMarginIndex);
+                    resource.Actuals.Revenue = reader.GetDecimal(ActualRevenueIndex);
+
+                    resource.Projected.Hours = reader.GetDecimal(projectedHoursIndex);
+                    resource.Projected.Margin = reader.GetDecimal(projectedMarginIndex);
+                    resource.Projected.Revenue = reader.GetDecimal(projectedRevenueIndex);
+
+                    resource.ProjectedRemaining.Hours = reader.GetDecimal(remProjectedHoursIndex);
+                    resource.ProjectedRemaining.Margin = reader.GetDecimal(remProjectedMarginIndex);
+                    resource.ProjectedRemaining.Revenue = reader.GetDecimal(remProjectedRevenueIndex);
+
+                    resource.EAC.Hours = reader.GetDecimal(EACHoursIndex);
+                    resource.EAC.Revenue = reader.GetDecimal(EACRevenueIndex);
+                    resource.EAC.Margin = reader.GetDecimal(EACMarginIndex);
+                }
+
+            }
+        }
+
+        public static Dictionary<DateTime, ComputedFinancials> GetProjectWeeklyFinancials(int projectId, DateTime? startDate, DateTime? endDate, int @step, DateTime? ActualsEndDate)
+        {
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            using (var command = new SqlCommand(Constants.ProcedureNames.Reports.GetWeeklyRevenuesForProject, connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = connection.ConnectionTimeout;
+                command.Parameters.AddWithValue(Constants.ParameterNames.ProjectId, projectId);
+                command.Parameters.AddWithValue(Constants.ParameterNames.Step, step);
+                command.Parameters.AddWithValue(Constants.ParameterNames.StartDate, startDate == null ? (object)DBNull.Value : startDate);
+                command.Parameters.AddWithValue(Constants.ParameterNames.EndDate, endDate == null ? (object)DBNull.Value : endDate);
+                command.Parameters.AddWithValue(Constants.ParameterNames.ActualsEndDate, ActualsEndDate == null ? (object)DBNull.Value : ActualsEndDate);
+
+                var financials = new Dictionary<DateTime, ComputedFinancials>();
+
+                connection.Open();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    ReadProjectWeeklyFinancials(reader, financials);
+                }
+
+                return financials;
+            }
+        }
+
+        private static void ReadProjectWeeklyFinancials(SqlDataReader reader, Dictionary<DateTime, ComputedFinancials> projectFinancials)
+        {
+            if (!reader.HasRows) return;
+            int projectIdIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectIdColumn);
+            int startDateIndex = reader.GetOrdinal(Constants.ColumnNames.StartDate);
+            int endDateIndex = reader.GetOrdinal(Constants.ColumnNames.EndDate);
+            int revenueIndex = reader.GetOrdinal(Constants.ColumnNames.RevenueColumn);
+            int revenueNetIndex = reader.GetOrdinal(Constants.ColumnNames.RevenueNetColumn);
+            int grossMarginIndex = reader.GetOrdinal(Constants.ColumnNames.GrossMarginColumn);
+            int actualRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.ActualRevenue);
+            int EACRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.EACRevenue);
+            int budgetRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.BudgetRevenue);
+            int projectedHoursIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectedHours);
+            int actualHoursIndex = reader.GetOrdinal(Constants.ColumnNames.ActualHours);
+            int EACHoursIndex = reader.GetOrdinal(Constants.ColumnNames.EACHours);
+            int actualMarginIndex = reader.GetOrdinal(Constants.ColumnNames.ActualMargin);
+
+            while (reader.Read())
+            {
+                var financial = new ComputedFinancials()
+                {
+                    FinancialDate = reader.GetDateTime(startDateIndex),
+                    Revenue = reader.GetDecimal(revenueIndex),
+                    RevenueNet = reader.GetDecimal(revenueNetIndex),
+                    GrossMargin = reader.GetDecimal(grossMarginIndex),
+                    ActualRevenue = reader.GetDecimal(actualRevenueIndex),
+                    EACRevenue = reader.GetDecimal(EACRevenueIndex),
+                    BudgetRevenue = reader.GetDecimal(budgetRevenueIndex),
+                    HoursBilled = reader.GetDecimal(projectedHoursIndex),
+                    ActualHours = reader.GetDecimal(actualHoursIndex),
+                    EACHours = reader.GetDecimal(EACHoursIndex),
+                    ActualGrossMargin = reader.GetDecimal(actualMarginIndex)
+
+                };
+                projectFinancials.Add(financial.FinancialDate.Value, financial);
+            }
+        }
+
+        private static void ReadProjectExpenses(SqlDataReader reader, List<ProjectExpense> Expenses)
+        {
+            if (!reader.HasRows) return;
+            int idIndex = reader.GetOrdinal(Constants.ColumnNames.Id);
+            int nameIndex = reader.GetOrdinal(Constants.ColumnNames.Name);
+
+            int budgetExpenseIndex = reader.GetOrdinal(Constants.ColumnNames.BudgetExpense);
+            int actualExpenseIndex = reader.GetOrdinal(Constants.ColumnNames.ActualExpense);
+            int projectedExpenseIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectedExpense);
+            int projRemExpenseIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectedRemainingExpense);
+            while (reader.Read())
+            {
+                var expense = new ProjectExpense()
+                {
+                    Id = reader.GetInt32(idIndex),
+                    Name = reader.GetString(nameIndex),
+                    ExpectedAmount = reader.GetDecimal(projectedExpenseIndex),
+                    Amount = reader.GetDecimal(actualExpenseIndex),
+                    BudgetAmount = reader.GetDecimal(budgetExpenseIndex),
+                    ProjectedRemainingAmount = reader.GetDecimal(projRemExpenseIndex)
+                };
+                Expenses.Add(expense);
+            }
+        }
+
+        public static List<PersonBudgetComparison> GetBudgetComparisonReportForProject(string projectNumber, DateTime? startDate, DateTime? endDate, DateTime? actualsEndDate)
+        {
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            using (var command = new SqlCommand(Constants.ProcedureNames.Reports.ProjectBudgetComaparisonSummary, connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = connection.ConnectionTimeout;
+                command.Parameters.AddWithValue(Constants.ParameterNames.ProjectNumber, projectNumber);
+                command.Parameters.AddWithValue(Constants.ParameterNames.StartDate, startDate == null ? (object)DBNull.Value : startDate);
+                command.Parameters.AddWithValue(Constants.ParameterNames.EndDate, endDate == null ? (object)DBNull.Value : endDate);
+                command.Parameters.AddWithValue(Constants.ParameterNames.ActualsEndDate, actualsEndDate == null ? (object)DBNull.Value : actualsEndDate);
+
+                var result = new List<PersonBudgetComparison>();
+
+                connection.Open();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    ReadBudgetComparisonProjectedResource(reader, result);
+                    reader.NextResult();
+                    ReadBudgetComparisonBillRate(reader, result);
+                    reader.NextResult();
+                    ReadBudgetComparisonRevenue(reader, result);
+                    reader.NextResult();
+                    ReadBudgetComparisonBudgetData(reader, result);
+                    reader.NextResult();
+                    ReadBudgetComparisonBudgetBillRate(reader, result);
+                    reader.NextResult();
+                    ReadBudgetComparisonBudgetRevenue(reader, result);
+                }
+
+                return result;
+            }
+        }
+
+        private static void ReadBudgetComparisonBudgetRevenue(SqlDataReader reader, List<PersonBudgetComparison> result)
+        {
+            if (!reader.HasRows) return;
+            int personIdIndex = reader.GetOrdinal(Constants.ColumnNames.PersonId);
+            int budgetRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.BudgetRevenue);
+            int budgetMarginIndex = reader.GetOrdinal(Constants.ColumnNames.BudgetMargin);
+
+
+            while (reader.Read())
+            {
+                PersonBudgetComparison personForComparison = null;
+                int personid = reader.GetInt32(personIdIndex);
+                if (result.Any(r => r.Person.Id == personid))
+                {
+                    personForComparison = result.FirstOrDefault(r => r.Person.Id == personid);
+                }
+                if (personForComparison != null)
+                {
+                    if (personForComparison.Financials == null)
+                    {
+                        personForComparison.Financials = new ComputedFinancials();
+                    }
+                    personForComparison.Financials.BudgetRevenue = reader.GetDecimal(budgetRevenueIndex);
+                    personForComparison.Financials.BudgetGrossMargin = reader.GetDecimal(budgetMarginIndex);
+                }
+            }
+        }
+
+        private static void ReadBudgetComparisonRevenue(SqlDataReader reader, List<PersonBudgetComparison> result)
+        {
+            if (!reader.HasRows) return;
+            int personIdIndex = reader.GetOrdinal(Constants.ColumnNames.PersonId);
+            int actualRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.ActualRevenue);
+            int actualMarginIndex = reader.GetOrdinal(Constants.ColumnNames.ActualMargin);
+            int projectedRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectedRevenue);
+            int projectedMarginIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectedMargin);
+            int EACRevenueIndex = reader.GetOrdinal(Constants.ColumnNames.EACRevenue);
+            int EACMarginIndex = reader.GetOrdinal(Constants.ColumnNames.EACMargin);
+
+            while (reader.Read())
+            {
+                PersonBudgetComparison personForComparison = null;
+                int personid = reader.GetInt32(personIdIndex);
+                if (result.Any(r => r.Person.Id == personid))
+                {
+                    personForComparison = result.FirstOrDefault(r => r.Person.Id == personid);
+                }
+                if (personForComparison != null)
+                {
+                    if (personForComparison.Financials == null)
+                    {
+                        personForComparison.Financials = new ComputedFinancials();
+                    }
+
+                    personForComparison.Financials.Revenue = reader.GetDecimal(projectedRevenueIndex);
+                    personForComparison.Financials.GrossMargin = reader.GetDecimal(projectedMarginIndex);
+                    personForComparison.Financials.ActualRevenue = reader.GetDecimal(actualRevenueIndex);
+                    personForComparison.Financials.ActualGrossMargin = reader.GetDecimal(actualMarginIndex);
+                    personForComparison.Financials.EACRevenue = reader.GetDecimal(EACRevenueIndex);
+                    personForComparison.Financials.EACGrossMargin = reader.GetDecimal(EACMarginIndex);
+                }
+            }
+        }
+
+        private static void ReadBudgetComparisonProjectedResource(SqlDataReader reader, List<PersonBudgetComparison> result)
+        {
+            if (!reader.HasRows) return;
+            int personIdIndex = reader.GetOrdinal(Constants.ColumnNames.PersonId);
+            int firstNameIndex = reader.GetOrdinal(Constants.ColumnNames.FirstName);
+            int lastNameIndex = reader.GetOrdinal(Constants.ColumnNames.LastName);
+            int titleIdIndex = reader.GetOrdinal(Constants.ColumnNames.TitleId);
+            int titleNameIndex = reader.GetOrdinal(Constants.ColumnNames.Title);
+            int financialDateIndex = reader.GetOrdinal(Constants.ColumnNames.FinancialDateColumn);
+            int projectedHoursIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectedHours);
+            int actualHoursIndex = reader.GetOrdinal(Constants.ColumnNames.ActualHours);
+            int remProjectedHoursIndex = reader.GetOrdinal(Constants.ColumnNames.RemainingProjectedHours);
+
+            while (reader.Read())
+            {
+                PersonBudgetComparison personForComparison = null;
+                int personid = reader.GetInt32(personIdIndex);
+                if (result.Any(r => r.Person.Id == personid))
+                {
+                    personForComparison = result.FirstOrDefault(r => r.Person.Id == personid);
+                }
+                if (personForComparison == null)
+                {
+                    personForComparison = new PersonBudgetComparison
+                    {
+                        Person = new Person
+                        {
+                            Id = reader.GetInt32(personIdIndex),
+                            FirstName = reader.GetString(firstNameIndex),
+                            LastName = reader.GetString(lastNameIndex)
+                        }
+                    };
+
+                    if (!reader.IsDBNull(titleIdIndex))
+                    {
+                        personForComparison.Person.Title = new Title
+                        {
+                            TitleId = reader.GetInt32(titleIdIndex),
+                            TitleName = reader.GetString(titleNameIndex)
+                        };
+                    }
+                    result.Add(personForComparison);
+                    personForComparison = result.FirstOrDefault(r => r.Person.Id == personid);
+                }
+                if (personForComparison != null)
+                {
+                    if (personForComparison.ActualHours == null)
+                    {
+                        personForComparison.ActualHours = new Dictionary<DateTime, decimal>();
+                    }
+                    if (personForComparison.ProjectedHours == null)
+                    {
+                        personForComparison.ProjectedHours = new Dictionary<DateTime, decimal>();
+                    }
+                    if (personForComparison.ProjectedRemainingHours == null)
+                    {
+                        personForComparison.ProjectedRemainingHours = new Dictionary<DateTime, decimal>();
+                    }
+                    if (personForComparison.EACHours == null)
+                    {
+                        personForComparison.EACHours = new Dictionary<DateTime, decimal>();
+                    }
+                    var finacialDate = reader.GetDateTime(financialDateIndex);
+                    var projectedHours = reader.GetDecimal(projectedHoursIndex);
+                    var actualHours = reader.GetDecimal(actualHoursIndex);
+                    var remProjectedHours = reader.GetDecimal(remProjectedHoursIndex);
+                    personForComparison.ActualHours.Add(finacialDate, actualHours);
+                    personForComparison.ProjectedHours.Add(finacialDate, projectedHours);
+                    personForComparison.ProjectedRemainingHours.Add(finacialDate, remProjectedHours);
+                    personForComparison.EACHours.Add(finacialDate, remProjectedHours + actualHours);
+                }
+            }
+        }
+
+        private static void ReadBudgetComparisonBudgetBillRate(SqlDataReader reader, List<PersonBudgetComparison> result)
+        {
+            if (!reader.HasRows) return;
+            int personIdIndex = reader.GetOrdinal(Constants.ColumnNames.PersonId);
+            int startDateIndex = reader.GetOrdinal(Constants.ColumnNames.StartDate);
+            int billRateIndex = reader.GetOrdinal(Constants.ColumnNames.BillRate);
+            int payRateIndex = reader.GetOrdinal(Constants.ColumnNames.PayRate);
+
+            while (reader.Read())
+            {
+                PersonBudgetComparison personForComparison = null;
+                int personid = reader.GetInt32(personIdIndex);
+                if (result.Any(r => r.Person.Id == personid))
+                {
+                    personForComparison = result.FirstOrDefault(r => r.Person.Id == personid);
+                }
+                if (personForComparison != null)
+                {
+                    var startDate = reader.GetDateTime(startDateIndex);
+
+                    if (personForComparison.BudgetBillRate == null)
+                    {
+                        personForComparison.BudgetBillRate = new Dictionary<DateTime, PayRate>();
+                    }
+
+                    var personPayRate = new PayRate
+                    {
+                        PersonId = personid,
+                        BillRate = reader.GetDecimal(billRateIndex),
+                        PersonCost = reader.GetDecimal(payRateIndex)
+                    };
+                    personForComparison.BudgetBillRate.Add(startDate, personPayRate);
+                }
+            }
+        }
+
+        private static void ReadBudgetComparisonBudgetData(SqlDataReader reader, List<PersonBudgetComparison> result)
+        {
+            if (!reader.HasRows) return;
+            int personIdIndex = reader.GetOrdinal(Constants.ColumnNames.PersonId);
+            int firstNameIndex = reader.GetOrdinal(Constants.ColumnNames.FirstName);
+            int lastNameIndex = reader.GetOrdinal(Constants.ColumnNames.LastName);
+            int titleIdIndex = reader.GetOrdinal(Constants.ColumnNames.TitleId);
+            int titleNameIndex = reader.GetOrdinal(Constants.ColumnNames.Title);
+            int financialDateIndex = reader.GetOrdinal(Constants.ColumnNames.FinancialDateColumn);
+            int budgetHoursIndex = reader.GetOrdinal(Constants.ColumnNames.BudgetHours);
+
+            while (reader.Read())
+            {
+                PersonBudgetComparison personForComparison = null;
+                int personid = reader.GetInt32(personIdIndex);
+                if (result.Any(r => r.Person.Id == personid))
+                {
+                    personForComparison = result.FirstOrDefault(r => r.Person.Id == personid);
+                }
+                if (personForComparison == null)
+                {
+                    personForComparison = new PersonBudgetComparison
+                    {
+                        Person = new Person
+                        {
+                            Id = reader.GetInt32(personIdIndex),
+                            FirstName = reader.GetString(firstNameIndex),
+                            LastName = reader.GetString(lastNameIndex)
+                        }
+                    };
+
+                    if (!reader.IsDBNull(titleIdIndex))
+                    {
+                        personForComparison.Person.Title = new Title
+                        {
+                            TitleId = reader.GetInt32(titleIdIndex),
+                            TitleName = reader.GetString(titleNameIndex)
+                        };
+                    }
+                    result.Add(personForComparison);
+                    personForComparison = result.FirstOrDefault(r => r.Person.Id == personid);
+                }
+                if (personForComparison != null)
+                {
+                    if (personForComparison.BudgetHours == null)
+                    {
+                        personForComparison.BudgetHours = new Dictionary<DateTime, decimal>();
+                    }
+                    var finacialDate = reader.GetDateTime(financialDateIndex);
+                    var budgetHours = reader.GetDecimal(budgetHoursIndex);
+
+                    personForComparison.BudgetHours.Add(finacialDate, budgetHours);
+
+                }
+            }
+        }
+
+        private static void ReadBudgetComparisonBillRate(SqlDataReader reader, List<PersonBudgetComparison> result)
+        {
+            if (!reader.HasRows) return;
+            int personIdIndex = reader.GetOrdinal(Constants.ColumnNames.PersonId);
+            int startDateIndex = reader.GetOrdinal(Constants.ColumnNames.StartDate);
+            int billRateIndex = reader.GetOrdinal(Constants.ColumnNames.BillRate);
+            int payRateIndex = reader.GetOrdinal(Constants.ColumnNames.PayRate);
+
+            while (reader.Read())
+            {
+                PersonBudgetComparison personForComparison = null;
+                int personid = reader.GetInt32(personIdIndex);
+                if (result.Any(r => r.Person.Id == personid))
+                {
+                    personForComparison = result.FirstOrDefault(r => r.Person.Id == personid);
+                }
+                if (personForComparison != null)
+                {
+                    var startDate = reader.GetDateTime(startDateIndex);
+                    if (personForComparison.ProjectedAndActualBillRate == null)
+                    {
+                        personForComparison.ProjectedAndActualBillRate = new Dictionary<DateTime, PayRate>();
+                    }
+
+                    var personPayRate = new PayRate
+                    {
+                        PersonId = personid,
+                        BillRate = reader.GetDecimal(billRateIndex),
+                        PersonCost = reader.GetDecimal(payRateIndex)
+                    };
+                    personForComparison.ProjectedAndActualBillRate.Add(startDate, personPayRate);
+                }
+            }
+        }
+
+        public static List<ExpenseSummary> ReadProjectExpensesByTypeandByMonth(int projectId, int? milestoneId, DateTime? startDate, DateTime? endDate)
+        {
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            using (var command = new SqlCommand(Constants.ProcedureNames.Reports.GetProjectExpensesGroupedByMonth, connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = connection.ConnectionTimeout;
+                command.Parameters.AddWithValue(Constants.ParameterNames.ProjectId, projectId);
+                command.Parameters.AddWithValue(Constants.ParameterNames.StartDate, startDate == null ? (object)DBNull.Value : startDate);
+                command.Parameters.AddWithValue(Constants.ParameterNames.EndDate, endDate == null ? (object)DBNull.Value : endDate);
+                command.Parameters.AddWithValue(Constants.ParameterNames.MilestoneIdParam, milestoneId == null ? (object)DBNull.Value : milestoneId);
+
+                var result = new List<ExpenseSummary>();
+
+                connection.Open();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    ReadProjectedAndActualExpensesByMonth(reader, result);
+                    reader.NextResult();
+                    ReadBudgetExpensesByMonth(reader, result);
+                }
+
+                return result;
+            }
+        }
+
+        private static void ReadProjectedAndActualExpensesByMonth(SqlDataReader reader, List<ExpenseSummary> result)
+        {
+            if (!reader.HasRows) return;
+            int projectIdIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectId);
+            int expenseTypeIdIndex = reader.GetOrdinal(Constants.ColumnNames.ExpenseTypeId);
+            int expenseTypeNameIndex = reader.GetOrdinal(Constants.ColumnNames.ExpenseTypeName);
+            int financialDateIndex = reader.GetOrdinal(Constants.ColumnNames.FinancialDateColumn);
+            int projectedExpenseIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectedExpense);
+            int remainingProjectedExpenseIndex = reader.GetOrdinal(Constants.ColumnNames.RemainingProjectedExpense);
+            int actualExpenseIndex = reader.GetOrdinal(Constants.ColumnNames.ActualExpense);
+            while (reader.Read())
+            {
+                ExpenseSummary expenseSummary = null;
+                int projectId = reader.GetInt32(projectIdIndex);
+                int expenseTypeId = reader.GetInt32(expenseTypeIdIndex);
+                if (result.Any(r => r.Type.Id == expenseTypeId))
+                {
+                    expenseSummary = result.FirstOrDefault(r => r.Type.Id == expenseTypeId);
+                }
+                else
+                {
+                    expenseSummary = new ExpenseSummary
+                    {
+                        Type = new ExpenseType
+                        {
+                            Id = reader.GetInt32(expenseTypeIdIndex),
+                            Name = reader.GetString(expenseTypeNameIndex)
+                        },
+                        Project = new Project
+                        {
+                            Id = projectId
+                        }
+                    };
+                    result.Add(expenseSummary);
+                    expenseSummary = result.FirstOrDefault(r => r.Type.Id == expenseTypeId);
+                }
+
+                if (expenseSummary != null)
+                {
+                    var monthStartDate = reader.GetDateTime(financialDateIndex);
+                    var projectedExpense = reader.GetDecimal(projectedExpenseIndex);
+                    var actualExpense = reader.GetDecimal(actualExpenseIndex);
+                    var remProjExpense = reader.GetDecimal(remainingProjectedExpenseIndex);
+                    if (expenseSummary.MonthlyExpectedExpenses == null)
+                    {
+                        expenseSummary.MonthlyExpectedExpenses = new Dictionary<DateTime, decimal>();
+                    }
+                    if (expenseSummary.MonthlyExpenses == null)
+                    {
+                        expenseSummary.MonthlyExpenses = new Dictionary<DateTime, decimal>();
+                    }
+                    if (expenseSummary.MonthlyEACExpenses == null)
+                    {
+                        expenseSummary.MonthlyEACExpenses = new Dictionary<DateTime, decimal>();
+                    }
+                    expenseSummary.MonthlyExpectedExpenses.Add(monthStartDate, projectedExpense);
+                    expenseSummary.MonthlyExpenses.Add(monthStartDate, actualExpense);
+                    expenseSummary.MonthlyEACExpenses.Add(monthStartDate, actualExpense + remProjExpense);
+                }
+            }
+
+        }
+
+        private static void ReadBudgetExpensesByMonth(SqlDataReader reader, List<ExpenseSummary> result)
+        {
+            if (!reader.HasRows) return;
+            int projectIdIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectId);
+            int expenseTypeIdIndex = reader.GetOrdinal(Constants.ColumnNames.ExpenseTypeId);
+            int expenseTypeNameIndex = reader.GetOrdinal(Constants.ColumnNames.ExpenseTypeName);
+            int financialDateIndex = reader.GetOrdinal(Constants.ColumnNames.FinancialDateColumn);
+            int budgetExpenseIndex = reader.GetOrdinal(Constants.ColumnNames.BudgetExpense);
+            while (reader.Read())
+            {
+                ExpenseSummary expenseSummary = null;
+                int projectId = reader.GetInt32(projectIdIndex);
+                int expenseTypeId = reader.GetInt32(expenseTypeIdIndex);
+                if (result.Any(r => r.Type.Id == expenseTypeId))
+                {
+                    expenseSummary = result.FirstOrDefault(r => r.Type.Id == expenseTypeId);
+                }
+                else
+                {
+                    expenseSummary = new ExpenseSummary
+                    {
+                        Type = new ExpenseType
+                        {
+                            Id = reader.GetInt32(expenseTypeIdIndex),
+                            Name = reader.GetString(expenseTypeNameIndex)
+                        },
+                        Project = new Project
+                        {
+                            Id = projectId
+                        }
+                    };
+                    result.Add(expenseSummary);
+                    expenseSummary = result.FirstOrDefault(r => r.Type.Id == expenseTypeId);
+                }
+                if (expenseSummary != null)
+                {
+                    var startDate = reader.GetDateTime(financialDateIndex);
+                    if (expenseSummary.MonthlyBudgetExpenses == null)
+                    {
+                        expenseSummary.MonthlyBudgetExpenses = new Dictionary<DateTime, decimal>();
+                    }
+                    var budgetExpense = reader.GetDecimal(budgetExpenseIndex);
+
+                    expenseSummary.MonthlyBudgetExpenses.Add(startDate, budgetExpense);
+                }
+
+            }
+        }
+
+        public static List<PersonBudgetComparison> GetForecastDataForMilestone(int milestoneId)
+        {
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            using (var command = new SqlCommand(Constants.ProcedureNames.Reports.GetForecastDataForMilestone, connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = connection.ConnectionTimeout;
+                command.Parameters.AddWithValue(Constants.ParameterNames.MilestoneIdParam, milestoneId);
+
+
+                var result = new List<PersonBudgetComparison>();
+
+                connection.Open();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    ReadForcastResource(reader, result);
+                    reader.NextResult();
+                    ReadBudgetComparisonBillRate(reader, result);
+
+                }
+
+                return result;
+            }
+        }
+
+        private static void ReadForcastResource(SqlDataReader reader, List<PersonBudgetComparison> result)
+        {
+            if (!reader.HasRows) return;
+            int personIdIndex = reader.GetOrdinal(Constants.ColumnNames.PersonId);
+            int firstNameIndex = reader.GetOrdinal(Constants.ColumnNames.FirstName);
+            int lastNameIndex = reader.GetOrdinal(Constants.ColumnNames.LastName);
+            int titleIdIndex = reader.GetOrdinal(Constants.ColumnNames.TitleId);
+            int titleNameIndex = reader.GetOrdinal(Constants.ColumnNames.Title);
+            int financialDateIndex = reader.GetOrdinal(Constants.ColumnNames.FinancialDateColumn);
+            int projectedHoursIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectedHours);
+
+
+            while (reader.Read())
+            {
+
+                PersonBudgetComparison forcastPerson = null;
+                int personid = reader.GetInt32(personIdIndex);
+                if (result.Any(r => r.Person.Id == personid))
+                {
+                    forcastPerson = result.FirstOrDefault(r => r.Person.Id == personid);
+                }
+                if (forcastPerson == null)
+                {
+                    forcastPerson = new PersonBudgetComparison
+                    {
+                        Person = new Person
+                        {
+                            Id = reader.GetInt32(personIdIndex),
+                            FirstName = reader.GetString(firstNameIndex),
+                            LastName = reader.GetString(lastNameIndex)
+                        }
+                    };
+
+                    if (!reader.IsDBNull(titleIdIndex))
+                    {
+                        forcastPerson.Person.Title = new Title
+                        {
+                            TitleId = reader.GetInt32(titleIdIndex),
+                            TitleName = reader.GetString(titleNameIndex)
+                        };
+                    }
+                    result.Add(forcastPerson);
+                    forcastPerson = result.FirstOrDefault(r => r.Person.Id == personid);
+                }
+                if (forcastPerson != null)
+                {
+
+                    if (forcastPerson.ProjectedHours == null)
+                    {
+                        forcastPerson.ProjectedHours = new Dictionary<DateTime, decimal>();
+                    }
+
+                    var finacialDate = reader.GetDateTime(financialDateIndex);
+                    var projectedHours = reader.GetDecimal(projectedHoursIndex);
+                    forcastPerson.ProjectedHours.Add(finacialDate, projectedHours);
+                }
+            }
+        }
+
+        private static void ReadForcastBillRate(SqlDataReader reader, List<PersonBudgetComparison> result)
+        {
+            if (!reader.HasRows) return;
+            int personIdIndex = reader.GetOrdinal(Constants.ColumnNames.PersonId);
+            int startDateIndex = reader.GetOrdinal(Constants.ColumnNames.StartDate);
+            int billRateIndex = reader.GetOrdinal(Constants.ColumnNames.BillRate);
+            int payRateIndex = reader.GetOrdinal(Constants.ColumnNames.PayRate);
+
+            while (reader.Read())
+            {
+                PersonBudgetComparison forcastPerson = null;
+                int personid = reader.GetInt32(personIdIndex);
+                if (result.Any(r => r.Person.Id == personid))
+                {
+                    forcastPerson = result.FirstOrDefault(r => r.Person.Id == personid);
+                }
+                if (forcastPerson != null)
+                {
+                    var startDate = reader.GetDateTime(startDateIndex);
+
+                    if (forcastPerson.ProjectedAndActualBillRate == null)
+                    {
+                        forcastPerson.ProjectedAndActualBillRate = new Dictionary<DateTime, PayRate>();
+                    }
+
+                    var personPayRate = new PayRate
+                    {
+                        PersonId = personid,
+                        BillRate = reader.GetDecimal(billRateIndex),
+                        PersonCost = reader.GetDecimal(payRateIndex)
+                    };
+                    forcastPerson.ProjectedAndActualBillRate.Add(startDate, personPayRate);
+                }
             }
         }
     }
