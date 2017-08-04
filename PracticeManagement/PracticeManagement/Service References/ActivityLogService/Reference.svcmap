@@ -21,14 +21,17 @@
     <MetadataSource Address="http://localhost/PracticeManagementService/ActivityLogService.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="ActivityLogService1.xsd" MetadataType="Schema" ID="2dc6f3b1-3fc4-432e-9960-2a396a1bea6b" SourceId="1" SourceUrl="http://system68.ggk.com/PracticeManagementService/ActivityLogService.svc?xsd=xsd5" />
-    <MetadataFile FileName="ActivityLogService2.xsd" MetadataType="Schema" ID="843a715f-6de3-42d0-bdeb-4cfc79ea8e5c" SourceId="1" SourceUrl="http://system68.ggk.com/PracticeManagementService/ActivityLogService.svc?xsd=xsd4" />
-    <MetadataFile FileName="ActivityLogService1.wsdl" MetadataType="Wsdl" ID="b1096e23-a255-4b5e-96d7-6e7cfabfce2e" SourceId="1" SourceUrl="http://system68.ggk.com/PracticeManagementService/ActivityLogService.svc?wsdl" />
-    <MetadataFile FileName="ActivityLogService3.xsd" MetadataType="Schema" ID="89cd1326-8108-4546-bc2a-8c76aa0a63b6" SourceId="1" SourceUrl="http://system68.ggk.com/PracticeManagementService/ActivityLogService.svc?xsd=xsd1" />
-    <MetadataFile FileName="ActivityLogService4.xsd" MetadataType="Schema" ID="0407075b-93a6-4c6d-b8c6-be64dee0427a" SourceId="1" SourceUrl="http://system68.ggk.com/PracticeManagementService/ActivityLogService.svc?xsd=xsd0" />
-    <MetadataFile FileName="ActivityLogService5.xsd" MetadataType="Schema" ID="91212f77-4133-45f7-b915-c98cf43005fc" SourceId="1" SourceUrl="http://system68.ggk.com/PracticeManagementService/ActivityLogService.svc?xsd=xsd3" />
-    <MetadataFile FileName="ActivityLogService7.xsd" MetadataType="Schema" ID="a0803849-0f03-44d5-97b7-dec256ec7842" SourceId="1" SourceUrl="http://system68.ggk.com/PracticeManagementService/ActivityLogService.svc?xsd=xsd2" />
-    <MetadataFile FileName="ActivityLogService1.disco" MetadataType="Disco" ID="b7e03289-2c04-465f-bf0a-10250b2e9f2c" SourceId="1" SourceUrl="http://system68.ggk.com/PracticeManagementService/ActivityLogService.svc?disco" />
+    <MetadataFile FileName="ActivityLogService1.disco" MetadataType="Disco" ID="bd28a498-2dcc-40ad-bf6a-9bb561967afd" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ActivityLogService.svc?disco" />
+    <MetadataFile FileName="ActivityLogService1.xsd" MetadataType="Schema" ID="eaa23cc5-82e4-48d8-848d-e22eda073715" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ActivityLogService.svc?xsd=xsd8" />
+    <MetadataFile FileName="ActivityLogService2.xsd" MetadataType="Schema" ID="68fe6e1c-3dd9-4770-a676-a6b42df9ac8e" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ActivityLogService.svc?xsd=xsd7" />
+    <MetadataFile FileName="ActivityLogService3.xsd" MetadataType="Schema" ID="577bb579-d9cb-462c-a797-91883ba289c9" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ActivityLogService.svc?xsd=xsd6" />
+    <MetadataFile FileName="ActivityLogService1.wsdl" MetadataType="Wsdl" ID="a0d03175-fd11-4882-ae1f-77c0fb06844e" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ActivityLogService.svc?wsdl" />
+    <MetadataFile FileName="ActivityLogService4.xsd" MetadataType="Schema" ID="fb25fa19-34e1-453d-b689-50ed1d82ced6" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ActivityLogService.svc?xsd=xsd4" />
+    <MetadataFile FileName="ActivityLogService5.xsd" MetadataType="Schema" ID="53b2f44e-18fb-42fd-b825-4fabdf65abcf" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ActivityLogService.svc?xsd=xsd5" />
+    <MetadataFile FileName="ActivityLogService7.xsd" MetadataType="Schema" ID="6412e026-669e-4e1c-a325-08fd7bde6026" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ActivityLogService.svc?xsd=xsd2" />
+    <MetadataFile FileName="ActivityLogService17.xsd" MetadataType="Schema" ID="0c02412d-9977-499e-93f6-f0464a992da8" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ActivityLogService.svc?xsd=xsd3" />
+    <MetadataFile FileName="ActivityLogService18.xsd" MetadataType="Schema" ID="7fcfb4c6-3006-4775-8ac5-ee5d624cdd06" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ActivityLogService.svc?xsd=xsd0" />
+    <MetadataFile FileName="ActivityLogService19.xsd" MetadataType="Schema" ID="d3db1254-878d-49b9-88bc-f2ad49456311" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ActivityLogService.svc?xsd=xsd1" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
