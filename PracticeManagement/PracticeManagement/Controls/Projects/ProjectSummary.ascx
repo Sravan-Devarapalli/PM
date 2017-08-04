@@ -10,13 +10,32 @@
 <%@ Register Src="~/Controls/Generic/Filtering/DateInterval.ascx" TagPrefix="uc"
     TagName="DateInterval" %>
 <script type="text/javascript">
+
+    var isBudgetManagement = false;
+
     $(document).ready(function () {
-        $("#lvProjects_table").tablesorter(
-            {
-                sortList: [[0, 0]],
-                sortForce: [[0, 0]]
-            });
+        if (window.location.href.indexOf("BudgetManagement.aspx") > -1) {
+            isBudgetManagement = true;
+        }
     });
+
+    function pageLoad() {
+        SetActualDropDown();
+    }
+
+    function SetActualDropDown() {
+        if (isBudgetManagement) {
+            $(".tdActual").css("display", "none");
+        }
+        else {
+            if ($("[id$='ddlCalculationsType']").val() == "2") {
+                $(".tdActual").css("display", "");
+            }
+            else {
+                $(".tdActual").css("display", "none");
+            }
+        }
+    }
 
     function setPosition(item, ytop, xleft) {
         item.offset({ top: ytop, left: xleft });
@@ -45,9 +64,17 @@
         $(".hideCol").css("display", "none");
     }
 
-    function ShowColumns() {
+    function ShowDetailedColumns() {
         $(".hideCol").css("display", "");
+        $(".hideMonthCol").css("display", "none");
     }
+
+    function HideDetailedColumns() {
+        $(".hideCol").css("display", "none");
+        $(".hideMonthCol").css("display", "none");
+    }
+
+
 
     var IsExportAllDisplayed = false;
 
@@ -160,6 +187,7 @@
         }
 
         custom_ScrollingDropdown_onclick('cblProjectGroup', 'Business Unit');
+
     }
 
     function GetDefaultcblList() {
@@ -171,7 +199,8 @@
     }
 
     function GetDefault(control) {
-        control.fireEvent('onclick');
+        control.click();
+        //control.fireEvent('onclick');
     }
 
     function resetCalculationsTab() {
@@ -183,7 +212,33 @@
         document.getElementById("<%= chbProposed.ClientID %>").checked = false;
         document.getElementById("<%= chbInactive.ClientID %>").checked = false;
         document.getElementById("<%= chbAtRisk.ClientID %>").checked = true;
-        document.getElementById("<%= ddlCalculateRange.ClientID %>").selectedIndex = 0;
+        document.getElementById("<%= ddlSupressZeroBalance.ClientID %>").selectedIndex = 0;
+
+        var div = document.getElementById("<%= divDataPoints.ClientID %>");
+        var arrayOfCheckBoxes = div.getElementsByTagName('input');
+        for (var i = 0; i < arrayOfCheckBoxes.length; i++) {
+            arrayOfCheckBoxes[i].checked = i == 1;
+        }
+
+        var calculationType = document.getElementById("<%= ddlCalculationsType.ClientID %>");
+        var level = document.getElementById("<%= ddlLevel.ClientID %>");
+        if (level === null) {
+            calculationType.selectedIndex = 3;
+        }
+        else {
+            level.selectedIndex = 0;
+            calculationType.selectedIndex = 0;
+
+            var divFee = document.getElementById("<%= divFeeType.ClientID %>");
+            var arrayOfCheckBoxes = divFee.getElementsByTagName('input');
+            for (var i = 0; i < arrayOfCheckBoxes.length; i++) {
+                arrayOfCheckBoxes[i].checked = true;
+            }
+            GetDefault(document.getElementById("<%= ddlFeeType.ClientID %>"));
+        }
+
+        GetDefault(document.getElementById("<%= ddldataPoints.ClientID %>"));
+        SetActualDropDown();
     }
 
     function custom_ScrollingDropdown_onclick(control, type) {
@@ -275,6 +330,7 @@
         }
     }
 
+
 </script>
 <asp:UpdatePanel ID="flrPanel" runat="server">
     <ContentTemplate>
@@ -291,8 +347,7 @@
                             <asp:Image ID="btnExpandCollapseFilter" runat="server" ImageUrl="~/Images/collapse.jpg"
                                 ToolTip="Search, Filter and Calculation Options" />
                         </td>
-                        <td class="Width8Percent">
-                            &nbsp;Show&nbsp;Projects&nbsp;for&nbsp;
+                        <td class="Width8Percent">&nbsp;Show&nbsp;Projects&nbsp;for&nbsp;
                         </td>
                         <td class="Width8Percent">
                             <asp:DropDownList ID="ddlPeriod" runat="server" Onchange=" return CheckAndShowCustomDatesPoup(this);">
@@ -332,18 +387,9 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            &nbsp;
+                        <td>&nbsp;
                         </td>
-                        <td colspan="3" class="buttons-blockCheckBox PaddingTop4Px">
-                            <%--<asp:CheckBox ID="chbUseActuals" runat="server" Checked="true" Text="Use Actual Time Entry data for Previous Month calculations" />--%>
-                            <asp:DropDownList ID="ddlCalculationsType" runat="server">
-                                <asp:ListItem Text="Projected values for all months" Value="1" Selected="True"></asp:ListItem>
-                                <asp:ListItem Text="Actual values for all months" Value="2"></asp:ListItem>
-                                <asp:ListItem Text="Actual values for previous months and Projected values for current/Future months."
-                                    Value="3"></asp:ListItem>
-                            </asp:DropDownList>
-                        </td>
+                        <td colspan="3" class="buttons-blockCheckBox PaddingTop4Px"></td>
                         <td class="PaddingTop5">
                             <asp:Button ID="btnUpdateFilters" runat="server" Text="Refresh Report" OnClick="btnUpdateView_Click"
                                 ValidationGroup="Filter" EnableViewState="False" CssClass="Width100Px" />
@@ -352,22 +398,8 @@
                             <table>
                                 <tr class="PaddingTop5 padRight5">
                                     <td class="PaddingTop5">
-                                        <asp:Button ID="btnExportToExcel" runat="server" OnClick="btnExportToExcel_Click"
+                                        <asp:Button ID="btnExportToExcel" runat="server"
                                             Text="Export" CssClass="WholeWidth" Width="80px" Style="margin-right: 0px;" />
-                                    </td>
-                                    <td class="PaddingTop5">
-                                        <asp:Image ID="imgExportAllToExcel" runat="server" ImageUrl="~/Images/Dropdown_Arrow_22.png"
-                                            onclick="imgArrow_click();" onmouseover="imgArrow_mouseOver();" onmouseout="imgArrow_mouseOut();" />
-                                    </td>
-                                </tr>
-                                <tr onmouseover="Exportall_click_mouseOver();" onmouseout="imgArrow_mouseOut();">
-                                    <td colspan="2" class="ExportAndExportAll">
-                                        <ul id="popupmenu" class="pmenu" width="80px">
-                                            <li>
-                                                <asp:LinkButton ID="btnExportAllToExcel" runat="server" OnClick="btnExportAllToExcel_Click"
-                                                    Text="Export All" CssClass="bgcolor_CCCCCC" OnClientClick="this.parentNode.parentNode.style.display='none';return true;" />
-                                            </li>
-                                        </ul>
                                     </td>
                                 </tr>
                             </table>
@@ -399,8 +431,7 @@
                                             <asp:Button ID="btnSearchAll" runat="server" Text="Search All" ValidationGroup="Search"
                                                 PostBackUrl="~/ProjectSearch.aspx" CssClass="Width100Px" EnableViewState="False" />
                                         </td>
-                                        <td>
-                                        </td>
+                                        <td></td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -420,34 +451,24 @@
                             <div id="divProjectFilter" runat="server">
                                 <table class="WholeWidth Height80Px">
                                     <tr class="tb-header ProjectSummaryAdvancedFiltersHeader">
-                                        <th>
-                                            Account / Business Unit
+                                        <th>Account / Business Unit
                                         </th>
-                                        <td class="Padding5 Width10Px">
-                                        </td>
-                                        <th>
-                                            Sales Team
+                                        <td class="Padding5 Width10Px"></td>
+                                        <th>Sales Team
                                         </th>
-                                        <td class="Padding5 Width10Px">
-                                        </td>
-                                        <th>
-                                            Division / Practice Area
+                                        <td class="Padding5 Width10Px"></td>
+                                        <th>Division / Practice Area
                                         </th>
-                                        <td class="Padding5 Width10Px">
-                                        </td>
-                                        <th>
-                                            Revenue Type / Offering
+                                        <td class="Padding5 Width10Px"></td>
+                                        <th>Revenue Type / Offering
                                         </th>
-                                        <td class="Padding5 Width10Px">
-                                        </td>
-                                        <th>
-                                            Channel
+                                        <td class="Padding5 Width10Px"></td>
+                                        <th>Channel
                                         </th>
                                         <td rowspan="3">
                                             <table class="textRight WholeWidth">
                                                 <tr>
-                                                    <td>
-                                                    </td>
+                                                    <td></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="PaddingTop10">
@@ -467,8 +488,7 @@
                                                 UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                             </ext:ScrollableDropdownExtender>
                                         </td>
-                                        <td>
-                                        </td>
+                                        <td></td>
                                         <td>
                                             <pmc:ScrollingDropDown ID="cblSalesperson" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                                 onclick="scrollingDropdown_onclick('cblSalesperson','Salesperson')" DropDownListType="Salesperson" />
@@ -476,8 +496,7 @@
                                                 UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                             </ext:ScrollableDropdownExtender>
                                         </td>
-                                        <td>
-                                        </td>
+                                        <td></td>
                                         <td>
                                             <pmc:ScrollingDropDown ID="cblDivision" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                                 onclick="scrollingDropdown_onclick('cblDivision','Division')" DropDownListType="Division" />
@@ -485,8 +504,7 @@
                                                 UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                             </ext:ScrollableDropdownExtender>
                                         </td>
-                                        <td>
-                                        </td>
+                                        <td></td>
                                         <td>
                                             <pmc:ScrollingDropDown ID="cblRevenueType" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                                 onclick="scrollingDropdown_onclick('cblRevenueType','RevenueType')" DropDownListType="Revenue Type" />
@@ -494,8 +512,7 @@
                                                 UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                             </ext:ScrollableDropdownExtender>
                                         </td>
-                                        <td>
-                                        </td>
+                                        <td></td>
                                         <td>
                                             <pmc:ScrollingDropDown ID="cblChannel" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                                 onclick="scrollingDropdown_onclick('cblChannel','Channel')" DropDownListType="Channel" />
@@ -513,8 +530,7 @@
                                                 UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                             </ext:ScrollableDropdownExtender>
                                         </td>
-                                        <td>
-                                        </td>
+                                        <td></td>
                                         <td>
                                             <pmc:ScrollingDropDown ID="cblProjectOwner" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                                 onclick="scrollingDropdown_onclick('cblProjectOwner','Project Access','es','Project Accesses',33);"
@@ -524,8 +540,7 @@
                                                 UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                             </ext:ScrollableDropdownExtender>
                                         </td>
-                                        <td>
-                                        </td>
+                                        <td></td>
                                         <td>
                                             <pmc:ScrollingDropDown ID="cblPractice" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                                 onclick="scrollingDropdown_onclick('cblPractice','Practice Area')" DropDownListType="Practice Area" />
@@ -533,8 +548,7 @@
                                                 UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                             </ext:ScrollableDropdownExtender>
                                         </td>
-                                        <td>
-                                        </td>
+                                        <td></td>
                                         <td>
                                             <pmc:ScrollingDropDown ID="cblOffering" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                                 onclick="scrollingDropdown_onclick('cblOffering','Offering')" DropDownListType="Offering" />
@@ -542,10 +556,8 @@
                                                 UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                             </ext:ScrollableDropdownExtender>
                                         </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
+                                        <td></td>
+                                        <td></td>
                                     </tr>
                                 </table>
                             </div>
@@ -553,25 +565,35 @@
                     </AjaxControlToolkit:TabPanel>
                     <AjaxControlToolkit:TabPanel runat="server" ID="tpMainFilters">
                         <HeaderTemplate>
-                            <span class="bg"><a href="#"><span>Calculations</span></a> </span>
+                            <span class="bg"><a href="#"><span>View</span></a> </span>
                         </HeaderTemplate>
                         <ContentTemplate>
                             <div class="project-filter">
                                 <table class="WholeWidth Height80Px" cellpadding="5">
                                     <tr class="tb-header">
-                                        <td colspan="3" class="ProjectSummaryProjectTypeTd">
-                                            Project Types Included
+                                        <td colspan="3" class="ProjectSummaryProjectTypeTd">Project Types Included
                                         </td>
-                                        <td class="Width20Px" rowspan="4">
+                                        <td class="Width20Px" rowspan="4"></td>
+                                        <td class="ProjectSummaryGrandTotalTd">Data Points
                                         </td>
-                                        <td class="ProjectSummaryGrandTotalTd">
-                                            Calculated Grand Total
+                                        <td class="Width20Px" rowspan="4"></td>
+                                        <td class="ProjectSummaryGrandTotalTd">View
+                                        </td>
+                                        <td class="Width20Px tdActual" rowspan="4"></td>
+                                        <td class="ProjectSummaryGrandTotalTd tdActual" style="width: 150px !important">Actuals
+                                        </td>
+                                        <td class="Width20Px" rowspan="4"></td>
+                                        <td id="tdFeeTypeLbl" runat="server" class="ProjectSummaryGrandTotalTd" visible="false" style="width: 150px !important">Fee Type</td>
+                                        <td class="Width20Px" rowspan="4"></td>
+                                        <td class="ProjectSummaryGrandTotalTd" style="width: 150px !important">Suppress Zero Balance Projects
+                                        </td>
+                                        <td class="Width20Px" rowspan="4"></td>
+                                        <td id="tdLevelLbl" runat="server" class="ProjectSummaryGrandTotalTd" visible="false" width="150px">Level
                                         </td>
                                         <td rowspan="4">
                                             <table class="textRight WholeWidth">
                                                 <tr>
-                                                    <td>
-                                                    </td>
+                                                    <td></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="PaddingTop10">
@@ -593,11 +615,50 @@
                                         <td class="ProjectSummaryCheckboxTd">
                                             <asp:CheckBox ID="chbProposed" runat="server" Text="Proposed" Checked="false" EnableViewState="False" />
                                         </td>
-                                        <td rowspan="2" class="ProjectSummaryCalculateRangeTd">
-                                            <asp:DropDownList ID="ddlCalculateRange" runat="server" AutoPostBack="false">
-                                                <asp:ListItem Text="Project Value in Range" Value="1"></asp:ListItem>
-                                                <asp:ListItem Text="Total Project Value" Value="2"></asp:ListItem>
-                                                <asp:ListItem Text="Current Fiscal Year" Value="3"></asp:ListItem>
+                                        <td rowspan="2" class="">
+                                            <div id="divDataPoints" runat="server">
+                                                <pmc:ScrollingDropDown ID="ddldataPoints" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown TextAlignLeftImp"
+                                                    onclick="scrollingDropdown_onclick('ddldataPoints','Data point')" DropDownListType="DataPoint" />
+                                                <ext:ScrollableDropdownExtender ID="ScrollableDropdownExtender1" runat="server" TargetControlID="ddldataPoints"
+                                                    UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="220px">
+                                                </ext:ScrollableDropdownExtender>
+                                            </div>
+                                        </td>
+                                        <td rowspan="2" class="">
+                                            <asp:DropDownList ID="ddlCalculationsType" runat="server" AutoPostBack="false" CssClass="height20PImp Width170Px" Onchange="SetActualDropDown();">
+                                                <asp:ListItem Text="Budget" Value="3"></asp:ListItem>
+                                                <asp:ListItem Text="Projected" Value="1"></asp:ListItem>
+                                                <asp:ListItem Text="Actual" Value="2"></asp:ListItem>
+                                                <asp:ListItem Text="ETC" Value="4" Selected="True"></asp:ListItem>
+                                            </asp:DropDownList>
+                                        </td>
+                                        <td rowspan="2" class="tdActual">
+                                            <asp:DropDownList ID="ddlActualPeriod" runat="server" AutoPostBack="false" Width="150px">
+                                                <asp:ListItem Selected="True" Value="1">Today</asp:ListItem>
+                                                <asp:ListItem Value="15">Last Pay Period</asp:ListItem>
+                                                <asp:ListItem Value="30">Prior Month End</asp:ListItem>
+                                                <asp:ListItem Value="0">All</asp:ListItem>
+                                            </asp:DropDownList>
+                                        </td>
+                                        <td id="tdFeeType" runat="server" rowspan="2" visible="false">
+                                            <div id="divFeeType" runat="server">
+                                                <pmc:ScrollingDropDown ID="ddlFeeType" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown TextAlignLeftImp"
+                                                    onclick="scrollingDropdown_onclick('ddlFeeType','Fee Type')" DropDownListType="FeeType" />
+                                                <ext:ScrollableDropdownExtender ID="ScrollableDropdownExtender2" runat="server" TargetControlID="ddlFeeType"
+                                                    UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="150px">
+                                                </ext:ScrollableDropdownExtender>
+                                            </div>
+                                        </td>
+                                        <td rowspan="2" class="">
+                                            <asp:DropDownList ID="ddlSupressZeroBalance" runat="server" AutoPostBack="false" CssClass="height20PImp" Width="150px">
+                                                <asp:ListItem Text="Yes" Value="1" Selected="True"></asp:ListItem>
+                                                <asp:ListItem Text="No" Value="2"></asp:ListItem>
+                                            </asp:DropDownList>
+                                        </td>
+                                        <td id="tdLevelValue" runat="server" rowspan="2" visible="false">
+                                            <asp:DropDownList ID="ddlLevel" runat="server" AutoPostBack="false" CssClass="height20PImp" Width="150px">
+                                                <asp:ListItem Text="Summary" Value="1" Selected="True"></asp:ListItem>
+                                                <asp:ListItem Text="Detail" Value="2"></asp:ListItem>
                                             </asp:DropDownList>
                                         </td>
                                     </tr>
@@ -619,8 +680,7 @@
                                         <td>
                                             <asp:CheckBox ID="chbExperimental" runat="server" Text="Experimental" EnableViewState="False" />
                                         </td>
-                                        <td>
-                                        </td>
+                                        <td></td>
                                     </tr>
                                 </table>
                             </div>
@@ -628,20 +688,60 @@
                     </AjaxControlToolkit:TabPanel>
                 </AjaxControlToolkit:TabContainer>
             </asp:Panel>
+
+            <AjaxControlToolkit:ModalPopupExtender ID="mpeExportPopUp" runat="server"
+                TargetControlID="btnExportToExcel" BehaviorID="mpeExportPopUp"
+                BackgroundCssClass="modalBackground" PopupControlID="pnlExportPopUp" CancelControlID="btnCancelExport"
+                DropShadow="false" />
+            <asp:Panel ID="pnlExportPopUp" runat="server" CssClass="PanelPerson ConfirmBoxClassError"
+                Style="display: none">
+                <table class="WholeWidth">
+                    <tr>
+                        <th align="center" class="TextAlignCenter BackGroundColorGray vBottom" colspan="2">
+                            <b class="BtnClose">Export</b>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td class="Padding10Px" colspan="2">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <asp:DropDownList ID="ddlExportOptions" runat="server">
+                                            <asp:ListItem Text="Screen information only" Value="1" Selected="True"></asp:ListItem>
+                                            <asp:ListItem Text="All data fields - revenue only" Value="2"></asp:ListItem>
+                                            <asp:ListItem Text="All data fields - margin only" Value="3"></asp:ListItem>
+                                            <asp:ListItem Text="All data fields - revenue and margin" Value="4"></asp:ListItem>
+                                        </asp:DropDownList>
+                                        <br />
+                                    </td>
+                                </tr>
+                                <tr class="bgColor_F5FAFF">
+                                    <td class="textRight Padding3PX">
+                                        <asp:Button ID="btnExport" Text="Export" ToolTip="Export" runat="server" OnClick="btnExportToExcel_Click" />
+                                        <asp:Button ID="btnCancelExport" Text="Close" ToolTip="Close" runat="server" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </asp:Panel>
+
             <asp:ValidationSummary ID="valsPerformance" runat="server" ValidationGroup="Filter"
                 CssClass="searchError WholeWidth" />
+
+
         </div>
     </ContentTemplate>
     <Triggers>
-        <asp:PostBackTrigger ControlID="btnExportToExcel" />
-        <asp:PostBackTrigger ControlID="btnExportAllToExcel" />
+        <asp:PostBackTrigger ControlID="btnExport" />
     </Triggers>
 </asp:UpdatePanel>
 <pmcg:StyledUpdatePanel ID="StyledUpdatePanel" runat="server" CssClass="container minheight250Px"
     UpdateMode="Conditional">
     <ContentTemplate>
         <asp:Panel runat="server" ID="horisontalScrollDiv" CssClass="xScrollAuto minheight250Px">
-            <div style="max-height: 650px; overflow: auto;">
+            <div id="test">
                 <asp:ListView ID="lvProjects" runat="server" DataKeyNames="Id" OnItemDataBound="lvProjects_ItemDataBound"
                     OnSorted="lvProjects_Sorted" OnDataBound="lvProjects_OnDataBound" OnSorting="lvProjects_Sorting"
                     OnPagePropertiesChanging="lvProjects_PagePropertiesChanging">
@@ -664,76 +764,166 @@
                                             CssClass="arrow">Account</asp:LinkButton>
                                     </div>
                                 </td>
+                                <%--------%>
+                                <td class="MinWidth hideCol">
+                                    <div class="ie-bg">
+                                        <asp:LinkButton ID="LinkButton1" CommandArgument="3" CommandName="Sort" runat="server"
+                                            CssClass="arrow">House Account</asp:LinkButton>
+                                    </div>
+                                </td>
+                                <td class="MinWidth hideCol">
+                                    <div class="ie-bg">
+                                        <asp:LinkButton ID="LinkButton2" CommandArgument="4" CommandName="Sort" runat="server"
+                                            CssClass="arrow">Business Group</asp:LinkButton>
+                                    </div>
+                                </td>
+                                <td class="MinWidth hideCol">
+                                    <div class="ie-bg">
+                                        <asp:LinkButton ID="LinkButton3" CommandArgument="5" CommandName="Sort" runat="server"
+                                            CssClass="arrow">Business Unit</asp:LinkButton>
+                                    </div>
+                                </td>
+                                <td class="MinWidth hideCol">
+                                    <div class="ie-bg">
+                                        <asp:LinkButton ID="LinkButton4" CommandArgument="6" CommandName="Sort" runat="server"
+                                            CssClass="arrow">Buyer</asp:LinkButton>
+                                    </div>
+                                </td>
+                                <%--------%>
                                 <td class="CompPerfProject">
                                     <div class="ie-bg">
-                                        <asp:LinkButton ID="btnSortProjectName" CommandArgument="3" CommandName="Sort" runat="server"
+                                        <asp:LinkButton ID="btnSortProjectName" CommandArgument="7" CommandName="Sort" runat="server"
                                             CssClass="arrow">Project</asp:LinkButton>
                                     </div>
                                 </td>
+                                <%--------%>
+                                <td class="MinWidth hideCol" id="thNewOrExtension" runat="server">
+                                    <div class="ie-bg alignCenter">
+                                        <asp:LinkButton ID="btnNewOrExtension" CommandArgument="8" CommandName="Sort" runat="server"
+                                            CssClass="arrow">New/Extension</asp:LinkButton>
+                                    </div>
+                                </td>
+
                                 <td class="MinWidth hideCol" id="thStatus" runat="server">
                                     <div class="ie-bg alignCenter">
-                                        <asp:LinkButton ID="btnStatus" CommandArgument="4" CommandName="Sort" runat="server"
+                                        <asp:LinkButton ID="btnStatus" CommandArgument="9" CommandName="Sort" runat="server"
                                             CssClass="arrow">Status</asp:LinkButton>
                                     </div>
                                 </td>
+
                                 <td class="CompPerfPeriod">
                                     <div class="ie-bg alignCenter">
-                                        <asp:LinkButton ID="btnSortStartDate" CommandArgument="5" CommandName="Sort" runat="server"
+                                        <asp:LinkButton ID="btnSortStartDate" CommandArgument="10" CommandName="Sort" runat="server"
                                             CssClass="arrow">Start Date</asp:LinkButton>
                                     </div>
                                 </td>
                                 <td class="CompPerfPeriod">
                                     <div class="ie-bg  alignCenter">
-                                        <asp:LinkButton ID="btnSortEndDate" CommandArgument="6" CommandName="Sort" runat="server"
+                                        <asp:LinkButton ID="btnSortEndDate" CommandArgument="11" CommandName="Sort" runat="server"
                                             CssClass="arrow">End Date</asp:LinkButton>
                                     </div>
                                 </td>
-                                <td class="MinWidth hideCol" id="thNewOrExtension" runat="server">
-                                    <div class="ie-bg alignCenter">
-                                        <asp:LinkButton ID="btnNewOrExtension" CommandArgument="7" CommandName="Sort" runat="server"
-                                            CssClass="arrow">New/Extension</asp:LinkButton>
-                                    </div>
-                                </td>
+
                                 <td class="MinWidth hideCol">
                                     <div class="ie-bg  alignCenter">
-                                        <asp:LinkButton ID="btnDivision" CommandArgument="8" CommandName="Sort" runat="server"
+                                        <asp:LinkButton ID="btnDivision" CommandArgument="12" CommandName="Sort" runat="server"
                                             CssClass="arrow">Division</asp:LinkButton>
                                     </div>
                                 </td>
                                 <td class="MinWidth hideCol">
                                     <div class="ie-bg  alignCenter">
-                                        <asp:LinkButton ID="btnPractice" CommandArgument="9" CommandName="Sort" runat="server"
+                                        <asp:LinkButton ID="btnPractice" CommandArgument="13" CommandName="Sort" runat="server"
                                             CssClass="arrow">Practice Area</asp:LinkButton>
                                     </div>
                                 </td>
                                 <td class="MinWidth hideCol">
                                     <div class="ie-bg  alignCenter">
-                                        <asp:LinkButton ID="btnChannel" CommandArgument="10" CommandName="Sort" runat="server"
+                                        <asp:LinkButton ID="btnChannel" CommandArgument="14" CommandName="Sort" runat="server"
                                             CssClass="arrow">Channel</asp:LinkButton>
                                     </div>
                                 </td>
                                 <td class="MinWidth hideCol">
                                     <div class="ie-bg  alignCenter">
-                                        <asp:LinkButton ID="btnSubChannel" CommandArgument="11" CommandName="Sort" runat="server"
+                                        <asp:LinkButton ID="btnSubChannel" CommandArgument="15" CommandName="Sort" runat="server"
                                             CssClass="arrow">Channel-Sub</asp:LinkButton>
                                     </div>
                                 </td>
                                 <td class="MinWidth hideCol">
                                     <div class="ie-bg  alignCenter">
-                                        <asp:LinkButton ID="btnRevenueType" CommandArgument="12" CommandName="Sort" runat="server"
-                                            CssClass="arrow">Revenue Type</asp:LinkButton>
+                                        <asp:LinkButton ID="btnOffering" CommandArgument="16" CommandName="Sort" runat="server"
+                                            CssClass="arrow">Offering</asp:LinkButton>
                                     </div>
                                 </td>
                                 <td class="MinWidth hideCol">
                                     <div class="ie-bg  alignCenter">
-                                        <asp:LinkButton ID="btnOffering" CommandArgument="13" CommandName="Sort" runat="server"
-                                            CssClass="arrow">Offering</asp:LinkButton>
+                                        <asp:LinkButton ID="btnRevenueType" CommandArgument="17" CommandName="Sort" runat="server"
+                                            CssClass="arrow">Revenue Type</asp:LinkButton>
                                     </div>
                                 </td>
+
+                                <td class="MinWidth hideCol">
+                                    <div class="ie-bg  alignCenter">
+                                        <%--<asp:LinkButton ID="LinkButton5" CommandArgument="18" CommandName="Sort" runat="server"
+                                            CssClass="arrow">--%>
+                                            Capabilities
+
+                                        <%--</asp:LinkButton>--%>
+                                    </div>
+                                </td>
+
                                 <td class="MinWidth hideCol" id="thSalesPerson" runat="server">
                                     <div class="ie-bg alignCenter">
-                                        <asp:LinkButton ID="btnSalesPerson" CommandArgument="14" CommandName="Sort" runat="server"
+                                        <asp:LinkButton ID="btnSalesPerson" CommandArgument="19" CommandName="Sort" runat="server"
                                             CssClass="arrow">Sales Person</asp:LinkButton>
+                                    </div>
+                                </td>
+
+                                <td class="MinWidth hideCol" id="Td1" runat="server">
+                                    <div class="ie-bg alignCenter">
+                                        <asp:LinkButton ID="LinkButton6" CommandArgument="20" CommandName="Sort" runat="server"
+                                            CssClass="arrow">Project Manager</asp:LinkButton>
+                                    </div>
+                                </td>
+                                <td class="MinWidth hideCol" id="Td2" runat="server">
+                                    <div class="ie-bg alignCenter">
+                                        <asp:LinkButton ID="LinkButton7" CommandArgument="21" CommandName="Sort" runat="server"
+                                            CssClass="arrow">Engagement Manager</asp:LinkButton>
+                                    </div>
+                                </td>
+                                <td class="MinWidth hideCol" id="Td3" runat="server">
+                                    <div class="ie-bg alignCenter">
+                                        <asp:LinkButton ID="LinkButton8" CommandArgument="22" CommandName="Sort" runat="server"
+                                            CssClass="arrow">Executive in Charge</asp:LinkButton>
+                                    </div>
+                                </td>
+                                <td class="MinWidth hideCol" id="Td4" runat="server">
+                                    <div class="ie-bg alignCenter">
+                                        <asp:LinkButton ID="LinkButton9" CommandArgument="23" CommandName="Sort" runat="server"
+                                            CssClass="arrow">Pricing List</asp:LinkButton>
+                                    </div>
+                                </td>
+                                <td class="MinWidth hideCol" id="Td5" runat="server">
+                                    <div class="ie-bg alignCenter">
+                                        <asp:LinkButton ID="LinkButton10" CommandArgument="24" CommandName="Sort" runat="server"
+                                            CssClass="arrow">PO Number</asp:LinkButton>
+                                    </div>
+                                </td>
+                                <td class="MinWidth hideCol" id="Td6" runat="server">
+                                    <div class="ie-bg alignCenter">
+                                        <asp:LinkButton ID="LinkButton11" CommandArgument="25" CommandName="Sort" runat="server"
+                                            CssClass="arrow">Client Time Entry Required</asp:LinkButton>
+                                    </div>
+                                </td>
+                                <td class="MinWidth hideCol" id="Td7" runat="server">
+                                    <div class="ie-bg alignCenter">
+                                        <asp:LinkButton ID="LinkButton12" CommandArgument="26" CommandName="Sort" runat="server"
+                                            CssClass="arrow">Previous Project Number</asp:LinkButton>
+                                    </div>
+                                </td>
+                                <td class="MinWidth hideCol" id="Td8" runat="server">
+                                    <div class="ie-bg alignCenter">
+                                        <asp:LinkButton ID="LinkButton13" CommandArgument="27" CommandName="Sort" runat="server"
+                                            CssClass="arrow">Outsource Id Indicator</asp:LinkButton>
                                     </div>
                                 </td>
                                 <td class="CompPerfTotalSummary">
@@ -745,7 +935,8 @@
                             <tr runat="server" id="lvSummary" class="summary">
                                 <td id="tdSummary" runat="server">
                                     <div class="cell-pad">
-                                        Financial Summary</div>
+                                        Financial Summary
+                                    </div>
                                 </td>
                             </tr>
                             <tbody>
@@ -755,16 +946,32 @@
                     </LayoutTemplate>
                     <ItemTemplate>
                         <tr runat="server" id="boundingRow" class="bgcolorwhite">
-                            <td class="CompPerfProjectState">
-                            </td>
+                            <td class="CompPerfProjectState"></td>
                             <td class="CompPerfProjectNumber">
                                 <asp:Label ID="lblProjectNumber" runat="server" />
                             </td>
                             <td class="CompPerfClient">
                                 <asp:HyperLink ID="btnClientName" runat="server" />
                             </td>
-                            <td class="CompPerfProject padLeft10Imp">
+                            <td class="MinWidth TextAlignCenter hideCol" id="tdHouseAccount" runat="server">
+                                <asp:Label ID="lblIsHouseAccount" runat="server" />
                             </td>
+                            <td class="MinWidth TextAlignCenter hideCol" id="tdBusinessGroup" runat="server">
+                                <asp:Label ID="lblBusinessGroup" runat="server" />
+                            </td>
+                            <td class="MinWidth TextAlignCenter hideCol" id="tdBusinessUnit" runat="server">
+                                <asp:Label ID="lblBusinessUnit" runat="server" />
+                            </td>
+                            <td class="MinWidth TextAlignCenter hideCol" id="tdBuyer" runat="server">
+                                <asp:Label ID="lblBuyer" runat="server" />
+                            </td>
+
+                            <td id="tdProjectName" runat="server" class="CompPerfProject padLeft10Imp"></td>
+
+                            <td class="MinWidth TextAlignCenter hideCol" id="tdNewOrExt" runat="server">
+                                <asp:Label ID="lblNewOrExt" runat="server" />
+                            </td>
+
                             <td class="MinWidth TextAlignCenter hideCol" id="tdStatus" runat="server">
                                 <asp:Label ID="lblStatus" runat="server" />
                             </td>
@@ -774,9 +981,7 @@
                             <td class="CompPerfPeriod TextAlignCenter">
                                 <asp:Label ID="lblEndDate" runat="server" />
                             </td>
-                            <td class="MinWidth TextAlignCenter hideCol" id="tdNewOrExt" runat="server">
-                                <asp:Label ID="lblNewOrExt" runat="server" />
-                            </td>
+
                             <td class="MinWidth padLeft10Imp TextAlignCenter hideCol">
                                 <asp:Label ID="lblDivision" runat="server" />
                             </td>
@@ -790,28 +995,75 @@
                                 <asp:Label ID="lblSubChannel" runat="server" />
                             </td>
                             <td class="MinWidth padLeft10Imp TextAlignCenter hideCol">
-                                <asp:Label ID="lblRevenue" runat="server" />
-                            </td>
-                            <td class="MinWidth padLeft10Imp TextAlignCenter hideCol">
                                 <asp:Label ID="lblOffering" runat="server" />
                             </td>
-                            <td class="MinWidth hideCol" id="tdSalesPerson" runat="server">
+                            <td class="MinWidth padLeft10Imp TextAlignCenter hideCol">
+                                <asp:Label ID="lblRevenue" runat="server" />
+                            </td>
+                            <td class="MinWidth padLeft10Imp TextAlignCenter hideCol Width20PerImp">
+                                <asp:Label ID="lblCapabilities" runat="server" />
+                            </td>
+
+                            <td class="MinWidth hideCol TextAlignCenter" id="tdSalesPerson" runat="server">
                                 <asp:Label ID="lblSalesPerson" runat="server" />
                             </td>
+
+                            <td class="MinWidth hideCol TextAlignCenter" id="tdProjectManager" runat="server">
+                                <asp:Label ID="lblProjectManager" runat="server" />
+                            </td>
+                            <td class="MinWidth hideCol TextAlignCenter" id="tdEngagementManager" runat="server">
+                                <asp:Label ID="lblEngagementManager" runat="server" />
+                            </td>
+                            <td class="MinWidth hideCol TextAlignCenter" id="tdExecutiveIncharge" runat="server">
+                                <asp:Label ID="lblExecutiveInCharge" runat="server" />
+                            </td>
+
+                            <td class="MinWidth hideCol TextAlignCenter" id="tdPricingList" runat="server">
+                                <asp:Label ID="lblPricingList" runat="server" />
+                            </td>
+                            <td class="MinWidth hideCol TextAlignCenter" id="tdPONumber" runat="server">
+                                <asp:Label ID="lblPONumber" runat="server" />
+                            </td>
+                            <td class="MinWidth hideCol TextAlignCenter" id="td9" runat="server">
+                                <asp:Label ID="lblClientTimeEntry" runat="server" />
+                            </td>
+                            <td class="MinWidth hideCol TextAlignCenter" id="td10" runat="server">
+                                <asp:Label ID="lblPreviousProjectNumber" runat="server" />
+                            </td>
+                            <td class="MinWidth hideCol TextAlignCenter" id="td11" runat="server">
+                                <asp:Label ID="lblOutSourceId" runat="server" />
+                            </td>
+
                         </tr>
                     </ItemTemplate>
                     <AlternatingItemTemplate>
                         <tr runat="server" id="boundingRow" class="rowEven">
-                            <td class="CompPerfProjectState">
-                            </td>
+                            <td class="CompPerfProjectState"></td>
                             <td class="CompPerfProjectNumber">
                                 <asp:Label ID="lblProjectNumber" runat="server" />
                             </td>
                             <td class="CompPerfClient">
                                 <asp:HyperLink ID="btnClientName" runat="server" />
                             </td>
-                            <td class="CompPerfProject padLeft10Imp">
+                            <td class="MinWidth TextAlignCenter hideCol" id="tdHouseAccount" runat="server">
+                                <asp:Label ID="lblIsHouseAccount" runat="server" />
                             </td>
+                            <td class="MinWidth TextAlignCenter hideCol" id="tdBusinessGroup" runat="server">
+                                <asp:Label ID="lblBusinessGroup" runat="server" />
+                            </td>
+                            <td class="MinWidth TextAlignCenter hideCol" id="tdBusinessUnit" runat="server">
+                                <asp:Label ID="lblBusinessUnit" runat="server" />
+                            </td>
+                            <td class="MinWidth TextAlignCenter hideCol" id="tdBuyer" runat="server">
+                                <asp:Label ID="lblBuyer" runat="server" />
+                            </td>
+
+                            <td id="tdProjectName" runat="server" class="CompPerfProject padLeft10Imp"></td>
+
+                            <td class="MinWidth TextAlignCenter hideCol" id="tdNewOrExt" runat="server">
+                                <asp:Label ID="lblNewOrExt" runat="server" />
+                            </td>
+
                             <td class="MinWidth TextAlignCenter hideCol" id="tdStatus" runat="server">
                                 <asp:Label ID="lblStatus" runat="server" />
                             </td>
@@ -821,9 +1073,7 @@
                             <td class="CompPerfPeriod TextAlignCenter">
                                 <asp:Label ID="lblEndDate" runat="server" />
                             </td>
-                            <td class="MinWidth TextAlignCenter hideCol" id="tdNewOrExt" runat="server">
-                                <asp:Label ID="lblNewOrExt" runat="server" />
-                            </td>
+
                             <td class="MinWidth padLeft10Imp TextAlignCenter hideCol">
                                 <asp:Label ID="lblDivision" runat="server" />
                             </td>
@@ -837,20 +1087,50 @@
                                 <asp:Label ID="lblSubChannel" runat="server" />
                             </td>
                             <td class="MinWidth padLeft10Imp TextAlignCenter hideCol">
-                                <asp:Label ID="lblRevenue" runat="server" />
-                            </td>
-                            <td class="MinWidth padLeft10Imp TextAlignCenter hideCol">
                                 <asp:Label ID="lblOffering" runat="server" />
                             </td>
-                            <td class="MinWidth hideCol" id="tdSalesPerson" runat="server">
+                            <td class="MinWidth padLeft10Imp TextAlignCenter hideCol">
+                                <asp:Label ID="lblRevenue" runat="server" />
+                            </td>
+                            <td class="MinWidth padLeft10Imp TextAlignCenter hideCol Width20PerImp">
+                                <asp:Label ID="lblCapabilities" runat="server" />
+                            </td>
+
+                            <td class="MinWidth hideCol TextAlignCenter" id="tdSalesPerson" runat="server">
                                 <asp:Label ID="lblSalesPerson" runat="server" />
                             </td>
+
+                            <td class="MinWidth hideCol TextAlignCenter" id="tdProjectManager" runat="server">
+                                <asp:Label ID="lblProjectManager" runat="server" />
+                            </td>
+                            <td class="MinWidth hideCol TextAlignCenter" id="tdEngagementManager" runat="server">
+                                <asp:Label ID="lblEngagementManager" runat="server" />
+                            </td>
+                            <td class="MinWidth hideCol TextAlignCenter" id="tdExecutiveIncharge" runat="server">
+                                <asp:Label ID="lblExecutiveInCharge" runat="server" />
+                            </td>
+
+                            <td class="MinWidth hideCol TextAlignCenter" id="tdPricingList" runat="server">
+                                <asp:Label ID="lblPricingList" runat="server" />
+                            </td>
+                            <td class="MinWidth hideCol TextAlignCenter" id="tdPONumber" runat="server">
+                                <asp:Label ID="lblPONumber" runat="server" />
+                            </td>
+                            <td class="MinWidth hideCol TextAlignCenter" id="td9" runat="server">
+                                <asp:Label ID="lblClientTimeEntry" runat="server" />
+                            </td>
+                            <td class="MinWidth hideCol TextAlignCenter" id="td10" runat="server">
+                                <asp:Label ID="lblPreviousProjectNumber" runat="server" />
+                            </td>
+                            <td class="MinWidth hideCol TextAlignCenter" id="td11" runat="server">
+                                <asp:Label ID="lblOutSourceId" runat="server" />
+                            </td>
+
                         </tr>
                     </AlternatingItemTemplate>
                     <EmptyDataTemplate>
                         <tr runat="server" id="EmptyDataRow">
-                            <td>
-                                There is nothing to be displayed here.
+                            <td>There is nothing to be displayed here.
                             </td>
                         </tr>
                     </EmptyDataTemplate>
@@ -858,19 +1138,10 @@
             </div>
             <asp:DataPager ID="dpProjects" runat="server" PagedControlID="lvProjects">
                 <Fields>
-                    <asp:TemplatePagerField OnPagerCommand="Pager_PagerCommand">
-                        <PagerTemplate>
-                            <asp:LinkButton ID="LinkButton1" runat="server" Text="Previous" PostBackUrl="#" CommandName="<%# PagerPrevCommand %>"
-                                Visible="<%# IsNeedToShowPrevButton() %>"></asp:LinkButton>
-                        </PagerTemplate>
-                    </asp:TemplatePagerField>
+                    <asp:NextPreviousPagerField ButtonType="Link" ShowFirstPageButton="false" ShowPreviousPageButton="true"
+                        ShowNextPageButton="false" />
                     <asp:NumericPagerField ButtonCount="10" NextPageText="..." PreviousPageText="..." />
-                    <asp:TemplatePagerField OnPagerCommand="Pager_PagerCommand">
-                        <PagerTemplate>
-                            <asp:LinkButton ID="LinkButton2" runat="server" Text="Next" PostBackUrl="#" CommandName="<%# PagerNextCommand %>"
-                                Visible="<%# IsNeedToShowNextButton() %>"></asp:LinkButton>
-                        </PagerTemplate>
-                    </asp:TemplatePagerField>
+                    <asp:NextPreviousPagerField ButtonType="Link" ShowNextPageButton="true" ShowLastPageButton="false" ShowPreviousPageButton="false" />
                 </Fields>
             </asp:DataPager>
             <uc3:LoadingProgress ID="LoadingProgress1" runat="server" DisplayText="Refreshing Data..." />
@@ -883,8 +1154,7 @@
                             <asp:Label ID="lblPageCount" runat="server"></asp:Label>
                         </div>
                     </td>
-                    <td align="right">
-                    </td>
+                    <td align="right"></td>
                 </tr>
             </table>
         </div>
@@ -921,27 +1191,20 @@
                         <div class="tail">
                         </div>
                     </td>
-                    <td class="tbor">
-                    </td>
-                    <td class="rt">
-                    </td>
+                    <td class="tbor"></td>
+                    <td class="rt"></td>
                 </tr>
                 <tr class="middle">
-                    <td class="lbor">
-                    </td>
+                    <td class="lbor"></td>
                     <td class="content WordWrap">
                         <asp:Label ID="lblProjectTooltip" CssClass="WordWrap" runat="server"></asp:Label>
                     </td>
-                    <td class="rbor">
-                    </td>
+                    <td class="rbor"></td>
                 </tr>
                 <tr class="bottom">
-                    <td class="lb">
-                    </td>
-                    <td class="bbor">
-                    </td>
-                    <td class="rb">
-                    </td>
+                    <td class="lb"></td>
+                    <td class="bbor"></td>
+                    <td class="rb"></td>
                 </tr>
             </table>
         </asp:Panel>
