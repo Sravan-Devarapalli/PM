@@ -126,6 +126,36 @@
   <wsdl:message name="IClientService_GetBusinessUnitsForClients_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetBusinessUnitsForClientsResponse" />
   </wsdl:message>
+  <wsdl:message name="IClientService_GetClientMarginGoals_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetClientMarginGoals" />
+  </wsdl:message>
+  <wsdl:message name="IClientService_GetClientMarginGoals_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetClientMarginGoalsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IClientService_InsertClientMargin_InputMessage">
+    <wsdl:part name="parameters" element="tns:InsertClientMargin" />
+  </wsdl:message>
+  <wsdl:message name="IClientService_InsertClientMargin_OutputMessage">
+    <wsdl:part name="parameters" element="tns:InsertClientMarginResponse" />
+  </wsdl:message>
+  <wsdl:message name="IClientService_UpdateClientMarginGoal_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateClientMarginGoal" />
+  </wsdl:message>
+  <wsdl:message name="IClientService_UpdateClientMarginGoal_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateClientMarginGoalResponse" />
+  </wsdl:message>
+  <wsdl:message name="IClientService_DeleteClientMarginGoal_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteClientMarginGoal" />
+  </wsdl:message>
+  <wsdl:message name="IClientService_DeleteClientMarginGoal_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteClientMarginGoalResponse" />
+  </wsdl:message>
+  <wsdl:message name="IClientService_GetMarginGoalLogForClient_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMarginGoalLogForClient" />
+  </wsdl:message>
+  <wsdl:message name="IClientService_GetMarginGoalLogForClient_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMarginGoalLogForClientResponse" />
+  </wsdl:message>
   <wsdl:portType name="IClientService">
     <wsdl:operation name="SaveClientDetail">
       <wsdl:input wsaw:Action="http://www.logic2020.com/IClientService/SaveClientDetail" message="tns:IClientService_SaveClientDetail_InputMessage" />
@@ -202,6 +232,26 @@
     <wsdl:operation name="GetBusinessUnitsForClients">
       <wsdl:input wsaw:Action="http://www.logic2020.com/IClientService/GetBusinessUnitsForClients" message="tns:IClientService_GetBusinessUnitsForClients_InputMessage" />
       <wsdl:output wsaw:Action="http://www.logic2020.com/IClientService/GetBusinessUnitsForClientsResponse" message="tns:IClientService_GetBusinessUnitsForClients_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetClientMarginGoals">
+      <wsdl:input wsaw:Action="http://www.logic2020.com/IClientService/GetClientMarginGoals" message="tns:IClientService_GetClientMarginGoals_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.logic2020.com/IClientService/GetClientMarginGoalsResponse" message="tns:IClientService_GetClientMarginGoals_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="InsertClientMargin">
+      <wsdl:input wsaw:Action="http://www.logic2020.com/IClientService/InsertClientMargin" message="tns:IClientService_InsertClientMargin_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.logic2020.com/IClientService/InsertClientMarginResponse" message="tns:IClientService_InsertClientMargin_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateClientMarginGoal">
+      <wsdl:input wsaw:Action="http://www.logic2020.com/IClientService/UpdateClientMarginGoal" message="tns:IClientService_UpdateClientMarginGoal_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.logic2020.com/IClientService/UpdateClientMarginGoalResponse" message="tns:IClientService_UpdateClientMarginGoal_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteClientMarginGoal">
+      <wsdl:input wsaw:Action="http://www.logic2020.com/IClientService/DeleteClientMarginGoal" message="tns:IClientService_DeleteClientMarginGoal_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.logic2020.com/IClientService/DeleteClientMarginGoalResponse" message="tns:IClientService_DeleteClientMarginGoal_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMarginGoalLogForClient">
+      <wsdl:input wsaw:Action="http://www.logic2020.com/IClientService/GetMarginGoalLogForClient" message="tns:IClientService_GetMarginGoalLogForClient_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.logic2020.com/IClientService/GetMarginGoalLogForClientResponse" message="tns:IClientService_GetMarginGoalLogForClient_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
 </wsdl:definitions>
