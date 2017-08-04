@@ -23,7 +23,8 @@ CREATE PROCEDURE  [dbo].[ProjectListAllMultiParameters]
 	@StartDate			DATETIME,
 	@EndDate			DATETIME,
 	@ExcludeInternalPractices BIT = 0,
-	@UserLogin			NVARCHAR(255)
+	@UserLogin			NVARCHAR(255),
+	@FeeType			INT = NULL
 AS 
 	SET NOCOUNT ON ;
 
@@ -175,8 +176,14 @@ AS
 	LEFT JOIN dbo.ProjectDivision as pd on pd.DivisionId=p.DivisionId
 	LEFT JOIN dbo.Channel as ch on ch.ChannelId=p.ChannelId
 	LEFT JOIN dbo.Offering as o on o.OfferingId=p.OfferingId
-	 LEFT JOIN dbo.Project AS PrevProject ON p.PreviousProjectNumber=PrevProject.ProjectNumber
-	LEFt JOIN dbo.Revenue as r on r.RevenueTypeId=p.RevenueTypeId
+	LEFT JOIN dbo.Project AS PrevProject ON p.PreviousProjectNumber=PrevProject.ProjectNumber
+	LEFT JOIN dbo.Revenue as r on r.RevenueTypeId=p.RevenueTypeId
+	LEFT JOIN ( SELECT M.ProjectId,
+					   MIN(CAST(M.IsHourlyAmount AS INT)) MinimumValue,
+			           MAX(CAST(M.IsHourlyAmount AS INT)) MaximumValue
+				FROM Milestone M
+				GROUP BY M.ProjectId
+			  ) FeeType on P.ProjectId=FeeType.ProjectId
 	OUTER APPLY (SELECT TOP 1 ProjectId FROM ProjectAttachment as pa WHERE pa.ProjectId = P.ProjectId) A
 	WHERE	   ( (P.EndDate >= @StartDate AND P.StartDate <= @EndDate) OR (P.StartDate IS NULL AND P.EndDate IS NULL))
 			AND ( @ClientIds IS NULL OR P.ClientId IN (SELECT * from @ClientsList) )
@@ -214,6 +221,9 @@ AS
 						)
 				)
 			AND P.IsAllowedToShow = 1
+			AND (@FeeType IS NULL OR 
+					(((FeeType.MinimumValue = FeeType.MaximumValue AND FeeType.MinimumValue = 0) OR FeeType.MinimumValue != FeeType.MaximumValue) AND @FeeType=2)
+						OR (((FeeType.MinimumValue = FeeType.MaximumValue AND FeeType.MinimumValue = 1) OR FeeType.MinimumValue != FeeType.MaximumValue) AND @FeeType=1))
 	ORDER BY CASE P.ProjectStatusId
 			   WHEN 2 THEN P.StartDate
 			   ELSE P.EndDate
