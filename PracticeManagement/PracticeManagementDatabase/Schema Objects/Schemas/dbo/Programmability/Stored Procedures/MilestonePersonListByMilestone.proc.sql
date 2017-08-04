@@ -52,7 +52,10 @@ AS
 		   mp.BadgeEndDate,
 		   mp.IsBadgeException,
 		   mp.IsApproved,
-		   MS.BadgeEndDate AS ConsultantEndDate
+		   MS.BadgeEndDate AS ConsultantEndDate,
+		   mp.MilestonePersonDiscount,
+		   mp.LockDiscount,
+		   mp.IsNewToBudget
 	  FROM dbo.v_MilestonePerson AS mp
 	  INNER JOIN dbo.Person AS p ON mp.PersonId = p.PersonId
 	  LEFT JOIN MileStonePersonActiveDates AS MPAD ON MPAD.PersonId = P.PersonId
