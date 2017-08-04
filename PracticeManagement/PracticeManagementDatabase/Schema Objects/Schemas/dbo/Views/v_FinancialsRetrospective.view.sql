@@ -14,6 +14,7 @@ AS
 	           THEN ISNULL(m.Amount * m.HoursPerDay * r.Discount / 100, 0)
 	           ELSE ISNULL(r.MilestoneDailyAmount * m.HoursPerDay * r.Discount / (r.HoursPerDay * 100), r.MilestoneDailyAmount * r.Discount / 100)
 	       END AS PersonDiscountDailyAmount, --Entry Level Daily Discount Amount
+		   ISNULL(m.Amount*m.HoursPerDay, 0) as MilestonePersonAmount,
 	       r.Discount,
 		   r.HoursPerDay,
 		   m.PersonId,
@@ -46,7 +47,16 @@ AS
 			--Vacation days are allowed only for w2 salary person
 		   (CASE WHEN p.Timescale = 2
 				 THEN ISNULL(p.HourlyRate * p.VacationDays * m.HoursPerDay,0)/r.HoursInYear
-			ELSE 0 END)  VacationRate
+			ELSE 0 END)  VacationRate,
+			 CASE
+	           WHEN r.IsHourlyAmount = 1
+	           THEN m.Amount
+	           WHEN r.IsHourlyAmount = 0 AND r.HoursPerDay = 0
+	           THEN 0
+	           ELSE r.MilestoneDailyAmount / r.HoursPerDay
+		   END AS BillRate,
+		   m.ActualHoursPerDay,
+		   m.PersonRoleId
 	  FROM dbo.v_MilestoneRevenueRetrospective AS r
 		   -- Linking to persons
 	       INNER JOIN dbo.v_MilestonePersonSchedule m ON m.MilestoneId = r.MilestoneId AND m.Date = r.Date
@@ -59,4 +69,5 @@ AS
 															AND p.Date BETWEEN o.StartDate AND ISNULL(o.EndDate, FD.FutureDate)
 	GROUP BY r.ProjectId, r.Discount, r.MilestoneId,r.IsHourlyAmount,r.Date,r.MilestoneDailyAmount,r.HoursPerDay,r.HoursInYear,
 			 m.PersonId,m.EntryId, m.EntryStartDate,m.Amount,m.HoursPerDay,
-			 p.Timescale,p.HourlyRate,p.VacationDays,p.BonusRate,MLFO.Rate
+			 p.Timescale,p.HourlyRate,p.VacationDays,p.BonusRate,MLFO.Rate,m.ActualHoursPerDay, m.PersonRoleId
+
