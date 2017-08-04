@@ -3,11 +3,13 @@
   <xs:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/ActivityLogService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/DataTransferObjects" />
   <xs:complexType name="ActivityLogSelectContext">
     <xs:sequence>
+      <xs:element minOccurs="0" name="Budget" type="xs:boolean" />
       <xs:element minOccurs="0" name="Capabilities" type="xs:boolean" />
       <xs:element minOccurs="0" name="Channel" type="xs:boolean" />
       <xs:element minOccurs="0" name="Director" type="xs:boolean" />
       <xs:element minOccurs="0" name="Division" type="xs:boolean" />
       <xs:element minOccurs="0" name="EndDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Margin" type="xs:boolean" />
       <xs:element minOccurs="0" name="MilestoneId" nillable="true" type="xs:int" />
       <xs:element minOccurs="0" name="NewOrExtension" type="xs:boolean" />
       <xs:element minOccurs="0" name="Offering" type="xs:boolean" />
