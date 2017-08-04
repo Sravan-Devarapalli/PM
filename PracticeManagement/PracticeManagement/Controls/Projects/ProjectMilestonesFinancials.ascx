@@ -8,28 +8,23 @@
             <table id="tblMilestones" class="gvStrawmen CompPerfTable WholeWidth">
                 <thead>
                     <tr class="MilestoneHeaderText CursorPointer">
-                        <th class="Width3Percent">
+                        <th class="Width3Percent"></th>
+                        <th class="ie-bg NoBorder">Milestone Type
                         </th>
-                        <th class="wrapMilestoneName ie-bg NoBorder">
-                            Milestone Name<span id="name"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <th class="wrapMilestoneName ie-bg NoBorder TextAlignLeftImp">Milestone Name<span id="name"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                         </th>
-                        <th class="Width9Percent ie-bg NoBorder">
-                            Start Date<span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
+                        <th class="Width9Percent ie-bg NoBorder">Start Date<span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                         </th>
-                        <th class="Width9Percent ie-bg NoBorder">
-                            End Date<span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <th class="Width9Percent ie-bg NoBorder">End Date<span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                         </th>
-                        <th class="ie-bg NoBorder Width7Percent"> 
-                            Services Revenue<span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <th class="ie-bg NoBorder Width7Percent">Services Revenue<span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                         </th>
-                        <th class="ie-bg NoBorder Width11Percent">
-                            Contribution Margin<span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <th class="ie-bg NoBorder Width11Percent">Contribution Margin<span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                         </th>
-                        <th class="ie-bg NoBorder Width7Percent">
-                            Margin %<span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <th class="ie-bg NoBorder Width7Percent">Margin %<span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                         </th>
-                        <th class="Width7Percent ie-bg NoBorder">
-                            Billable<span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <th class="Width7Percent ie-bg NoBorder">Billable<span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                         </th>
                     </tr>
                 </thead>
@@ -68,15 +63,19 @@
                 <asp:ImageButton ID="imgbtnCancel" runat="server" ToolTip="Cancel" OnClick="imgbtnCancel_OnClick" Visible="false"
                     ImageUrl="~/Images/no.png" />
             </td>
+            <td>
+                <asp:Label ID="lblMilestoneType" runat="server" Text='<%# ((int)Eval("milestoneType"))==1?"General":"Change Order" %>' />
+            </td>
             <td class="Width35Percent TextAlignLeftImp">
                 <asp:HyperLink ID="hlMilestoneName" runat="server" NavigateUrl='<%# GetMilestoneRedirectUrl(Eval("MilestoneId")) %>'
                     Text='<%# GetWrappedTest(HttpUtility.HtmlEncode((string)Eval("MilestoneName"))) %>'
                     onclick='<%# "return checkDirty(\"" + MILESTONE_TARGET + "\", " + Eval("MilestoneId") + ")" %>' />
                 <asp:TextBox ID="tbMilestoneName" runat="server" MilestoneId='<%# Eval("MilestoneId") %>' Visible="false"
-                    Text='<%# Bind("MilestoneName") %>'></asp:TextBox> 
-                <asp:RequiredFieldValidator ID="rfvMilestoneName" runat="server" ControlToValidate="tbMilestoneName" 
+                    Text='<%# Bind("MilestoneName") %>'></asp:TextBox>
+                <asp:RequiredFieldValidator ID="rfvMilestoneName" runat="server" ControlToValidate="tbMilestoneName"
                     EnableClientScript="false" Text="*" ErrorMessage="Milestone Name Required" ToolTip="Milestone Name Required"></asp:RequiredFieldValidator>
             </td>
+
             <td class="Width9Percent">
                 <asp:Label ID="lblStartDate" runat="server" Text='<%# ((DateTime)Eval("StartDate")).ToString("MM/dd/yyyy") %>' />
             </td>
@@ -115,8 +114,7 @@
 <asp:Panel ID="pnlAttribution" runat="server" CssClass="popUp yScrollAuto" Style="display: none;">
     <table class="WholeWidth">
         <tr class="PopUpHeader">
-            <th colspan="2">
-                Attention!
+            <th colspan="2">Attention!
             </th>
         </tr>
         <tr id="trAttributionRecord" runat="server">
@@ -124,7 +122,8 @@
                 <p>
                     &nbsp;&nbsp;&nbsp; This action cannot be done as the following attribution records
                     have the person start date and end date out of the project's start date and project's
-                    end date in commissions tab.</p>
+                    end date in commissions tab.
+                </p>
                 <br />
             </td>
         </tr>
@@ -152,7 +151,8 @@
             <td>
                 <asp:Repeater runat="server" ID="repSalesPersons">
                     <HeaderTemplate>
-                        &nbsp;&nbsp;Sales Attribution:</HeaderTemplate>
+                        &nbsp;&nbsp;Sales Attribution:
+                    </HeaderTemplate>
                     <ItemTemplate>
                         <br />
                         &nbsp;&nbsp;&nbsp;&nbsp; <b>
