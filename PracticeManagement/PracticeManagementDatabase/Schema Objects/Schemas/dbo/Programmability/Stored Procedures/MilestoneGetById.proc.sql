@@ -29,7 +29,12 @@ BEGIN
 	       m.ClientIsChargeable,
 	       m.ProjectIsChargeable,
 	       m.MilestoneIsChargeable,		  
-		   m.IsMarginColorInfoEnabled
+		   m.IsMarginColorInfoEnabled,
+		   m.MilestoneType,
+		   m.PremiumDiscount,
+		   m.DiscountType,
+		   m.IsAmountAtMilestone,
+		   m.IsDiscountAtMilestone
 	  FROM dbo.v_Milestone AS m
 	 WHERE m.MilestoneId = @MilestoneId
 END
