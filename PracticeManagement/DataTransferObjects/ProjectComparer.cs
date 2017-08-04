@@ -92,6 +92,43 @@ namespace DataTransferObjects
                 case "New/Extension":
                     return string.Compare(((Project)pFirstObject).BusinessType.ToString(),
                                           ((Project)pObjectToCompare).BusinessType.ToString());
+                case "House Account":
+                    return string.Compare(((Project)pFirstObject).Client.IsHouseAccount.ToString(),
+                                          ((Project)pObjectToCompare).Client.IsHouseAccount.ToString());
+                case "Business Group":
+                    return string.Compare(((Project)pFirstObject).BusinessGroup.HtmlEncodedName,
+                                          ((Project)pObjectToCompare).BusinessGroup.HtmlEncodedName);
+                case "Business Unit":
+                    return string.Compare(((Project)pFirstObject).Group.HtmlEncodedName,
+                                          ((Project)pObjectToCompare).Group.HtmlEncodedName);
+                case "Buyer":
+                    return string.Compare(((Project)pFirstObject).BuyerName,
+                                          ((Project)pObjectToCompare).BuyerName);
+                case "Project Manager":
+                    return string.Compare(((Project)pFirstObject).ProjectOwner.Name,
+                                         ((Project)pObjectToCompare).ProjectOwner.Name);
+                case "Engagement Manager":
+                    return string.Compare(((Project)pFirstObject).SeniorManagerName,
+                                         ((Project)pObjectToCompare).SeniorManagerName);
+                case "Executive in Charge":
+                    return string.Compare(((Project)pFirstObject).Director.Name,
+                                        ((Project)pObjectToCompare).Director.Name);
+                case "Pricing List":
+                    return string.Compare(((Project)pFirstObject).PricingList.HtmlEncodedName,
+                                        ((Project)pObjectToCompare).PricingList.HtmlEncodedName);
+                case "PO Number":
+                    return string.Compare(((Project)pFirstObject).PONumber,
+                                      ((Project)pObjectToCompare).PONumber);
+                case "Client Time Entry Required":
+                    return string.Compare(((Project)pFirstObject).IsClientTimeEntryRequired.ToString(),
+                                      ((Project)pObjectToCompare).IsClientTimeEntryRequired.ToString());
+                case "Previous Project Number":
+                    return string.Compare(((Project)pFirstObject).PreviousProject != null ? ((Project)pFirstObject).PreviousProject.ProjectNumber : "",
+                                          ((Project)pObjectToCompare).PreviousProject != null ? ((Project)pFirstObject).PreviousProject.ProjectNumber : "");
+                case "Outsource Id Indicator":
+                    return string.Compare(((Project)pFirstObject).OutsourceId.ToString(),
+                                        ((Project)pObjectToCompare).OutsourceId.ToString());
+
                 default:
                     return 0;
             }
