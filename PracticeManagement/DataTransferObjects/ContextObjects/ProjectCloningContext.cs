@@ -35,5 +35,8 @@ namespace DataTransferObjects.ContextObjects
         /// </summary>
         [DataMember]
         public ProjectStatus ProjectStatus { get; set; }
+
+        [DataMember]
+        public int ProjectRevenueType { get; set; }
     }
 }
