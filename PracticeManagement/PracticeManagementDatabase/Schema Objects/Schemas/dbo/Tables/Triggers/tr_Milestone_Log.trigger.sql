@@ -28,7 +28,10 @@ BEGIN
 		       i.Amount,
 			   CASE WHEN i.ConsultantsCanAdjust = 1 THEN 'Yes' ELSE 'No' END AS 'ConsultantsCanAdjust',
    			   CASE WHEN i.IsChargeable = 1 THEN 'Yes' ELSE 'No' END AS 'IsChargeable',
-   			   CASE WHEN i.IsHourlyAmount = 1 THEN 'Yes' ELSE 'No' END AS 'IsHourlyAmount'
+   			   CASE WHEN i.IsHourlyAmount = 1 THEN 'Yes' ELSE 'No' END AS 'IsHourlyAmount',
+			   CASE WHEN i.MilestoneType =1 THEN 'General' ELSE 'Change Order' END AS 'MilestoneType',
+			   CASE WHEN i.DiscountType = 1 THEN '$'+CONVERT(NVARCHAR(10),i.Discount)
+					WHEN i.DiscountType = 2 THEN CONVERT(NVARCHAR(10),i.Discount)+'%' END AS 'Discount'
 		  FROM inserted AS i
 		       INNER JOIN dbo.Project AS p ON i.ProjectId = p.ProjectId
 	),
@@ -44,7 +47,10 @@ BEGIN
 		       d.Amount,
 			   CASE WHEN d.ConsultantsCanAdjust = 1 THEN 'Yes' ELSE 'No' END AS 'ConsultantsCanAdjust',
    			   CASE WHEN d.IsChargeable = 1 THEN 'Yes' ELSE 'No' END AS 'IsChargeable',
-   			   CASE WHEN d.IsHourlyAmount = 1 THEN 'Yes' ELSE 'No' END AS 'IsHourlyAmount'
+   			   CASE WHEN d.IsHourlyAmount = 1 THEN 'Yes' ELSE 'No' END AS 'IsHourlyAmount',
+			   CASE WHEN d.MilestoneType =1 THEN 'General' ELSE 'Change Order' END AS 'MilestoneType',
+			   CASE WHEN d.DiscountType = 1 THEN '$'+CONVERT(NVARCHAR(10),d.Discount)
+					WHEN d.DiscountType = 2 THEN CONVERT(NVARCHAR(10),d.Discount)+'%' END AS 'Discount'
 		  FROM deleted AS d
 		       INNER JOIN dbo.Project AS p ON d.ProjectId = p.ProjectId
 	)
@@ -85,10 +91,14 @@ BEGIN
 								NEW_VALUES.MilestoneProjectId,
 								NEW_VALUES.ProjectedDeliveryDate,
 								NEW_VALUES.StartDate,
+								NEW_VALUES.MilestoneType,
+								NEW_VALUES.Discount,
 								OLD_VALUES.MilestoneId,
 								OLD_VALUES.MilestoneProjectId,
 								OLD_VALUES.ProjectedDeliveryDate,
-								OLD_VALUES.StartDate
+								OLD_VALUES.StartDate,
+								OLD_VALUES.MilestoneType,
+								OLD_VALUES.Discount
 					    FROM NEW_VALUES
 					         FULL JOIN OLD_VALUES ON NEW_VALUES.MilestoneId = OLD_VALUES.MilestoneId
 			           WHERE NEW_VALUES.MilestoneId = ISNULL(i.MilestoneId, d.MilestoneId) OR OLD_VALUES.MilestoneId = ISNULL(i.MilestoneId, d.MilestoneId)
@@ -105,7 +115,9 @@ BEGIN
 	    OR i.StartDate <> d.StartDate
 	    OR i.ProjectedDeliveryDate <> d.ProjectedDeliveryDate
 	    OR i.IsHourlyAmount <> d.IsHourlyAmount
-
+		OR i.MilestoneType <> d.MilestoneType
+		OR (i.Discount IS NOT NULL AND d.Discount IS NOT NULL)
+		OR i.Discount <> d.Discount
 		IF  ( SELECT UserLogin FROM SessionLogData WHERE SessionID = @@SPID ) IS NULL
 		BEGIN
 			EXEC SessionLogPrepare @UserLogin = @UserLogin
