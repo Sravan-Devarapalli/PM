@@ -384,6 +384,37 @@ namespace PracticeManagementService
         {
             return ReportDAL.DetailedExpenseSummary(startDate, endDate, clientIds, divisionIds, practiceIds, projectIds, active, projected, completed, proposed, inActive, experimental, atRisk, expenseTypeIds);
         }
+
+        public List<Project> GetActiveAndAtRiskProjectsByClient(int clientId, string userLogin)
+        {
+            return ReportDAL.GetActiveAndAtRiskProjectsByClient(clientId, userLogin);
+        }
+
+        public ProjectBurnFinancials GetBurnReportFortheProject(int projectId, DateTime? startDate, DateTime? endDate, int step, DateTime? actualsEndDate)
+        {
+            return ReportDAL.GetBurnReportFortheProject(projectId, startDate, endDate, step, actualsEndDate);
+        }
+
+        public Dictionary<DateTime, ComputedFinancials> GetWeeklyFinancialsForProject(int projectId, DateTime? startDate, DateTime? endDate, int step, DateTime? actualsEndDate)
+        {
+            return ReportDAL.GetProjectWeeklyFinancials(projectId, startDate, endDate, step, actualsEndDate);
+        }
+
+        public List<ProjectBudgetResource> GetBurnReportExportDataFortheProject(int projectId, DateTime? startDate, DateTime? endDate, DateTime? actualsEndDate, bool isBudget, bool isProjected, bool isEAC, bool isActual)
+        {
+            return ReportDAL.GetBurnReportExportDataFortheProject(projectId, startDate, endDate, actualsEndDate, isBudget, isProjected, isEAC, isActual);
+        }
+
+        public List<PersonBudgetComparison> GetBudgetComparisonReportForProject(string projectNumber, DateTime? startDate, DateTime? endDate, DateTime? actualsEndDate)
+        {
+            return ReportDAL.GetBudgetComparisonReportForProject(projectNumber, startDate, endDate, actualsEndDate);
+        }
+
+        public List<ExpenseSummary> ReadProjectExpensesByTypeandByMonth(int projectId, int? milestoneId, DateTime? startDate, DateTime? endDate)
+        {
+            return ReportDAL.ReadProjectExpensesByTypeandByMonth(projectId, milestoneId, startDate, endDate);
+        }
+
     }
 }
 
