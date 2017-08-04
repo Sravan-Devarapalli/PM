@@ -269,6 +269,9 @@ namespace PraticeManagement.Reports
                 CellStyles dataDateCellStyle = new CellStyles();
                 dataDateCellStyle.DataFormat = "mm/dd/yy;@";
 
+                CellStyles dataNumberDateCellStyle = new CellStyles();
+                dataNumberDateCellStyle.DataFormat = "$#,##0_);($#,##0)";
+
                 dataDateCellStyle.HorizontalAlignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
 
                 List<CellStyles> headerCellStyleList = new List<CellStyles>();
@@ -277,7 +280,8 @@ namespace PraticeManagement.Reports
 
                 CellStyles dataCellStyle = new CellStyles();
 
-                var dataCellStylearray = new List<CellStyles>() { dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataDateCellStyle, dataDateCellStyle, dataCellStyle };
+                var dataCellStylearray = new List<CellStyles>() { dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataDateCellStyle, dataDateCellStyle, dataCellStyle,
+                dataCellStyle,dataCellStyle,dataCellStyle,dataCellStyle,dataCellStyle,dataCellStyle,dataCellStyle,dataCellStyle,dataCellStyle,dataCellStyle,dataCellStyle,dataNumberDateCellStyle,dataNumberDateCellStyle};
 
                 var coloumnWidth = new List<int>();
                 for (int i = 0; i < 14; i++)
@@ -390,7 +394,7 @@ namespace PraticeManagement.Reports
         public void PDFExport()
         {
             var data = ServiceCallers.Custom.Report(r => r.ProjectsListWithFilters(SelectedClientIds, ShowProjected, ShowCompleted, ShowActive, ShowInternal, ShowExperimental,
-                ShowProposed, ShowInactive,ShowAtRisk, StartDate, EndDate, SelectedSalespersonIds, SelectedProjectOwnerIds, SelectedPracticeIds, SelectedGroupIds, SelectedDivisionIds, SelectedChannelIds, SelectedRevenueTypeIds, SelectedOfferingIds, Page.User.Identity.Name)).ToList();
+                ShowProposed, ShowInactive, ShowAtRisk, StartDate, EndDate, SelectedSalespersonIds, SelectedProjectOwnerIds, SelectedPracticeIds, SelectedGroupIds, SelectedDivisionIds, SelectedChannelIds, SelectedRevenueTypeIds, SelectedOfferingIds, Page.User.Identity.Name)).ToList();
 
             HtmlToPdfBuilder builder = new HtmlToPdfBuilder(iTextSharp.text.PageSize.A4_LANDSCAPE);
             string filename = "ProjectsList.pdf";
@@ -537,6 +541,8 @@ namespace PraticeManagement.Reports
             data.Columns.Add("Client Time Entry Required");
             data.Columns.Add("Previous Project Number");
             data.Columns.Add("Outsource Id Indicator");
+            data.Columns.Add("Budgeted Revenue");
+            data.Columns.Add("ETC Revenue");
             foreach (var reportItem in report)
             {
                 var projectCapabilityIdList = reportItem.ProjectCapabilityIds.Split(',');
@@ -571,6 +577,9 @@ namespace PraticeManagement.Reports
                 row.Add(reportItem.IsClientTimeEntryRequired ? "Yes" : "No");
                 row.Add(reportItem.PreviousProject != null ? reportItem.PreviousProject.ProjectNumber : string.Empty);
                 row.Add((reportItem.OutsourceId != 3) ? DataHelper.GetDescription((OutsourceId)reportItem.OutsourceId) : string.Empty);
+                row.Add(reportItem.Budget != null ? reportItem.Budget.ToString() : string.Empty);
+                row.Add(reportItem.ETC != null ? reportItem.ETC.ToString() : string.Empty);
+
                 data.Rows.Add(row.ToArray());
             }
             return data;
@@ -731,7 +740,7 @@ namespace PraticeManagement.Reports
         public void PopulateData()
         {
             ProjectList = ServiceCallers.Custom.Report(r => r.ProjectsListWithFilters(SelectedClientIds, ShowProjected, ShowCompleted, ShowActive, ShowInternal, ShowExperimental,
-                ShowProposed, ShowInactive,ShowAtRisk, StartDate, EndDate, SelectedSalespersonIds, SelectedProjectOwnerIds, SelectedPracticeIds, SelectedGroupIds, SelectedDivisionIds, SelectedChannelIds, SelectedRevenueTypeIds, SelectedOfferingIds, Page.User.Identity.Name)).ToList();
+                ShowProposed, ShowInactive, ShowAtRisk, StartDate, EndDate, SelectedSalespersonIds, SelectedProjectOwnerIds, SelectedPracticeIds, SelectedGroupIds, SelectedDivisionIds, SelectedChannelIds, SelectedRevenueTypeIds, SelectedOfferingIds, Page.User.Identity.Name)).ToList();
             if (ProjectList.Any())
             {
                 divWholePage.Visible = true;
@@ -777,6 +786,22 @@ namespace PraticeManagement.Reports
                     }
                 }
                 lblCapabilities.Text = flag ? allCapabilitiesText : dataItem.Capabilities;
+                var lnkPreviousProject = e.Item.FindControl("lnkPreviousProject") as HyperLink;
+                var lblOutsourceId = e.Item.FindControl("lblOutSourceId") as Label;
+                lblOutsourceId.Text = (dataItem.OutsourceId != 3) ? DataHelper.GetDescription((OutsourceId)dataItem.OutsourceId) : string.Empty;
+
+                if (dataItem.PreviousProject != null)
+                {
+                    lnkPreviousProject.Text = dataItem.PreviousProject.ProjectNumber;
+                    lnkPreviousProject.NavigateUrl = Utils.Generic.GetTargetUrlWithReturn(String.Format("{0}?projectnumber={1}", Constants.ApplicationPages.ProjectDetail, dataItem.PreviousProject.ProjectNumber),
+                                                       Constants.ApplicationPages.ProjectsListPage);
+                }
+                else
+                {
+                    lnkPreviousProject.Text = string.Empty;
+                }
+
+
             }
         }
 
