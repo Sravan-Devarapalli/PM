@@ -212,20 +212,27 @@
   <xs:complexType name="Milestone">
     <xs:sequence>
       <xs:element minOccurs="0" name="Amount" nillable="true" type="tns:PracticeManagementCurrency" />
+      <xs:element minOccurs="0" name="BudgetFinancials" nillable="true" type="tns:ComputedFinancials" />
       <xs:element minOccurs="0" name="ComputedFinancials" nillable="true" type="tns:ComputedFinancials" />
       <xs:element minOccurs="0" name="ConsultantsCanAdjust" type="xs:boolean" />
       <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="ExpectedHours" type="xs:decimal" />
       <xs:element minOccurs="0" name="Id" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="IsAmountAtMilestone" type="xs:boolean" />
       <xs:element minOccurs="0" name="IsChargeable" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsDiscountAtMilestoneLevel" type="xs:int" />
       <xs:element minOccurs="0" name="IsHourlyAmount" type="xs:boolean" />
       <xs:element minOccurs="0" name="MilestonePersons" nillable="true" type="tns:ArrayOfMilestonePerson" />
+      <xs:element minOccurs="0" name="MonthlyRevenue" nillable="true" type="tns:ArrayOfMonthlyRevenue" />
       <xs:element minOccurs="0" name="People" nillable="true" type="tns:ArrayOfPerson" />
       <xs:element minOccurs="0" name="PersonCount" type="xs:int" />
+      <xs:element minOccurs="0" name="PremiumDiscount" nillable="true" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PremiumType" type="xs:int" />
       <xs:element minOccurs="0" name="Project" nillable="true" type="tns:Project" />
       <xs:element minOccurs="0" name="ProjectedDeliveryDate" type="xs:dateTime" />
       <xs:element minOccurs="0" name="ProjectedDuration" type="xs:int" />
       <xs:element minOccurs="0" name="StartDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="milestoneType" type="xs:int" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="Milestone" nillable="true" type="tns:Milestone" />
@@ -280,15 +287,24 @@
   <xs:complexType name="ComputedFinancials">
     <xs:sequence>
       <xs:element minOccurs="0" name="ActualGrossMargin" type="tns:PracticeManagementCurrency" />
+      <xs:element minOccurs="0" name="ActualHours" type="xs:decimal" />
       <xs:element minOccurs="0" name="ActualRevenue" type="tns:PracticeManagementCurrency" />
       <xs:element minOccurs="0" name="BillRateMinusDiscount" nillable="true" type="tns:PracticeManagementCurrency" />
+      <xs:element minOccurs="0" name="BudgetGrossMargin" type="tns:PracticeManagementCurrency" />
+      <xs:element minOccurs="0" name="BudgetHours" type="xs:decimal" />
+      <xs:element minOccurs="0" name="BudgetRevenue" type="tns:PracticeManagementCurrency" />
       <xs:element minOccurs="0" name="Cogs" type="tns:PracticeManagementCurrency" />
+      <xs:element minOccurs="0" name="EACGrossMargin" type="tns:PracticeManagementCurrency" />
+      <xs:element minOccurs="0" name="EACHours" type="xs:decimal" />
+      <xs:element minOccurs="0" name="EACRevenue" type="tns:PracticeManagementCurrency" />
       <xs:element minOccurs="0" name="EndDate" nillable="true" type="xs:dateTime" />
       <xs:element minOccurs="0" name="Expenses" type="xs:decimal" />
+      <xs:element minOccurs="0" name="FinanceType" type="xs:int" />
       <xs:element minOccurs="0" name="FinancialDate" nillable="true" type="xs:dateTime" />
       <xs:element xmlns:q12="http://schemas.datacontract.org/2004/07/DataTransferObjects.Financials" minOccurs="0" name="FinancialRange" nillable="true" type="q12:RangeType" />
       <xs:element minOccurs="0" name="GrossMargin" type="tns:PracticeManagementCurrency" />
       <xs:element minOccurs="0" name="HoursBilled" type="xs:decimal" />
+      <xs:element minOccurs="0" name="MilestonePersonAmount" type="tns:PracticeManagementCurrency" />
       <xs:element minOccurs="0" name="PreviousMonthsActualMarginValue" type="tns:PracticeManagementCurrency" />
       <xs:element minOccurs="0" name="PreviousMonthsActualRevenueValue" type="tns:PracticeManagementCurrency" />
       <xs:element minOccurs="0" name="ReimbursedExpenses" type="xs:decimal" />
@@ -339,6 +355,8 @@
       <xs:element minOccurs="0" name="BadgeStartDate" nillable="true" type="xs:dateTime" />
       <xs:element minOccurs="0" name="ComputedFinancials" nillable="true" type="tns:ComputedFinancials" />
       <xs:element minOccurs="0" name="ConsultantEndDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Discount" nillable="true" type="xs:decimal" />
+      <xs:element minOccurs="0" name="DiscountLocked" type="xs:boolean" />
       <xs:element minOccurs="0" name="EndDate" nillable="true" type="xs:dateTime" />
       <xs:element minOccurs="0" name="EstimatedClientDiscount" type="tns:PracticeManagementCurrency" />
       <xs:element minOccurs="0" name="HasTimeEntries" type="xs:boolean" />
@@ -346,6 +364,8 @@
       <xs:element minOccurs="0" name="HoursPerDay" type="xs:decimal" />
       <xs:element minOccurs="0" name="Id" type="xs:int" />
       <xs:element minOccurs="0" name="IsApproved" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsDiscountAtResourceLevel" type="xs:int" />
+      <xs:element minOccurs="0" name="IsNewToBudget" type="xs:boolean" />
       <xs:element minOccurs="0" name="Location" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="MSBadgeRequired" type="xs:boolean" />
       <xs:element minOccurs="0" name="MilestonePersonId" type="xs:int" />
@@ -428,6 +448,22 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="PracticeManagerHistory" nillable="true" type="tns:PracticeManagerHistory" />
+  <xs:complexType name="ArrayOfMonthlyRevenue">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="MonthlyRevenue" nillable="true" type="tns:MonthlyRevenue" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfMonthlyRevenue" nillable="true" type="tns:ArrayOfMonthlyRevenue" />
+  <xs:complexType name="MonthlyRevenue">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Amount" type="xs:decimal" />
+      <xs:element minOccurs="0" name="EndDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="MilestoneId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="StartDate" type="xs:dateTime" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="MonthlyRevenue" nillable="true" type="tns:MonthlyRevenue" />
   <xs:complexType name="ArrayOfPerson">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="Person" nillable="true" type="tns:Person" />
@@ -440,6 +476,9 @@
       <xs:element minOccurs="0" name="Attachments" nillable="true" type="tns:ArrayOfProjectAttachment" />
       <xs:element minOccurs="0" name="AttributionList" nillable="true" type="tns:ArrayOfAttribution" />
       <xs:element minOccurs="0" name="BillableType" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Budget" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="BudgetRequestorName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="BudgetResetRequestId" type="xs:int" />
       <xs:element minOccurs="0" name="BusinessGroup" nillable="true" type="tns:BusinessGroup" />
       <xs:element minOccurs="0" name="BusinessType" type="tns:BusinessType" />
       <xs:element minOccurs="0" name="BuyerName" nillable="true" type="xs:string" />
@@ -456,9 +495,12 @@
       <xs:element minOccurs="0" name="DirectorName" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Discount" type="xs:decimal" />
       <xs:element minOccurs="0" name="Division" nillable="true" type="tns:ProjectDivision" />
+      <xs:element minOccurs="0" name="ETC" nillable="true" type="xs:int" />
       <xs:element minOccurs="0" name="EndDate" nillable="true" type="xs:dateTime" />
       <xs:element minOccurs="0" name="EngagementManagerID" type="xs:int" />
       <xs:element minOccurs="0" name="EngagementManagerUserID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ExceptionMargin" nillable="true" type="xs:decimal" />
+      <xs:element minOccurs="0" name="ExceptionRevenue" nillable="true" type="xs:decimal" />
       <xs:element minOccurs="0" name="ExecutiveInChargeId" type="xs:int" />
       <xs:element minOccurs="0" name="ExecutiveInChargeName" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="ExecutiveInChargeUserId" nillable="true" type="xs:string" />
@@ -468,6 +510,8 @@
       <xs:element minOccurs="0" name="HasTimeEntries" type="xs:boolean" />
       <xs:element minOccurs="0" name="Id" nillable="true" type="xs:int" />
       <xs:element minOccurs="0" name="IsAssignedProject" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsBudgetReset" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsBudgetResetPending" type="xs:boolean" />
       <xs:element minOccurs="0" name="IsBusinessDevelopment" type="xs:boolean" />
       <xs:element minOccurs="0" name="IsCSATEligible" type="xs:boolean" />
       <xs:element minOccurs="0" name="IsChargeable" type="xs:boolean" />
@@ -477,10 +521,13 @@
       <xs:element minOccurs="0" name="IsNoteRequired" type="xs:boolean" />
       <xs:element minOccurs="0" name="IsORTProject" type="xs:boolean" />
       <xs:element minOccurs="0" name="IsPTOProject" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsRevenueException" type="xs:boolean" />
       <xs:element minOccurs="0" name="IsSeniorManagerUnassigned" type="xs:boolean" />
       <xs:element minOccurs="0" name="IsSickLeaveProject" type="xs:boolean" />
       <xs:element minOccurs="0" name="IsUnpaidProject" type="xs:boolean" />
       <xs:element minOccurs="0" name="MailBody" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="MarginExceptionId" type="xs:int" />
+      <xs:element minOccurs="0" name="MarginExceptionRequestorId" type="xs:int" />
       <xs:element minOccurs="0" name="Milestones" nillable="true" type="tns:ArrayOfMilestone" />
       <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Offering" nillable="true" type="tns:Offering" />
@@ -517,9 +564,12 @@
       <xs:element minOccurs="0" name="Status" nillable="true" type="tns:ProjectStatus" />
       <xs:element minOccurs="0" name="SubChannel" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Terms" type="xs:int" />
+      <xs:element minOccurs="0" name="TierOneExceptionStatus" type="xs:int" />
+      <xs:element minOccurs="0" name="TierTwoExceptionStatus" type="xs:int" />
       <xs:element minOccurs="0" name="TimeEntrySectionId" type="xs:int" />
       <xs:element minOccurs="0" name="TimeTypeId" type="xs:int" />
       <xs:element minOccurs="0" name="ToAddressList" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="showBudgetRequest" type="xs:boolean" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="Project" nillable="true" type="tns:Project" />
@@ -980,4 +1030,43 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="ArrayOfPricingList" nillable="true" type="tns:ArrayOfPricingList" />
+  <xs:complexType name="ArrayOfClientMarginGoal">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ClientMarginGoal" nillable="true" type="tns:ClientMarginGoal" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfClientMarginGoal" nillable="true" type="tns:ArrayOfClientMarginGoal" />
+  <xs:complexType name="ClientMarginGoal">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ClientId" type="xs:int" />
+      <xs:element minOccurs="0" name="Comments" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="EndDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="MarginGoal" type="xs:int" />
+      <xs:element minOccurs="0" name="StartDate" type="xs:dateTime" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ClientMarginGoal" nillable="true" type="tns:ClientMarginGoal" />
+  <xs:complexType name="ArrayOfClientMarginGoalLog">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ClientMarginGoalLog" nillable="true" type="tns:ClientMarginGoalLog" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfClientMarginGoalLog" nillable="true" type="tns:ArrayOfClientMarginGoalLog" />
+  <xs:complexType name="ClientMarginGoalLog">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Acivity" type="xs:int" />
+      <xs:element minOccurs="0" name="ClientId" type="xs:int" />
+      <xs:element minOccurs="0" name="Comments" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="LogTime" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="NewEndDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="NewMarginGoal" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="NewStartDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="OldEndDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="OldMarginGoal" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="OldStartDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="PersonName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ClientMarginGoalLog" nillable="true" type="tns:ClientMarginGoalLog" />
 </xs:schema>
