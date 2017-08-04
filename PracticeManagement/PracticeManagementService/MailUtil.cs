@@ -131,10 +131,10 @@ namespace PracticeManagementService
             Email(emailTemplate.Subject, string.Format(emailTemplate.Body, firstName, lastName), true, emailTemplate.EmailTemplateTo, string.Empty, null, true);
         }
 
-        internal static void SendActivateAccountEmail(string firstName, string lastName, string startDate, string emailAddress, string title, string payType, string telephoneNumber,string isOffshore,string manager,string division)
+        internal static void SendActivateAccountEmail(string firstName, string lastName, string startDate, string emailAddress, string title, string payType, string telephoneNumber, string isOffshore, string manager, string division)
         {
             var emailTemplate = EmailTemplateDAL.EmailTemplateGetByName(Resources.Messages.ActivateAccountTemplateName);
-            var body = string.Format(emailTemplate.Body, firstName, lastName, startDate, emailAddress, title, payType, telephoneNumber,isOffshore,manager,division);
+            var body = string.Format(emailTemplate.Body, firstName, lastName, startDate, emailAddress, title, payType, telephoneNumber, isOffshore, manager, division);
             Email(emailTemplate.Subject, body, true, emailTemplate.EmailTemplateTo, string.Empty, null);
         }
 
@@ -174,9 +174,9 @@ namespace PracticeManagementService
         //    Email(emailTempalte.Subject, body, true, emailTempalte.EmailTemplateTo, string.Empty, null);
         //}
 
-        internal static void SendMSBadgeRequestEmail(Project project,int milestoneId)
+        internal static void SendMSBadgeRequestEmail(Project project, int milestoneId)
         {
-            string url = IsUAT ? string.Format("http://65.52.17.100/MilestoneDetail.aspx?id={0}&projectId={1}" ,milestoneId, project.Id.Value): string.Format("https://practice.logic2020.com/MilestoneDetail.aspx?id={0}&projectId={1}" ,milestoneId, project.Id.Value);
+            string url = IsUAT ? string.Format("http://65.52.17.100/MilestoneDetail.aspx?id={0}&projectId={1}", milestoneId, project.Id.Value) : string.Format("https://practice.logic2020.com/MilestoneDetail.aspx?id={0}&projectId={1}", milestoneId, project.Id.Value);
             var emailTemplate = EmailTemplateDAL.EmailTemplateGetByName(Resources.Messages.MSBadgeRequestTemplateName);
             var body = string.Format(project.MailBody, url);
             Email(emailTemplate.Subject, body, true, emailTemplate.EmailTemplateTo, string.Empty, null);
@@ -214,7 +214,7 @@ namespace PracticeManagementService
         internal static void SendReviewCanceledMailNotification(List<ProjectFeedbackMail> feedbacks)
         {
             int count = 0;
-            foreach(var feedback in feedbacks)
+            foreach (var feedback in feedbacks)
             {
                 count++;
                 string url = IsUAT ? "http://65.52.17.100/ProjectDetail.aspx?id=" + feedback.Project.Id.Value.ToString() : "https://practice.logic2020.com/ProjectDetail.aspx?id=" + feedback.Project.Id.Value.ToString();
@@ -311,12 +311,70 @@ namespace PracticeManagementService
             }
 
             SmtpClient client = new SmtpClient(smtpSettings.MailServer, smtpSettings.PortNumber)
-                {
-                    EnableSsl = smtpSettings.SSLEnabled,
-                    Credentials = new NetworkCredential(smtpSettings.UserName, smtpSettings.Password)
-                };
+            {
+                EnableSsl = smtpSettings.SSLEnabled,
+                Credentials = new NetworkCredential(smtpSettings.UserName, smtpSettings.Password)
+            };
 
             return client;
+        }
+
+        public static void SendBudgetResetMail(Project project, string toAddress, string comments, int revisionType, DateTime? budgetToDate)
+        {
+            var emailTemplate = EmailTemplateDAL.EmailTemplateGetByName(Resources.Messages.BudgetResetMailTemplateName);
+            var smtpSettings = SettingsHelper.GetSMTPSettings();
+            var projectName = project.ProjectNumber + "-" + project.Name;
+            var subject = string.Format(emailTemplate.Subject, projectName);
+            var resetDescription = ProjectDAL.GetBudgetRevisionTypeById(revisionType) + (budgetToDate != null ? "<br/><br/> Budget to date: " + budgetToDate.Value.ToString("MM/dd/yyyy") : "");
+            var url = IsUAT ? "http://65.52.17.100/ProjectDetail.aspx?id=" + project.Id.Value.ToString() : "https://practice.logic2020.com/ProjectDetail.aspx?id=" + project.Id.Value.ToString();
+            var body = string.Format(emailTemplate.Body, url, projectName, comments, resetDescription, project.Budget != null ? project.Budget.Value.ToString("$###,###,###,###,###,##0") : string.Empty);
+            Email(subject, body, true, toAddress, string.Empty, null);
+
+        }
+
+        public static void SendBudgetResetRequestMail(Project project, string comments, string reasons, int revisionType, DateTime? budgetToDate, string requestorName)
+        {
+            var emailTemplate = EmailTemplateDAL.EmailTemplateGetByName(Resources.Messages.BudgetResetRequestMailTemplateName);
+            var smtpSettings = SettingsHelper.GetSMTPSettings();
+            var projectName = project.ProjectNumber + "-" + project.Name;
+            var subject = string.Format(emailTemplate.Subject, projectName);
+            var resetDescription = ProjectDAL.GetBudgetRevisionTypeById(revisionType) + (budgetToDate != null ? "<br/><br/> Budget to date: " + budgetToDate.Value.ToString("MM/dd/yyyy") : "");
+            var url = IsUAT ? "http://65.52.17.100/ProjectDetail.aspx?id=" + project.Id.Value.ToString() : "https://practice.logic2020.com/ProjectDetail.aspx?id=" + project.Id.Value.ToString();
+            var body = string.Format(emailTemplate.Body, requestorName, url, projectName, reasons, comments, resetDescription);
+            Email(subject, body, true, emailTemplate.EmailTemplateTo, string.Empty, null);
+        }
+
+
+        public static void SendBudgetResetDeclineMail(Project project, string toAddress, string comments)
+        {
+            var emailTemplate = EmailTemplateDAL.EmailTemplateGetByName(Resources.Messages.BudgetResetDeclineMailTemplateName);
+            var smtpSettings = SettingsHelper.GetSMTPSettings();
+            var projectName = project.ProjectNumber + "-" + project.Name;
+            var subject = string.Format(emailTemplate.Subject, projectName);
+            var url = IsUAT ? "http://65.52.17.100/ProjectDetail.aspx?id=" + project.Id.Value.ToString() : "https://practice.logic2020.com/ProjectDetail.aspx?id=" + project.Id.Value.ToString();
+            var body = string.Format(emailTemplate.Body, url, projectName, comments);
+            Email(subject, body, true, toAddress, string.Empty, null);
+        }
+        public static void SendMarginExceptionRequestMail(Project project, string reasons, string Comments, string toAddress, string user)
+        {
+            var emailTemplate = EmailTemplateDAL.EmailTemplateGetByName(Resources.Messages.MarginExceptionRequest);
+            var smtpSettings = SettingsHelper.GetSMTPSettings();
+            var projectName = project.ProjectNumber + "-" + project.Name;
+            var subject = string.Format(emailTemplate.Subject, projectName);
+            var url = IsUAT ? "http://65.52.17.100/ProjectDetail.aspx?id=" + project.Id.Value.ToString() : "https://practice.logic2020.com/ProjectDetail.aspx?id=" + project.Id.Value.ToString();
+            var body = string.Format(emailTemplate.Body, user, url, projectName, reasons, Comments);
+            Email(subject, body, true, toAddress, string.Empty, null);
+        }
+
+        public static void SendMarginExceptionResponseMail(Project project, int status, string reasons, string Comments, string toAddress, string user)
+        {
+            var emailTemplate = EmailTemplateDAL.EmailTemplateGetByName(Resources.Messages.MarginExceptionResponse);
+            var smtpSettings = SettingsHelper.GetSMTPSettings();
+            var projectName = project.ProjectNumber + "-" + project.Name;
+            var subject = string.Format(emailTemplate.Subject, projectName, status == 2 ? "Approved" : "Denied");
+            var url = IsUAT ? "http://65.52.17.100/ProjectDetail.aspx?id=" + project.Id.Value.ToString() : "https://practice.logic2020.com/ProjectDetail.aspx?id=" + project.Id.Value.ToString();
+            var body = string.Format(emailTemplate.Body, user, status == 2 ? "approved" : "denied", url, projectName, reasons, Comments);
+            Email(subject, body, true, toAddress, string.Empty, null);
         }
 
         /// <summary>
@@ -408,6 +466,8 @@ namespace PracticeManagementService
             message.From = new MailAddress(smtpSettings.PMSupportEmail);
             client.Send(message);
         }
+
+
 
         #endregion Methods
     }
