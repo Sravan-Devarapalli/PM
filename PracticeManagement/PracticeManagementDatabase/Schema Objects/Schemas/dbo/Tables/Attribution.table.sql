@@ -9,4 +9,8 @@
 	[EndDate]					DATETIME			NULL,
 	[Percentage]				DECIMAL(5,2)		NULL
 )
+GO
 
+CREATE NONCLUSTERED INDEX [IX_Attribution_ProjectId]
+ON [dbo].[Attribution] ([ProjectId])
+GO
