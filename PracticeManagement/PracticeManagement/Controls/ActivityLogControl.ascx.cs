@@ -57,6 +57,7 @@ namespace PraticeManagement.Controls
         }
 
 
+
         /// <summary>
         /// 	Default constructor of ActivityLogControl.
         /// </summary>
@@ -655,6 +656,8 @@ namespace PraticeManagement.Controls
             e.InputParameters["channel"] = true;
             e.InputParameters["offering"] = true;
             e.InputParameters["revenueType"] = true;
+            e.InputParameters["budget"] = true;
+            e.InputParameters["margin"] = true;
         }
 
         public object AddDefaultProjectAndMileStoneInfo(object logDataObject)
@@ -776,6 +779,11 @@ namespace PraticeManagement.Controls
                 FromDateFilterValue = filters.ReportStartDate;
                 ToDateFilterValue = filters.ReportEndDate;
             }
+        }
+
+        protected void odsProjects_Selecting(object sender, ObjectDataSourceSelectingEventArgs e)
+        {
+            e.InputParameters["IsMilestone"] = DisplayDropDownValue == ActivityEventSource.Milestone;
         }
     }
 }
