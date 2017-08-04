@@ -41,6 +41,18 @@ namespace DataTransferObjects.Filters
             get;
             set;
         }
+
+        public bool ShowNonBillableHours
+        {
+            get;
+            set;
+        }
+
+        public string BillingTypes
+        {
+            get;
+            set;
+        }
     }
 }
 
