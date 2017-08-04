@@ -10,7 +10,12 @@
 	@UserLogin                NVARCHAR(255),
 	@ConsultantsCanAdjust	  BIT,
 	@IsChargeable			  BIT,
-	@IsDefault				  BIT = 0
+	@IsDefault				  BIT = 0,
+	@MilestoneType		      INT = 1,
+	@Discount				  DECIMAL(18,2)=NULL,
+	@DiscountType			  INT = NULL,
+	@IsDiscountAtMilestone	  INT = 0,
+	@IsAmountAtMilestone	  BIT = 0
 )
 AS
 BEGIN
@@ -32,9 +37,9 @@ BEGIN
 
 	INSERT INTO dbo.Milestone
 	            (ProjectId, Description, Amount, StartDate,
-	             ProjectedDeliveryDate, IsHourlyAmount, ConsultantsCanAdjust, IsChargeable, IsDefault)
+	             ProjectedDeliveryDate, IsHourlyAmount, ConsultantsCanAdjust, IsChargeable, IsDefault, MilestoneType, Discount, DiscountType, IsDiscountAtMilestone, IsAmountAtMilestone)
 	     VALUES (@ProjectId, @Description, @Amount, @StartDate,
-	             @ProjectedDeliveryDate, @IsHourlyAmount, @ConsultantsCanAdjust, @IsChargeable, @IsDefault)
+	             @ProjectedDeliveryDate, @IsHourlyAmount, @ConsultantsCanAdjust, @IsChargeable, @IsDefault, @MilestoneType, @Discount, @DiscountType, @IsDiscountAtMilestone, @IsAmountAtMilestone)
 
 	SET @MilestoneId = SCOPE_IDENTITY()
 
