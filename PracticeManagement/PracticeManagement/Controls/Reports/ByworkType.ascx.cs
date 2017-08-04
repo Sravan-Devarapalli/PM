@@ -36,7 +36,7 @@ namespace PraticeManagement.Controls.Reports
                 RowStyles headerrowStyle = new RowStyles(cellStylearray);
                 headerrowStyle.Height = 350;
 
-                RowStyles[] rowStylearray = { headerrowStyle};
+                RowStyles[] rowStylearray = { headerrowStyle };
 
                 SheetStyles sheetStyle = new SheetStyles(rowStylearray);
                 sheetStyle.IsAutoResize = false;
@@ -62,13 +62,17 @@ namespace PraticeManagement.Controls.Reports
                 dataPercentCellStyle.DataFormat = "0.00%";
 
                 CellStyles[] dataCellStylearray = { dataCellStyle,
-                                                    dataCellStyle, 
                                                     dataCellStyle,
-                                                    dataCellStyle,
-                                                    dataPercentCellStyle
+                                                    dataCellStyle
                                                   };
+                var dataCellStylelist = dataCellStylearray.ToList();
+                if (HostingPage.ShowNonBillableHours)
+                {
+                    dataCellStylelist.Add(dataCellStyle);
+                }
+                dataCellStylelist.Add(dataPercentCellStyle);
 
-                RowStyles datarowStyle = new RowStyles(dataCellStylearray);
+                RowStyles datarowStyle = new RowStyles(dataCellStylelist.ToArray());
 
                 RowStyles[] rowStylearray = { headerrowStyle, datarowStyle };
                 SheetStyles sheetStyle = new SheetStyles(rowStylearray);
@@ -117,6 +121,13 @@ namespace PraticeManagement.Controls.Reports
                 LblBillable = e.Item.FindControl("lblBillable") as Label;
                 LblNonBillable = e.Item.FindControl("lblNonBillable") as Label;
                 LblActualHours = e.Item.FindControl("lblActualHours") as Label;
+                var thNonBillable = e.Item.FindControl("thNonBillable") as HtmlTableCell;
+                thNonBillable.Visible = HostingPage.ShowNonBillableHours;
+            }
+            else if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
+            {
+                var tdNonBillable = e.Item.FindControl("tdNonBillable") as HtmlTableCell;
+                tdNonBillable.Visible = HostingPage.ShowNonBillableHours;
             }
         }
 
@@ -177,7 +188,7 @@ namespace PraticeManagement.Controls.Reports
                 dataset.Tables.Add(header);
                 dataSetList.Add(dataset);
             }
-            
+
             NPOIExcel.Export(filename, dataSetList, sheetStylesList);
         }
 
@@ -189,31 +200,32 @@ namespace PraticeManagement.Controls.Reports
 
             data.Columns.Add("WorkType");
             data.Columns.Add("Billable");
-            data.Columns.Add("Non-Billable");
+            if (HostingPage.ShowNonBillableHours)
+            {
+                data.Columns.Add("Non-Billable");
+            }
             data.Columns.Add("Actual Hours");
             data.Columns.Add("Percent of Total Actual Hours");
-            
+
             foreach (var item in report)
             {
                 row = new List<object>();
                 row.Add(item.WorkType.Name);
                 row.Add(GetDoubleFormat(item.BillableHours));
-                row.Add(GetDoubleFormat(item.NonBillableHours));
+                if (HostingPage.ShowNonBillableHours)
+                {
+                    row.Add(GetDoubleFormat(item.NonBillableHours));
+                }
                 row.Add(GetDoubleFormat(item.TotalHours));
                 row.Add(GetPercentageFormat(item.WorkTypeTotalHoursPercent));
                 data.Rows.Add(row.ToArray());
             }
             return data;
-        } 
-
-        protected void btnExportToPDF_OnClick(object sender, EventArgs e)
-        {
-
         }
 
         protected string GetPercentageFormat(double value)
         {
-            var result = (double)(value/100);
+            var result = (double)(value / 100);
             return result.ToString();
         }
 
