@@ -9,8 +9,7 @@
             <td class=" Width10Percent padRight5">
                 <table class="WholeWidth">
                     <tr>
-                        <td class="textRight">
-                            Export:
+                        <td class="textRight">Export:
                             <asp:Button ID="btnExportToExcel" runat="server" Text="Excel" OnClick="btnExportToExcel_OnClick"
                                 UseSubmitBehavior="false" ToolTip="Export To Excel" />
                         </td>
@@ -55,29 +54,21 @@
                                                     <th>
                                                         <asp:Label ID="lblProjectNameHeader" runat="server"></asp:Label>
                                                     </th>
-                                                    <th class="Width14Percent">
-                                                        Expense Type
+                                                    <th class="Width14Percent">Expense Type
                                                     </th>
-                                                    <th class="Width8Per">
-                                                        Start Date
+                                                    <th class="Width8Per">Start Date
                                                     </th>
-                                                    <th class="Width8Per">
-                                                        End Date
+                                                    <th class="Width8Per">End Date
                                                     </th>
-                                                    <th class="Width10Per hideEstCol" id="thEstExpense" runat="server">
-                                                        Estimated Expense($)
+                                                    <th class="Width10Per hideEstCol" id="thEstExpense" runat="server">Estimated Expense($)
                                                     </th>
-                                                    <th class="Width10Per hideActCol" id="thActExpense" runat="server">
-                                                        Actual Expense($)
+                                                    <th class="Width10Per hideActCol" id="thActExpense" runat="server">Actual Expense($)
                                                     </th>
-                                                    <th class="hideDiffCol" id="thDiffExpense" runat="server">
-                                                        Difference($)
+                                                    <th class="hideDiffCol" id="thDiffExpense" runat="server">Difference($)
                                                     </th>
-                                                    <th class="Width10Per">
-                                                        Reimbursement %
+                                                    <th class="Width10Per">Reimbursement %
                                                     </th>
-                                                    <th class="Width10Per">
-                                                        Reimburse Amount($)
+                                                    <th class="Width10Per">Reimburse Amount($)
                                                     </th>
                                                 </tr>
                                             </thead>
@@ -101,7 +92,7 @@
                                             <%# (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.ExpectedAmount).ToString("###,###,###,###,###,##0.##")%>
                                         </td>
                                         <td class="textCenter hideActCol" id="tdActExpense" runat="server">
-                                            <%# (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Amount).ToString("###,###,###,###,###,##0.##")%>
+                                            <%#((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Amount!=null? (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Amount).Value.ToString("###,###,###,###,###,##0.##"):string.Empty%>
                                         </td>
                                         <td class="textCenter hideDiffCol" id="tdDiffExpense" runat="server">
                                             <%#  (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Difference).ToString("###,###,###,###,###,##0.##")%>
@@ -133,7 +124,7 @@
                                             <%# (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.ExpectedAmount).ToString("###,###,###,###,###,##0.##")%>
                                         </td>
                                         <td class="textCenter hideActCol" id="tdActExpense" runat="server">
-                                            <%# (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Amount).ToString("###,###,###,###,###,##0.##")%>
+                                            <%#((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Amount!=null? (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Amount).Value.ToString("###,###,###,###,###,##0.##"):string.Empty%>
                                         </td>
                                         <td class="textCenter hideDiffCol" id="tdDiffExpense" runat="server">
                                             <%#  (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Difference).ToString("###,###,###,###,###,##0.##")%>
@@ -174,29 +165,21 @@
                                                     <th>
                                                         <asp:Label ID="lblProjectNameHeader" runat="server"></asp:Label>
                                                     </th>
-                                                    <th class="Width14Percent">
-                                                        Expense Type
+                                                    <th class="Width14Percent">Expense Type
                                                     </th>
-                                                    <th class="Width8Per">
-                                                        Start Date
+                                                    <th class="Width8Per">Start Date
                                                     </th>
-                                                    <th class="Width8Per">
-                                                        End Date
+                                                    <th class="Width8Per">End Date
                                                     </th>
-                                                    <th class="Width10Per hideEstCol" id="thEstExpense" runat="server">
-                                                        Estimated Expense($)
+                                                    <th class="Width10Per hideEstCol" id="thEstExpense" runat="server">Estimated Expense($)
                                                     </th>
-                                                    <th class="Width10Per hideActCol" id="thActExpense" runat="server">
-                                                        Actual Expense($)
+                                                    <th class="Width10Per hideActCol" id="thActExpense" runat="server">Actual Expense($)
                                                     </th>
-                                                    <th class="hideDiffCol" id="thDiffExpense" runat="server">
-                                                        Difference($)
+                                                    <th class="hideDiffCol" id="thDiffExpense" runat="server">Difference($)
                                                     </th>
-                                                    <th class="Width10Per">
-                                                        Reimbursement %
+                                                    <th class="Width10Per">Reimbursement %
                                                     </th>
-                                                    <th class="Width10Per">
-                                                        Reimburse Amount($)
+                                                    <th class="Width10Per">Reimburse Amount($)
                                                     </th>
                                                 </tr>
                                             </thead>
@@ -220,7 +203,7 @@
                                             <%# (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.ExpectedAmount).ToString("###,###,###,###,###,##0.##")%>
                                         </td>
                                         <td class="textCenter hideActCol" id="tdActExpense" runat="server">
-                                            <%# (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Amount).ToString("###,###,###,###,###,##0.##")%>
+                                            <%#((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Amount!=null? (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Amount).Value.ToString("###,###,###,###,###,##0.##"):string.Empty%>
                                         </td>
                                         <td class="textCenter hideDiffCol" id="tdDiffExpense" runat="server">
                                             <%#  (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Difference).ToString("###,###,###,###,###,##0.##")%>
@@ -252,7 +235,7 @@
                                             <%# (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.ExpectedAmount).ToString("###,###,###,###,###,##0.##")%>
                                         </td>
                                         <td class="textCenter hideActCol" id="tdActExpense" runat="server">
-                                            <%# (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Amount).ToString("###,###,###,###,###,##0.##")%>
+                                            <%#((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Amount!=null? (((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Amount).Value.ToString("###,###,###,###,###,##0.##"):string.Empty%>
                                         </td>
                                         <td class="textCenter hideDiffCol" id="tdDiffExpense" runat="server">
                                             <%#(((DataTransferObjects.Reports.ExpenseSummary)Container.DataItem).Expense.Difference).ToString("###,###,###,###,###,##0.##")%>
