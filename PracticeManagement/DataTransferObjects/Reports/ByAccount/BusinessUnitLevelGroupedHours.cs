@@ -81,6 +81,29 @@ namespace DataTransferObjects.Reports.ByAccount
         [DataMember]
         public int ProjectsCount { get; set; }
 
+        [DataMember]
+        public double BudgetHours
+        {
+            get;
+            set;
+        }
+
+        public double ForecastedHoursFromToday
+        {
+            get
+            {
+                return (ForecastedHours - ForecastedHoursUntilToday);
+            }
+        }
+
+        public double ETCHours
+        {
+            get
+            {
+                return (TotalHours + ForecastedHoursFromToday);
+            }
+        }
+
         public double TotalHours
         {
             get
@@ -101,6 +124,14 @@ namespace DataTransferObjects.Reports.ByAccount
             get
             {
                 return (BillableHoursUntilToday - ForecastedHoursUntilToday);
+            }
+        }
+
+        public double BudgetHoursVariance
+        {
+            get
+            {
+                return (BudgetHours - ForecastedHours);
             }
         }
     }
