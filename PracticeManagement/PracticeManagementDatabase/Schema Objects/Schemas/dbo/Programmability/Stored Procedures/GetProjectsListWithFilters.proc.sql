@@ -96,6 +96,15 @@ AS
 			AND R.LoweredRoleName IN ('system administrator','client director','business unit manager','salesperson','practice area manager','senior leadership','operations')			
 	END
 
+	--;With ETCValues
+	--AS
+	--(
+	--SELECT E.ProjectId,
+	--	   CONVERT(INT, SUM(ISNULL(E.ETCRevenue,0))) as ETCRevenue
+	--FROM v_FinancialRestospectiveETC E
+	--GROUP BY E.ProjectId
+	--)
+
 	SELECT	P.ProjectId,
 			P.ProjectNumber,
 			P.Name AS ProjectName,
@@ -129,7 +138,8 @@ AS
 			p.IsClientTimeEntryRequired,
 			PrevProject.ProjectId AS PreviousProjectId,
 			PrevProject.ProjectNumber AS PreviousProjectNumber,
-			p.OutsourceId
+			p.OutsourceId,
+			p.Budget
 	FROM Project AS P
 	INNER JOIN dbo.Client AS Clnt ON Clnt.ClientId=P.ClientId
 	INNER JOIN dbo.Practice pr ON pr.PracticeId = P.PracticeId
