@@ -175,6 +175,51 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetClientMarginGoals">
+      <soap:operation soapAction="http://www.logic2020.com/IClientService/GetClientMarginGoals" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InsertClientMargin">
+      <soap:operation soapAction="http://www.logic2020.com/IClientService/InsertClientMargin" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateClientMarginGoal">
+      <soap:operation soapAction="http://www.logic2020.com/IClientService/UpdateClientMarginGoal" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteClientMarginGoal">
+      <soap:operation soapAction="http://www.logic2020.com/IClientService/DeleteClientMarginGoal" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMarginGoalLogForClient">
+      <soap:operation soapAction="http://www.logic2020.com/IClientService/GetMarginGoalLogForClient" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="ClientService">
     <wsdl:port name="BasicHttpBinding_IClientService" binding="tns:BasicHttpBinding_IClientService">
