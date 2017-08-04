@@ -9,7 +9,12 @@
 	@IsHourlyAmount           BIT,
 	@UserLogin                NVARCHAR(255),
 	@ConsultantsCanAdjust	  BIT,
-	@IsChargeable			  BIT
+	@IsChargeable			  BIT,
+	@MilestoneType		      INT = 1,
+	@Discount				  DECIMAL(18,2)=NULL,
+	@DiscountType			  INT = NULL,
+	@IsDiscountAtMilestone	  INT = 0,
+	@IsAmountAtMilestone      BIT = 0
 )
 AS
 BEGIN
@@ -17,6 +22,11 @@ BEGIN
 
 	-- Start logging session
 	EXEC dbo.SessionLogPrepare @UserLogin = @UserLogin
+
+	DECLARE @PreviousDiscountType INT 
+
+	SELECT @PreviousDiscountType = DiscountType
+	FROM Milestone WHERE MilestoneId = @MilestoneId
 
 	-- Change the milestone
 	UPDATE dbo.Milestone
@@ -27,7 +37,12 @@ BEGIN
 	       ProjectedDeliveryDate = @ProjectedDeliveryDate,
 	       IsHourlyAmount = @IsHourlyAmount,
 	       IsChargeable = @IsChargeable,
-	       ConsultantsCanAdjust = @ConsultantsCanAdjust
+	       ConsultantsCanAdjust = @ConsultantsCanAdjust,
+		   MilestoneType = @MilestoneType,
+		   Discount= @Discount,
+		   DiscountType=@DiscountType,
+		   IsDiscountAtMilestone =@IsDiscountAtMilestone,
+		   IsAmountAtMilestone =@IsAmountAtMilestone
 	 WHERE MilestoneId = @MilestoneId
 
 	 --Adjust Expenses in Milestone level, but not in Project level
@@ -43,6 +58,32 @@ BEGIN
 		 EndDate = @ProjectedDeliveryDate
 	 WHERE (StartDate > @ProjectedDeliveryDate OR @StartDate > EndDate)
 			AND ProjectId = @ProjectId AND MilestoneId=@MilestoneId
+
+	IF(@IsHourlyAmount = 0)
+	BEGIN
+		EXEC UpdateFixedMilestoneAmount @MilestoneId= @MilestoneId
+
+		IF(@PreviousDiscountType = 1 AND @DiscountType = 2)
+		BEGIN
+			-- Convert dollar discount amount to percentage
+			UPDATE MPE
+			SET MPE.Discount =ISNULL(MPE.Discount*100/MPE.Amount,0)
+			FROM MilestonePersonEntry MPE
+			JOIN MilestonePerson MP ON MP.MilestonePersonId = MPE.MilestonePersonId 
+			WHERE MP.MilestoneId = @MilestoneId AND MPE.Discount IS NOT NULL
+
+		END
+		ELSE IF(@PreviousDiscountType = 2 AND @DiscountType = 1)
+		BEGIN
+			-- Convert Percentage discount to dollar amount
+			UPDATE MPE
+			SET MPE.Discount =ISNULL(MPE.Discount*MPE.Amount/100,0)
+			FROM MilestonePersonEntry MPE
+			JOIN MilestonePerson MP ON MP.MilestonePersonId = MPE.MilestonePersonId 
+			WHERE MP.MilestoneId = @MilestoneId AND MPE.Discount IS NOT NULL
+		END
+
+	END
 
 	-- End logging session
 	EXEC dbo.SessionLogUnprepare
