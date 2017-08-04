@@ -86,9 +86,10 @@ PraticeManagement.Controls.Generic.ScrollableDropdown.ScrollableDropdownBehavior
         var scrollingDropdown = this.get_scrollingDropdown();
         if (scrollingDropdown) {
             scrollingDropdown.style.display = 'none';
-            scrollingDropdown.style.left = '0px';
-            scrollingDropdown.style.top = '0px';
-            scrollingDropdown.style.position = 'fixed';
+            //scrollingDropdown.style.left = '0px';
+            //scrollingDropdown.style.top = '0px';
+            scrollingDropdown.style.marginTop = '20px';
+            scrollingDropdown.style.position = 'absolute';
         }
     },
 
@@ -115,15 +116,15 @@ PraticeManagement.Controls.Generic.ScrollableDropdown.ScrollableDropdownBehavior
 
     _setCheckBoxListPosition: function () {
 
-        var scrollingDropdown = this.get_scrollingDropdown();
-        var labelControlPosition = this.getOffset($get(this.get_labelValue()));
+        //var scrollingDropdown = this.get_scrollingDropdown();
+        //var labelControlPosition = this.getOffset($get(this.get_labelValue()));
 
-        if (labelControlPosition != null && scrollingDropdown) {
-            scrollingDropdown.style.left = labelControlPosition.x - document.documentElement.scrollLeft + 'px';
+        //if (labelControlPosition != null && scrollingDropdown) {
+            //scrollingDropdown.style.left = labelControlPosition.x - document.documentElement.scrollLeft + 'px';
 
-            scrollingDropdown.style.top = labelControlPosition.y + labelControlPosition.h - document.documentElement.scrollTop + 'px';
+            //scrollingDropdown.style.top = labelControlPosition.y + labelControlPosition.h - document.documentElement.scrollTop + 'px';
 
-        }
+        //}
     },
 
     getOffset: function (object) {
