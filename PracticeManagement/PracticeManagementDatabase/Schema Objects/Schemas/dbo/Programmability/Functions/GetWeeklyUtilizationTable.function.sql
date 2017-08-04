@@ -38,6 +38,8 @@ RETURN
 
 */
 
+
+
 WIth Ranges
 AS
 (
@@ -91,12 +93,36 @@ SELECT PersonId,StartDate,EndDate,Timescale
 FROM CurrentConsultantsWithRanges
 WHERE LatestPayRank = 1
 ),
+
+MilestonePersonSchedule
+AS(
+	SELECT m.[MilestoneId],
+	       mp.PersonId,
+	      -- dbo.PersonProjectedHoursPerDay(cal.DayOff,cal.companydayoff,cal.TimeoffHours,mpe.HoursPerDay) AS HoursPerDay,
+		  --Removed Inline Function for the sake of performance. When ever PersonProjectedHoursPerDay function is updated need to update below case when also.
+			CONVERT(DECIMAL(4,2),CASE WHEN cal.DayOff = 0  THEN mpe.HoursPerDay -- No Time-off and no company holiday
+				WHEN (cal.DayOff = 1 and cal.companydayoff = 1) OR (cal.DayOff = 1 AND cal.companydayoff = 0 AND ISNULL(cal.TimeoffHours,8) = 8) THEN 0 -- only company holiday OR person complete dayoff
+				ELSE mpe.HoursPerDay * (1-(cal.TimeoffHours/8)) --person partial day off
+			END) AS HoursPerDay,
+	       cal.Date,
+	       m.ProjectId,
+	       
+		   P.ProjectStatusId
+		 
+	
+	  FROM dbo.Project P 
+		   INNER JOIN dbo.[Milestone] AS m ON m.ProjectId=P.ProjectId AND P.IsAdministrative = 0 AND P.ProjectId != 174  AND m.IsDefault = 0
+		   INNER JOIN dbo.MilestonePerson AS mp ON mp.[MilestoneId] = m.[MilestoneId]
+	       INNER JOIN dbo.MilestonePersonEntry AS mpe ON mpe.MilestonePersonId = mp.MilestonePersonId
+	       INNER JOIN dbo.PersonCalendarAuto AS cal ON cal.Date BETWEEN mpe.Startdate AND mpe.EndDate AND mp.PersonId = cal.PersonId
+		   ),
+-- more time
 CurrentConsultantsWithProjectedHours
 AS
 (
  SELECT  S.PersonId,CONVERT(DECIMAL(10,2),SUM(S.HoursPerDay)) ProjectedHours,CCWV.StartDate ,CCWV.Timescale
     FROM CurrentConsultantsWithRanges2 CCWV
-	INNER JOIN dbo.v_MilestonePersonSchedule AS S ON CCWV.PersonId = S.PersonId
+	INNER JOIN MilestonePersonSchedule AS S ON CCWV.PersonId = S.PersonId
     WHERE  s.MilestoneId <> (SELECT MilestoneId FROM dbo.DefaultMilestoneSetting)
 			AND s.Date BETWEEN CCWV.startDate AND CCWV.endDate AND 
 			(@ActiveProjects = 1 AND s.ProjectStatusId = 3 OR		--  3 - Active
@@ -116,7 +142,7 @@ AS
 			CCWR.StartDate,
 			CCWR.EndDate,
 			CCWR.Timescale, 
-				CASE WHEN CCWR.Timescale = 2 THEN ISNULL(COUNT(PC.Date),0) ELSE ISNULL(SUM(CASE WHEN PC.CompanyDayOff = 1 AND pc.DayOff = 1 AND (DATEPART(DW,PC.Date) <> 1 AND DATEPART(DW,PC.Date) <> 7) THEN 0 ELSE (case when PC.Date is not null then 1 else 0 end) END),0) END AS RedefinedVacationDays,
+			CASE WHEN CCWR.Timescale = 2 THEN ISNULL(COUNT(PC.Date),0) ELSE ISNULL(SUM(CASE WHEN PC.CompanyDayOff = 1 AND pc.DayOff = 1 AND (DATEPART(DW,PC.Date) <> 1 AND DATEPART(DW,PC.Date) <> 7) THEN 0 ELSE (case when PC.Date is not null then 1 else 0 end) END),0) END AS RedefinedVacationDays,
 			ISNULL(SUM(CASE WHEN DATEPART(DW,PC.Date) <> 1 AND DATEPART(DW,PC.Date) <> 7 THEN 1 ELSE 0 END),0) AS VacationDaysIncludingCompanyDayOffsNotWeekends
 	FROM CurrentConsultantsWithRanges2 CCWR
 	INNER JOIN dbo.PersonCalendarAuto PC ON PC.PersonId = CCWR.PersonId 
@@ -133,6 +159,8 @@ AS
 	GROUP BY CCWR.PersonId,CCWR.StartDate,CCWR.EndDate,CCWR.Timescale
 )
 ,
+
+-- more time
 CurrentConsultantsWithAvailableHours
 AS
 (
@@ -145,7 +173,9 @@ AS
 										AND (PC.DayOff = 0 OR (PC.DayOff = 1 AND PC.CompanyDayOff = 0))
 	GROUP BY PC.PersonId,CCWV.StartDate 
 	UNION 
-	SELECT CCWP.PersonId,CCWP.ProjectedHours AS AvailableHours ,CCWP.StartDate FROM  CurrentConsultantsWithProjectedHours CCWP WHERE CCWP.Timescale != 2 -- Non SalaryPerson AvailableHours
+	SELECT CCWP.PersonId,CCWP.ProjectedHours AS AvailableHours ,CCWP.StartDate 
+	FROM  CurrentConsultantsWithProjectedHours CCWP 
+	WHERE CCWP.Timescale != 2 -- Non SalaryPerson AvailableHours
 ),
 CurrentConsultantsWithAllHours
 AS
