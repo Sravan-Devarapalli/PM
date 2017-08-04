@@ -37,7 +37,10 @@ BEGIN
 	       mp.ConsultantsCanAdjust,
 	       mp.ClientIsChargeable,
 	       mp.ProjectIsChargeable,
-	       mp.MilestoneIsChargeable
+	       mp.MilestoneIsChargeable,
+		   mp.MilestonePersonDiscount,
+		   mp.LockDiscount,
+		   mp.IsNewToBudget
 	  FROM dbo.v_MilestonePerson AS mp
 	  INNER JOIN dbo.Person AS P ON (P.PersonId = MP.PersonId AND (@IncludeStrawman = 1  OR P.IsStrawman = 0))
 	 WHERE mp.ProjectId = @ProjectId 
