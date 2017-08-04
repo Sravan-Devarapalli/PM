@@ -2,6 +2,7 @@
 <xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/MilestoneService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/DataTransferObjects" />
   <xs:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/MilestoneService.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/MilestoneService.svc?xsd=xsd8" namespace="http://schemas.datacontract.org/2004/07/DataTransferObjects.Reports" />
   <xs:element name="SaveDefaultMilestone">
     <xs:complexType>
       <xs:sequence>
@@ -449,6 +450,74 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element xmlns:q26="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="GetAllExpenseTypesListResult" nillable="true" type="q26:ArrayOfExpenseType" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMonthlyExpensesByExpenseId">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="expenseId" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMonthlyExpensesByExpenseIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q27="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="GetMonthlyExpensesByExpenseIdResult" nillable="true" type="q27:ArrayOfPeriodicalExpense" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SaveMonthlyExpenses">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="expenseId" type="xs:int" />
+        <xs:element xmlns:q28="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="monthlyExpense" nillable="true" type="q28:ArrayOfPeriodicalExpense" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SaveMonthlyExpensesResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SaveMonthlyRevenueForFixedMilestone">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="milestoneId" type="xs:int" />
+        <xs:element xmlns:q29="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="monthlyRevenues" nillable="true" type="q29:ArrayOfMonthlyRevenue" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SaveMonthlyRevenueForFixedMilestoneResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMonthlyRevenuesForMilestone">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="milestoneId" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMonthlyRevenuesForMilestoneResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q30="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="GetMonthlyRevenuesForMilestoneResult" nillable="true" type="q30:ArrayOfMonthlyRevenue" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetForecastDataForMilestone">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="milestoneId" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetForecastDataForMilestoneResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q31="http://schemas.datacontract.org/2004/07/DataTransferObjects.Reports" minOccurs="0" name="GetForecastDataForMilestoneResult" nillable="true" type="q31:ArrayOfPersonBudgetComparison" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
