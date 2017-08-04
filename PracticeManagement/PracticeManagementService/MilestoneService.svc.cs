@@ -4,6 +4,7 @@ using System.Linq;
 using System.ServiceModel.Activation;
 using DataAccess;
 using DataTransferObjects;
+using DataTransferObjects.Reports;
 
 namespace PracticeManagementService
 {
@@ -71,7 +72,7 @@ namespace PracticeManagementService
             if (result != null)
             {
                 result.ComputedFinancials = ComputedFinancialsDAL.FinancialsGetByMilestone(milestoneId);
-
+                result.BudgetFinancials = ComputedFinancialsDAL.BudgetFinancialsGetByMilestone(milestoneId);
                 result.MilestonePersons =
                     PersonRateCalculator.GetMilestonePersonListByMilestone(milestoneId).ToArray();
 
@@ -128,6 +129,7 @@ namespace PracticeManagementService
             else
             {
                 MilestoneDAL.MilestoneUpdate(milestone, userName);
+                MilestoneDAL.UpdateMilestoneDiscount(milestone.Id.Value);
             }
 
             if (milestone.Id != null) return milestone.Id.Value;
@@ -199,7 +201,10 @@ namespace PracticeManagementService
         /// <returns>Id of the inserted entity</returns>
         public int AddProjectExpense(ProjectExpense entity)
         {
-            return (new ProjectExpenseDal()).Add(entity);
+            int expenseID = (new ProjectExpenseDal()).Add(entity);
+
+            ProjectExpenseDal.InsertProjectMonthlyExpenses(expenseID, entity.MonthlyExpense);
+            return expenseID;
         }
 
         /// <summary>
@@ -216,8 +221,22 @@ namespace PracticeManagementService
         /// </summary>
         public void UpdateProjectExpense(ProjectExpense entity)
         {
+
             (new ProjectExpenseDal()).Update(entity);
+
+            if (entity.MonthlyExpense != null && entity.MonthlyExpense.Count > 0)
+            {
+                if (entity.MonthlyExpense.Any(m => m.Id == null))
+                {
+                    ProjectExpenseDal.InsertProjectMonthlyExpenses(entity.Id.Value, entity.MonthlyExpense);
+                }
+                else
+                {
+                    ProjectExpenseDal.UpdateProjectMonthlyExpenses(entity.Id.Value, entity.MonthlyExpense);
+                }
+            }
         }
+
 
         public List<Note> NoteListByTargetId(int targetId, int noteTargetId)
         {
@@ -286,9 +305,9 @@ namespace PracticeManagementService
             return MilestoneDAL.GetPersonMilestonesOnPreviousHireDate(personId, previousHireDate);
         }
 
-        public void SendBadgeRequestMail(Project project,int milestoneId)
+        public void SendBadgeRequestMail(Project project, int milestoneId)
         {
-            MailUtil.SendMSBadgeRequestEmail(project,milestoneId);
+            MailUtil.SendMSBadgeRequestEmail(project, milestoneId);
         }
 
         public void SendBadgeRequestApprovedMail(string personName, string toAddress)
@@ -305,6 +324,43 @@ namespace PracticeManagementService
         {
             return ProjectExpenseDal.GetAllExpenseTypesList();
         }
+
+        public List<PeriodicalExpense> GetMonthlyExpensesByExpenseId(int expenseId)
+        {
+            return ProjectExpenseDal.GetMonthlyExpensesForProjectExpense(expenseId);
+        }
+
+        public void SaveMonthlyExpenses(int expenseId, List<PeriodicalExpense> monthlyExpense)
+        {
+            ProjectExpenseDal.UpdateProjectMonthlyExpenses(expenseId, monthlyExpense);
+        }
+
+        public void SaveMonthlyRevenueForFixedMilestone(int milestoneId, List<MonthlyRevenue> monthlyRevenues)
+        {
+            if (monthlyRevenues != null && monthlyRevenues.Count > 0)
+            {
+                if (monthlyRevenues.Any(m => m.Id == null))
+                {
+                    MilestoneDAL.SaveFixedMilestoneMonthlyRevenues(milestoneId, monthlyRevenues);
+                }
+                else
+                {
+                    MilestoneDAL.UpdateFixedMilestoneMonthlyRevenues(milestoneId, monthlyRevenues);
+                }
+            }
+        }
+
+        public List<MonthlyRevenue> GetMonthlyRevenuesForMilestone(int milestoneId)
+        {
+            return MilestoneDAL.GetMonthlyRevenuesForMilestone(milestoneId);
+
+        }
+
+        public List<PersonBudgetComparison> GetForecastDataForMilestone(int milestoneId)
+        {
+            return ReportDAL.GetForecastDataForMilestone(milestoneId);
+        }
+
 
         #endregion Implementation of IDataTransferObjectManipulator<ProjectExpense> and custom methods
     }
