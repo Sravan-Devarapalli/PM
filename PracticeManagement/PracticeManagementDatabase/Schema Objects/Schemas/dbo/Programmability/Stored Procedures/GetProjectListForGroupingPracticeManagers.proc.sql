@@ -302,8 +302,8 @@ BEGIN
 		AS
 		(
 			SELECT pexp.ProjectId,
-				CONVERT(DECIMAL(18,2),SUM(pexp.Amount/((DATEDIFF(dd,pexp.StartDate,pexp.EndDate)+1)))) Expense,
-				CONVERT(DECIMAL(18,2),SUM(pexp.Reimbursement*0.01*pexp.Amount /((DATEDIFF(dd,pexp.StartDate,pexp.EndDate)+1)))) Reimbursement,
+				CONVERT(DECIMAL(18,2),SUM(pexp.ExpectedAmount/((DATEDIFF(dd,pexp.StartDate,pexp.EndDate)+1)))) Expense,
+				CONVERT(DECIMAL(18,2),SUM(pexp.Reimbursement*0.01*pexp.ExpectedAmount /((DATEDIFF(dd,pexp.StartDate,pexp.EndDate)+1)))) Reimbursement,
 				c.MonthStartDate AS FinancialDate,
 				c.MonthEndDate AS MonthEnd
 			FROM dbo.ProjectExpense as pexp
