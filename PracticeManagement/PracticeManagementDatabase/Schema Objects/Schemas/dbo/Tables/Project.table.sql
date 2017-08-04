@@ -41,6 +41,19 @@
 	[IsClientTimeEntryRequired]   BIT    NOT NULL CONSTRAINT DF_Project_IsClientTimeEntryRequired DEFAULT (0),
 	[PreviousProjectNumber]    NVARCHAR (12)   NULL,
 	[OutsourceId]				INT		NOT NULL CONSTRAINT DF_Project_OutsourceId DEFAULT (3) --NotApplicable
-    FOREIGN KEY ([GroupId]) REFERENCES [dbo].[ProjectGroup] ([GroupId]) ON DELETE NO ACTION ON UPDATE NO ACTION
+    FOREIGN KEY ([GroupId]) REFERENCES [dbo].[ProjectGroup] ([GroupId]) ON DELETE NO ACTION ON UPDATE NO ACTION, 
+    [Budget] INT NULL, 
+    [ExceptionMargin] DECIMAL(5, 2) NULL, 
+    [BudgetSetDate] DATETIME NULL, 
+    [ExceptionRevenue] DECIMAL(18, 2) NULL
 );
+GO
 
+CREATE NONCLUSTERED INDEX [IX_Project_GroupIdSalesPersonId]
+ON [dbo].[Project] ([GroupId],[SalesPersonId])
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Project_IsAllowedToShow]
+ON [dbo].[Project] ([IsAllowedToShow])
+INCLUDE ([StartDate],[EndDate],[ProjectStatusId],[ExecutiveInChargeId],[ProjectManagerId],[EngagementManagerId])
+GO
