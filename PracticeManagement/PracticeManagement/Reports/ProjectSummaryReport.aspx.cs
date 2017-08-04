@@ -339,6 +339,51 @@ namespace PraticeManagement.Reporting
             set;
         }
 
+        public bool ShowNonBillableHours
+        {
+            get
+            {
+                return chbShowNonBillable.Checked;
+            }
+            set
+            {
+                chbShowNonBillable.Checked = value;
+            }
+        }
+
+        //private int ActualPeriod
+        //{
+        //    get
+        //    {
+        //        return int.Parse(ddlActualPeriod.SelectedValue);
+        //    }
+        //}
+
+        //public DateTime? ActualsEndDate
+        //{
+        //    get
+        //    {
+        //        var now = Utils.Generic.GetNowWithTimeZone();
+
+        //        if (ActualPeriod == 30)
+        //        {
+        //            return Utils.Calendar.MonthEndDate(now.AddMonths(-1));
+        //        }
+        //        else if (ActualPeriod == 15)
+        //        {
+        //            return Utils.Calendar.PayrollPerviousEndDate(now);
+        //        }
+        //        else if (ActualPeriod == 0)
+        //        {
+        //            return null;
+        //        }
+        //        else
+        //        {
+        //            return now;
+        //        }
+        //    }
+        //}
+
         #endregion
 
         #region Control Methods
@@ -359,7 +404,7 @@ namespace PraticeManagement.Reporting
             if (value == null)
                 ddlPeriod.SelectedValue = "*";
             else
-                ddlPeriod.SelectedValue = value.Value ;
+                ddlPeriod.SelectedValue = value.Value;
             LoadActiveView();
             SaveFilterValuesForSession();
         }
@@ -492,9 +537,7 @@ namespace PraticeManagement.Reporting
                 repProjectNamesList.Visible = false;
                 ltrlNoProjectsText.Visible = true;
             }
-
             mpeProjectSearch.Show();
-
         }
 
         protected void lnkProjectNumber_OnClick(object sender, EventArgs e)
@@ -685,6 +728,8 @@ namespace PraticeManagement.Reporting
             filter.SelectedView = ddlView.SelectedValue;
             filter.StartDate = diRange.FromDate.Value;
             filter.EndDate = diRange.ToDate.Value;
+            filter.ShowNonBillableHours = ShowNonBillableHours;
+            //filter.ActualsEndDate = ddlActualPeriod.SelectedValue;
             ReportsFilterHelper.SaveFilterValues(ReportName.ByProjectReport, filter);
         }
 
@@ -699,6 +744,8 @@ namespace PraticeManagement.Reporting
                 ddlView.SelectedValue = filters.SelectedView;
                 diRange.FromDate = filters.StartDate;
                 diRange.ToDate = filters.EndDate;
+                ShowNonBillableHours = filters.ShowNonBillableHours;
+                //ddlActualPeriod.SelectedValue = filters.ActualsEndDate;
             }
         }
 
@@ -772,7 +819,7 @@ namespace PraticeManagement.Reporting
 
         #region Pdf Methods
 
-        private PdfPTable GetPdfReportHeader(List<PersonLevelGroupedHours> personLevelGroupedHoursList, Project project, int? personId)
+        private PdfPTable GetPdfReportHeader(List<PersonLevelGroupedHours> personLevelGroupedHoursList, Project project, int? personId, double totalEstBillings)
         {
             List<PersonLevelGroupedHours> _personLevelGroupedHoursList = personLevelGroupedHoursList;
             if (personId.HasValue)
@@ -783,7 +830,7 @@ namespace PraticeManagement.Reporting
             double billableHours = _personLevelGroupedHoursList.Sum(p => p.DayTotalHours != null ? p.DayTotalHours.Sum(d => d.BillableHours) : p.BillableHours);
             double nonBillableHours = _personLevelGroupedHoursList.Sum(p => p.NonBillableHours);
             double projectedHours = _personLevelGroupedHoursList.Sum(p => p.ForecastedHours);
-            double totalEstBillings = _personLevelGroupedHoursList.Where(p => p.EstimatedBillings != -1.00).Sum(p => p.EstimatedBillings);
+            //double totalEstBillings = _personLevelGroupedHoursList.Where(p => p.EstimatedBillings != -1.00).Sum(p => p.EstimatedBillings);
             PdfPTable outerTable = new PdfPTable(5);
             outerTable.WidthPercentage = 100;
             float[] outerWidths = { .4f, .15f, .15f, .2f, .1f };
@@ -867,7 +914,7 @@ namespace PraticeManagement.Reporting
             PdfPTable innerTable5 = new PdfPTable(1);
             innerTable5.WidthPercentage = 100;
             PdfPCell headerText13 = new PdfPCell(new Phrase("Total Estimated Billings", normalFont12));
-            PdfPCell headerText14 = new PdfPCell(new Phrase(project.BillableType == "Fixed" ? "FF" : (totalEstBillings).ToString(Constants.Formatting.CurrencyExcelReportFormat), boldFont));
+            PdfPCell headerText14 = new PdfPCell(new Phrase((totalEstBillings).ToString(Constants.Formatting.CurrencyExcelReportFormat), boldFont));
             headerText13.VerticalAlignment = Element.ALIGN_BOTTOM;
             headerText14.VerticalAlignment = Element.ALIGN_TOP;
             headerText13.HorizontalAlignment = headerText14.HorizontalAlignment = Element.ALIGN_CENTER;
@@ -924,20 +971,23 @@ namespace PraticeManagement.Reporting
             if (data.Count > 0)
             {
                 //Header
-                _pdfProjectPersonsSummary = string.Format("Resource{0}ProjectRole{0}Projected Hours{0}Billable{0}Non-Billable{0}Actual Hours{0}Hourly Bill Rate{0}Estimated Billings{0}Billable Hours Variance{1}", ColoumSpliter, RowSpliter);
+                _pdfProjectPersonsSummary = string.Format("Resource{0}Budget Hours{0}Projected Hours{0}Billable{0}", ColoumSpliter);
+                _pdfProjectPersonsSummary += ShowNonBillableHours ? string.Format("Non-Billable{0}", ColoumSpliter) : "";
+                _pdfProjectPersonsSummary += string.Format("Actual Hours{0} ETC Hours{0}Hourly Bill Rate{0}Estimated Billings{0}Billable Hours Variance{1}", ColoumSpliter, RowSpliter);
 
                 var list = data.OrderBy(p => p.Person.PersonLastFirstName);
 
                 //Data
                 foreach (var byPerson in list)
                 {
-                    _pdfProjectPersonsSummary += String.Format("{0}{9}{1}{9}{2}{9}{3}{9}{4}{9}{5}{9}{6}{9}{7}{9}{8}{10}",
-                        byPerson.Person.PersonLastFirstName,
-                        byPerson.Person.ProjectRoleName,
+                    _pdfProjectPersonsSummary += String.Format("{0}{4}{1}{4}{2}{4}{3}{4}", byPerson.Person.PersonLastFirstName,
+                        GetDoubleFormat(byPerson.BudgetHours),
                         GetDoubleFormat(byPerson.ForecastedHours),
-                        GetDoubleFormat(byPerson.BillableHours),
-                        GetDoubleFormat(byPerson.NonBillableHours),
-                        GetDoubleFormat(byPerson.TotalHours),
+                        GetDoubleFormat(byPerson.BillableHours), ColoumSpliter);
+
+                    _pdfProjectPersonsSummary += ShowNonBillableHours ? string.Format("{0}{1}", GetDoubleFormat(byPerson.NonBillableHours), ColoumSpliter) : "";
+
+                    _pdfProjectPersonsSummary += String.Format("{0}{5}{1}{5}{2}{5}{3}{5}{4}{6}", GetDoubleFormat(byPerson.TotalHours), GetDoubleFormat(byPerson.ETCHours),
                         (byPerson.FormattedBillRate),
                         (byPerson.FormattedEstimatedBillings),
                         (byPerson.BillableHoursVariance > 0) ? "+" + GetDoubleFormat(byPerson.BillableHoursVariance) : GetDoubleFormat(byPerson.BillableHoursVariance),
@@ -1009,7 +1059,8 @@ namespace PraticeManagement.Reporting
             document.Open();
             if (summaryData.Count > 0)
             {
-                document.Add((IElement)GetPdfReportHeader(summaryData, project, null));
+                double totalEstBillings = summaryData.Where(p => p.EstimatedBillings != -1.00).Sum(p => p.EstimatedBillings);
+                document.Add((IElement)GetPdfReportHeader(summaryData, project, null, totalEstBillings));
                 string reportDataInPdfString = GetSummaryReportDataInPdfString(summaryData);
                 var table = builder.GetPdftable(reportDataInPdfString, PdfProjectPersonsSummaryTableStyle, RowSpliter, ColoumSpliter);
                 document.Add((IElement)table);
@@ -1029,7 +1080,8 @@ namespace PraticeManagement.Reporting
                     {
                         detailTable = PDFHelper.GetPdfTableWithGivenString("There are no Time Entries entered towards this project for the selected date range.");
                     }
-                    document.Add((IElement)GetPdfReportHeader(detailData, project, personId));
+                    totalEstBillings = summaryData.Where(p => p.EstimatedBillings != -1.00 && p.Person.Id == personId).Sum(p => p.EstimatedBillings);
+                    document.Add((IElement)GetPdfReportHeader(detailData, project, personId, totalEstBillings));
                     document.Add((IElement)detailTable);
                     if (i < personIdsCount)
                     {
@@ -1060,7 +1112,8 @@ namespace PraticeManagement.Reporting
             document.Open();
             if (summaryData.Count > 0)
             {
-                document.Add((IElement)GetPdfReportHeader(summaryData, project, null));
+                double totalEstBillings = summaryData.Where(p => p.EstimatedBillings != -1.00).Sum(p => p.EstimatedBillings);
+                document.Add((IElement)GetPdfReportHeader(summaryData, project, null, totalEstBillings));
                 string reportDataInPdfString = GetSummaryReportDataInPdfString(summaryData);
                 var table = builder.GetPdftable(reportDataInPdfString, PdfProjectPersonsSummaryTableStyle, RowSpliter, ColoumSpliter);
                 document.Add((IElement)table);
@@ -1080,7 +1133,8 @@ namespace PraticeManagement.Reporting
                     {
                         detailTable = PDFHelper.GetPdfTableWithGivenString("There are no Time Entries entered towards this project for the selected date range.");
                     }
-                    document.Add((IElement)GetPdfReportHeader(detailData, project, personId));
+                    totalEstBillings = summaryData.Where(p => p.EstimatedBillings != -1.00 && p.Person.Id == personId).Sum(p => p.EstimatedBillings);
+                    document.Add((IElement)GetPdfReportHeader(detailData, project, personId, totalEstBillings));
                     document.Add((IElement)detailTable);
                     if (i < personIdsCount)
                     {
@@ -1101,10 +1155,10 @@ namespace PraticeManagement.Reporting
             var project = ServiceCallers.Custom.Project(p => p.GetProjectShortByProjectNumber(ProjectNumber, MilestoneId, StartDate, EndDate));
             List<PersonLevelGroupedHours> summaryData = ServiceCallers.Custom.Report(r => r.ProjectSummaryReportByResource(ProjectNumber,
                 MilestoneId, PeriodSelected == "*" ? null : StartDate,
-                PeriodSelected == "*" ? null : EndDate, ByResourceControl.cblProjectRolesControl.SelectedItemsXmlFormat)).ToList();
+                PeriodSelected == "*" ? null : EndDate, null)).ToList();
             List<PersonLevelGroupedHours> detailData = ServiceCallers.Custom.Report(r => r.ProjectDetailReportByResource(ProjectNumber, MilestoneId,
                PeriodSelected == "*" ? null : StartDate, PeriodSelected == "*" ? null : EndDate,
-               ByResourceControl.cblProjectRolesControl.SelectedItemsXmlFormat,false)).ToList();
+               null, false)).ToList();
 
             HtmlToPdfBuilder builder = new HtmlToPdfBuilder(iTextSharp.text.PageSize.A4_LANDSCAPE);
             string filename = string.Format("{0}_{1}_{2}.pdf", project.ProjectNumber, project.Name, "_ByResource").Replace(' ', '_');
@@ -1130,6 +1184,18 @@ namespace PraticeManagement.Reporting
         }
 
         #endregion
+
+        protected void chbShowNonBillable_CheckedChanged(object sender, EventArgs e)
+        {
+            LoadActiveView();
+            SaveFilterValuesForSession();
+        }
+
+        //protected void ddlActualPeriod_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    LoadActiveView();
+        //    SaveFilterValuesForSession();
+        //}
     }
 }
 
