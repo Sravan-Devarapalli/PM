@@ -23,7 +23,7 @@ AS
 	SELECT @Today = CONVERT(DATETIME,CONVERT(DATE,[dbo].[GettingPMTime](GETUTCDATE())))
 	-- Create a milestone record
 	INSERT INTO dbo.Milestone
-	            (ProjectId, Description, Amount, StartDate, ProjectedDeliveryDate, IsHourlyAmount)
+	            (ProjectId, Description, Amount, StartDate, ProjectedDeliveryDate, IsHourlyAmount, MilestoneType, Discount, DiscountType)
 	     SELECT ISNULL(@ProjectId, m.ProjectId),
 	            SUBSTRING(m.Description + ' (cloned)', 1, 255),
 	            m.Amount,
@@ -35,7 +35,10 @@ AS
 	             WHEN @ProjectId IS NOT NULL THEN m.ProjectedDeliveryDate
 	             ELSE DATEADD(dd, @CloneDuration, m.ProjectedDeliveryDate)
 	            END,
-	            m.IsHourlyAmount
+	            m.IsHourlyAmount,
+				1,
+				m.Discount,
+				m.DiscountType
 	       FROM dbo.Milestone AS m
 	      WHERE m.MilestoneId = @MilestoneId
 
@@ -52,8 +55,8 @@ AS
 	BEGIN
 	--insert milestonepersonentries for Persons in milestone cloning in milestonedetail page.
 	INSERT INTO dbo.MilestonePersonEntry
-	            (MilestonePersonId, StartDate, EndDate, PersonRoleId, Amount, HoursPerDay)
-	     (SELECT mp.MilestonePersonId, mp.StartDate, mp.ProjectedDeliveryDate, mp.PersonRoleId, mp.Amount, mp.HoursPerDay
+	            (MilestonePersonId, StartDate, EndDate, PersonRoleId, Amount, HoursPerDay,Discount)
+	     (SELECT mp.MilestonePersonId, mp.StartDate, mp.ProjectedDeliveryDate, mp.PersonRoleId, mp.Amount, mp.HoursPerDay,mp.Discount
 	       FROM (
 	             SELECT mpc.MilestonePersonId,
 	                    CASE WHEN m.StartDate > PH.HireDate THEN m.StartDate ELSE PH.HireDate END AS StartDate,
@@ -61,6 +64,7 @@ AS
 	                    mpe.PersonRoleId,
 	                    mpe.Amount,
 	                    mpe.HoursPerDay,
+						mpe.Discount,
 	                    ROW_NUMBER() OVER(PARTITION BY mp.PersonId,PH.PersonId,PH.HireDate ORDER BY mpe.StartDate DESC) AS RowNum
 	               FROM dbo.MilestonePersonEntry AS mpe
 	                    INNER JOIN dbo.MilestonePerson AS mp
@@ -81,7 +85,8 @@ AS
 	            m.ProjectedDeliveryDate,
 	            mpe.PersonRoleId,
 	            mpe.Amount,
-	            mpe.HoursPerDay
+	            mpe.HoursPerDay,
+				mpe.Discount
 	        FROM dbo.MilestonePersonEntry AS mpe
 	            INNER JOIN dbo.MilestonePerson AS mp
 	                ON mp.MilestonePersonId = mpe.MilestonePersonId AND mp.MilestoneId = @MilestoneId
@@ -96,14 +101,15 @@ AS
 	BEGIN
 	--insert milestonepersonentries for Persons in project cloning.
 	INSERT INTO dbo.MilestonePersonEntry
-	            (MilestonePersonId, StartDate, EndDate, PersonRoleId, Amount, HoursPerDay)
+	            (MilestonePersonId, StartDate, EndDate, PersonRoleId, Amount, HoursPerDay, Discount)
 	     (
 	             SELECT mpc.MilestonePersonId,
 						CASE WHEN mpe.StartDate > PH.HireDate THEN mpe.StartDate ELSE PH.HireDate END,
 	                    CASE WHEN PH.TerminationDate IS NULL OR mpe.EndDate < PH.TerminationDate THEN mpe.EndDate ELSE PH.TerminationDate END,
 	                    mpe.PersonRoleId,
 	                    mpe.Amount,
-	                    mpe.HoursPerDay
+	                    mpe.HoursPerDay,
+						mpe.Discount
 	               FROM dbo.MilestonePersonEntry AS mpe
 	                    INNER JOIN dbo.MilestonePerson AS mp
 	                        ON mp.MilestonePersonId = mpe.MilestonePersonId AND mp.MilestoneId = @MilestoneId
