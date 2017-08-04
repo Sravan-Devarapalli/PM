@@ -79,6 +79,12 @@ namespace DataTransferObjects.ContextObjects
         [DataMember]
         public bool RevenueType { get; set; }
 
+        [DataMember]
+        public bool Budget { get; set; }
+
+        [DataMember]
+        public bool Margin { get; set; }
+
     }
 }
 
