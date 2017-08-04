@@ -44,7 +44,7 @@ namespace PraticeManagement.Controls.Reports
                 RowStyles headerrowStyle = new RowStyles(cellStylearray);
                 headerrowStyle.Height = 350;
 
-                RowStyles[] rowStylearray = { headerrowStyle};
+                RowStyles[] rowStylearray = { headerrowStyle };
 
                 SheetStyles sheetStyle = new SheetStyles(rowStylearray);
                 sheetStyle.IsAutoResize = false;
@@ -69,19 +69,22 @@ namespace PraticeManagement.Controls.Reports
                 CellStyles dataNumberDataCellStyle = new CellStyles();
                 dataNumberDataCellStyle.DataFormat = "$#,##0.00";
 
-                CellStyles[] dataCellStylearray = { dataCellStyle,
-                                                    dataCellStyle, 
+                CellStyles[] dataCellStylearray = {  dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
-                                                    dataCellStyle, 
                                                     dataCellStyle,
-                                                   dataNumberDataCellStyle,
-                                                   dataNumberDataCellStyle,
-                                                   dataCellStyle
+                                                    dataCellStyle
                                                   };
-
-                RowStyles datarowStyle = new RowStyles(dataCellStylearray);
+                var dataCellStylelist = dataCellStylearray.ToList();
+                if (HostingPage.ShowNonBillableHours)
+                {
+                    dataCellStylelist.Add(dataCellStyle);
+                }
+                dataCellStylelist.Add(dataNumberDataCellStyle);
+                dataCellStylelist.Add(dataNumberDataCellStyle);
+                dataCellStylelist.Add(dataCellStyle);
+                RowStyles datarowStyle = new RowStyles(dataCellStylelist.ToArray());
 
                 RowStyles[] rowStylearray = { headerrowStyle, datarowStyle };
                 SheetStyles sheetStyle = new SheetStyles(rowStylearray);
@@ -96,13 +99,13 @@ namespace PraticeManagement.Controls.Reports
 
         private HtmlImage ImgProjectRoleFilter { get; set; }
 
-        public FilteredCheckBoxList cblProjectRolesControl
-        {
-            get
-            {
-                return cblProjectRoles;
-            }
-        }
+        //public FilteredCheckBoxList cblProjectRolesControl
+        //{
+        //    get
+        //    {
+        //        return cblProjectRoles;
+        //    }
+        //}
 
         private PraticeManagement.Reporting.ProjectSummaryReport HostingPage
         {
@@ -130,19 +133,12 @@ namespace PraticeManagement.Controls.Reports
 
         public void DataBindByResourceSummary(PersonLevelGroupedHours[] reportData, bool isFirstTime)
         {
-            if (isFirstTime)
-            {
-                PopulateProjectRoleFilter(reportData.ToList());
-            }
-            if (reportData.Count() > 0 || cblProjectRoles.Items.Count > 1)
+            if (reportData.Count() > 0)
             {
                 divEmptyMessage.Style["display"] = "none";
                 repResource.Visible = true;
                 repResource.DataSource = reportData;
                 repResource.DataBind();
-                cblProjectRoles.SaveSelectedIndexesInViewState();
-                ImgProjectRoleFilter.Attributes["onclick"] = string.Format("Filter_Click(\'{0}\',\'{1}\',\'{2}\',\'{3}\');", cblProjectRoles.FilterPopupClientID,
-                  cblProjectRoles.SelectedIndexes, cblProjectRoles.CheckBoxListObject.ClientID, cblProjectRoles.WaterMarkTextBoxBehaviorID);
 
                 //Populate header hover               
                 PopulateHeaderHoverLabels(reportData.ToList());
@@ -185,13 +181,13 @@ namespace PraticeManagement.Controls.Reports
             }
         }
 
-        private void PopulateProjectRoleFilter(List<PersonLevelGroupedHours> reportData)
-        {
-            var projectRoles = reportData.Select(r => new { Text = string.IsNullOrEmpty(r.Person.ProjectRoleName) ? "Unassigned" : r.Person.ProjectRoleName, Value = r.Person.ProjectRoleName }).Distinct().ToList().OrderBy(s => s.Value);
-            DataHelper.FillListDefault(cblProjectRoles.CheckBoxListObject, "All Project Roles", projectRoles.ToArray(), false, "Value", "Text");
-            cblProjectRoles.SelectAllItems(true);
-            cblProjectRoles.OKButtonId = btnUpdate.ClientID;
-        }
+        //private void PopulateProjectRoleFilter(List<PersonLevelGroupedHours> reportData)
+        //{
+        //    var projectRoles = reportData.Select(r => new { Text = string.IsNullOrEmpty(r.Person.ProjectRoleName) ? "Unassigned" : r.Person.ProjectRoleName, Value = r.Person.ProjectRoleName }).Distinct().ToList().OrderBy(s => s.Value);
+        //    DataHelper.FillListDefault(cblProjectRoles.CheckBoxListObject, "All Project Roles", projectRoles.ToArray(), false, "Value", "Text");
+        //    cblProjectRoles.SelectAllItems(true);
+        //    cblProjectRoles.OKButtonId = btnUpdate.ClientID;
+        //}
 
         #endregion
 
@@ -208,6 +204,8 @@ namespace PraticeManagement.Controls.Reports
                 LblNonBillable = e.Item.FindControl("lblNonBillable") as Label;
                 LblActualHours = e.Item.FindControl("lblActualHours") as Label;
                 LblBillableHoursVariance = e.Item.FindControl("lblBillableHoursVariance") as Label;
+                var thNonBillable = e.Item.FindControl("thNonBillable") as HtmlTableCell;
+                thNonBillable.Visible = HostingPage.ShowNonBillableHours;
             }
             else if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
             {
@@ -215,6 +213,8 @@ namespace PraticeManagement.Controls.Reports
                 var LnkActualHours = e.Item.FindControl("lnkActualHours") as LinkButton;
                 LnkActualHours.Attributes["NavigationUrl"] = string.Format(ByPersonByResourceUrl, (HostingPage.StartDate.HasValue) ? HostingPage.StartDate.Value.ToString(Constants.Formatting.EntryDateFormat) : null,
                     (HostingPage.EndDate.HasValue) ? HostingPage.EndDate.Value.Date.ToString(Constants.Formatting.EntryDateFormat) : null, (HostingPage.PeriodSelected != "*") ? HostingPage.PeriodSelected : "0", dataItem.Person.Id);
+                var tdNonBillable = e.Item.FindControl("tdNonBillable") as HtmlTableCell;
+                tdNonBillable.Visible = HostingPage.ShowNonBillableHours;
             }
         }
 
@@ -231,15 +231,7 @@ namespace PraticeManagement.Controls.Reports
 
             var project = ServiceCallers.Custom.Project(p => p.GetProjectShortByProjectNumber(HostingPage.ProjectNumber, HostingPage.MilestoneId, HostingPage.StartDate, HostingPage.EndDate));
             List<PersonLevelGroupedHours> report = ServiceCallers.Custom.Report(r => r.ProjectSummaryReportByResource(HostingPage.ProjectNumber,
-                HostingPage.MilestoneId, HostingPage.PeriodSelected == "*" ? null : HostingPage.StartDate, HostingPage.PeriodSelected == "*" ? null : HostingPage.EndDate, cblProjectRoles.SelectedItemsXmlFormat)).ToList();
-
-            string filterApplied = "Filters applied to columns: ";
-            bool isFilterApplied = false;
-            if (!cblProjectRoles.AllItemsSelected)
-            {
-                filterApplied = filterApplied + " ProjectRoles.";
-                isFilterApplied = true;
-            }
+                HostingPage.MilestoneId, HostingPage.PeriodSelected == "*" ? null : HostingPage.StartDate, HostingPage.PeriodSelected == "*" ? null : HostingPage.EndDate, null)).ToList();
 
             var filename = string.Format("{0}_{1}_{2}.xls", project.ProjectNumber, project.Name, "_ByResourceSummary");
             filename = filename.Replace(' ', '_');
@@ -266,12 +258,7 @@ namespace PraticeManagement.Controls.Reports
                 header1.Rows.Add(row3.ToArray());
 
                 var row4 = new List<object>();
-                if (isFilterApplied)
-                {
-                    row4.Add(filterApplied);
-                    row4.Add("");
-                    header1.Rows.Add(row4.ToArray());
-                }
+
                 headerRowsCount = header1.Rows.Count + 3;
                 var data = PrepareDataTable(report);
                 coloumnsCount = data.Columns.Count;
@@ -304,13 +291,17 @@ namespace PraticeManagement.Controls.Reports
             List<object> rownew;
             List<object> row;
 
-            data.Columns.Add("Employee Id");
             data.Columns.Add("Resource");
-            data.Columns.Add("Project Role");
+            data.Columns.Add("Budget Hours");
             data.Columns.Add("Projected Hours");
             data.Columns.Add("Billable");
-            data.Columns.Add("Non-Billable");
+            if (HostingPage.ShowNonBillableHours)
+            {
+                data.Columns.Add("Non-Billable");
+            }
             data.Columns.Add("Actual Hours");
+           
+            data.Columns.Add("ETC Hours");
             data.Columns.Add("Hourly Bill Rate");
             data.Columns.Add("Estimated Billings");
             data.Columns.Add("Billable Hours Variance");
@@ -319,13 +310,16 @@ namespace PraticeManagement.Controls.Reports
             foreach (var item in list)
             {
                 row = new List<object>();
-                row.Add(item.Person.EmployeeNumber != null ? item.Person.EmployeeNumber : "");
                 row.Add(item.Person.HtmlEncodedName != null ? item.Person.HtmlEncodedName : "");
-                row.Add((item.Person.ProjectRoleName != null) ? item.Person.ProjectRoleName : "");
+                row.Add(GetDoubleFormat(item.BudgetHours));
                 row.Add(GetDoubleFormat(item.ForecastedHours));
                 row.Add(GetDoubleFormat(item.BillableHours));
-                row.Add(GetDoubleFormat(item.NonBillableHours));
+                if (HostingPage.ShowNonBillableHours)
+                {
+                    row.Add(GetDoubleFormat(item.NonBillableHours));
+                }
                 row.Add(GetDoubleFormat(item.TotalHours));
+                row.Add(GetDoubleFormat(item.ETCHours));
                 row.Add(item.FormattedBillRateForExcel);
                 row.Add(item.FormattedEstimatedBillingsForExcel);
                 row.Add(GetDoubleFormat(item.BillableHoursVariance));
