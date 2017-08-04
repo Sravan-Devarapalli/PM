@@ -56,7 +56,9 @@ namespace PracticeManagementService
             bool excludeInternalPractices,
             string userLogin,
             bool useActuals,
-            bool getFinancialsFromCache)
+            bool getFinancialsFromCache,
+            int? feeType,
+            DateTime? actualsEndDate)
         {
             List<Project> result =
                 ProjectDAL.ProjectListAllMultiParameters(
@@ -80,11 +82,12 @@ namespace PracticeManagementService
                 offeringIdsList,
                 projectGroupIdsList,
                 excludeInternalPractices,
-                userLogin);
+                userLogin,
+                feeType);
 
             if (!getFinancialsFromCache)
             {
-                return CalculateRates(result, periodStart, periodEnd, includeCurentYearFinancials, useActuals);
+                return CalculateRates(result, periodStart, periodEnd, includeCurentYearFinancials, useActuals, actualsEndDate);
             }
             return LoadFinancialsAndMilestonePersonInfoFromCache(
                 result,
@@ -98,7 +101,8 @@ namespace PracticeManagementService
             DateTime periodStart,
             DateTime periodEnd,
             ProjectCalculateRangeType includeCurentYearFinancials,
-            bool useActuals)
+            bool useActuals,
+            DateTime? actualEndDate)
         {
             // Recalculating the interest values
             return LoadFinancialsAndMilestonePersonInfo(
@@ -106,7 +110,8 @@ namespace PracticeManagementService
                 periodStart,
                 periodEnd,
                 includeCurentYearFinancials,
-                useActuals);
+                useActuals,
+                actualEndDate);
         }
 
         private static List<Project>
@@ -115,10 +120,11 @@ namespace PracticeManagementService
                 DateTime periodStart,
                 DateTime periodEnd,
                 ProjectCalculateRangeType calculatePeriodType,
-                bool useActuals
+                bool useActuals,
+                DateTime? actualEndDate
             )
         {
-            ComputedFinancialsDAL.LoadFinancialsPeriodForProjects(result, periodStart, periodEnd, useActuals);
+            ComputedFinancialsDAL.LoadFinancialsPeriodForProjects(result, periodStart, periodEnd, useActuals, actualEndDate);
 
             switch (calculatePeriodType)
             {
@@ -159,7 +165,7 @@ namespace PracticeManagementService
                DateTime periodStart,
                DateTime periodEnd,
                ProjectCalculateRangeType calculatePeriodType
-            // bool useActuals :From cache we renders data always useActuals as true
+           // bool useActuals :From cache we renders data always useActuals as true
            )
         {
             ComputedFinancialsDAL.LoadFinancialsPeriodForProjectsFromCache(result, periodStart, periodEnd, false);
@@ -199,23 +205,23 @@ namespace PracticeManagementService
                     Project currentYearProject = currentYearProjects.First(p => p.Id == project.Id);
 
                     var financials = new ComputedFinancials
-                        {
-                            FinancialDate = currentYearProject.StartDate,
-                            Revenue = currentYearProject.ProjectedFinancialsByMonth.Values.Sum(mf => mf.Revenue),
-                            RevenueNet = currentYearProject.ProjectedFinancialsByMonth.Values.Sum(mf => mf.RevenueNet),
-                            Cogs = currentYearProject.ProjectedFinancialsByMonth.Values.Sum(mf => mf.Cogs),
-                            GrossMargin = currentYearProject.ProjectedFinancialsByMonth.Values.Sum(mf => mf.GrossMargin),
-                            HoursBilled = currentYearProject.ProjectedFinancialsByMonth.Values.Sum(mf => mf.HoursBilled),
-                            Expenses = currentYearProject.ProjectedFinancialsByMonth.Values.Sum(mf => mf.Expenses),
-                            ReimbursedExpenses =
+                    {
+                        FinancialDate = currentYearProject.StartDate,
+                        Revenue = currentYearProject.ProjectedFinancialsByMonth.Values.Sum(mf => mf.Revenue),
+                        RevenueNet = currentYearProject.ProjectedFinancialsByMonth.Values.Sum(mf => mf.RevenueNet),
+                        Cogs = currentYearProject.ProjectedFinancialsByMonth.Values.Sum(mf => mf.Cogs),
+                        GrossMargin = currentYearProject.ProjectedFinancialsByMonth.Values.Sum(mf => mf.GrossMargin),
+                        HoursBilled = currentYearProject.ProjectedFinancialsByMonth.Values.Sum(mf => mf.HoursBilled),
+                        Expenses = currentYearProject.ProjectedFinancialsByMonth.Values.Sum(mf => mf.Expenses),
+                        ReimbursedExpenses =
                                 currentYearProject.ProjectedFinancialsByMonth.Values.Sum(mf => mf.ReimbursedExpenses),
-                            ActualRevenue =
+                        ActualRevenue =
                                 currentYearProject.ProjectedFinancialsByMonth.Values.Sum(mf => mf.ActualRevenue),
-                            ActualGrossMargin =
+                        ActualGrossMargin =
                                 currentYearProject.ProjectedFinancialsByMonth.Values.Sum(mf => mf.ActualGrossMargin),
-                            PreviousMonthsActualMarginValue = currentYearProject.ProjectedFinancialsByMonth.Values.Sum(mf => mf.PreviousMonthsActualMarginValue),
-                            PreviousMonthsActualRevenueValue = currentYearProject.ProjectedFinancialsByMonth.Values.Sum(mf => mf.PreviousMonthsActualRevenueValue)
-                        };
+                        PreviousMonthsActualMarginValue = currentYearProject.ProjectedFinancialsByMonth.Values.Sum(mf => mf.PreviousMonthsActualMarginValue),
+                        PreviousMonthsActualRevenueValue = currentYearProject.ProjectedFinancialsByMonth.Values.Sum(mf => mf.PreviousMonthsActualRevenueValue)
+                    };
 
                     project.ComputedFinancials = financials;
                 }
@@ -235,20 +241,24 @@ namespace PracticeManagementService
             foreach (var project in result)
             {
                 var financials = new ComputedFinancials
-                    {
-                        FinancialDate = project.StartDate,
-                        Revenue = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.Revenue),
-                        RevenueNet = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.RevenueNet),
-                        Cogs = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.Cogs),
-                        GrossMargin = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.GrossMargin),
-                        HoursBilled = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.HoursBilled),
-                        Expenses = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.Expenses),
-                        ReimbursedExpenses = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.ReimbursedExpenses),
-                        ActualRevenue = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.ActualRevenue),
-                        ActualGrossMargin = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.ActualGrossMargin),
-                        PreviousMonthsActualRevenueValue = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.PreviousMonthsActualRevenueValue),
-                        PreviousMonthsActualMarginValue = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.PreviousMonthsActualMarginValue)
-                    };
+                {
+                    FinancialDate = project.StartDate,
+                    Revenue = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.Revenue),
+                    RevenueNet = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.RevenueNet),
+                    Cogs = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.Cogs),
+                    GrossMargin = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.GrossMargin),
+                    HoursBilled = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.HoursBilled),
+                    Expenses = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.Expenses),
+                    ReimbursedExpenses = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.ReimbursedExpenses),
+                    ActualRevenue = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.ActualRevenue),
+                    ActualGrossMargin = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.ActualGrossMargin),
+                    PreviousMonthsActualRevenueValue = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.PreviousMonthsActualRevenueValue),
+                    PreviousMonthsActualMarginValue = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.PreviousMonthsActualMarginValue),
+                    EACRevenue = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.EACRevenue),
+                    EACGrossMargin = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.EACGrossMargin),
+                    BudgetRevenue = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.BudgetRevenue),
+                    BudgetGrossMargin = project.ProjectedFinancialsByMonth.Values.Sum(mf => mf.BudgetGrossMargin)
+                };
 
                 project.ComputedFinancials = financials;
             }
@@ -266,14 +276,14 @@ namespace PracticeManagementService
             foreach (Person person in bench)
             {
                 Project benchProject = new Project
-                    {
-                        Client = new Client { Name = Resources.Messages.BenchProjectClientName, Id = person.Id },
-                        Name = person.LastName + ", " + person.FirstName,
-                        StartDate = person.HireDate,
-                        EndDate = person.TerminationDate.HasValue ? person.TerminationDate.Value : endDate,
-                        ProjectedFinancialsByMonth = person.ProjectedFinancialsByMonth,
-                        Status = new ProjectStatus()
-                    };
+                {
+                    Client = new Client { Name = Resources.Messages.BenchProjectClientName, Id = person.Id },
+                    Name = person.LastName + ", " + person.FirstName,
+                    StartDate = person.HireDate,
+                    EndDate = person.TerminationDate.HasValue ? person.TerminationDate.Value : endDate,
+                    ProjectedFinancialsByMonth = person.ProjectedFinancialsByMonth,
+                    Status = new ProjectStatus()
+                };
 
                 if (person.Status != null && person.Status.Id == (int)PersonStatusType.Contingent)
                 {
@@ -310,14 +320,14 @@ namespace PracticeManagementService
             foreach (Person person in bench)
             {
                 Project benchProject = new Project
-                    {
-                        Client = new Client { Name = Resources.Messages.BenchProjectClientName, Id = person.Id },
-                        Name = person.LastName + ", " + person.FirstName,
-                        StartDate = person.HireDate,
-                        EndDate = person.TerminationDate.HasValue ? person.TerminationDate.Value : endDate,
-                        ProjectedFinancialsByMonth = person.ProjectedFinancialsByMonth,
-                        Status = new ProjectStatus()
-                    };
+                {
+                    Client = new Client { Name = Resources.Messages.BenchProjectClientName, Id = person.Id },
+                    Name = person.LastName + ", " + person.FirstName,
+                    StartDate = person.HireDate,
+                    EndDate = person.TerminationDate.HasValue ? person.TerminationDate.Value : endDate,
+                    ProjectedFinancialsByMonth = person.ProjectedFinancialsByMonth,
+                    Status = new ProjectStatus()
+                };
 
                 if (person.Status != null && person.Status.Id == (int)PersonStatusType.Contingent)
                 {
@@ -333,10 +343,10 @@ namespace PracticeManagementService
 
             // Bench total
             Project benchTotal = new Project
-                {
-                    Name = Resources.Messages.BenchTotalProjectName,
-                    ProjectedFinancialsByMonth = new Dictionary<DateTime, ComputedFinancials>()
-                };
+            {
+                Name = Resources.Messages.BenchTotalProjectName,
+                ProjectedFinancialsByMonth = new Dictionary<DateTime, ComputedFinancials>()
+            };
 
             for (DateTime dtTemp = startDate; dtTemp <= endDate; dtTemp = dtTemp.AddMonths(1))
             {
