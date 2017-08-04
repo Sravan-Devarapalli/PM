@@ -8,65 +8,75 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PraticeManagement.ActivityLogService {
-    
-    
+namespace PraticeManagement.ActivityLogService
+{
+
+
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ActivityLogService.IActivityLogService")]
-    public interface IActivityLogService {
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IActivityLogService/ActivityLogList", ReplyAction="http://tempuri.org/IActivityLogService/ActivityLogListResponse")]
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName = "ActivityLogService.IActivityLogService")]
+    public interface IActivityLogService
+    {
+
+        [System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IActivityLogService/ActivityLogList", ReplyAction = "http://tempuri.org/IActivityLogService/ActivityLogListResponse")]
         DataTransferObjects.ActivityLogItem[] ActivityLogList(DataTransferObjects.ContextObjects.ActivityLogSelectContext context, int pageSize, int pageNo);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IActivityLogService/ActivityLogGetCount", ReplyAction="http://tempuri.org/IActivityLogService/ActivityLogGetCountResponse")]
+
+        [System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IActivityLogService/ActivityLogGetCount", ReplyAction = "http://tempuri.org/IActivityLogService/ActivityLogGetCountResponse")]
         int ActivityLogGetCount(DataTransferObjects.ContextObjects.ActivityLogSelectContext context);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IActivityLogService/ActivityLogInsert", ReplyAction="http://tempuri.org/IActivityLogService/ActivityLogInsertResponse")]
+
+        [System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IActivityLogService/ActivityLogInsert", ReplyAction = "http://tempuri.org/IActivityLogService/ActivityLogInsertResponse")]
         void ActivityLogInsert(int activityTypeId, string logData);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IActivityLogService/GetDatabaseVersion", ReplyAction="http://tempuri.org/IActivityLogService/GetDatabaseVersionResponse")]
+
+        [System.ServiceModel.OperationContractAttribute(Action = "http://tempuri.org/IActivityLogService/GetDatabaseVersion", ReplyAction = "http://tempuri.org/IActivityLogService/GetDatabaseVersionResponse")]
         string GetDatabaseVersion();
     }
-    
+
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface IActivityLogServiceChannel : PraticeManagement.ActivityLogService.IActivityLogService, System.ServiceModel.IClientChannel {
+    public interface IActivityLogServiceChannel : PraticeManagement.ActivityLogService.IActivityLogService, System.ServiceModel.IClientChannel
+    {
     }
-    
+
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class ActivityLogServiceClient : System.ServiceModel.ClientBase<PraticeManagement.ActivityLogService.IActivityLogService>, PraticeManagement.ActivityLogService.IActivityLogService {
-        
-    
-        
-        public ActivityLogServiceClient(string endpointConfigurationName) : 
-                base(endpointConfigurationName) {
+    public partial class ActivityLogServiceClient : System.ServiceModel.ClientBase<PraticeManagement.ActivityLogService.IActivityLogService>, PraticeManagement.ActivityLogService.IActivityLogService
+    {
+
+        public ActivityLogServiceClient(string endpointConfigurationName) :
+                base(endpointConfigurationName)
+        {
         }
-        
-        public ActivityLogServiceClient(string endpointConfigurationName, string remoteAddress) : 
-                base(endpointConfigurationName, remoteAddress) {
+
+        public ActivityLogServiceClient(string endpointConfigurationName, string remoteAddress) :
+                base(endpointConfigurationName, remoteAddress)
+        {
         }
-        
-        public ActivityLogServiceClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
-                base(endpointConfigurationName, remoteAddress) {
+
+        public ActivityLogServiceClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) :
+                base(endpointConfigurationName, remoteAddress)
+        {
         }
-        
-        public ActivityLogServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
-                base(binding, remoteAddress) {
+
+        public ActivityLogServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) :
+                base(binding, remoteAddress)
+        {
         }
-        
-        public DataTransferObjects.ActivityLogItem[] ActivityLogList(DataTransferObjects.ContextObjects.ActivityLogSelectContext context, int pageSize, int pageNo) {
+
+        public DataTransferObjects.ActivityLogItem[] ActivityLogList(DataTransferObjects.ContextObjects.ActivityLogSelectContext context, int pageSize, int pageNo)
+        {
             return base.Channel.ActivityLogList(context, pageSize, pageNo);
         }
-        
-        public int ActivityLogGetCount(DataTransferObjects.ContextObjects.ActivityLogSelectContext context) {
+
+        public int ActivityLogGetCount(DataTransferObjects.ContextObjects.ActivityLogSelectContext context)
+        {
             return base.Channel.ActivityLogGetCount(context);
         }
-        
-        public void ActivityLogInsert(int activityTypeId, string logData) {
+
+        public void ActivityLogInsert(int activityTypeId, string logData)
+        {
             base.Channel.ActivityLogInsert(activityTypeId, logData);
         }
-        
-        public string GetDatabaseVersion() {
+
+        public string GetDatabaseVersion()
+        {
             return base.Channel.GetDatabaseVersion();
         }
     }
