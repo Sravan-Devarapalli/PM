@@ -125,7 +125,7 @@ namespace DataAccess
                 connection.Open();
                 using (var reader = command.ExecuteReader())
                 {
-                    projects.ForEach(delegate(Project project) { project.ProjectPersons = new List<MilestonePerson>(); });
+                    projects.ForEach(delegate (Project project) { project.ProjectPersons = new List<MilestonePerson>(); });
                     ReadMilestonePersonsShort(reader, projects);
                 }
             }
@@ -533,6 +533,11 @@ namespace DataAccess
                 command.Parameters.AddWithValue(Constants.ParameterNames.IsApproved, entry.IsApproved);
                 command.Parameters.AddWithValue(UserLoginParam,
                                                 !string.IsNullOrEmpty(userName) ? (object)userName : DBNull.Value);
+                command.Parameters.AddWithValue(Constants.ParameterNames.IsNewtoBudget, entry.IsNewToBudget);
+                command.Parameters.AddWithValue(Constants.ParameterNames.DiscountParam, entry.Discount);
+                command.Parameters.AddWithValue(Constants.ParameterNames.LockDiscount, entry.DiscountLocked);
+
+                command.Parameters.AddWithValue(Constants.ParameterNames.IsDiscountAtResourceLevel, entry.IsDiscountAtResourceLevel);
 
                 var milestonePersonEntryId = new SqlParameter(Constants.ParameterNames.IdParam, SqlDbType.Int) { Direction = ParameterDirection.Output };
                 command.Parameters.Add(milestonePersonEntryId);
@@ -683,6 +688,34 @@ namespace DataAccess
             int IsBadgeExceptionIndex;
             int IsApprovedIndex;
             int ConsultantEndDateIndex;
+            int personDiscountIndex;
+            int isNewtoBudgetIndex;
+            int discountLockedIndex;
+
+            try {
+                discountLockedIndex = reader.GetOrdinal(Constants.ColumnNames.LockDiscount);
+            }
+            catch {
+                discountLockedIndex = -1;
+            }
+            try
+            {
+                personDiscountIndex = reader.GetOrdinal(Constants.ColumnNames.MilestonePersonDiscount);
+            }
+            catch
+            {
+                personDiscountIndex = -1;
+            }
+
+            try
+            {
+                isNewtoBudgetIndex = reader.GetOrdinal(Constants.ColumnNames.IsNewToBudget);
+            }
+            catch
+            {
+                isNewtoBudgetIndex = -1;
+            }
+
             try
             {
                 IsBadgeRequiredIndex = reader.GetOrdinal(Constants.ColumnNames.IsBadgeRequired);
@@ -791,25 +824,25 @@ namespace DataAccess
 
                 // Person on milestone
                 var entry = new MilestonePersonEntry
-                    {
-                        StartDate = reader.GetDateTime(startDateIndex),
-                        EndDate =
+                {
+                    StartDate = reader.GetDateTime(startDateIndex),
+                    EndDate =
                             !reader.IsDBNull(endDateIndex)
                                 ? (DateTime?)reader.GetDateTime(endDateIndex)
                                 : null,
-                        HoursPerDay = reader.GetDecimal(hoursPerDayIndex),
-                        ProjectedWorkloadWithVacation = reader.GetDecimal(expectedHoursWithVacationDaysIndex),
-                        HourlyAmount = !reader.IsDBNull(milestoneHourlyRevenueIndex)
+                    HoursPerDay = reader.GetDecimal(hoursPerDayIndex),
+                    ProjectedWorkloadWithVacation = reader.GetDecimal(expectedHoursWithVacationDaysIndex),
+                    HourlyAmount = !reader.IsDBNull(milestoneHourlyRevenueIndex)
                                            ? reader.GetDecimal(milestoneHourlyRevenueIndex)
                                            : 0,
-                        MilestonePersonId = reader.GetInt32(milestonePersonIdIndex),
-                        ThisPerson = new Person()
-                            {
-                                Id = reader.GetInt32(personIdIndex),
-                                FirstName = reader.GetString(firstNameIndex),
-                                LastName = reader.GetString(lastNameIndex)
-                            },
-                    };
+                    MilestonePersonId = reader.GetInt32(milestonePersonIdIndex),
+                    ThisPerson = new Person()
+                    {
+                        Id = reader.GetInt32(personIdIndex),
+                        FirstName = reader.GetString(firstNameIndex),
+                        LastName = reader.GetString(lastNameIndex)
+                    },
+                };
 
                 if (IsBadgeRequiredIndex > -1)
                 {
@@ -840,13 +873,28 @@ namespace DataAccess
                     entry.Id = reader.GetInt32(milestonePersonEntryIdIndex);
                 }
 
+                if (personDiscountIndex > -1)
+                {
+                    entry.Discount = !reader.IsDBNull(personDiscountIndex) ? (decimal?)reader.GetDecimal(personDiscountIndex) : null;
+                }
+
+                if (isNewtoBudgetIndex > -1)
+                {
+                    entry.IsNewToBudget = reader.GetBoolean(isNewtoBudgetIndex);
+                }
+
+                if (discountLockedIndex > -1)
+                {
+                    entry.DiscountLocked = reader.GetBoolean(discountLockedIndex);
+                }
+
                 if (!reader.IsDBNull(personRoleIdIndex))
                 {
                     entry.Role = new PersonRole
-                        {
-                            Id = reader.GetInt32(personRoleIdIndex),
-                            Name = reader.GetString(personRoleNameIndex)
-                        };
+                    {
+                        Id = reader.GetInt32(personRoleIdIndex),
+                        Name = reader.GetString(personRoleNameIndex)
+                    };
                     entry.StartDate = !reader.IsDBNull(startDateIndex) ? reader.GetDateTime(startDateIndex) : DateTime.MinValue;
                     entry.EndDate = !reader.IsDBNull(endDateIndex) ? reader.GetDateTime(endDateIndex) : DateTime.MaxValue;
                 }
@@ -855,11 +903,11 @@ namespace DataAccess
 
                 // Person details
                 milestonePerson.Person = new Person
-                    {
-                        Id = reader.GetInt32(personIdIndex),
-                        FirstName = reader.GetString(firstNameIndex),
-                        LastName = reader.GetString(lastNameIndex)
-                    };
+                {
+                    Id = reader.GetInt32(personIdIndex),
+                    FirstName = reader.GetString(firstNameIndex),
+                    LastName = reader.GetString(lastNameIndex)
+                };
 
                 if (hireDateIndex >= 0 && terminationDateIndex >= 0)
                 {
@@ -887,28 +935,28 @@ namespace DataAccess
 
                 // Milestone details
                 var project = new Project
-                    {
-                        Id = reader.GetInt32(projectIdIndex),
-                        Name = reader.GetString(projectNameIndex),
-                        StartDate = reader.GetDateTime(projectStartDateIndex),
-                        EndDate = reader.GetDateTime(projectEndDateIndex),
-                        Discount = reader.GetDecimal(discountIndex)
-                    };
+                {
+                    Id = reader.GetInt32(projectIdIndex),
+                    Name = reader.GetString(projectNameIndex),
+                    StartDate = reader.GetDateTime(projectStartDateIndex),
+                    EndDate = reader.GetDateTime(projectEndDateIndex),
+                    Discount = reader.GetDecimal(discountIndex)
+                };
                 milestonePerson.Milestone = new Milestone
-                    {
-                        Id = reader.GetInt32(milestoneIdIndex),
-                        Description = reader.GetString(milestoneNameIndex),
-                        Amount =
+                {
+                    Id = reader.GetInt32(milestoneIdIndex),
+                    Description = reader.GetString(milestoneNameIndex),
+                    Amount =
                             !reader.IsDBNull(amountIndex)
                                 ? (decimal?)reader.GetDecimal(amountIndex)
                                 : null,
-                        StartDate = reader.GetDateTime(milestoneStartDateIndex),
-                        ProjectedDeliveryDate =
+                    StartDate = reader.GetDateTime(milestoneStartDateIndex),
+                    ProjectedDeliveryDate =
                             reader.GetDateTime(milestoneProjectedDeliveryDateIndex),
-                        IsHourlyAmount = reader.GetBoolean(isHourlyAmountIndex),
-                        ExpectedHours = reader.GetDecimal(milestoneExpectedHoursIndex),
-                        Project = project
-                    };
+                    IsHourlyAmount = reader.GetBoolean(isHourlyAmountIndex),
+                    ExpectedHours = reader.GetDecimal(milestoneExpectedHoursIndex),
+                    Project = project
+                };
 
                 // Project details
 
@@ -917,10 +965,10 @@ namespace DataAccess
 
                 // Client details
                 milestonePerson.Milestone.Project.Client = new Client
-                    {
-                        Id = reader.GetInt32(clientIdIndex),
-                        Name = reader.GetString(clientNameIndex)
-                    };
+                {
+                    Id = reader.GetInt32(clientIdIndex),
+                    Name = reader.GetString(clientNameIndex)
+                };
                 result.Add(milestonePerson);
             }
         }
@@ -936,15 +984,15 @@ namespace DataAccess
             while (reader.Read())
             {
                 var milestonePerson = new MilestonePerson
+                {
+                    Id = reader.GetInt32(milestonePersonIdIndex),
+                    Person = new Person
                     {
-                        Id = reader.GetInt32(milestonePersonIdIndex),
-                        Person = new Person
-                            {
-                                Id = reader.GetInt32(personIdIndex),
-                                FirstName = reader.GetString(firstNameIndex),
-                                LastName = reader.GetString(lastNameIndex)
-                            }
-                    };
+                        Id = reader.GetInt32(personIdIndex),
+                        FirstName = reader.GetString(firstNameIndex),
+                        LastName = reader.GetString(lastNameIndex)
+                    }
+                };
 
                 // Person details
 
@@ -968,21 +1016,21 @@ namespace DataAccess
 
                 var milestonePerson =
                     new MilestonePerson
+                    {
+                        Id = reader.GetInt32(milestonePersonIdIndex),
+                        Person = new Person
                         {
-                            Id = reader.GetInt32(milestonePersonIdIndex),
-                            Person = new Person
-                                {
-                                    Id = reader.GetInt32(personIdIndex),
-                                    FirstName = reader.GetString(firstNameIndex),
-                                    LastName = reader.GetString(lastNameIndex),
-                                    PrefferedFirstName = reader.IsDBNull(preferredFirstNameIndex) ? string.Empty : reader.GetString(preferredFirstNameIndex),
-                                    Seniority = !reader.IsDBNull(seniorityIdIndex) ?
+                            Id = reader.GetInt32(personIdIndex),
+                            FirstName = reader.GetString(firstNameIndex),
+                            LastName = reader.GetString(lastNameIndex),
+                            PrefferedFirstName = reader.IsDBNull(preferredFirstNameIndex) ? string.Empty : reader.GetString(preferredFirstNameIndex),
+                            Seniority = !reader.IsDBNull(seniorityIdIndex) ?
                                                     new Seniority
-                                                        {
-                                                            Id = reader.GetInt32(seniorityIdIndex)
-                                                        } : null
-                                }
-                        };
+                                                    {
+                                                        Id = reader.GetInt32(seniorityIdIndex)
+                                                    } : null
+                        }
+                    };
 
                 var i = projects.IndexOf(project);
                 projects[i].ProjectPersons.Add(milestonePerson);
@@ -1013,44 +1061,44 @@ namespace DataAccess
                 {
                     // Client details
                     var client = new Client
-                                     {
-                                         Id = reader.GetInt32(clientIdIndex),
-                                         Name = reader.GetString(clientNameIndex)
-                                     };
+                    {
+                        Id = reader.GetInt32(clientIdIndex),
+                        Name = reader.GetString(clientNameIndex)
+                    };
 
                     // Project details
                     var project = new Project
-                                      {
-                                          Id = reader.GetInt32(projectIdIndex),
-                                          Name = reader.GetString(projectNameIndex),
-                                          ProjectNumber = reader.GetString(projectNumberIndex),
-                                          Status = new ProjectStatus
-                                                       {
-                                                           Id = reader.GetInt32(projectStatusIdIndex)
-                                                       },
-                                          Client = client,
-                                          ProjectManagers = Utils.stringToProjectManagersList(reader.GetString(pmIndex))
-                                      };
+                    {
+                        Id = reader.GetInt32(projectIdIndex),
+                        Name = reader.GetString(projectNameIndex),
+                        ProjectNumber = reader.GetString(projectNumberIndex),
+                        Status = new ProjectStatus
+                        {
+                            Id = reader.GetInt32(projectStatusIdIndex)
+                        },
+                        Client = client,
+                        ProjectManagers = Utils.stringToProjectManagersList(reader.GetString(pmIndex))
+                    };
 
                     // Milestone details
                     var milestone = new Milestone
-                                        {
-                                            Id = reader.GetInt32(milestoneIdIndex),
-                                            Description = reader.GetString(milestoneNameIndex),
-                                            Project = project
-                                        };
+                    {
+                        Id = reader.GetInt32(milestoneIdIndex),
+                        Description = reader.GetString(milestoneNameIndex),
+                        Project = project
+                    };
 
                     // Person on milestone
                     var entry = new MilestonePersonEntry
-                                    {
-                                        MilestonePersonId = reader.GetInt32(milestonePersonIdIndex),
-                                        StartDate = reader.GetDateTime(startDateIndex),
-                                        EndDate = !reader.IsDBNull(endDateIndex)
+                    {
+                        MilestonePersonId = reader.GetInt32(milestonePersonIdIndex),
+                        StartDate = reader.GetDateTime(startDateIndex),
+                        EndDate = !reader.IsDBNull(endDateIndex)
                                                       ? (DateTime?)reader.GetDateTime(endDateIndex)
                                                       : null,
-                                        HoursPerDay = reader.GetDecimal(hoursPerDayIndex),
-                                        ParentMilestone = milestone
-                                    };
+                        HoursPerDay = reader.GetDecimal(hoursPerDayIndex),
+                        ParentMilestone = milestone
+                    };
 
                     result.Add(entry);
                 }
@@ -1080,41 +1128,41 @@ namespace DataAccess
             while (reader.Read())
             {
                 var project = new Project
+                {
+                    Id = reader.GetInt32(projectIdIndex),
+                    Name = reader.GetString(projectNameIndex),
+                    Client = new Client
                     {
-                        Id = reader.GetInt32(projectIdIndex),
-                        Name = reader.GetString(projectNameIndex),
-                        Client = new Client
-                            {
-                                Id = reader.GetInt32(clientIdIndex),
-                                Name = reader.GetString(clientNameIndex)
-                            },
-                        StartDate = !reader.IsDBNull(projectStartDateIndex)
+                        Id = reader.GetInt32(clientIdIndex),
+                        Name = reader.GetString(clientNameIndex)
+                    },
+                    StartDate = !reader.IsDBNull(projectStartDateIndex)
                                         ? (DateTime?)
                                           reader.GetDateTime(projectStartDateIndex)
                                         : null,
-                        EndDate = !reader.IsDBNull(projectEndDateIndex)
+                    EndDate = !reader.IsDBNull(projectEndDateIndex)
                                       ? (DateTime?)
                                         reader.GetDateTime(projectEndDateIndex)
                                       : null
-                    };
+                };
 
                 var milestone = new Milestone
-                    {
-                        Id = reader.GetInt32(milestoneIdIndex),
-                        IsHourlyAmount = reader.GetBoolean(isHourlyAmountIndex),
-                        Description = reader.GetString(milestoneNameIndex),
-                        StartDate = reader.GetDateTime(milestoneStartDateIndex),
-                        ProjectedDeliveryDate =
+                {
+                    Id = reader.GetInt32(milestoneIdIndex),
+                    IsHourlyAmount = reader.GetBoolean(isHourlyAmountIndex),
+                    Description = reader.GetString(milestoneNameIndex),
+                    StartDate = reader.GetDateTime(milestoneStartDateIndex),
+                    ProjectedDeliveryDate =
                             reader.GetDateTime(milestoneProjectedDeliveryDateIndex),
-                        Project = project
-                    };
+                    Project = project
+                };
 
                 var association = new MilestonePerson
-                    {
-                        Id = reader.GetInt32(milestonePersonIdIndex),
-                        Milestone = milestone,
-                        Person = new Person { Id = reader.GetInt32(personIdIndex) }
-                    };
+                {
+                    Id = reader.GetInt32(milestonePersonIdIndex),
+                    Milestone = milestone,
+                    Person = new Person { Id = reader.GetInt32(personIdIndex) }
+                };
 
                 if (!reader.IsDBNull(personSeniorityIdIndex))
                 {
@@ -1148,43 +1196,43 @@ namespace DataAccess
             {
                 var entry =
                     new MilestonePersonEntry
-                        {
-                            Id = reader.GetInt32(milestonePersonEntryIdIndex),
-                            MilestonePersonId = reader.GetInt32(milestonePersonIdIndex),
-                            StartDate = reader.GetDateTime(startDateIndex),
-                            EndDate =
+                    {
+                        Id = reader.GetInt32(milestonePersonEntryIdIndex),
+                        MilestonePersonId = reader.GetInt32(milestonePersonIdIndex),
+                        StartDate = reader.GetDateTime(startDateIndex),
+                        EndDate =
                                 !reader.IsDBNull(endDateIndex)
                                     ? (DateTime?)reader.GetDateTime(endDateIndex)
                                     : null,
-                            HourlyAmount =
+                        HourlyAmount =
                                 !reader.IsDBNull(amountIndex)
                                     ? (decimal?)reader.GetDecimal(amountIndex)
                                     : null,
-                            HoursPerDay = reader.GetDecimal(hoursPerDayIndex),
-                            VacationDays = reader.GetInt32(personVacationsOnMilestoneIndex),
-                            ProjectedWorkloadWithVacation = reader.GetDecimal(expectedHoursWithVacationDaysIndex),
-                            ThisPerson = new Person
-                                {
-                                    Id = reader.GetInt32(personIdIndex),
-                                    FirstName = reader.GetString(firstNameIndex),
-                                    LastName = reader.GetString(lastNameIndex),
-                                    Seniority = !reader.IsDBNull(personSeniorityIdIndex) ? new Seniority
-                                        {
-                                            Id = reader.GetInt32(personSeniorityIdIndex)
-                                        } : null
-                                },
-                            Location = !reader.IsDBNull(locationIndex)
+                        HoursPerDay = reader.GetDecimal(hoursPerDayIndex),
+                        VacationDays = reader.GetInt32(personVacationsOnMilestoneIndex),
+                        ProjectedWorkloadWithVacation = reader.GetDecimal(expectedHoursWithVacationDaysIndex),
+                        ThisPerson = new Person
+                        {
+                            Id = reader.GetInt32(personIdIndex),
+                            FirstName = reader.GetString(firstNameIndex),
+                            LastName = reader.GetString(lastNameIndex),
+                            Seniority = !reader.IsDBNull(personSeniorityIdIndex) ? new Seniority
+                            {
+                                Id = reader.GetInt32(personSeniorityIdIndex)
+                            } : null
+                        },
+                        Location = !reader.IsDBNull(locationIndex)
                                            ? reader.GetString(locationIndex)
                                            : null
-                        };
+                    };
 
                 if (!reader.IsDBNull(personRoleIdIndex))
                     entry.Role =
                         new PersonRole
-                            {
-                                Id = reader.GetInt32(personRoleIdIndex),
-                                Name = reader.GetString(personRoleNameIndex)
-                            };
+                        {
+                            Id = reader.GetInt32(personRoleIdIndex),
+                            Name = reader.GetString(personRoleNameIndex)
+                        };
 
                 result.Add(entry);
             }
@@ -1280,11 +1328,11 @@ namespace DataAccess
                 var entry = (milestonePersons.Find(mp => mp.Person.Id.Value == personId)).Entries.Find(e => e.Id == entryId);
                 entry.ComputedFinancials
                     = new ComputedFinancials
-                        {
-                            Revenue = reader.GetDecimal(revenueIndex),
-                            GrossMargin = reader.GetDecimal(grossMarginIndex),
-                            RevenueNet = reader.GetDecimal(revenueNetIndex)
-                        };
+                    {
+                        Revenue = reader.GetDecimal(revenueIndex),
+                        GrossMargin = reader.GetDecimal(grossMarginIndex),
+                        RevenueNet = reader.GetDecimal(revenueNetIndex)
+                    };
             }
         }
 
@@ -1314,6 +1362,9 @@ namespace DataAccess
                 var isBadgeExceptionIndex = reader.GetOrdinal(Constants.ColumnNames.IsBadgeException);
                 var isApprovedIndex = reader.GetOrdinal(Constants.ColumnNames.IsApproved);
                 var consultantEndDateIndex = reader.GetOrdinal(Constants.ColumnNames.ConsultantEndDate);
+                var personDiscountIndex = reader.GetOrdinal(Constants.ColumnNames.MilestonePersonDiscount);
+                var isNewtoBudgetIndex = reader.GetOrdinal(Constants.ColumnNames.IsNewToBudget);
+                var discountLockedIndex = reader.GetOrdinal(Constants.ColumnNames.LockDiscount);
 
                 while (reader.Read())
                 {
@@ -1351,7 +1402,10 @@ namespace DataAccess
                             IsApproved = !reader.IsDBNull(isApprovedIndex) ? reader.GetBoolean(isApprovedIndex) : false,
                             BadgeStartDate = !reader.IsDBNull(badgeStartDateIndex) ? (DateTime?)reader.GetDateTime(badgeStartDateIndex) : null,
                             BadgeEndDate = !reader.IsDBNull(badgeEndDateIndex) ? (DateTime?)reader.GetDateTime(badgeEndDateIndex) : null,
-                            ConsultantEndDate = !reader.IsDBNull(consultantEndDateIndex) ? (DateTime?)reader.GetDateTime(consultantEndDateIndex) : null
+                            ConsultantEndDate = !reader.IsDBNull(consultantEndDateIndex) ? (DateTime?)reader.GetDateTime(consultantEndDateIndex) : null,
+                            Discount = !reader.IsDBNull(personDiscountIndex) ? (decimal?)reader.GetDecimal(personDiscountIndex) : null,
+                            IsNewToBudget = reader.GetBoolean(isNewtoBudgetIndex),
+                            DiscountLocked=reader.GetBoolean(discountLockedIndex)
                         };
 
                     if (!reader.IsDBNull(personRoleIdIndex))
@@ -1380,11 +1434,11 @@ namespace DataAccess
             {
                 mpe.ComputedFinancials
                     = new ComputedFinancials
-                        {
-                            Revenue = reader.GetDecimal(revenueIndex),
-                            RevenueNet = reader.GetDecimal(revenueNetIndex),
-                            GrossMargin = reader.GetDecimal(grossMarginIndex),
-                        };
+                    {
+                        Revenue = reader.GetDecimal(revenueIndex),
+                        RevenueNet = reader.GetDecimal(revenueNetIndex),
+                        GrossMargin = reader.GetDecimal(grossMarginIndex),
+                    };
             }
         }
 
@@ -1414,53 +1468,60 @@ namespace DataAccess
             var lastNameIndex = reader.GetOrdinal(LastNameColumn);
             var hasTimeEntriesIndex = reader.GetOrdinal(HasTimeEntriesColumn);
             var isStrawManIndex = reader.GetOrdinal(Constants.ColumnNames.IsStrawmanColumn);
+            var personDiscountIndex = reader.GetOrdinal(Constants.ColumnNames.MilestonePersonDiscount);
+            var isNewtoBudgetIndex = reader.GetOrdinal(Constants.ColumnNames.IsNewToBudget);
+            var discountLockedIndex = reader.GetOrdinal(Constants.ColumnNames.LockDiscount);
+
             while (reader.Read())
             {
                 var entry =
                     new MilestonePersonEntry
-                        {
-                            Id = reader.GetInt32(milestonePersonEntryIdIndex),
-                            MilestonePersonId = reader.GetInt32(milestonePersonIdIndex),
-                            StartDate = reader.GetDateTime(startDateIndex),
-                            EndDate =
+                    {
+                        Id = reader.GetInt32(milestonePersonEntryIdIndex),
+                        MilestonePersonId = reader.GetInt32(milestonePersonIdIndex),
+                        StartDate = reader.GetDateTime(startDateIndex),
+                        EndDate =
                                 !reader.IsDBNull(endDateIndex)
                                     ? (DateTime?)reader.GetDateTime(endDateIndex)
                                     : null,
-                            HourlyAmount =
+                        HourlyAmount =
                                 !reader.IsDBNull(amountIndex)
                                     ? (decimal?)reader.GetDecimal(amountIndex)
                                     : null,
-                            HoursPerDay = reader.GetDecimal(hoursPerDayIndex),
-                            VacationDays = reader.GetInt32(personVacationsOnMilestoneIndex),
-                            ProjectedWorkloadWithVacation = reader.GetDecimal(expectedHoursWithVacationDaysIndex),
-                            ThisPerson = new Person
-                                {
-                                    Id = reader.GetInt32(personIdIndex),
-                                    FirstName = reader.GetString(firstNameIndex),
-                                    LastName = reader.GetString(lastNameIndex),
-                                    IsStrawMan = reader.GetBoolean(isStrawManIndex),
-                                    Seniority = !reader.IsDBNull(personSeniorityIdIndex)
+                        HoursPerDay = reader.GetDecimal(hoursPerDayIndex),
+                        VacationDays = reader.GetInt32(personVacationsOnMilestoneIndex),
+                        ProjectedWorkloadWithVacation = reader.GetDecimal(expectedHoursWithVacationDaysIndex),
+                        ThisPerson = new Person
+                        {
+                            Id = reader.GetInt32(personIdIndex),
+                            FirstName = reader.GetString(firstNameIndex),
+                            LastName = reader.GetString(lastNameIndex),
+                            IsStrawMan = reader.GetBoolean(isStrawManIndex),
+                            Seniority = !reader.IsDBNull(personSeniorityIdIndex)
                                                     ? new Seniority
-                                                        {
-                                                            Id = reader.GetInt32(personSeniorityIdIndex)
-                                                        } : null
-                                },
-                            HasTimeEntries = reader.GetBoolean(hasTimeEntriesIndex),
-                            MSBadgeRequired = !reader.IsDBNull(isBadgeRequiredIndex) ? reader.GetBoolean(isBadgeRequiredIndex) : false,
-                            BadgeException = !reader.IsDBNull(isBadgeExceptionIndex) ? reader.GetBoolean(isBadgeExceptionIndex) : false,
-                            IsApproved = !reader.IsDBNull(isApprovedIndex) ? reader.GetBoolean(isApprovedIndex) : false,
-                            BadgeStartDate = !reader.IsDBNull(badgeStartDateIndex) ? (DateTime?)reader.GetDateTime(badgeStartDateIndex) : null,
-                            BadgeEndDate = !reader.IsDBNull(badgeEndDateIndex) ? (DateTime?)reader.GetDateTime(badgeEndDateIndex) : null,
-                            ConsultantEndDate = !reader.IsDBNull(consultantEndDateIndex) ? (DateTime?)reader.GetDateTime(consultantEndDateIndex) : null
-                        };
+                                                    {
+                                                        Id = reader.GetInt32(personSeniorityIdIndex)
+                                                    } : null
+                        },
+                        HasTimeEntries = reader.GetBoolean(hasTimeEntriesIndex),
+                        MSBadgeRequired = !reader.IsDBNull(isBadgeRequiredIndex) ? reader.GetBoolean(isBadgeRequiredIndex) : false,
+                        BadgeException = !reader.IsDBNull(isBadgeExceptionIndex) ? reader.GetBoolean(isBadgeExceptionIndex) : false,
+                        IsApproved = !reader.IsDBNull(isApprovedIndex) ? reader.GetBoolean(isApprovedIndex) : false,
+                        BadgeStartDate = !reader.IsDBNull(badgeStartDateIndex) ? (DateTime?)reader.GetDateTime(badgeStartDateIndex) : null,
+                        BadgeEndDate = !reader.IsDBNull(badgeEndDateIndex) ? (DateTime?)reader.GetDateTime(badgeEndDateIndex) : null,
+                        ConsultantEndDate = !reader.IsDBNull(consultantEndDateIndex) ? (DateTime?)reader.GetDateTime(consultantEndDateIndex) : null,
+                        Discount = !reader.IsDBNull(personDiscountIndex) ? (decimal?)reader.GetDecimal(personDiscountIndex) : null,
+                        IsNewToBudget = reader.GetBoolean(isNewtoBudgetIndex),
+                        DiscountLocked=reader.GetBoolean(discountLockedIndex)
+                    };
 
                 if (!reader.IsDBNull(personRoleIdIndex))
                     entry.Role =
                         new PersonRole
-                            {
-                                Id = reader.GetInt32(personRoleIdIndex),
-                                Name = reader.GetString(personRoleNameIndex)
-                            };
+                        {
+                            Id = reader.GetInt32(personRoleIdIndex),
+                            Name = reader.GetString(personRoleNameIndex)
+                        };
 
                 var mperson = milestonePersons.Find(mp => mp.Person != null && mp.Person.Id == entry.ThisPerson.Id);
                 if (mperson.Entries == null)
@@ -1547,12 +1608,12 @@ namespace DataAccess
                                                    : DBNull.Value);
 
                     var milestonePersonId = new SqlParameter
-                        {
-                            ParameterName = MilestonePersonIdParam,
-                            SqlDbType = SqlDbType.Int,
-                            Value = entry.MilestonePersonId,
-                            Direction = ParameterDirection.InputOutput
-                        };
+                    {
+                        ParameterName = MilestonePersonIdParam,
+                        SqlDbType = SqlDbType.Int,
+                        Value = entry.MilestonePersonId,
+                        Direction = ParameterDirection.InputOutput
+                    };
                     command.Parameters.Add(milestonePersonId);
 
                     command.Parameters.AddWithValue(StartDateParam, entry.StartDate);
@@ -1573,6 +1634,10 @@ namespace DataAccess
                     command.Parameters.AddWithValue(Constants.ParameterNames.RequestDate, entry.RequestDate.HasValue ? (object)entry.RequestDate.Value : DBNull.Value);
                     command.Parameters.AddWithValue(UserLoginParam,
                                                     !string.IsNullOrEmpty(userName) ? (object)userName : DBNull.Value);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.DiscountParam, entry.Discount);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.LockDiscount, entry.DiscountLocked);
+
+                    command.Parameters.AddWithValue(Constants.ParameterNames.IsDiscountAtResourceLevel, entry.IsDiscountAtResourceLevel);
 
                     connection.Open();
 
@@ -1616,6 +1681,7 @@ namespace DataAccess
                 trn.Commit();
             }
         }
+
     }
 }
 
