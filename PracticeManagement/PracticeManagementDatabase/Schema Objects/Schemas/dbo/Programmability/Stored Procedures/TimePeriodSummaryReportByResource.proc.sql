@@ -47,12 +47,12 @@ AS
 	-- Get person level Default hours in between the StartDate and EndDate
 	--1.Day should not be company holiday and also not converted to substitute day.
 	--2.day should be company holiday and it should be taken as a substitute holiday.
-	;
-		WITH    PersonDefaultHoursWithInPeriod
-				  AS ( SELECT   Pc.Personid ,
+
+						SELECT   Pc.Personid ,
 				                SUM(CASE WHEN PC.Date < @NOW THEN 1
 										 ELSE 0 END) * 8 AS  DefaultHoursUntilToday,
 								( COUNT(PC.Date) * 8 ) AS DefaultHours --Estimated working hours per day is 8.
+					   INTO #PersonDefaultHoursWithInPeriod
 					   FROM     ( SELECT    CAL.Date ,
 											P.PersonId ,
 											CAL.DayOff AS CompanyDayOff ,
@@ -69,56 +69,58 @@ AS
 										AND  @EndDateLocal												
 								AND DATENAME(weekday,PC.Date) != 'Saturday' AND DATENAME(weekday,PC.Date) != 'Sunday'
 					   GROUP BY PC.PersonId
-					 ),
-				ActivePersonsInSelectedRange
-				  AS ( SELECT DISTINCT
+					 
+				
+				      SELECT DISTINCT
 								PTSH.PersonId
+					   INTO #ActivePersonsInSelectedRange
 					   FROM     dbo.PersonStatusHistory PTSH
 					   WHERE    PTSH.StartDate <= @EndDateLocal
 								AND @StartDateLocal <=  ISNULL(PTSH.EndDate,@FutureDate)
 								AND PTSH.PersonStatusId IN (1,5) --ACTIVE STATUS
 								
-					 ),
-				    PersonPayDuringSelectedRange
-				  AS ( 
+					
+				    
+				  
 					   SELECT   P.PersonId ,
 								MAX(pa.StartDate) AS StartDate
+					   INTO #PersonPayDuringSelectedRange
 					   FROM     dbo.Person AS P
 								LEFT JOIN dbo.Pay pa ON pa.Person = P.PersonId 
 														AND pa.StartDate <= @EndDateLocal AND (ISNULL(pa.EndDate, @FutureDate) - 1) >= @StartDateLocal
 					   WHERE    P.IsStrawman = 0
 					   GROUP BY P.PersonId
 
-					 ),
-					 PersonPayToday
-					 AS 
-					 (
+					
+					 
+					
 					   SELECT   P.PersonId ,
 								MAX(pa.StartDate) AS StartDate
+					   INTO #PersonPayToday
 					   FROM     dbo.Person AS P
 								LEFT JOIN dbo.Pay AS pa ON pa.Person = P.PersonId 
 														AND @NOW BETWEEN pa.StartDate AND (ISNULL(pa.EndDate, @FutureDate) - 1)
 					   WHERE    P.IsStrawman = 0
 					   GROUP BY P.PersonId
-					 )
-					 ,
-					 PersonWithPay AS
+					
+					SELECT t.* INTO #PersonWithPay 
+					FROM
 					 (
 					  SELECT PPDTP.PersonId,
 					         ISNULL(TS.Name,'') AS Timescale
-					  FROM	PersonPayDuringSelectedRange AS PPDTP
+					  FROM	#PersonPayDuringSelectedRange AS PPDTP
 					  LEFT JOIN dbo.Pay AS pa ON pa.Person = PPDTP.PersonId  AND pa.StartDate = PPDTP.StartDate
 					  LEFT JOIN dbo.Timescale TS ON PA.Timescale = TS.TimescaleId
 					  WHERE PPDTP.StartDate IS NOT NULL
 					  UNION 
 					  SELECT PPT.PersonId,
 					         ISNULL(TS.Name,'') AS Timescale
-					  FROM	 PersonPayDuringSelectedRange AS PPDTP
-					  INNER JOIN PersonPayToday AS PPT ON PPDTP.PersonId = PPT.PersonId
+					  FROM	 #PersonPayDuringSelectedRange AS PPDTP
+					  INNER JOIN #PersonPayToday AS PPT ON PPDTP.PersonId = PPT.PersonId
 					  LEFT JOIN dbo.Pay AS pa ON pa.Person = PPT.PersonId  AND pa.StartDate = PPT.StartDate
 					  LEFT JOIN dbo.Timescale TS ON PA.Timescale = TS.TimescaleId
 					  WHERE PPDTP.StartDate IS NULL
-					 )
+					 ) as t
 
 					 
 			SELECT  P.PersonId ,
@@ -239,15 +241,15 @@ AS
 									)
 					  GROUP BY  TE.PersonId
 					) Data
-					FULL JOIN ActivePersonsInSelectedRange AP ON AP.PersonId = Data.PersonId
+					FULL JOIN #ActivePersonsInSelectedRange AP ON AP.PersonId = Data.PersonId
 					INNER JOIN dbo.Person P ON ( P.PersonId = Data.PersonId
 												 OR AP.PersonId = P.PersonId
 											   )
 											   AND p.IsStrawman = 0
 					INNER JOIN dbo.Title S ON S.TitleId = P.TitleId
-					INNER JOIN PersonWithPay PCP ON P.PersonId = PCP.PersonId 
+					INNER JOIN #PersonWithPay PCP ON P.PersonId = PCP.PersonId 
 					INNER JOIN [dbo].[PersonStatus] PS ON PS.PersonStatusId = P.PersonStatusId
-					LEFT JOIN PersonDefaultHoursWithInPeriod PDH ON PDH.PersonId = P.PersonId
+					LEFT JOIN #PersonDefaultHoursWithInPeriod PDH ON PDH.PersonId = P.PersonId
 			WHERE   ( @IncludePersonsWithNoTimeEntries = 1
 					  OR ( @IncludePersonsWithNoTimeEntries = 0
 						   AND Data.PersonId IS NOT NULL
@@ -281,5 +283,13 @@ AS
 						)
 			ORDER BY P.LastName ,
 					P.FirstName
+
+
+			DROP TABLE #PersonDefaultHoursWithInPeriod
+			DROP TABLE #ActivePersonsInSelectedRange
+			DROP TABLE #PersonPayDuringSelectedRange
+			DROP TABLE #PersonPayToday
+			DROP TABLE #PersonWithPay
+
 	END
 
