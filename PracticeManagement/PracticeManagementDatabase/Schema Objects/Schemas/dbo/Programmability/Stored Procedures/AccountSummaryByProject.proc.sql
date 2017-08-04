@@ -31,8 +31,8 @@ BEGIN
 	SET @ProjectBillingTypesLocal = @ProjectBillingTypes
 
 	INSERT INTO @ProjectBillingTypesTable(BillingType)
-	SELECT ResultString
-	FROM [dbo].[ConvertXmlStringInToStringTable](@ProjectBillingTypesLocal)
+	SELECT ResultName
+	FROM dbo.ConvertStringListIntoStringTable(@ProjectBillingTypesLocal)
 
 	INSERT INTO @BusinessUnitIdsTable(Ids)
 	SELECT ResultId
@@ -85,6 +85,51 @@ BEGIN
 					
 			GROUP BY MP.PersonId,Pro.ProjectId,Pro.ClientId,PC.Date 
 		),
+
+		ProjectResources
+		AS
+		(
+			SELECT  PBPE.ProjectId,
+					PBPE.MilestoneId,
+					PBPE.StartDate,
+					PBPE.EndDate,
+					PBPE.HoursPerDay,
+					PBPE.PersonId
+			FROM ProjectBudgetPersonEntry PBPE
+			JOIN dbo.Project P on P.ProjectId = PBPE.ProjectId
+			WHERE  P.ClientId = @AccountIdLocal
+		),
+
+		PersonBudgetHours
+		AS
+		(	
+			SELECT   PR.PersonId ,
+					 Pro.ClientId,
+					 Pro.ProjectId,
+					 PC.Date
+					,SUM(CASE WHEN P.IsStrawman = 0 THEN dbo.PersonProjectedHoursPerDay(PC.DayOff,PC.CompanyDayOff,PC.TimeOffHours,PR.HoursPerDay) ELSE 0 END)  AS ForecastedBudgetHours
+			FROM	dbo.Project Pro
+				LEFT JOIN ProjectResources PR ON PR.ProjectId=Pro.ProjectId
+				LEFT JOIN Milestone M on M.MilestoneId=PR.MilestoneId
+				LEFT JOIN dbo.person AS P ON P.PersonId = PR.PersonId 
+				LEFT JOIN dbo.PersonCalendarAuto PC ON PC.PersonId = PR.PersonId 
+						AND PC.Date BETWEEN PR.StartDate AND PR.EndDate 
+						AND PC.Date BETWEEN @StartDateLocal AND @EndDateLocal 
+						  
+		WHERE (@ProjectStatusIds IS NULL
+					 OR Pro.ProjectStatusId IN (SELECT Ids
+												FROM @ProjectStatusIdsTable))
+			  AND Pro.ClientId = @AccountIdLocal
+			   AND (@BusinessUnitIds IS NULL
+					OR Pro.GroupId IN (SELECT Ids
+											FROM @BusinessUnitIdsTable )
+				)
+			  AND Pro.StartDate IS NOT NULL AND Pro.EndDate IS NOT NULL
+			  AND M.StartDate <= @EndDateLocal AND @StartDateLocal <= M.ProjectedDeliveryDate
+					
+			GROUP BY PR.PersonId,Pro.ProjectId,Pro.ClientId,PC.Date 
+		),
+
 		TimeEntryPersonsForBillRate 
 		AS
 		(
@@ -187,6 +232,16 @@ BEGIN
 			 ClientId,
 		     TimeEntrySectionId,
 		     GroupId
+	),
+	BudgetHours
+	AS
+	(
+		SELECT ProjectId,
+				ClientId,
+				ROUND(SUM(ForecastedBudgetHours),2) AS ForecastedBudgetHours
+		FROM 	PersonBudgetHours
+		GROUP BY ProjectId,
+				ClientId
 	)
 
 SELECT C.ClientId
@@ -216,21 +271,15 @@ SELECT C.ClientId
 			   WHEN  pfh.MinimumValue IS NOT NULL AND (pfh.MinimumValue <> PFH.MaximumValue) THEN
 			       'Both'
 		   END) AS BillingType
-		 , (CASE
-			  WHEN  pfh.MinimumValue IS NOT NULL AND pfh.MinimumValue = PFH.MaximumValue AND pfh.MinimumValue = 0 THEN
-			       -1
-			   WHEN  pfh.MinimumValue IS NOT NULL AND pfh.MinimumValue = PFH.MaximumValue AND pfh.MinimumValue = 1 THEN
-			       ISNULL(EBP.EstBillings,0)
-			   WHEN  pfh.MinimumValue IS NOT NULL AND pfh.MinimumValue <> PFH.MaximumValue THEN
-			       ISNULL(EBP.EstBillings,0)
-			   ELSE
-				   ISNULL(EBP.EstBillings,0)
-		   END) AS EstimatedBillings
-		, CASE WHEN ISNULL(HD.TimeEntrySectionId,-1) = 2 THEN 1 ELSE ISNULL(P.IsBusinessDevelopment,0) END AS IsBusinessDevelopment
+		 ,ISNULL(EBP.EstBillings,0)  AS EstimatedBillings
+		 , CASE WHEN ISNULL(HD.TimeEntrySectionId,-1) = 2 THEN 1 ELSE ISNULL(P.IsBusinessDevelopment,0) END AS IsBusinessDevelopment
+		 , ISNULL(BH.ForecastedBudgetHours,-1) AS BudgetHours
 	FROM
 		HoursData HD
 		FULL JOIN ProjectForeCastedHoursUntilToday pfh
 			ON pfh.ProjectId = HD.ProjectId AND pfh.ClientId = HD.ClientId
+		FULL JOIN BudgetHours BH
+			ON BH.ProjectId=ISNULL(pfh.ProjectId,HD.ProjectId) AND BH.ClientId=ISNULL(pfh.ClientId,HD.ClientId)
 		LEFT JOIN dbo.Project P 
 			ON P.ProjectId = ISNULL(pfh.ProjectId,HD.ProjectId)
 		LEFT JOIN EstimatedBillingsByProject EBP 
