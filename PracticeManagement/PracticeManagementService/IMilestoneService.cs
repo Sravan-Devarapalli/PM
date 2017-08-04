@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ServiceModel;
 using DataTransferObjects;
+using DataTransferObjects.Reports;
 
 namespace PracticeManagementService
 {
@@ -189,7 +190,7 @@ namespace PracticeManagementService
         List<Milestone> GetPersonMilestonesOnPreviousHireDate(int personId, DateTime previousHireDate);
 
         [OperationContract]
-        void SendBadgeRequestMail(Project project,int milestoneId);
+        void SendBadgeRequestMail(Project project, int milestoneId);
 
         [OperationContract]
         void SendBadgeRequestApprovedMail(string personName, string toAddress);
@@ -199,6 +200,21 @@ namespace PracticeManagementService
 
         [OperationContract]
         List<ExpenseType> GetAllExpenseTypesList();
+
+        [OperationContract]
+        List<PeriodicalExpense> GetMonthlyExpensesByExpenseId(int expenseId);
+
+        [OperationContract]
+        void SaveMonthlyExpenses(int expenseId, List<PeriodicalExpense> monthlyExpense);
+
+        [OperationContract]
+        void SaveMonthlyRevenueForFixedMilestone(int milestoneId, List<MonthlyRevenue> monthlyRevenues);
+
+        [OperationContract]
+        List<MonthlyRevenue> GetMonthlyRevenuesForMilestone(int milestoneId);
+
+        [OperationContract]
+        List<PersonBudgetComparison> GetForecastDataForMilestone(int milestoneId);
     }
 }
 
