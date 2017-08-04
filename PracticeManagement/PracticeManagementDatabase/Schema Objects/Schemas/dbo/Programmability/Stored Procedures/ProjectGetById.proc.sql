@@ -10,6 +10,36 @@ CREATE PROCEDURE  [dbo].[ProjectGetById]
 AS
 	SET NOCOUNT ON
 
+	declare @IsReset BIT =0,
+			@TierOneExceptionStatus INT,
+			@TierTwoExceptionStatus INT,
+			@MarginExceptionId INT,
+			@MarginRequestor  INT,
+			@IsCOMilestoneExists BIT = 0
+
+	 IF EXISTS(SELECT 1   FROM dbo.BudgetResetRequestHistory BRH
+		  LEFT JOIN dbo.BudgetResetApprovalHistory BAH on BRH.requestId=BAH.requestid 
+		  WHERE BRH.ProjectId=@ProjectId  AND BAH.Id IS NOT NULL)
+	 BEGIN 
+		  SET @IsReset=1
+	 END
+	 ELSE
+	 BEGIN
+		  SET @IsReset=0
+	 END
+
+	 SELECT TOP 1 @MarginExceptionId=Id, @TierOneExceptionStatus = TierOneStatus, @TierTwoExceptionStatus=TierTwoStatus, @MarginRequestor=Requestor  from MarginExceptionRequest 
+	 WHERE projectid=@ProjectId
+	 ORDER BY 1 DESC
+
+	 IF EXISTS(SELECT 1
+				FROM Milestone M 
+				LEFT JOIN ProjectBudgetHistory PBH on PBH.MilestoneId = M.MilestoneId and PBH.MilestoneId IS NOT NULL AND PBH.IsActive = 1
+				WHERE M.ProjectId = @ProjectId  AND PBH.MilestoneId is  NULL AND M.MilestoneType = 2 )
+	BEGIN
+		SET @IsCOMilestoneExists  = 1
+	END
+	
 	SELECT person.LastName+', '+person.FirstName AS PracticeOwnerName,
 		   p.ClientId,
 		   p.IsMarginColorInfoEnabled,
@@ -74,7 +104,21 @@ AS
 			p.IsClientTimeEntryRequired,
 			PrevProject.ProjectId AS PreviousProjectId,
 			PrevProject.ProjectNumber AS PreviousProjectNumber,
-			p.OutsourceId
+			p.OutsourceId,
+			p.Budget,
+			p.IsBudgetResetPending,
+			p.BudgetResetRequestId,
+			p.EnableBudgetRequest,
+			@IsReset as IsReset,
+			p.ExceptionMargin,
+			p.ExceptionRevenue,
+			@TierOneExceptionStatus as TierOneExceptionStatus,
+			@TierTwoExceptionStatus as TierTwoExceptionStatus,
+			@MarginExceptionId as MarginExceptionId,
+			@MarginRequestor as MarginRequestorId,
+			p.requestorName,
+			@IsCOMilestoneExists as IsCOMilestoneExists,
+			p.BudgetToDate
 	  FROM dbo.v_Project AS p
 	  INNER JOIN dbo.ProjectGroup AS pg ON p.GroupId = pg.GroupId
 	  LEFT JOIN dbo.Opportunity AS O ON O.OpportunityId = P.OpportunityId
