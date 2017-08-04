@@ -33,9 +33,11 @@ namespace PraticeManagement.Utils
             bool division = true,
             bool channel = true,
             bool offering = true,
-            bool revenueType = true)
+            bool revenueType = true,
+            bool budget =true,
+            bool margin = true)
         {
-            var context = GetContext(startDateFilter, endDateFilter, sourceFilter, personId, projectId,vendorId, opportunityId, milestoneId, practiceAreas, sowBudget, director, poAmount, capabilities, newOrExtension, poNumber, projectStatus, salesPerson, projectOwner, recordPerChange,division,channel,offering,revenueType);
+            var context = GetContext(startDateFilter, endDateFilter, sourceFilter, personId, projectId,vendorId, opportunityId, milestoneId, practiceAreas, sowBudget, director, poAmount, capabilities, newOrExtension, poNumber, projectStatus, salesPerson, projectOwner, recordPerChange,division,channel,offering,revenueType,budget,margin);
             
             
             var result= ServiceCallers.Custom.ActivityLog(
@@ -66,7 +68,9 @@ namespace PraticeManagement.Utils
              bool division,
             bool channel,
             bool offering,
-            bool revenueType)
+            bool revenueType,
+            bool budget,
+            bool margin)
         {
             var prsId = Generic.ParseNullableInt(personId);
             var prjId = Generic.ParseNullableInt(projectId);
@@ -99,7 +103,9 @@ namespace PraticeManagement.Utils
                 Division=division,
                 Channel=channel,
                 Offering=offering,
-                RevenueType=revenueType
+                RevenueType=revenueType,
+                Budget=budget,
+                Margin=margin
             };
         }
 
@@ -126,12 +132,19 @@ namespace PraticeManagement.Utils
             bool division = true,
             bool channel = true,
             bool offering = true,
-            bool revenueType = true)
+            bool revenueType = true,
+            bool budget= true,
+            bool margin = true)
         {
-            var context = GetContext(startDateFilter, endDateFilter, sourceFilter, personId, projectId,vendorId, opportunityId, milestoneId, practiceAreas, sowBudget, director, poAmount, capabilities, newOrExtension, poNumber, projectStatus, salesPerson, projectOwner, recordPerChange, division, channel, offering, revenueType);
+            var context = GetContext(startDateFilter, endDateFilter, sourceFilter, personId, projectId,vendorId, opportunityId, milestoneId, practiceAreas, sowBudget, director, poAmount, capabilities, newOrExtension, poNumber, projectStatus, salesPerson, projectOwner, recordPerChange, division, channel, offering, revenueType,budget,margin);
 
             return ServiceCallers.Custom.ActivityLog(client => client.ActivityLogGetCount(context));
         }
     }
+
+    //public static ActivityLogItem[] GetBudgetActivityLog(int Id)
+    //{
+    //    ServiceCallers.
+    //}
 }
 
