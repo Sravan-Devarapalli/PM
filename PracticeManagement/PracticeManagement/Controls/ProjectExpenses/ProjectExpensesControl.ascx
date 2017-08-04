@@ -85,10 +85,10 @@
                     <FooterTemplate>
                     </FooterTemplate>
                 </asp:TemplateField>
-                 <asp:TemplateField>
+                <asp:TemplateField>
                     <HeaderTemplate>
                         <div class="ie-bg NoBorder">
-                           Estimated Expense, $
+                            Estimated Expense
                         </div>
                     </HeaderTemplate>
                     <ItemStyle CssClass="textCenter" />
@@ -103,12 +103,12 @@
                 <asp:TemplateField>
                     <HeaderTemplate>
                         <div class="ie-bg NoBorder">
-                           Actual Expense, $
+                            Actual Expense
                         </div>
                     </HeaderTemplate>
                     <ItemStyle CssClass="textCenter" />
                     <ItemTemplate>
-                        <%# ((PracticeManagementCurrency) ((ProjectExpense) Container.DataItem).Amount).ToString() %>
+                        <%# ((ProjectExpense) Container.DataItem).Amount!=null? ((PracticeManagementCurrency) ((ProjectExpense) Container.DataItem).Amount).ToString():string.Empty %>
                     </ItemTemplate>
                     <FooterStyle CssClass="textCenter" />
                     <FooterTemplate>
@@ -118,7 +118,7 @@
                 <asp:TemplateField HeaderText="Reimbursed, %">
                     <HeaderTemplate>
                         <div class="ie-bg NoBorder">
-                            Reimbursed, %
+                            Reimbursed
                         </div>
                     </HeaderTemplate>
                     <ItemStyle CssClass="textCenter" />
@@ -133,7 +133,7 @@
                 <asp:TemplateField HeaderText="Reimbursed, $">
                     <HeaderTemplate>
                         <div class="ie-bg NoBorder">
-                            Reimbursed, $
+                            Reimbursed
                         </div>
                     </HeaderTemplate>
                     <ItemStyle CssClass="textCenter" />
