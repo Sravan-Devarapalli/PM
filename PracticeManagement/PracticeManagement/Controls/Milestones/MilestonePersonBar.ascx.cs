@@ -65,14 +65,14 @@ namespace PraticeManagement.Controls.Milestones
 
         protected void Page_Load(object sender, EventArgs e)
         {
-          custExceptionNotMoreThan18moEndDate.Enabled =  custBadgeAfterJuly.Enabled = custBadgeNotInEmpHistory.Enabled = custBadgeHasMoredays.Enabled = compBadgeEndWithPersonEnd.Enabled = compBadgeStartWithPersonStart.Enabled = reqBadgeStart.Enabled = compBadgeStartType.Enabled = custBadgeStart.Enabled = reqBadgeEnd.Enabled = compBadgeEndType.Enabled = compBadgeEnd.Enabled = custBadgeEnd.Enabled = custBlocked.Enabled = custBadgeInBreakPeriod.Enabled = chbBadgeRequiredInsert.Checked;
+            custExceptionNotMoreThan18moEndDate.Enabled = custBadgeAfterJuly.Enabled = custBadgeNotInEmpHistory.Enabled = custBadgeHasMoredays.Enabled = compBadgeEndWithPersonEnd.Enabled = compBadgeStartWithPersonStart.Enabled = reqBadgeStart.Enabled = compBadgeStartType.Enabled = custBadgeStart.Enabled = reqBadgeEnd.Enabled = compBadgeEndType.Enabled = compBadgeEnd.Enabled = custBadgeEnd.Enabled = custBlocked.Enabled = custBadgeInBreakPeriod.Enabled = chbBadgeRequiredInsert.Checked;
         }
 
         #region Validation
 
         protected void reqHourlyRevenue_ServerValidate(object sender, ServerValidateEventArgs e)
         {
-            e.IsValid = !HostingPage.Milestone.IsHourlyAmount || !string.IsNullOrEmpty(e.Value);
+            e.IsValid = !string.IsNullOrEmpty(e.Value);
         }
 
         protected void custPersonStartInsert_ServerValidate(object sender, ServerValidateEventArgs args)
@@ -430,14 +430,6 @@ namespace PraticeManagement.Controls.Milestones
             args.IsValid = isGreaterThanMilestone;
         }
 
-        //protected void dpPersonStart_SelectionChanged(object sender, EventArgs e)
-        //{
-        //    if (!chbBadgeRequiredInsert.Checked)
-        //        return;
-        //    dpBadgeStartInsert.TextValue = dpPersonStartInsert.TextValue;
-        //    dpBadgeEndInsert.TextValue = dpPersonEndInsert.TextValue;
-        //}
-
         protected void chbBadgeRequired_CheckedChanged(object sender, EventArgs e)
         {
             if (chbBadgeRequiredInsert.Checked)
@@ -449,12 +441,6 @@ namespace PraticeManagement.Controls.Milestones
                 Person person = HostingControl.GetPersonBySelectedValue(ddlPerson.SelectedValue);
                 if (person != null && !person.IsStrawMan && person.EmploymentHistory != null)
                 {
-                    //if (person.EmploymentHistory.Any(p => p.HireDate <= HostingControl.Milestone.ProjectedDeliveryDate && (!p.TerminationDate.HasValue || (p.TerminationDate.HasValue && HostingControl.Milestone.StartDate <= p.TerminationDate))))
-                    //{
-                    //    Employment employment = person.EmploymentHistory.First(p => p.HireDate <= HostingControl.Milestone.ProjectedDeliveryDate && (!p.TerminationDate.HasValue || (p.TerminationDate.HasValue && HostingControl.Milestone.StartDate <= p.TerminationDate)));
-                    //    dpBadgeStartInsert.TextValue = HostingControl.Milestone.StartDate < employment.HireDate.Date ? employment.HireDate.Date.ToString(Constants.Formatting.EntryDateFormat) : HostingControl.Milestone.StartDate.ToString(Constants.Formatting.EntryDateFormat);
-                    //    dpBadgeEndInsert.TextValue = employment.TerminationDate.HasValue ? HostingControl.Milestone.ProjectedDeliveryDate < employment.TerminationDate.Value ? HostingControl.Milestone.ProjectedDeliveryDate.ToString(Constants.Formatting.EntryDateFormat) : employment.TerminationDate.Value.ToString(Constants.Formatting.EntryDateFormat) : HostingControl.Milestone.ProjectedDeliveryDate.ToString(Constants.Formatting.EntryDateFormat);
-                    //}
                     dpBadgeStartInsert.TextValue = dpPersonStartInsert.TextValue;
                     dpBadgeEndInsert.TextValue = dpPersonEndInsert.TextValue;
                 }
@@ -512,16 +498,10 @@ namespace PraticeManagement.Controls.Milestones
         {
             if (!chbBadgeExceptionInsert.Checked)
                 return;
-            //var chbBadgeRequired = ((Control)source).Parent.FindControl("chbBadgeRequired") as CheckBox;
-            //var reqBadgeStart = ((Control)source).Parent.FindControl("reqBadgeStart") as RequiredFieldValidator;
-            //var compBadgeStartType = ((Control)source).Parent.FindControl("compBadgeStartType") as CompareValidator;
-            //var reqBadgeEnd = ((Control)source).Parent.FindControl("reqBadgeEnd") as RequiredFieldValidator;
-            //var compBadgeEndType = ((Control)source).Parent.FindControl("compBadgeEndType") as CompareValidator;
             if (!chbBadgeRequiredInsert.Checked || !reqBadgeStart.IsValid || !reqBadgeEnd.IsValid || !compBadgeStartType.IsValid || !compBadgeEndType.IsValid)
                 return;
             var lblConsultantsEnd = ((Control)source).Parent.FindControl("lblConsultantsEnd") as Label;
             var endDatevalue = lblConsultantsEnd.Attributes["DateValue"];
-           // var dpBadgeEnd = ((Control)source).Parent.FindControl("dpBadgeEnd") as DatePicker;
             var badgeEndDate = Convert.ToDateTime(endDatevalue);
             args.IsValid = !(badgeEndDate.Date >= dpBadgeEndInsert.DateValue.Date);
             if (!args.IsValid)
@@ -566,17 +546,13 @@ namespace PraticeManagement.Controls.Milestones
             {
                 var result = InsertPerson(bar);
             }
-            //if (!result)
-            //{
-            //    HostingPage.lblResultObject.ShowErrorMessage("Error occured while saving resources.");
-            //}
         }
 
         private bool InsertPerson(RepeaterItem bar, bool isSaveCommit = true, bool iSDatBindRows = true, bool isValidating = true)
         {
             HostingControl.vsumMileStonePersonsObject.ValidationGroup = milestonePersonEntryInsert + bar.ItemIndex.ToString();
 
-            bool result=false;
+            bool result = false;
             if (isValidating && ValidateAndSave())
             {
                 Page.Validate(HostingControl.vsumMileStonePersonsObject.ValidationGroup);
@@ -653,11 +629,11 @@ namespace PraticeManagement.Controls.Milestones
             }
             if (person != null && person.IsStrawMan)
             {
-               dpPersonStart.TextValue = HostingControl.Milestone.StartDate.ToString(Constants.Formatting.EntryDateFormat);
-               dpPersonEnd.TextValue = HostingControl.Milestone.EndDate.ToString(Constants.Formatting.EntryDateFormat);
-               dpBadgeEndInsert.EnabledTextBox = dpBadgeStartInsert.EnabledTextBox = chbBadgeExceptionInsert.Enabled = chbOpsApprovedInsert.Enabled = chbBadgeRequiredInsert.Enabled = false;
-               dpBadgeStartInsert.ReadOnly = dpBadgeEndInsert.ReadOnly = true;
-               dpBadgeStartInsert.TextValue = dpBadgeEndInsert.TextValue = string.Empty;
+                dpPersonStart.TextValue = HostingControl.Milestone.StartDate.ToString(Constants.Formatting.EntryDateFormat);
+                dpPersonEnd.TextValue = HostingControl.Milestone.EndDate.ToString(Constants.Formatting.EntryDateFormat);
+                dpBadgeEndInsert.EnabledTextBox = dpBadgeStartInsert.EnabledTextBox = chbBadgeExceptionInsert.Enabled = chbOpsApprovedInsert.Enabled = chbBadgeRequiredInsert.Enabled = false;
+                dpBadgeStartInsert.ReadOnly = dpBadgeEndInsert.ReadOnly = true;
+                dpBadgeStartInsert.TextValue = dpBadgeEndInsert.TextValue = string.Empty;
             }
         }
 
@@ -689,9 +665,32 @@ namespace PraticeManagement.Controls.Milestones
                 compPersonEndInsert.Validate();
             }
             return (reqPersonStart.IsValid && reqPersonEnd.IsValid && compPersonStartType.IsValid && compPersonEndType.IsValid && reqHourlyRevenue.IsValid && compPersonEndInsert.IsValid);
-        
         }
 
+        protected void txtDiscount_TextChanged(object sender, EventArgs e)
+        {
+            HostingPage.IsDiscountAtMilestoneLevel = 2;//discount set at milestone resource level
+        }
+
+        protected void cvDiscountLockInsert_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            ValidateDiscountLockWhenSaveAllClicked(source, args);
+        }
+
+        private void ValidateDiscountLockWhenSaveAllClicked(object sender, ServerValidateEventArgs e)
+        {
+            bool isLocked = chbDiscountLockInsert.Checked;
+
+            List<MilestonePersonEntry> entries = HostingControl.MilestonePersonsEntries;
+            if (isLocked)
+            {
+                e.IsValid = entries != null && entries.Count > 0 ? entries.Any(_ => _.DiscountLocked == false) : false;
+            }
+            else
+            {
+                e.IsValid = true;
+            }
+        }
     }
 }
 
