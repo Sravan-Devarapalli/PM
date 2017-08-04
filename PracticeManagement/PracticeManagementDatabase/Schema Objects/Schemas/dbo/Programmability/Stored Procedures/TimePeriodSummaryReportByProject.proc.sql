@@ -32,14 +32,16 @@ AS
 		INSERT  INTO @ProjectStatusIdsTable
 				SELECT  ResultId
 				FROM    [dbo].[ConvertStringListIntoTable](@ProjectStatusIds);
-			WITH    ProjectForeCastedHoursUntilToday
-					  AS ( SELECT   M.ProjectId ,
+
+		
+					      SELECT   M.ProjectId ,
 					                SUM(CASE WHEN PC.Date <= @Today THEN (dbo.PersonProjectedHoursPerDay(PC.DayOff,PC.CompanyDayOff,PC.TimeOffHours,MPE.HoursPerDay))
 											 ELSE 0
 										END)  AS ForecastedHoursUntilToday,
 									SUM(dbo.PersonProjectedHoursPerDay(PC.DayOff,PC.CompanyDayOff,PC.TimeOffHours,MPE.HoursPerDay)) AS ForecastedHours,
 									MIN(CAST(M.IsHourlyAmount AS INT)) MinimumValue,
 									MAX(CAST(M.IsHourlyAmount AS INT)) MaximumValue
+						   INTO #ProjectForeCastedHoursUntilToday
 						   FROM     dbo.MilestonePersonEntry AS MPE
 									INNER JOIN dbo.MilestonePerson AS MP ON MP.MilestonePersonId = MPE.MilestonePersonId
 									INNER JOIN dbo.Milestone AS M ON M.MilestoneId = MP.MilestoneId
@@ -49,7 +51,46 @@ AS
 															  AND PC.Date BETWEEN MPE.StartDate AND MPE.EndDate
 															  AND PC.Date BETWEEN @StartDateLocal AND @EndDateLocal															  
 						   GROUP BY M.ProjectId
-						 )
+						
+							CREATE CLUSTERED INDEX CIX_ProjectForeCastedHoursUntilToday ON #ProjectForeCastedHoursUntilToday(ProjectId) 
+						
+						 
+						   SELECT  PBPE.ProjectId,
+									PBPE.MilestoneId,
+									PBPE.StartDate,
+									PBPE.EndDate,
+									PBPE.HoursPerDay,
+									PBPE.PersonId
+							INTO #ProjectResources
+							FROM ProjectBudgetPersonEntry PBPE
+							JOIN Project P on P.ProjectId = PBPE.ProjectId
+							WHERE  ( ( @StartDateLocal IS NULL
+										AND @EndDateLocal IS NULL
+										)
+										OR ( @StartDateLocal BETWEEN PBPE.StartDate AND PBPE.EndDate)
+									    )  AND ( @ClientIds IS NULL
+										  OR P.ClientId IN ( SELECT ID  FROM  @ClientIdsTable )
+										)
+					CREATE CLUSTERED INDEX CIX_ProjectResources ON #ProjectResources(ProjectId) 
+
+					
+							SELECT   PR.ProjectId,
+									 SUM(CASE WHEN P.IsStrawman = 0 THEN dbo.PersonProjectedHoursPerDay(PC.DayOff,PC.CompanyDayOff,PC.TimeOffHours,PR.HoursPerDay) ELSE 0 END)  AS ForecastedBudgetHours
+							INTO #PersonBudgetHours
+							FROM #ProjectResources PR 
+								LEFT JOIN dbo.person AS P ON P.PersonId = PR.PersonId 
+								LEFT JOIN dbo.PersonCalendarAuto PC ON PC.PersonId = PR.PersonId 
+										AND PC.Date BETWEEN PR.StartDate AND PR.EndDate 
+						   WHERE  ( ( @StartDateLocal IS NULL
+										AND @EndDateLocal IS NULL
+										)
+										OR ( PC.Date BETWEEN @StartDateLocal AND @EndDateLocal )
+									)
+						GROUP BY PR.ProjectId
+
+						CREATE CLUSTERED INDEX CIX_PersonBudgetHours ON #PersonBudgetHours(ProjectId) 
+					
+
 			SELECT  C.ClientId ,
 					C.Name AS ClientName ,
 					C.Code AS ClientCode ,
@@ -65,6 +106,7 @@ AS
 					NonBillableHours ,
 					ISNULL(pfh.ForecastedHoursUntilToday, 0) AS ForecastedHoursUntilToday ,
 					ISNULL(pfh.ForecastedHours, 0) AS ForecastedHours ,
+					ISNULL(PBH.ForecastedBudgetHours,0) as BudgetHours,
 					BillableHoursUntilToday ,
 					TimeEntrySectionId ,
 					( CASE WHEN ( pfh.MinimumValue IS NULL ) THEN ''
@@ -124,7 +166,8 @@ AS
 					INNER JOIN dbo.ProjectStatus PS ON PS.ProjectStatusId = P.ProjectStatusId
 					INNER JOIN dbo.ProjectGroup PG ON PG.ClientId = C.ClientId
 													  AND PG.GroupId = Data.ProjectGroupId
-					LEFT JOIN ProjectForeCastedHoursUntilToday pfh ON pfh.ProjectId = P.ProjectId
+					LEFT JOIN #ProjectForeCastedHoursUntilToday pfh ON pfh.ProjectId = P.ProjectId
+					LEFT JOIN #PersonBudgetHours PBH ON PBH.ProjectId= P.ProjectId
 			WHERE   ( @ClientIds IS NULL
 					  OR C.ClientId IN ( SELECT ID
 										 FROM   @ClientIdsTable )
@@ -137,6 +180,11 @@ AS
 			ORDER BY TimeEntrySectionId ,
 					P.ProjectNumber
 	
+			DROP TABLE #ProjectForeCastedHoursUntilToday
+			DROP TABLE #ProjectResources
+			DROP TABLE #PersonBudgetHours
+
+
 	END
 	
 
