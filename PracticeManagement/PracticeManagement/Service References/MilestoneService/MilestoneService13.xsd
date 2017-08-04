@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/DataTransferObjects.Reports" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/DataTransferObjects.Reports" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/MilestoneService.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="http://ggku3sys280.ggktech.local/PracticemanagementService/MilestoneService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/DataTransferObjects" />
+  <xs:complexType name="ArrayOfPersonBudgetComparison">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PersonBudgetComparison" nillable="true" type="tns:PersonBudgetComparison" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPersonBudgetComparison" nillable="true" type="tns:ArrayOfPersonBudgetComparison" />
+  <xs:complexType name="PersonBudgetComparison">
+    <xs:sequence>
+      <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="ActualHours" nillable="true" type="q1:ArrayOfKeyValueOfdateTimedecimal" />
+      <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="BudgetBillRate" nillable="true" type="q2:ArrayOfKeyValueOfdateTimePayRatelNKOc9JJ" />
+      <xs:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="BudgetHours" nillable="true" type="q3:ArrayOfKeyValueOfdateTimedecimal" />
+      <xs:element xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="EACHours" nillable="true" type="q4:ArrayOfKeyValueOfdateTimedecimal" />
+      <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="Person" nillable="true" type="q5:Person" />
+      <xs:element xmlns:q6="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="ProjectedAndActualBillRate" nillable="true" type="q6:ArrayOfKeyValueOfdateTimePayRatelNKOc9JJ" />
+      <xs:element xmlns:q7="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="ProjectedHours" nillable="true" type="q7:ArrayOfKeyValueOfdateTimedecimal" />
+      <xs:element xmlns:q8="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="ProjectedRemainingHours" nillable="true" type="q8:ArrayOfKeyValueOfdateTimedecimal" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PersonBudgetComparison" nillable="true" type="tns:PersonBudgetComparison" />
+  <xs:complexType name="PayRate">
+    <xs:sequence>
+      <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="BillRate" type="q9:PracticeManagementCurrency" />
+      <xs:element xmlns:q10="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="PersonCost" type="q10:PracticeManagementCurrency" />
+      <xs:element minOccurs="0" name="PersonId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PayRate" nillable="true" type="tns:PayRate" />
+</xs:schema>
