@@ -237,8 +237,7 @@
                         <asp:Label ID="lblCustomDateRange" runat="server" Text=""></asp:Label>
                         <asp:Image ID="imgCalender" runat="server" ImageUrl="~/Images/calendar.gif" />
                     </td>
-                    <td>
-                    </td>
+                    <td></td>
                     <td align="right">
                         <table>
                             <tr>
@@ -299,36 +298,24 @@
                         <div id="divProjectFilter" class="Padding10Px" runat="server">
                             <table class="WholeWidth Height80Px">
                                 <tr class="tb-header ProjectSummaryAdvancedFiltersHeader">
-                                    <th class="Width10PerImp">
-                                        Account / Business Unit
+                                    <th class="Width10PerImp">Account / Business Unit
                                     </th>
-                                    <td class="Width10Px">
-                                    </td>
-                                    <th class="Width10PerImp">
-                                        Sales Team
+                                    <td class="Width10Px"></td>
+                                    <th class="Width10PerImp">Sales Team
                                     </th>
-                                    <td class="Width10Px">
-                                    </td>
-                                    <th class="Width10PerImp">
-                                        Division / Practice Area
+                                    <td class="Width10Px"></td>
+                                    <th class="Width10PerImp">Division / Practice Area
                                     </th>
-                                    <td class="Width10Px">
-                                    </td>
-                                    <th class="Width10PerImp">
-                                        Revenue Type / Offering
+                                    <td class="Width10Px"></td>
+                                    <th class="Width10PerImp">Revenue Type / Offering
                                     </th>
-                                    <td class="Width10Px">
-                                    </td>
-                                    <th class="Width10PerImp">
-                                        Channel
+                                    <td class="Width10Px"></td>
+                                    <th class="Width10PerImp">Channel
                                     </th>
-                                    <td class="Width10Px">
-                                    </td>
-                                    <th class="Width20PerImp">
-                                        Project Types Included
+                                    <td class="Width10Px"></td>
+                                    <th class="Width20PerImp">Project Types Included
                                     </th>
-                                    <td>
-                                    </td>
+                                    <td></td>
                                 </tr>
                                 <tr>
                                     <td class="Padding5">
@@ -339,8 +326,7 @@
                                             UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                         </ext:ScrollableDropdownExtender>
                                     </td>
-                                    <td>
-                                    </td>
+                                    <td></td>
                                     <td>
                                         <pmc:ScrollingDropDown ID="cblSalesperson" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                             onclick="scrollingDropdown_onclick('cblSalesperson','Salesperson')" DropDownListType="Salesperson" />
@@ -348,8 +334,7 @@
                                             UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                         </ext:ScrollableDropdownExtender>
                                     </td>
-                                    <td>
-                                    </td>
+                                    <td></td>
                                     <td>
                                         <pmc:ScrollingDropDown ID="cblDivision" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                             onclick="scrollingDropdown_onclick('cblDivision','Division')" DropDownListType="Division" />
@@ -357,8 +342,7 @@
                                             UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                         </ext:ScrollableDropdownExtender>
                                     </td>
-                                    <td>
-                                    </td>
+                                    <td></td>
                                     <td>
                                         <pmc:ScrollingDropDown ID="cblRevenueType" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                             onclick="scrollingDropdown_onclick('cblRevenueType','Revenue Type')" DropDownListType="Revenue Type" />
@@ -366,8 +350,7 @@
                                             UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                         </ext:ScrollableDropdownExtender>
                                     </td>
-                                    <td>
-                                    </td>
+                                    <td></td>
                                     <td>
                                         <pmc:ScrollingDropDown ID="cblChannel" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                             onclick="scrollingDropdown_onclick('cblChannel','Channel')" DropDownListType="Channel" />
@@ -375,8 +358,7 @@
                                             UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                         </ext:ScrollableDropdownExtender>
                                     </td>
-                                    <td>
-                                    </td>
+                                    <td></td>
                                     <td rowspan="2">
                                         <table>
                                             <tr class="PadLeft10Td">
@@ -416,13 +398,11 @@
                                                     <asp:CheckBox ID="chbExperimental" runat="server" Text="Experimental" onclick="EnableResetButton();"
                                                         EnableViewState="False" />
                                                 </td>
-                                                <td>
-                                                </td>
+                                                <td></td>
                                             </tr>
                                         </table>
                                     </td>
-                                    <td>
-                                    </td>
+                                    <td></td>
                                 </tr>
                                 <tr>
                                     <td class="Padding5">
@@ -433,8 +413,7 @@
                                             UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                         </ext:ScrollableDropdownExtender>
                                     </td>
-                                    <td>
-                                    </td>
+                                    <td></td>
                                     <td>
                                         <pmc:ScrollingDropDown ID="cblProjectOwner" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                             onclick="scrollingDropdown_onclick('cblProjectOwner','Project Access','es','Project Accesses',33);"
@@ -444,8 +423,7 @@
                                             UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                         </ext:ScrollableDropdownExtender>
                                     </td>
-                                    <td>
-                                    </td>
+                                    <td></td>
                                     <td>
                                         <pmc:ScrollingDropDown ID="cblPractice" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                             onclick="scrollingDropdown_onclick('cblPractice','Practice Area')" DropDownListType="Practice Area" />
@@ -453,8 +431,7 @@
                                             UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                         </ext:ScrollableDropdownExtender>
                                     </td>
-                                    <td>
-                                    </td>
+                                    <td></td>
                                     <td>
                                         <pmc:ScrollingDropDown ID="cblOffering" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                             onclick="scrollingDropdown_onclick('cblOffering','Offering')" DropDownListType="Offering" />
@@ -462,12 +439,9 @@
                                             UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                         </ext:ScrollableDropdownExtender>
                                     </td>
-                                    <td>
-                                    </td>
-                                    <td>
-                                    </td>
-                                    <td>
-                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                             </table>
                         </div>
@@ -481,8 +455,7 @@
     <div id="divWholePage" runat="server">
         <table id="tblRange" runat="server" class="WholeWidth">
             <tr>
-                <td class="fontBold font16Px">
-                    Projected Range:
+                <td class="fontBold font16Px">Projected Range:
                     <asp:Label ID="lblRange" runat="server"></asp:Label>
                 </td>
                 <td class="ProjectsListExport">
@@ -490,13 +463,12 @@
                         Export:</label>
                     <asp:Button ID="btnExportToExcel" runat="server" Text="Excel" OnClick="btnExportToExcel_OnClick"
                         Enabled="true" UseSubmitBehavior="false" ToolTip="Export To Excel." />
-                    <asp:Button ID="btnExportToPDF" runat="server" Text="PDF" OnClick="btnExportToPDF_OnClick"
-                        Enabled="true" UseSubmitBehavior="false" ToolTip="Export To PDF" />
+                    <%--  <asp:Button ID="btnExportToPDF" runat="server" Text="PDF" OnClick="btnExportToPDF_OnClick"
+                        Enabled="true" UseSubmitBehavior="false" ToolTip="Export To PDF" />--%>
                 </td>
             </tr>
             <tr>
-                <td colspan="2" class="ManagementReportHeader">
-                    Project List Report
+                <td colspan="2" class="ManagementReportHeader">Project List Report
                 </td>
             </tr>
         </table>
@@ -507,30 +479,23 @@
                     <table id="tblAllProjectsReport" class="tablesorter PersonSummaryReport zebra WholeWidthImp">
                         <thead class=" no-wrap">
                             <tr>
-                                <th class="TextAlignLeftImp Padding5Imp">
-                                    Project Number
+                                <th class="TextAlignLeftImp Padding5Imp">Project Number
                                 </th>
-                                <th class="DayTotalHoursBorderLeft Padding5Imp">
-                                    Account
+                                <th class="DayTotalHoursBorderLeft Padding5Imp">Account
                                 </th>
-                                <th class="DayTotalHoursBorderLeft Padding5Imp">
-                                    Business Group
+                                <th class="DayTotalHoursBorderLeft Padding5Imp">Business Group
                                 </th>
-                                <th class="DayTotalHoursBorderLeft Padding5Imp">
-                                    Business Unit
+                                <th class="DayTotalHoursBorderLeft Padding5Imp">Business Unit
                                 </th>
                                 <th class="DayTotalHoursBorderLeft Padding5Imp">
                                     <span>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;</span> Project Name <span>&nbsp;
                                         &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;</span>
                                 </th>
-                                <th class="DayTotalHoursBorderLeft Padding5Imp">
-                                    Status
+                                <th class="DayTotalHoursBorderLeft Padding5Imp">Status
                                 </th>
-                                <th class="DayTotalHoursBorderLeft Padding5Imp">
-                                    Start Date
+                                <th class="DayTotalHoursBorderLeft Padding5Imp">Start Date
                                 </th>
-                                <th class="DayTotalHoursBorderLeft Padding5Imp">
-                                    End Date
+                                <th class="DayTotalHoursBorderLeft Padding5Imp">End Date
                                 </th>
                                 <th class="DayTotalHoursBorderLeft Padding5Imp">
                                     <span>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;</span> Division <span>&nbsp; &nbsp;&nbsp;
@@ -545,11 +510,9 @@
                                     <span>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;</span>Channel <span>&nbsp; &nbsp;&nbsp;
                                         &nbsp;&nbsp; &nbsp;&nbsp;</span>
                                 </th>
-                                <th class="DayTotalHoursBorderLeft Padding5Imp">
-                                    Channel-Sub
+                                <th class="DayTotalHoursBorderLeft Padding5Imp">Channel-Sub
                                 </th>
-                                <th class="DayTotalHoursBorderLeft Padding5Imp">
-                                    Revenue Type
+                                <th class="DayTotalHoursBorderLeft Padding5Imp">Revenue Type
                                 </th>
                                 <th class="DayTotalHoursBorderLeft Padding5Imp">
                                     <span>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;</span>Offering <span>&nbsp; &nbsp;&nbsp;
@@ -560,11 +523,19 @@
                                         &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;</span> Capabilities <span>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
                                             &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;</span>
                                 </th>
-                                <th class="DayTotalHoursBorderLeft Padding5Imp">
-                                    Project Manager
+                                <th class="DayTotalHoursBorderLeft Padding5Imp">Project Manager
                                 </th>
-                                <th class="DayTotalHoursBorderLeft Padding5Imp">
-                                    Executive in charge
+                                <th class="DayTotalHoursBorderLeft Padding5Imp">Executive in charge
+                                </th>
+                                <th class="DayTotalHoursBorderLeft Padding5Imp">Client Time entry 
+                                </th>
+                                <th class="DayTotalHoursBorderLeft Padding5Imp">Previous Project Number
+                                </th>
+                                <th class="DayTotalHoursBorderLeft Padding5Imp">Outsource Id Indicator
+                                </th>
+                                <th class="DayTotalHoursBorderLeft Padding5Imp">Budgeted Revenue
+                                </th>
+                                <th class="DayTotalHoursBorderLeft Padding5Imp">ETC Revenue
                                 </th>
                             </tr>
                         </thead>
@@ -627,6 +598,22 @@
                     <td class="DayTotalHoursBorderLeft Padding5Imp">
                         <%# Eval("ExecutiveInChargeName")%>
                     </td>
+                    <td class="DayTotalHoursBorderLeft Padding5Imp">
+                        <%# (bool)Eval("IsClientTimeEntryRequired ")? "Yes" : "No"%>
+                    </td>
+                    <td class="DayTotalHoursBorderLeft Padding5Imp">
+                        <asp:HyperLink ID="lnkPreviousProject" runat="server"
+                            Target="_blank"> </asp:HyperLink>
+                    </td>
+                    <td class="DayTotalHoursBorderLeft Padding5Imp">
+                        <asp:Label ID="lblOutSourceId" runat="server"></asp:Label>
+                    </td>
+                    <td class="DayTotalHoursBorderLeft Padding5Imp" sorttable_customkey='<%# Eval("Budget")%>'>
+                        <%# Eval("Budget")==null?string.Empty:((int)Eval("Budget")).ToString("$###,###,###,###,##0")%>
+                    </td>
+                    <td class="DayTotalHoursBorderLeft Padding5Imp" sorttable_customkey='<%# Eval("ETC")%>'>
+                        <%# Eval("ETC")==null?string.Empty:((int)Eval("ETC")).ToString("$###,###,###,###,##0")%>
+                    </td>
                 </tr>
             </ItemTemplate>
             <AlternatingItemTemplate>
@@ -685,6 +672,23 @@
                     </td>
                     <td class="DayTotalHoursBorderLeft Padding5Imp">
                         <%# Eval("ExecutiveInChargeName")%>
+                    </td>
+                    <td class="DayTotalHoursBorderLeft Padding5Imp">
+                        <%# (bool)Eval("IsClientTimeEntryRequired ")? "Yes" : "No"%>
+                    </td>
+                    <td class="DayTotalHoursBorderLeft Padding5Imp">
+
+                        <asp:HyperLink ID="lnkPreviousProject" runat="server"
+                            Target="_blank"> </asp:HyperLink>
+                    </td>
+                    <td class="DayTotalHoursBorderLeft Padding5Imp">
+                        <asp:Label ID="lblOutSourceId" runat="server"></asp:Label>
+                    </td>
+                    <td class="DayTotalHoursBorderLeft Padding5Imp" sorttable_customkey='<%# Eval("Budget")%>'>
+                        <%# Eval("Budget")==null?string.Empty:((int)Eval("Budget")).ToString("$###,###,###,###,##0")%>
+                    </td>
+                    <td class="DayTotalHoursBorderLeft Padding5Imp" sorttable_customkey='<%# Eval("ETC")%>'>
+                        <%# Eval("ETC")==null?string.Empty:((int)Eval("ETC")).ToString("$###,###,###,###,##0")%>
                     </td>
                 </tr>
             </AlternatingItemTemplate>
