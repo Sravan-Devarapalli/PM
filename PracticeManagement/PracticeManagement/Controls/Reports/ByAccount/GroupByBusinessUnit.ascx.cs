@@ -71,16 +71,16 @@ namespace PraticeManagement.Controls.Reports.ByAccount
                 repBusinessUnits.Visible = false;
             }
 
-            if (Page is AccountSummaryReport)
-            {
-                var hostingPage = (AccountSummaryReport)Page;
-                hostingPage.ByBusinessDevelopmentControl.ApplyAttributes(reportdata.Count);
-            }
-            else
-            {
-                var hostingPage = (TimePeriodSummaryReport)Page;
-                hostingPage.ByProjectControl.ByBusinessDevelopmentControl.ApplyAttributes(reportdata.Count);
-            }
+            //if (Page is AccountSummaryReport)
+            //{
+            //    var hostingPage = (AccountSummaryReport)Page;
+            //    //hostingPage.ByBusinessDevelopmentControl.ApplyAttributes(reportdata.Count);
+            //}
+            //else
+            //{
+            //    var hostingPage = (TimePeriodSummaryReport)Page;
+            //    hostingPage.ByProjectControl.ByBusinessDevelopmentControl.ApplyAttributes(reportdata.Count);
+            //}
         }
 
         protected void repBusinessUnits_ItemDataBound(object sender, RepeaterItemEventArgs e)
@@ -93,16 +93,16 @@ namespace PraticeManagement.Controls.Reports.ByAccount
             {
                 JavaScriptSerializer jss = new JavaScriptSerializer();
                 var output = jss.Serialize(CollapsiblePanelExtenderClientIds);
-                if (Page is AccountSummaryReport)
-                {
-                    var hostingPage = (AccountSummaryReport)Page;
-                    hostingPage.ByBusinessDevelopmentControl.SetExpandCollapseIdsTohiddenField(output);
-                }
-                else
-                {
-                    var hostingPage = (TimePeriodSummaryReport)Page;
-                    hostingPage.ByProjectControl.ByBusinessDevelopmentControl.SetExpandCollapseIdsTohiddenField(output);
-                }
+                //if (Page is AccountSummaryReport)
+                //{
+                //    var hostingPage = (AccountSummaryReport)Page;
+                //    //hostingPage.ByBusinessDevelopmentControl.SetExpandCollapseIdsTohiddenField(output);
+                //}
+                //else
+                //{
+                //    var hostingPage = (TimePeriodSummaryReport)Page;
+                //    hostingPage.ByProjectControl.ByBusinessDevelopmentControl.SetExpandCollapseIdsTohiddenField(output);
+                //}
             }
         }
 
