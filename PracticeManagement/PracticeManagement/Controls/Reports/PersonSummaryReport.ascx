@@ -2,21 +2,14 @@
     Inherits="PraticeManagement.Controls.Reports.PersonSummaryReport" %>
 <table class="WholeWidthWithHeight">
     <tr>
-        <td colspan="4" class="Width90Percent">
-        </td>
+        <td colspan="4" class="Width90Percent"></td>
         <td class="Width10Percent padRight5">
             <table class="WholeWidth">
                 <tr>
-                    <td>
-                        Export:
-                    </td>
-                    <td>
+
+                    <td class="floatright">Export:&nbsp;
                         <asp:Button ID="btnExportToExcel" runat="server" Text="Excel" OnClick="btnExportToExcel_OnClick"
                             UseSubmitBehavior="false" ToolTip="Export To Excel" />
-                    </td>
-                    <td>
-                        <asp:Button ID="btnExportToPDF" runat="server" Text="PDF" OnClick="btnExportToPDF_OnClick"
-                            Enabled="false" UseSubmitBehavior="false" ToolTip="Export To PDF" />
                     </td>
                 </tr>
             </table>
@@ -28,14 +21,17 @@
         <table id="tblPersonSummaryReport" class="tablesorter TimePeriodByproject WholeWidth">
             <thead>
                 <tr>
-                    <th class="textLeft Width460Px">
-                        Project Name
+                    <th class="textLeft Width460Px">Project Name
+                    </th>
+                    <th class="Width110Px">Status
+                    </th>
+                    <th class="Width110Px">Billing Type
                     </th>
                     <th class="Width110Px">
-                        Status
+                        <asp:Label ID="lblBudgetHours" runat="server" Text="Budget Hours"></asp:Label>
                     </th>
                     <th class="Width110Px">
-                        Billing
+                        <asp:Label ID="lblEACHours" runat="server" Text="ETC Hours"></asp:Label>
                     </th>
                     <th class="Width110Px">
                         <asp:Label ID="lblProjectedHours" runat="server" Text="Projected Hours"></asp:Label>
@@ -43,7 +39,7 @@
                     <th class="Width100Px">
                         <asp:Label ID="lblBillable" runat="server" Text="Billable"></asp:Label>
                     </th>
-                    <th class="Width100Px">
+                    <th class="Width100Px" id="thNonBillable" runat="server">
                         <asp:Label ID="lblNonBillable" runat="server" Text="Non-Billable"></asp:Label>
                     </th>
                     <th class="Width100Px">
@@ -58,8 +54,7 @@
                             BackgroundCssClass="modalBackground" PopupControlID="pnlBillableUtilization"
                             DropShadow="false" />
                     </th>
-                    <th class="Width215Px">
-                        Percent of Actual Hours this Period
+                    <th class="Width215Px">Percent of Actual Hours this Period
                     </th>
                 </tr>
             </thead>
@@ -92,12 +87,18 @@
                 <%# Eval("BillableType")%>
             </td>
             <td>
+                <%# GetDoubleFormat((double)Eval("BudgetHours"))%>
+            </td>
+            <td>
+                <%# GetDoubleFormat((double)Eval("ETCHours"))%>
+            </td>
+            <td>
                 <%# GetDoubleFormat((double)Eval("ProjectedHours"))%>
             </td>
             <td>
                 <%# GetDoubleFormat((double)Eval("BillableHours"))%>
             </td>
-            <td>
+            <td id="tdNonBillable" runat="server">
                 <%# GetDoubleFormat((double)Eval("NonBillableHours"))%>
             </td>
             <td>
@@ -149,12 +150,18 @@
                 <%# Eval("BillableType")%>
             </td>
             <td>
+                <%# GetDoubleFormat((double)Eval("BudgetHours"))%>
+            </td>
+            <td>
+                <%# GetDoubleFormat((double)Eval("ETCHours"))%>
+            </td>
+            <td>
                 <%# GetDoubleFormat((double)Eval("ProjectedHours"))%>
             </td>
             <td>
                 <%# GetDoubleFormat((double)Eval("BillableHours"))%>
             </td>
-            <td>
+            <td id="tdNonBillable" runat="server">
                 <%# GetDoubleFormat((double)Eval("NonBillableHours"))%>
             </td>
             <td>
@@ -206,24 +213,21 @@
 <asp:Panel ID="pnlTotalActualHours" Style="display: none;" runat="server" CssClass="pnlTotal">
     <table>
         <tr>
-            <td class="fontBold">
-                Total Billable:
+            <td class="fontBold">Total Billable:
             </td>
             <td>
                 <asp:Label ID="lblTotalBillablePanlActual" runat="server"></asp:Label>
             </td>
         </tr>
         <tr>
-            <td class="fontBold">
-                Total Non-Billable:
+            <td class="fontBold">Total Non-Billable:
             </td>
             <td>
                 <asp:Label ID="lblTotalNonBillablePanlActual" runat="server"></asp:Label>
             </td>
         </tr>
         <tr>
-            <td class="fontBold padRight15">
-                Total Actual Hours:
+            <td class="fontBold padRight15">Total Actual Hours:
             </td>
             <td>
                 <asp:Label ID="lblTotalActualHours" runat="server"></asp:Label>
@@ -259,9 +263,9 @@
                 <br />
             </td>
         </tr>
-       <tr>
+        <tr>
             <td>
-            <p>   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For a time period that includes today's date, the Billable Hours Variance is calculated as the number of Billable Hours <b>up to and including today</b> minus the number of Projected Hours <b>up to and including today</b>.</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For a time period that includes today's date, the Billable Hours Variance is calculated as the number of Billable Hours <b>up to and including today</b> minus the number of Projected Hours <b>up to and including today</b>.</p>
             </td>
         </tr>
         <tr>
@@ -273,7 +277,8 @@
             <td>
                 <p>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For historical time periods, the
-                    system calculates Billable Hours Variance as Projected Hours minus Actual Hours.</p>
+                    system calculates Billable Hours Variance as Projected Hours minus Actual Hours.
+                </p>
             </td>
         </tr>
     </table>
