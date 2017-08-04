@@ -9,7 +9,8 @@ using System.Web.Security;
 using DataTransferObjects;
 using System.Threading;
 using PraticeManagement.Utils;
-
+using System.Web.Services;
+using System.Web.Script.Services;
 
 namespace PraticeManagement
 {
@@ -29,6 +30,8 @@ namespace PraticeManagement
         private bool _userIsSalesperson;
         private bool _userIsSeniorLeadership;
         private bool _userIsOperations;
+        private bool _userIsCFO;
+        private bool _userIsPracticeDirector;
 
         #endregion
 
@@ -61,13 +64,20 @@ namespace PraticeManagement
                 //Quick links
                 PopulateQuickLinksSection();
                 PopulateAnnouncement();
-
                 // Version information
                 SetCurrentAssemblyVersion();
             }
 
             btnEditAnnouncement.Visible = _userIsAdministrator && ddlDashBoardType.SelectedValue == DashBoardType.Admin.ToString();
         }
+
+        protected string GetProjectDetailsLink(int? projectId)
+        {
+            return Utils.Generic.GetTargetUrlWithReturn(String.Format(Constants.ApplicationPages.DetailRedirectFormat, Constants.ApplicationPages.ProjectDetail, projectId.Value),
+                                                        Constants.ApplicationPages.ProjectsListPage);
+        }
+
+
         private void SetCurrentAssemblyVersion()
         {
             string version = Generic.SystemVersion;
@@ -200,7 +210,7 @@ namespace PraticeManagement
                 if (ddlDashBoardType.SelectedValue == DashBoardType.Admin.ToString())
                 {
                     listOfItems.Add("Project", "Project");
-                    listOfItems.Add("Opportunity", "Opportunity");
+                    //listOfItems.Add("Opportunity", "Opportunity");
                     listOfItems.Add("Person", "Person");
                 }
                 else if (ddlDashBoardType.SelectedValue == DashBoardType.Recruiter.ToString())
@@ -219,10 +229,10 @@ namespace PraticeManagement
                         listOfItems.Add("Project", "Project");
                     }
 
-                    if (!listOfItems.Any(k => k.Key == "Opportunity"))
-                    {
-                        listOfItems.Add("Opportunity", "Opportunity");
-                    }
+                    //if (!listOfItems.Any(k => k.Key == "Opportunity"))
+                    //{
+                    //    listOfItems.Add("Opportunity", "Opportunity");
+                    //}
                 }
                 else if (ddlDashBoardType.SelectedValue == DashBoardType.Manager.ToString() || ddlDashBoardType.SelectedValue == DashBoardType.ProjectLead.ToString())
                 {
@@ -247,10 +257,10 @@ namespace PraticeManagement
                     listOfItems.Add("Project", "Project");
                 }
 
-                if (!listOfItems.Any(k => k.Key == "Opportunity"))
-                {
-                    listOfItems.Add("Opportunity", "Opportunity");
-                }
+                //if (!listOfItems.Any(k => k.Key == "Opportunity"))
+                //{
+                //    listOfItems.Add("Opportunity", "Opportunity");
+                //}
             }
             else if (_userIsPracticeAreaManger || _userIsProjectLead || _userIsBusinessUnitManager)
             {
@@ -265,10 +275,10 @@ namespace PraticeManagement
                 {
                     listOfItems.Add("Project", "Project");
                 }
-                if (!listOfItems.Any(k => k.Key == "Opportunity"))
-                {
-                    listOfItems.Add("Opportunity", "Opportunity");
-                }
+                //if (!listOfItems.Any(k => k.Key == "Opportunity"))
+                //{
+                //    listOfItems.Add("Opportunity", "Opportunity");
+                //}
                 if (!listOfItems.Any(k => k.Key == "Person"))
                 {
                     listOfItems.Add("Person", "Person");
@@ -317,6 +327,9 @@ namespace PraticeManagement
                 roles.Contains(DataTransferObjects.Constants.RoleNames.ConsultantRoleName);
             _userIsOperations =
                 roles.Contains(DataTransferObjects.Constants.RoleNames.OperationsRoleName);
+            var currentPerson = DataHelper.CurrentPerson;
+            _userIsCFO = currentPerson.Title.TitleName == "Chief Financial Officer";
+            _userIsPracticeDirector = currentPerson.Title.TitleName == "Practice Director";
         }
 
         protected string GetVirtualPath(string virtualPath)
@@ -460,6 +473,21 @@ namespace PraticeManagement
             return result;
         }
 
+        [WebMethod()]
+        public static List<string> GetOpenTasks()
+        {
+            var result = new List<string>();
+            var tasks = DataHelper.GetOpenTasks(Membership.GetUser().Email);
+            if (tasks == null || tasks.Count == 0)
+            {
+                return null;
+            }
+            foreach (var task in tasks.Where(_ => _.Task != string.Empty))
+            {
+                result.Add(task.Project.Id + "|" + task.Project.ProjectNumber + "-" + task.Task);
+            };
+            return result;
+        }
     }
 }
 
