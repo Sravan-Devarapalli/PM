@@ -15,14 +15,14 @@ namespace DataTransferObjects
         }
 
         [DataMember]
-        public int EndRange
+        public decimal EndRange
         {
             get;
             set;
         }
 
         [DataMember]
-        public int StartRange
+        public decimal StartRange
         {
             get;
             set;
