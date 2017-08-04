@@ -9,9 +9,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Web;
-using System.Web.Script.Services;
 using System.Web.Security;
-using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
@@ -33,14 +31,9 @@ namespace PraticeManagement.Controls.Projects
 
         private const string CurrencyDisplayFormat = "$###,###,###,###,###,##0";
         private const string CurrencyExcelReportFormat = "$####,###,###,###,###,##0.00";
-        //private const int NumberOfFixedColumns = 12;
+        private const int numberOfFixedCol = 28;
         private const int ProjectStateColumnIndex = 0;
         private const int ProjectNumberColumnIndex = 1;
-        private const int ClientNameColumnIndex = 2;
-        private const int ProjectNameColumnIndex = 3;
-        private const int StartDateColumnIndex = 4;
-        private const int EndDateColumnIndex = 5;
-
         private const int MaxPeriodLength = 24;
 
         private const string ButtonClientNameId = "btnClientName";
@@ -99,6 +92,20 @@ namespace PraticeManagement.Controls.Projects
                 if (Page is PraticeManagement.Config.ProjectsReport)
                 {
                     return ((PraticeManagement.Config.ProjectsReport)Page);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+        private PraticeManagement.BudgetManagement HostingPageIsBudgetManagementReport
+        {
+            get
+            {
+                if (Page is PraticeManagement.BudgetManagement)
+                {
+                    return ((PraticeManagement.BudgetManagement)Page);
                 }
                 else
                 {
@@ -274,12 +281,11 @@ namespace PraticeManagement.Controls.Projects
             }
         }
 
-        private int NumberOfFixedColumns
+        private bool showDetailedReport
         {
             get
             {
-                //return HostingPageIsProjectsReport != null ? 15 : 12;
-                return 15;
+                return HostingPageIsBudgetManagementReport != null && ddlLevel.SelectedValue == "2";
             }
         }
 
@@ -300,7 +306,59 @@ namespace PraticeManagement.Controls.Projects
                 {
                     CompanyPerformanceState.Filter.FinancialsFromCache = false;
                 }
-                return CompanyPerformanceState.ProjectList.ToList().OrderBy(p => p.ProjectNumber).ToArray();
+                try
+                {
+                    return CompanyPerformanceState.ProjectList.ToList().OrderBy(p => p.ProjectNumber).ToArray();
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
+
+        private Project[] UIProjectList
+        {
+            get
+            {
+                Project[] list = ProjectList;
+                if ((DataPoints == null || DataPoints.Contains(1)) && IsZeroProjectsSupressed)
+                {
+                    switch (CalculationsType)
+                    {
+                        case 1:
+                            list = ProjectList.ToList().Where(p => p.ComputedFinancials != null && p.ComputedFinancials.Revenue != 0).OrderBy(p => p.ProjectNumber).ToArray();
+                            break;
+                        case 2:
+                            list = ProjectList.ToList().Where(p => p.ComputedFinancials != null && p.ComputedFinancials.ActualRevenue != 0).OrderBy(p => p.ProjectNumber).ToArray();
+                            break;
+                        case 3:
+                            list = ProjectList.ToList().Where(p => p.ComputedFinancials != null && p.ComputedFinancials.BudgetRevenue != 0).OrderBy(p => p.ProjectNumber).ToArray();
+                            break;
+                        case 4:
+                            list = ProjectList.ToList().Where(p => p.ComputedFinancials != null && p.ComputedFinancials.EACRevenue != 0).OrderBy(p => p.ProjectNumber).ToArray();
+                            break;
+                    }
+                }
+                if ((DataPoints == null || DataPoints.Contains(2)) && IsZeroProjectsSupressed)
+                {
+                    switch (CalculationsType)
+                    {
+                        case 1:
+                            list = ProjectList.ToList().Where(p => p.ComputedFinancials != null && p.ComputedFinancials.GrossMargin != 0).OrderBy(p => p.ProjectNumber).ToArray();
+                            break;
+                        case 2:
+                            list = ProjectList.ToList().Where(p => p.ComputedFinancials != null && p.ComputedFinancials.ActualGrossMargin != 0).OrderBy(p => p.ProjectNumber).ToArray();
+                            break;
+                        case 3:
+                            list = ProjectList.ToList().Where(p => p.ComputedFinancials != null && p.ComputedFinancials.BudgetGrossMargin != 0).OrderBy(p => p.ProjectNumber).ToArray();
+                            break;
+                        case 4:
+                            list = ProjectList.ToList().Where(p => p.ComputedFinancials != null && p.ComputedFinancials.EACGrossMargin != 0).OrderBy(p => p.ProjectNumber).ToArray();
+                            break;
+                    }
+                }
+                return list;
             }
         }
 
@@ -313,18 +371,6 @@ namespace PraticeManagement.Controls.Projects
                     ViewState[ViewExportProjects] = ProjectList;
                 }
                 return (Project[])ViewState[ViewExportProjects];
-            }
-        }
-
-        private Project[] ExportAllProjectList
-        {
-            get
-            {
-                if (ViewState[ViewExportAllProjects] == null)
-                {
-                    ViewState[ViewExportAllProjects] = GetProjectListAll();
-                }
-                return (Project[])ViewState[ViewExportAllProjects];
             }
         }
 
@@ -371,6 +417,119 @@ namespace PraticeManagement.Controls.Projects
             }
         }
 
+        private int ActualPeriod
+        {
+            get
+            {
+                return int.Parse(ddlActualPeriod.SelectedValue);
+            }
+        }
+
+        public DateTime? ActualsEndDate
+        {
+            get
+            {
+                if (CalculationsType == 2)
+                {
+                    var now = Utils.Generic.GetNowWithTimeZone();
+
+                    if (HostingPageIsBudgetManagementReport != null)
+                    {
+                        return now;
+                    }
+                    else
+                    {
+
+                        if (ActualPeriod == 30)
+                        {
+                            return Utils.Calendar.MonthEndDate(now.AddMonths(-1));
+                        }
+                        else if (ActualPeriod == 15)
+                        {
+                            return Utils.Calendar.PayrollPerviousEndDate(now);
+                        }
+                        else if (ActualPeriod == 0)
+                        {
+                            return null;
+                        }
+                        else
+                        {
+                            return now;
+                        }
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        public List<int> DataPoints
+        {
+            get
+            {
+                //1-revenue, 2-Margin
+                return ddldataPoints.SelectedValues;
+            }
+        }
+
+        private string FeeTypeIds
+        {
+            get
+            {
+                return ddlFeeType.SelectedItems;
+            }
+            set
+            {
+                ddlFeeType.SelectedItems = value;
+            }
+
+        }
+
+        public int? FeeType
+        {
+            get
+            {
+                if (HostingPageIsBudgetManagementReport != null)
+                {
+                    var sel = ddlFeeType.SelectedValues;
+                    if (sel == null || (sel.Contains(1) && sel.Contains(2)))
+                    {
+                        return null;
+                    }
+                    else if (sel.Contains(1))
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        return 2;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        public bool IsZeroProjectsSupressed
+        {
+            get
+            {
+                return ddlSupressZeroBalance.SelectedValue == "1";
+            }
+        }
+
+        public int ExportType
+        {
+            get
+            {
+                return Convert.ToInt32(ddlExportOptions.SelectedValue);
+            }
+        }
+
         private SheetStyles HeaderSheetStyle
         {
             get
@@ -411,7 +570,7 @@ namespace PraticeManagement.Controls.Projects
                 monthNameHeaderCellStyle.HorizontalAlignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
 
                 List<CellStyles> headerCellStyleList = new List<CellStyles>();
-                for (int i = 0; i < 19; i++)//there are 14 columns before month columns.
+                for (int i = 0; i < 28; i++)//there are 28 columns before month columns.
                     headerCellStyleList.Add(headerCellStyle);
 
                 if (renderMonthColumns)
@@ -428,6 +587,7 @@ namespace PraticeManagement.Controls.Projects
 
                 CellStyles dataCellStyle = new CellStyles();
 
+
                 CellStyles wrapdataCellStyle = new CellStyles();
                 wrapdataCellStyle.WrapText = true;
 
@@ -435,17 +595,29 @@ namespace PraticeManagement.Controls.Projects
                 dataStartDateCellStyle.DataFormat = "mm/dd/yy;@";
 
                 CellStyles dataNumberDateCellStyle = new CellStyles();
-                dataNumberDateCellStyle.DataFormat = "$#,##0.00_);($#,##0.00)";
+                dataNumberDateCellStyle.DataFormat = "$#,##0_);($#,##0)";
 
-                CellStyles[] dataCellStylearray = { dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataStartDateCellStyle, dataStartDateCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle };
+                CellStyles dataPerCellStyle = new CellStyles();
+                dataPerCellStyle.DataFormat = "0.00%_);(0.00%)";
+
+                CellStyles[] dataCellStylearray = { dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataStartDateCellStyle, dataStartDateCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, wrapdataCellStyle, dataCellStyle };
                 List<CellStyles> dataCellStyleList = dataCellStylearray.ToList();
 
                 var coloumnWidth = new List<int>();
-                for (int i = 0; i < 12; i++)
+                for (int i = 0; i < 17; i++)
                     coloumnWidth.Add(0);
                 coloumnWidth.Add(50);
                 coloumnWidth.Add(0);
 
+                dataCellStyleList.Add(dataCellStyle);
+                dataCellStyleList.Add(dataCellStyle);
+                dataCellStyleList.Add(dataCellStyle);
+                dataCellStyleList.Add(dataCellStyle);
+                dataCellStyleList.Add(dataCellStyle);
+                dataCellStyleList.Add(dataCellStyle);
+                dataCellStyleList.Add(dataCellStyle);
+                dataCellStyleList.Add(dataCellStyle);
+                dataCellStyleList.Add(dataCellStyle);
                 if (renderMonthColumns)
                 {
                     var monthsInPeriod = GetPeriodLength();
@@ -455,12 +627,19 @@ namespace PraticeManagement.Controls.Projects
                     }
                 }
                 dataCellStyleList.Add(dataNumberDateCellStyle);
-                dataCellStyleList.Add(wrapdataCellStyle);
-                dataCellStyleList.Add(dataCellStyle);
-                dataCellStyleList.Add(dataCellStyle);
-                dataCellStyleList.Add(dataCellStyle);
-                //CAST OWNER dataCellStyleList.Add(dataCellStyle);
-
+                dataCellStyleList.Add(dataNumberDateCellStyle);
+                dataCellStyleList.Add(dataNumberDateCellStyle);
+                if (HostingPageIsBudgetManagementReport != null)
+                {
+                    dataCellStyleList.Add(dataPerCellStyle);
+                }
+                else
+                {
+                    dataCellStyleList.Add(dataNumberDateCellStyle);
+                    dataCellStyleList.Add(dataNumberDateCellStyle);
+                    dataCellStyleList.Add(dataNumberDateCellStyle);
+                    dataCellStyleList.Add(dataPerCellStyle);
+                }
                 RowStyles datarowStyle = new RowStyles(dataCellStyleList.ToArray());
 
                 RowStyles[] rowStylearray = { headerrowStyle, datarowStyle };
@@ -473,6 +652,124 @@ namespace PraticeManagement.Controls.Projects
                 return sheetStyle;
             }
         }
+
+        private SheetStyles ScreenOnlySheetStyle
+        {
+            get
+            {
+                CellStyles headerCellStyle = new CellStyles();
+                headerCellStyle.IsBold = true;
+                headerCellStyle.HorizontalAlignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
+
+                CellStyles monthNameHeaderCellStyle = new CellStyles();
+                monthNameHeaderCellStyle.DataFormat = "[$-409]mmmm-yy;@";
+                monthNameHeaderCellStyle.IsBold = true;
+                monthNameHeaderCellStyle.HorizontalAlignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
+
+                List<CellStyles> headerCellStyleList = new List<CellStyles>();
+                for (int i = 0; i < 7; i++)//there are 28 columns before month columns.
+                    headerCellStyleList.Add(headerCellStyle);
+
+                if (renderMonthColumns)
+                {
+                    var monthsInPeriod = GetPeriodLength();
+                    for (int i = 0; i < monthsInPeriod; i++)
+                    {
+                        headerCellStyleList.Add(monthNameHeaderCellStyle);
+                    }
+                }
+                headerCellStyleList.Add(headerCellStyle);
+
+                RowStyles headerrowStyle = new RowStyles(headerCellStyleList.ToArray());
+
+                CellStyles dataCellStyle = new CellStyles();
+
+                CellStyles dataStartDateCellStyle = new CellStyles();
+                dataStartDateCellStyle.DataFormat = "mm/dd/yy;@";
+
+                CellStyles dataNumberDateCellStyle = new CellStyles();
+                dataNumberDateCellStyle.DataFormat = "$#,##0_);($#,##0)";
+
+                CellStyles dataPerCellStyle = new CellStyles();
+                dataPerCellStyle.DataFormat = "0.00%_);(0.00%)";
+
+                CellStyles[] dataCellStylearray = { dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataStartDateCellStyle, dataStartDateCellStyle, dataCellStyle };
+                List<CellStyles> dataCellStyleList = dataCellStylearray.ToList();
+
+                if (renderMonthColumns)
+                {
+                    var monthsInPeriod = GetPeriodLength();
+                    for (int i = 0; i < monthsInPeriod; i++)
+                    {
+                        dataCellStyleList.Add(dataNumberDateCellStyle);
+                    }
+                }
+                dataCellStyleList.Add(dataNumberDateCellStyle);
+                if (CalculationsType != 3)
+                {
+                    dataCellStyleList.Add(dataNumberDateCellStyle);
+                    dataCellStyleList.Add(dataNumberDateCellStyle);
+                }
+
+                dataCellStyleList.Add(dataPerCellStyle);
+
+                RowStyles datarowStyle = new RowStyles(dataCellStyleList.ToArray());
+
+                //var dataNumberDateRevenueCellStyle = new CellStyles();
+                //dataNumberDateRevenueCellStyle.DataFormat = "$#,##0_);($#,##0)";
+                //dataNumberDateRevenueCellStyle.CellFormula = "SUMPRODUCT((MOD(ROW($H$4:$H$30),3)=0)*($B$1:$B$15))";
+
+                //CellStyles[] dataTotalCellStylearray = { dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataStartDateCellStyle, dataStartDateCellStyle, dataCellStyle };
+                //List<CellStyles> dataTotalCellStylelist = dataTotalCellStylearray.ToList();
+
+                //if (renderMonthColumns)
+                //{
+                //    var monthsInPeriod = GetPeriodLength();
+                //    for (int i = 0; i < monthsInPeriod; i++)
+                //    {
+                //        dataTotalCellStylelist.Add(dataNumberDateRevenueCellStyle);
+                //    }
+                //}
+                //dataTotalCellStylelist.Add(dataNumberDateRevenueCellStyle);
+                //if (CalculationsType != 3)
+                //{
+                //    dataTotalCellStylelist.Add(dataNumberDateRevenueCellStyle);
+                //    dataTotalCellStylelist.Add(dataNumberDateRevenueCellStyle);
+                //}
+
+                //dataTotalCellStylelist.Add(dataCellStyle);
+
+                //RowStyles datarowTotalStyle = new RowStyles(dataTotalCellStylelist.ToArray());
+
+                var rowStylelist = new List<RowStyles>();
+                rowStylelist.Add(headerrowStyle);
+
+                for (int i = 0; i < ExportRowsCount; i++)
+                {
+                    rowStylelist.Add(datarowStyle);
+                }
+
+                //rowStylelist.Add(datarowTotalStyle);
+
+                RowStyles[] rowStylearray = rowStylelist.ToArray();
+
+
+                SheetStyles sheetStyle = new SheetStyles(rowStylearray);
+                sheetStyle.TopRowNo = headerRowsCount;
+                sheetStyle.IsFreezePane = true;
+                sheetStyle.FreezePanColSplit = 0;
+                sheetStyle.FreezePanRowSplit = headerRowsCount;
+
+                return sheetStyle;
+            }
+        }
+
+        private int ExportRowsCount
+        {
+            get;
+            set;
+        }
+
 
         private string ErrorMessage { get; set; }
 
@@ -525,7 +822,7 @@ namespace PraticeManagement.Controls.Projects
             // Client side validator is not applicable here.
             reqSearchText.IsValid = true;
 
-           
+
             lblCustomDateRange.Text = string.Format("({0}&nbsp;-&nbsp;{1})",
                     diRange.FromDate.Value.ToString(Constants.Formatting.EntryDateFormat),
                     diRange.ToDate.Value.ToString(Constants.Formatting.EntryDateFormat)
@@ -559,11 +856,13 @@ namespace PraticeManagement.Controls.Projects
                     }
                 }
             }
-            imgExportAllToExcel.Visible = userIsAdministrator;
             if (HostingPageIsProjectsReport != null)
             {
                 lnkAddProject.Visible = false;
-                imgExportAllToExcel.Visible = false;
+            }
+            if (HostingPageIsBudgetManagementReport != null)
+            {
+                lnkAddProject.Visible = false;
             }
             hdnStartDate.Value = diRange.FromDate.Value.ToString(Constants.Formatting.EntryDateFormat);
             hdnEndDate.Value = diRange.ToDate.Value.ToString(Constants.Formatting.EntryDateFormat);
@@ -675,14 +974,19 @@ namespace PraticeManagement.Controls.Projects
         /// </summary>
         private void SaveFilterSettings()
         {
+            //raj
             CompanyPerformanceFilterSettings filter = GetFilterSettings();
-            if (HostingPageIsProjectsReport == null)
+            if (HostingPageIsProjectsReport != null)
             {
-                SerializationHelper.SerializeCookie(filter, CompanyPerformanceFilterKey);
+                ReportsFilterHelper.SaveFilterValues(ReportName.ProjectSummaryReport, filter);
+            }
+            else if (HostingPageIsBudgetManagementReport != null)
+            {
+                ReportsFilterHelper.SaveFilterValues(ReportName.BudgetManagementReport, filter);
             }
             else
             {
-                ReportsFilterHelper.SaveFilterValues(ReportName.ProjectSummaryReport, filter);
+                SerializationHelper.SerializeCookie(filter, CompanyPerformanceFilterKey);
             }
         }
 
@@ -720,10 +1024,15 @@ namespace PraticeManagement.Controls.Projects
                      ShowInactive = chbInactive.Checked,
                      PeriodSelected = Convert.ToInt32(ddlPeriod.SelectedValue),
                      ViewSelected = Convert.ToInt32(ddlView.SelectedValue),
-
-                     CalculateRangeSelected = (ProjectCalculateRangeType)Enum.Parse(typeof(ProjectCalculateRangeType), ddlCalculateRange.SelectedValue),
+                     CalculateRangeSelected = ProjectCalculateRangeType.ProjectValueInRange,
                      HideAdvancedFilter = false,
-                     CalculationsType = Convert.ToInt32(ddlCalculationsType.SelectedValue)
+                     CalculationsType = Convert.ToInt32(ddlCalculationsType.SelectedValue),
+                     DataPointsIdsList = ddldataPoints.SelectedItems,
+                     //ViewIdsList = ddlCalculationsType.SelectedValue,
+                     SupressZeroProjects = ddlSupressZeroBalance.SelectedValue,
+                     FeeTypeIds = FeeTypeIds,
+                     Level = ddlLevel.SelectedValue,
+                     ActualEndDate = ActualsEndDate
                  };
             return filter;
         }
@@ -733,23 +1042,49 @@ namespace PraticeManagement.Controls.Projects
             if (e.Item.ItemType == ListViewItemType.DataItem)
             {
                 var row = e.Item.FindControl("boundingRow") as HtmlTableRow;
-                if (HostingPageIsProjectsReport == null)
+
+
+                if (HostingPageIsBudgetManagementReport != null)
                 {
-                    ScriptManager.RegisterStartupScript(this.Page, Page.GetType(), "", "HideColumns();", true);
+                    if (showDetailedReport)
+                    {
+                        ScriptManager.RegisterStartupScript(this.Page, Page.GetType(), "", "ShowDetailedColumns();", true);
+                    }
+                    else
+                    {
+                        ScriptManager.RegisterStartupScript(this.Page, Page.GetType(), "", "HideDetailedColumns();", true);
+                    }
                 }
                 else
                 {
-                    ScriptManager.RegisterStartupScript(this.Page, Page.GetType(), "", "ShowColumns();", true);
+                    ScriptManager.RegisterStartupScript(this.Page, Page.GetType(), "", "HideColumns();", true);
                 }
-                if (row.Cells.Count == NumberOfFixedColumns)
+
+                if (row.Cells.Count == numberOfFixedCol)
                 {
                     var monthsInPeriod = GetPeriodLength();
+                    //Raj
+                    if (HostingPageIsBudgetManagementReport != null)
+                    {
+                        monthsInPeriod = 0;
+                    }
                     for (int i = 0; i < monthsInPeriod + 1; i++)   // + 1 means a cell for total column
                     {
                         var td = new HtmlTableCell() { };
                         td.Attributes["class"] = "CompPerfMonthSummary";
                         row.Cells.Insert(row.Cells.Count, td);
                     }
+
+                    if (CalculationsType != 3)
+                    {
+                        for (int i = 0; i < 3; i++)
+                        {
+                            var td = new HtmlTableCell() { };
+                            td.Attributes["class"] = "CompPerfMonthSummary";
+                            row.Cells.Insert(row.Cells.Count, td);
+                        }
+                    }
+
                 }
 
                 var project = (e.Item as ListViewDataItem).DataItem as Project;
@@ -770,10 +1105,6 @@ namespace PraticeManagement.Controls.Projects
 
                     if (project.Id.HasValue)
                     {
-                        /*
-                         * TEMPORARY COMMENT
-                         * Will be then used to fix #1257
-                         */
                         personListAnalyzer = new SeniorityAnalyzer(DataHelper.CurrentPerson);
                         personListAnalyzer.OneWithGreaterSeniorityExists(project.ProjectPersons);
 
@@ -784,21 +1115,25 @@ namespace PraticeManagement.Controls.Projects
                         FillProjectNameCell(htmlRow, project);
                         FillProjectStartCell(e.Item, project);
                         FillProjectEndCell(e.Item, project);
-                        FillDivisionCell(e.Item, project);
-                        FillPracticeCell(e.Item, project);
-                        FillChannelCell(e.Item, project);
-                        FillSubChannelCell(e.Item, project);
-                        FillRevenueCell(e.Item, project);
-                        FillOfferingCell(e.Item, project);
-                        if (HostingPageIsProjectsReport != null)
+                        if (HostingPageIsBudgetManagementReport != null && showDetailedReport)
                         {
+                            FillDivisionCell(e.Item, project);
+                            FillPracticeCell(e.Item, project);
+                            FillChannelCell(e.Item, project);
+                            FillSubChannelCell(e.Item, project);
+                            FillRevenueCell(e.Item, project);
+                            FillOfferingCell(e.Item, project);
                             FillStatusCell(e.Item, project);
                             FillNewOrExtCell(e.Item, project);
                             FillSalesPersonCell(e.Item, project);
+                            FillDetailsCell(e.Item, project);
                         }
                     }
-
-                    FillMonthCells(row, project, personListAnalyzer);
+                    //Raj
+                    if (HostingPageIsBudgetManagementReport == null)
+                    {
+                        FillMonthCells(row, project, personListAnalyzer);
+                    }
                     FillTotalsCell(row, project, personListAnalyzer);
                 }
             }
@@ -811,7 +1146,7 @@ namespace PraticeManagement.Controls.Projects
             int periodLength = GetPeriodLength();
 
             // Displaying the interest values (main cell data)
-            for (int i = NumberOfFixedColumns, k = 0;
+            for (int i = numberOfFixedCol, k = 0;
                 k < periodLength;
                 i++, k++, monthBegin = monthBegin.AddMonths(1))
             {
@@ -830,8 +1165,28 @@ namespace PraticeManagement.Controls.Projects
                                 // Project.Id != null is for regular projects only
                                 bool greaterSeniorityExists = personListAnalyzer != null && personListAnalyzer.GreaterSeniorityExists;
 
-                                var revenue = CalculationsType == 2 ? interestValue.Value.ActualRevenue : CalculationsType == 1 ? interestValue.Value.Revenue : interestValue.Value.PreviousMonthsActualRevenueValue;
-                                var margin = CalculationsType == 2 ? interestValue.Value.ActualGrossMargin : CalculationsType == 1 ? interestValue.Value.GrossMargin : interestValue.Value.PreviousMonthsActualMarginValue;
+                                PracticeManagementCurrency revenue = new PracticeManagementCurrency();
+                                PracticeManagementCurrency margin = new PracticeManagementCurrency();
+
+                                switch (CalculationsType)
+                                {
+                                    case 1:
+                                        revenue = interestValue.Value.Revenue;
+                                        margin = interestValue.Value.GrossMargin;
+                                        break;
+                                    case 2:
+                                        revenue = interestValue.Value.ActualRevenue;
+                                        margin = interestValue.Value.ActualGrossMargin;
+                                        break;
+                                    case 3:
+                                        revenue = interestValue.Value.BudgetRevenue;
+                                        margin = interestValue.Value.BudgetGrossMargin;
+                                        break;
+                                    case 4:
+                                        revenue = interestValue.Value.EACRevenue;
+                                        margin = interestValue.Value.EACGrossMargin;
+                                        break;
+                                }
 
                                 row.Cells[i].InnerHtml = GetMonthReportTableAsHtml(revenue, margin, greaterSeniorityExists);
                                 break;
@@ -856,6 +1211,49 @@ namespace PraticeManagement.Controls.Projects
                     Constants.Dates.FirstDay);
         }
 
+        private static void FillDetailsCell(ListViewItem e, Project project)
+        {
+            var lblIsHouseAccount = e.FindControl("lblIsHouseAccount") as Label;
+            lblIsHouseAccount.Text = project.Client.IsHouseAccount ? "Yes" : string.Empty;
+
+            var lblBusinessGroup = e.FindControl("lblBusinessGroup") as Label;
+            lblBusinessGroup.Text = project.BusinessGroup.HtmlEncodedName;
+
+            var lblBusinessUnit = e.FindControl("lblBusinessUnit") as Label;
+            lblBusinessUnit.Text = project.Group.HtmlEncodedName;
+
+            var lblBuyer = e.FindControl("lblBuyer") as Label;
+            lblBuyer.Text = project.BuyerName;
+
+            var lblProjectManager = e.FindControl("lblProjectManager") as Label;
+            lblProjectManager.Text = (project.ProjectOwner != null) ? project.ProjectOwner.Name : string.Empty;
+
+            var lblEngagementManager = e.FindControl("lblEngagementManager") as Label;
+            lblEngagementManager.Text = (project.SeniorManagerName != null) ? project.SeniorManagerName : string.Empty;
+
+            var lblExecutiveInCharge = e.FindControl("lblExecutiveInCharge") as Label;
+            lblExecutiveInCharge.Text = (project.Director != null && project.Director.Name != null) ? project.Director.Name.ToString() : string.Empty;
+
+            var lblPricingList = e.FindControl("lblPricingList") as Label;
+            lblPricingList.Text = project.PricingList != null ? project.PricingList.HtmlEncodedName : "";
+
+            var lblPONumber = e.FindControl("lblPONumber") as Label;
+            lblPONumber.Text = project.PONumber;
+
+            var lblClientTimeEntry = e.FindControl("lblClientTimeEntry") as Label;
+            lblClientTimeEntry.Text = project.IsClientTimeEntryRequired ? "Yes" : "No";
+
+            var lblPreviousProjectNumber = e.FindControl("lblPreviousProjectNumber") as Label;
+            lblPreviousProjectNumber.Text = project.PreviousProject != null ? project.PreviousProject.ProjectNumber : string.Empty;
+
+            var lblOutSourceId = e.FindControl("lblOutSourceId") as Label;
+            lblOutSourceId.Text = project.OutsourceId != 3 ? DataHelper.GetDescription((OutsourceId)project.OutsourceId) : string.Empty;
+
+            var lblCapabilities = e.FindControl("lblCapabilities") as Label;
+
+            lblCapabilities.Text = (project.Capabilities != null && project.Capabilities != string.Empty) ? project.Capabilities.TrimEnd(',', ' ') : string.Empty;
+        }
+
         private void FillTotalsCell(HtmlTableRow row, Project project, SeniorityAnalyzer personListAnalyzer)
         {
             // Project totals
@@ -866,22 +1264,50 @@ namespace PraticeManagement.Controls.Projects
             // Calculate Total Revenue and Margin for current Project
             if (project.ComputedFinancials != null)
             {
-                totalRevenue = CalculationsType == 2 ? project.ComputedFinancials.ActualRevenue : CalculationsType == 1 ? project.ComputedFinancials.Revenue : project.ComputedFinancials.PreviousMonthsActualRevenueValue; //CalculationsType == 1 ? project.ComputedFinancials.Revenue : project.ComputedFinancials.ActualRevenue;
-                totalMargin = CalculationsType == 2 ? project.ComputedFinancials.ActualGrossMargin : CalculationsType == 1 ? project.ComputedFinancials.GrossMargin : project.ComputedFinancials.PreviousMonthsActualMarginValue; //CalculationsType == 1 ? project.ComputedFinancials.GrossMargin : project.ComputedFinancials.ActualGrossMargin;
+                switch (CalculationsType)
+                {
+                    case 1:
+                        totalRevenue = project.ComputedFinancials.Revenue;
+                        totalMargin = project.ComputedFinancials.GrossMargin;
+                        break;
+                    case 2:
+                        totalRevenue = project.ComputedFinancials.ActualRevenue;
+                        totalMargin = project.ComputedFinancials.ActualGrossMargin;
+                        break;
+                    case 3:
+                        totalRevenue = project.ComputedFinancials.BudgetRevenue;
+                        totalMargin = project.ComputedFinancials.BudgetGrossMargin;
+                        break;
+                    case 4:
+                        totalRevenue = project.ComputedFinancials.EACRevenue;
+                        totalMargin = project.ComputedFinancials.EACGrossMargin;
+                        break;
+                }
             }
+
+            int totalCellNumber = CalculationsType == 3 ? row.Cells.Count - 1 : row.Cells.Count - 4;
 
             // Render Total Revenue and Margin for current Project
             if (project.Id.HasValue)
             {
-                // Displaying the project totals
                 bool greaterSeniorityExists = personListAnalyzer != null && personListAnalyzer.GreaterSeniorityExists;
+                row.Cells[totalCellNumber].InnerHtml = HostingPageIsBudgetManagementReport != null ? GetMonthReportTableAsHtml(project.ComputedFinancials.BudgetRevenue, project.ComputedFinancials.BudgetGrossMargin, greaterSeniorityExists) : GetMonthReportTableAsHtml(totalRevenue, totalMargin, greaterSeniorityExists);
+                row.Cells[totalCellNumber].Attributes["class"] = "CompPerfTotalSummary";
+                if (CalculationsType != 3)
+                {
+                    row.Cells[totalCellNumber + 1].InnerHtml = HostingPageIsBudgetManagementReport != null ? GetMonthReportTableAsHtml(totalRevenue, totalMargin, greaterSeniorityExists) : GetMonthReportTableAsHtml(project.ComputedFinancials.BudgetRevenue, project.ComputedFinancials.BudgetGrossMargin, greaterSeniorityExists);
+                    row.Cells[totalCellNumber + 1].Attributes["class"] = "CompPerfTotalSummary";
 
-                row.Cells[row.Cells.Count - 1].InnerHtml = GetMonthReportTableAsHtml(totalRevenue, totalMargin, greaterSeniorityExists);
-                //string.Format(
-                //Resources.Controls.ProjectInterestFormat, totalRevenue, strTotalMargin);
-                row.Cells[row.Cells.Count - 1].Attributes["class"] = "CompPerfTotalSummary";
-                //if (greaterSeniorityExists)
-                //    OneGreaterSeniorityExists = true;
+                    var varianceRevenue = totalRevenue - project.ComputedFinancials.BudgetRevenue;
+                    var varianceMargin = totalMargin - project.ComputedFinancials.BudgetGrossMargin;
+
+                    row.Cells[totalCellNumber + 2].InnerHtml = GetMonthReportTableAsHtml(varianceRevenue, varianceMargin, greaterSeniorityExists);
+                    row.Cells[totalCellNumber + 2].Attributes["class"] = "CompPerfTotalSummary";
+
+                    decimal revPer = totalRevenue.Value != 0M ? varianceRevenue.Value * 100 / totalRevenue.Value : 0M;
+                    decimal marper = totalMargin.Value != 0M ? varianceMargin.Value * 100 / totalMargin.Value : 0M;
+                    row.Cells[totalCellNumber + 3].InnerHtml = GetVariancePercentageTableAsHtml(revPer, marper);
+                }
             }
         }
 
@@ -903,11 +1329,6 @@ namespace PraticeManagement.Controls.Projects
             {
                 lblEndDate.Text = project.EndDate.Value.ToString("MM/dd/yyyy");
             }
-            //var indentDiv = new Panel() { CssClass = "cell-pad" };
-            //indentDiv.Controls.Add(lblEndDate);
-
-            //row.Cells[EndDateColumnIndex].Controls.Add(indentDiv);
-            //row.Cells[StartDateColumnIndex].Attributes["class"] = "CompPerfPeriod";
         }
 
         private static void FillStatusCell(ListViewItem e, Project project)
@@ -933,21 +1354,12 @@ namespace PraticeManagement.Controls.Projects
 
         private static void FillProjectStartCell(ListViewItem e, Project project)
         {
-            var row = e.FindControl("boundingRow") as HtmlTableRow;
-
-            // Project Start date cell content
             var lblStartDate = e.FindControl(LabelStartDateId) as Label;
 
             if (project.StartDate.HasValue)
             {
                 lblStartDate.Text = project.StartDate.Value.ToString("MM/dd/yyyy");
             }
-
-            //var indentDiv = new Panel() { CssClass = "cell-pad" };
-            //indentDiv.Controls.Add(lblStartDate);
-
-            //row.Cells[StartDateColumnIndex].Controls.Add(indentDiv);
-            //row.Cells[StartDateColumnIndex].Attributes["class"] = "CompPerfPeriod";
         }
 
         private void FillProjectStateCell(HtmlTableRow row, string cssClass, ProjectStatus status)
@@ -976,6 +1388,8 @@ namespace PraticeManagement.Controls.Projects
 
         private void FillProjectNameCell(HtmlTableRow row, Project project)
         {
+            var tdProjectName = row.FindControl("tdProjectName") as HtmlTableCell;
+
             HtmlAnchor anchor = new HtmlAnchor();
             anchor.InnerText = project.Name;
             anchor.HRef = GetRedirectUrl(project.Id.Value, Constants.ApplicationPages.ProjectDetail);
@@ -983,7 +1397,7 @@ namespace PraticeManagement.Controls.Projects
             anchor.Attributes["onmouseout"] = "HidePanel();";
             anchor.Attributes["onmouseover"] = "SetTooltipText(this.attributes['Description'].value,this);";
 
-            row.Cells[ProjectNameColumnIndex].Controls.Add(anchor);
+            tdProjectName.Controls.Add(anchor);
         }
 
         private static string GetRedirectUrl(int argProjectId, string targetUrl)
@@ -996,14 +1410,9 @@ namespace PraticeManagement.Controls.Projects
 
         private static void FillClientNameCell(ListViewItem e, Project project)
         {
-            var row = e.FindControl("boundingRow") as HtmlTableRow;
-            // Client name cell content
             var btnClient = e.FindControl(ButtonClientNameId) as HyperLink;
-
             btnClient.Text = project.Client.HtmlEncodedName;
             btnClient.NavigateUrl = GetRedirectUrl(project.Client.Id.Value, Constants.ApplicationPages.ClientDetails);
-
-            // row.Cells[ClientNameColumnIndex].Controls.Add(btnClient);
         }
 
         private static void FillDivisionCell(ListViewItem e, Project project)
@@ -1011,11 +1420,7 @@ namespace PraticeManagement.Controls.Projects
             var row = e.FindControl("boundingRow") as HtmlTableRow;
             // Division cell content
             var lblDivision = e.FindControl("lblDivision") as Label;
-
             lblDivision.Text = project.Division != null ? project.Division.Name : string.Empty;
-
-
-            //row.Cells[ClientNameColumnIndex].Controls.Add(btnClient);
         }
 
         private static void FillPracticeCell(ListViewItem e, Project project)
@@ -1091,7 +1496,7 @@ namespace PraticeManagement.Controls.Projects
 
         private void BindProjectGrid()
         {
-            lvProjects.DataSource = SortProjects(ProjectList);
+            lvProjects.DataSource = SortProjects(UIProjectList);
             lvProjects.DataBind();
         }
 
@@ -1136,7 +1541,7 @@ namespace PraticeManagement.Controls.Projects
                 }
                 return projectList;
             }
-            return ProjectList;
+            return UIProjectList;
         }
 
         protected void custPeriod_ServerValidate(object source, ServerValidateEventArgs args)
@@ -1201,7 +1606,7 @@ namespace PraticeManagement.Controls.Projects
             OneGreaterSeniorityExists = false;
             var personListAnalyzer = new SeniorityAnalyzer(DataHelper.CurrentPerson);
 
-            foreach (var project in ProjectList)
+            foreach (var project in UIProjectList)
             {
                 var greaterSeniorityExists = personListAnalyzer.OneWithGreaterSeniorityExists(project.ProjectPersons);
                 if (greaterSeniorityExists)
@@ -1212,7 +1617,7 @@ namespace PraticeManagement.Controls.Projects
             }
             SaveFilterSettings();
             // Main GridView
-            lvProjects.DataSource = ProjectList;
+            lvProjects.DataSource = UIProjectList;
             lvProjects.DataBind();
 
             if (!IsPostBack)
@@ -1263,8 +1668,25 @@ namespace PraticeManagement.Controls.Projects
                             projectFinancials.Key.Month == dtTemp.Month &&
                             project.Id.HasValue)
                         {
-                            financials.Revenue += CalculationsType == 2 ? projectFinancials.Value.ActualRevenue : CalculationsType == 1 ? projectFinancials.Value.Revenue : projectFinancials.Value.PreviousMonthsActualRevenueValue;
-                            financials.GrossMargin += CalculationsType == 2 ? projectFinancials.Value.ActualGrossMargin : CalculationsType == 1 ? projectFinancials.Value.GrossMargin : projectFinancials.Value.PreviousMonthsActualMarginValue;
+                            switch (CalculationsType)
+                            {
+                                case 1:
+                                    financials.Revenue += projectFinancials.Value.Revenue;
+                                    financials.GrossMargin += projectFinancials.Value.GrossMargin;
+                                    break;
+                                case 2:
+                                    financials.Revenue += projectFinancials.Value.ActualRevenue;
+                                    financials.GrossMargin += projectFinancials.Value.ActualGrossMargin;
+                                    break;
+                                case 3:
+                                    financials.Revenue += projectFinancials.Value.BudgetRevenue;
+                                    financials.GrossMargin += projectFinancials.Value.BudgetGrossMargin;
+                                    break;
+                                case 4:
+                                    financials.Revenue += projectFinancials.Value.EACRevenue;
+                                    financials.GrossMargin += projectFinancials.Value.EACGrossMargin;
+                                    break;
+                            }
                         }
                     }
                 }
@@ -1275,8 +1697,36 @@ namespace PraticeManagement.Controls.Projects
 
                 if (projectsHavingFinancials != null)
                 {
-                    financialSummaryRevenue.ComputedFinancials.GrossMargin = projectsHavingFinancials.Sum(proj => CalculationsType == 2 ? proj.ComputedFinancials.ActualGrossMargin : CalculationsType == 1 ? proj.ComputedFinancials.GrossMargin : proj.ComputedFinancials.PreviousMonthsActualMarginValue);
-                    financialSummaryRevenue.ComputedFinancials.Revenue = projectsHavingFinancials.Sum(proj => CalculationsType == 2 ? proj.ComputedFinancials.ActualRevenue : CalculationsType == 1 ? proj.ComputedFinancials.Revenue : proj.ComputedFinancials.PreviousMonthsActualRevenueValue);
+                    switch (CalculationsType)
+                    {
+                        case 1:
+                            financialSummaryRevenue.ComputedFinancials.Revenue = projectsHavingFinancials.Sum(proj => proj.ComputedFinancials.Revenue);
+                            financialSummaryRevenue.ComputedFinancials.GrossMargin = projectsHavingFinancials.Sum(proj => proj.ComputedFinancials.GrossMargin);
+                            break;
+                        case 2:
+                            financialSummaryRevenue.ComputedFinancials.Revenue = projectsHavingFinancials.Sum(proj => proj.ComputedFinancials.ActualRevenue);
+                            financialSummaryRevenue.ComputedFinancials.GrossMargin = projectsHavingFinancials.Sum(proj => proj.ComputedFinancials.ActualGrossMargin);
+                            break;
+                        case 3:
+                            financialSummaryRevenue.ComputedFinancials.Revenue = projectsHavingFinancials.Sum(proj => proj.ComputedFinancials.BudgetRevenue);
+                            financialSummaryRevenue.ComputedFinancials.GrossMargin = projectsHavingFinancials.Sum(proj => proj.ComputedFinancials.BudgetGrossMargin);
+                            break;
+                        case 4:
+                            financialSummaryRevenue.ComputedFinancials.Revenue = projectsHavingFinancials.Sum(proj => proj.ComputedFinancials.EACRevenue);
+                            financialSummaryRevenue.ComputedFinancials.GrossMargin = projectsHavingFinancials.Sum(proj => proj.ComputedFinancials.EACGrossMargin);
+                            break;
+                    }
+                    financialSummaryRevenue.ComputedFinancials.BudgetRevenue = projectsHavingFinancials.Sum(proj => proj.ComputedFinancials.BudgetRevenue);
+                    financialSummaryRevenue.ComputedFinancials.BudgetGrossMargin = projectsHavingFinancials.Sum(proj => proj.ComputedFinancials.BudgetGrossMargin);
+
+                    //ETC hear is budget to selection variance
+                    financialSummaryRevenue.ComputedFinancials.EACRevenue = financialSummaryRevenue.ComputedFinancials.Revenue - financialSummaryRevenue.ComputedFinancials.BudgetRevenue;
+                    financialSummaryRevenue.ComputedFinancials.EACGrossMargin = financialSummaryRevenue.ComputedFinancials.GrossMargin - financialSummaryRevenue.ComputedFinancials.BudgetGrossMargin;
+
+                    financialSummaryRevenue.ComputedFinancials.ActualRevenue = projectsHavingFinancials.Sum(proj => proj.ComputedFinancials.ActualRevenue);
+                    financialSummaryRevenue.ComputedFinancials.ActualGrossMargin = projectsHavingFinancials.Sum(proj => proj.ComputedFinancials.ActualGrossMargin);
+                    //financialSummaryRevenue.ComputedFinancials.GrossMargin = projectsHavingFinancials.Sum(proj => CalculationsType == 2 ? proj.ComputedFinancials.ActualGrossMargin : CalculationsType == 1 ? proj.ComputedFinancials.GrossMargin : proj.ComputedFinancials.PreviousMonthsActualMarginValue);
+                    //financialSummaryRevenue.ComputedFinancials.Revenue = projectsHavingFinancials.Sum(proj => CalculationsType == 2 ? proj.ComputedFinancials.ActualRevenue : CalculationsType == 1 ? proj.ComputedFinancials.Revenue : proj.ComputedFinancials.PreviousMonthsActualRevenueValue);
                 }
             }
 
@@ -1339,8 +1789,46 @@ namespace PraticeManagement.Controls.Projects
 
                 DataHelper.FillOfferingsList(cblOffering, "All Offerings");
 
+                ListItem all = new ListItem("All Data Points", "");
+                ListItem rev = new ListItem("Revenue", "1");
+                ListItem mar = new ListItem("Contribution Margin", "2");
+
+                ddldataPoints.Items.Add(all);
+                ddldataPoints.Items.Add(rev);
+                ddldataPoints.Items.Add(mar);
+                ddldataPoints.SelectedItems = "1,";
+
+                if (HostingPageIsBudgetManagementReport != null)
+                {
+                    ddlCalculationsType.Items.Clear();
+                    ListItem budget = new ListItem("Budget only", "3");
+                    ListItem eac = new ListItem("Budget to ETC", "4");
+                    ListItem actual = new ListItem("Budget to-date to Actual to-date", "2");
+                    ListItem projected = new ListItem("Budget Remaining to Projected Remaining", "1");
+                    ddlCalculationsType.Items.Add(budget);
+                    ddlCalculationsType.Items.Add(eac);
+                    ddlCalculationsType.Items.Add(actual);
+                    ddlCalculationsType.Items.Add(projected);
+                    ddlCalculationsType.SelectedValue = "3";
+
+                }
                 DataHelper.FillRevenueTypeList(cblRevenueType, "All Revenue Types");
 
+
+
+                tdLevelLbl.Visible = tdLevelValue.Visible = tdFeeTypeLbl.Visible = tdFeeType.Visible = HostingPageIsBudgetManagementReport != null;
+
+                //if (HostingPageIsBudgetManagementReport != null)
+                //{
+                ListItem allFeeTypes = new ListItem("All", "");
+                ListItem TMOnly = new ListItem("T&M Only", "1");
+                ListItem FFOnly = new ListItem("Fixed Fee Only", "2");
+
+                ddlFeeType.Items.Add(allFeeTypes);
+                ddlFeeType.Items.Add(TMOnly);
+                ddlFeeType.Items.Add(FFOnly);
+                ddlFeeType.SelectedIndex = 0;
+                //}
                 // Set the default viewable interval.
                 diRange.FromDate = filter.PeriodStart;
                 diRange.ToDate = filter.PeriodEnd;
@@ -1365,12 +1853,16 @@ namespace PraticeManagement.Controls.Projects
                 SelectedProjectOwnerIds = filter.ProjectOwnerIdsList;
                 SelectedSalespersonIds = filter.SalespersonIdsList;
                 SelectedGroupIds = filter.ProjectGroupIdsList;
-
+                ddldataPoints.SelectedItems = filter.DataPointsIdsList;
+                //ddlCalculationsType.SelectedValue = filter.ViewIdsList; //need to review 
+                ddlSupressZeroBalance.SelectedValue = filter.SupressZeroProjects;
+                ddlLevel.SelectedValue = filter.Level;
+                FeeTypeIds = filter.FeeTypeIds;
                 ddlPeriod.SelectedIndex = ddlPeriod.Items.IndexOf(ddlPeriod.Items.FindByValue(filter.PeriodSelected.ToString()));
                 ddlView.SelectedIndex = ddlView.Items.IndexOf(ddlView.Items.FindByValue(filter.ViewSelected.ToString()));
-                ddlCalculateRange.SelectedIndex = ddlCalculateRange.Items.IndexOf(ddlCalculateRange.Items.FindByValue(filter.CalculateRangeSelected.ToString()));
+                //ddlCalculateRange.SelectedIndex = ddlCalculateRange.Items.IndexOf(ddlCalculateRange.Items.FindByValue(filter.CalculateRangeSelected.ToString()));
 
-                ddlCalculationsType.SelectedValue = filter.CalculationsType == 0 ? "1" : filter.CalculationsType.ToString();
+                ddlCalculationsType.SelectedValue = filter.CalculationsType == 0 ? "4" : filter.CalculationsType.ToString();
             }
             else
             {
@@ -1380,25 +1872,31 @@ namespace PraticeManagement.Controls.Projects
 
         private CompanyPerformanceFilterSettings InitFilter()
         {
-            if (HostingPageIsProjectsReport == null)
+            if (HostingPageIsProjectsReport != null)
             {
-                return SerializationHelper.DeserializeCookie(CompanyPerformanceFilterKey) as CompanyPerformanceFilterSettings ??
-                       new CompanyPerformanceFilterSettings();
+                return ReportsFilterHelper.GetFilterValues(ReportName.ProjectSummaryReport) as CompanyPerformanceFilterSettings ??
+                   new CompanyPerformanceFilterSettings();
+            }
+            else if (HostingPageIsBudgetManagementReport != null)
+            {
+                return ReportsFilterHelper.GetFilterValues(ReportName.BudgetManagementReport) as CompanyPerformanceFilterSettings ??
+                  new CompanyPerformanceFilterSettings();
             }
             else
             {
-                return ReportsFilterHelper.GetFilterValues(ReportName.ProjectSummaryReport) as CompanyPerformanceFilterSettings ??
-                    new CompanyPerformanceFilterSettings();
+                return SerializationHelper.DeserializeCookie(CompanyPerformanceFilterKey) as CompanyPerformanceFilterSettings ??
+                       new CompanyPerformanceFilterSettings();
+
             }
         }
 
-        private void AddMonthColumn(HtmlTableRow row, DateTime periodStart, int monthsInPeriod, int insertPosition)
+        private void AddMonthColumn(HtmlTableRow row, DateTime periodStart, int monthsInPeriod, int insertPosition, bool showColumn)
         {
             if (row != null)
             {
-                while (row.Cells.Count > NumberOfFixedColumns + 1)
+                while (row.Cells.Count > numberOfFixedCol + 1)
                 {
-                    row.Cells.RemoveAt(NumberOfFixedColumns);
+                    row.Cells.RemoveAt(numberOfFixedCol);
                 }
 
                 for (int i = insertPosition, k = 0; k < monthsInPeriod; i++, k++)
@@ -1407,7 +1905,8 @@ namespace PraticeManagement.Controls.Projects
                     row.Cells.Insert(i, newColumn);
 
                     row.Cells[i].InnerHtml = periodStart.ToString(Constants.Formatting.CompPerfMonthYearFormat);
-                    row.Cells[i].Attributes["class"] = "CompPerfMonthSummary";
+                    string extClass = showColumn ? "" : "hideMonthCol";
+                    row.Cells[i].Attributes["class"] = "CompPerfMonthSummary " + extClass;
 
                     periodStart = periodStart.AddMonths(1);
                 }
@@ -1715,10 +2214,6 @@ namespace PraticeManagement.Controls.Projects
                     if (IsInMonth(interestValue.Key, monthBegin, monthEnd))
                     {
                         row.Cells[i].InnerHtml = GetMonthReportTableAsHtml(interestValue.Value.Revenue, interestValue.Value.GrossMargin, OneGreaterSeniorityExists);
-
-                        //string.Format(Resources.Controls.ProjectInterestFormat,
-                        //interestValue.Value.Revenue,
-                        //interestValue.Value.GrossMargin);
                     }
                 }
             }
@@ -1734,7 +2229,63 @@ namespace PraticeManagement.Controls.Projects
                 totalRevenue = summary.ComputedFinancials.Revenue;
                 totalMargin = summary.ComputedFinancials.GrossMargin;
             }
-            row.Cells[row.Cells.Count - 1].InnerHtml = GetMonthReportTableAsHtml(totalRevenue, totalMargin, OneGreaterSeniorityExists);
+            int totalCell = CalculationsType == 3 ? row.Cells.Count - 1 : row.Cells.Count - 4;
+            if (CalculationsType == 3)
+            {
+                row.Cells[row.Cells.Count - 1].InnerHtml = GetMonthReportTableAsHtml(totalRevenue, totalMargin, OneGreaterSeniorityExists);
+            }
+            else
+            {
+                row.Cells[row.Cells.Count - 4].InnerHtml = HostingPageIsBudgetManagementReport != null ? GetMonthReportTableAsHtml(summary.ComputedFinancials.BudgetRevenue, summary.ComputedFinancials.BudgetGrossMargin, OneGreaterSeniorityExists) : GetMonthReportTableAsHtml(totalRevenue, totalMargin, OneGreaterSeniorityExists);
+                row.Cells[row.Cells.Count - 3].InnerHtml = HostingPageIsBudgetManagementReport != null ? GetMonthReportTableAsHtml(totalRevenue, totalMargin, OneGreaterSeniorityExists) : GetMonthReportTableAsHtml(summary.ComputedFinancials.BudgetRevenue, summary.ComputedFinancials.BudgetGrossMargin, OneGreaterSeniorityExists);
+                row.Cells[row.Cells.Count - 2].InnerHtml = GetMonthReportTableAsHtml(summary.ComputedFinancials.EACRevenue, summary.ComputedFinancials.EACGrossMargin, OneGreaterSeniorityExists);
+                var budgetRevenue = summary.ComputedFinancials.BudgetRevenue;
+                var budgetMargin = summary.ComputedFinancials.BudgetGrossMargin;
+                totalRevenue = summary.ComputedFinancials.EACRevenue;
+                totalMargin = summary.ComputedFinancials.EACGrossMargin;
+                decimal revenuePerc = summary.ComputedFinancials.Revenue.Value != 0M ? totalRevenue.Value * 100 / summary.ComputedFinancials.Revenue.Value : 0M;
+                decimal marginPerc = summary.ComputedFinancials.GrossMargin.Value != 0M ? totalMargin.Value * 100 / summary.ComputedFinancials.GrossMargin.Value : 0M;
+                row.Cells[row.Cells.Count - 1].InnerHtml = GetVariancePercentageTableAsHtml(revenuePerc, marginPerc);
+            }
+
+        }
+
+        private string GetVariancePercentageTableAsHtml(decimal revenuePer, decimal marginPer)
+        {
+            string outterHtml = string.Empty;
+
+            var stringWriter = new System.IO.StringWriter();
+
+            var reportTable = new Table() { Width = Unit.Percentage(100) };
+            if (DataPoints == null || DataPoints.Contains(1))
+            {
+                var tr = new TableRow() { };
+                tr.Cells.Add(new TableCell() { HorizontalAlign = HorizontalAlign.Left, Text = "" });
+
+                tr.Cells.Add(new TableCell() { HorizontalAlign = HorizontalAlign.Right, Text = revenuePer < 0 ? string.Format("<span class=\"Bench\">({0}%)</span>", Math.Abs(revenuePer).ToString("#0.00")) : string.Format("{0}%", revenuePer.ToString("##0.00")) });
+                reportTable.Rows.Add(tr);
+            }
+            if (DataPoints == null || DataPoints.Contains(2))
+            {
+                var tr = new TableRow();
+                tr.Cells.Add(new TableCell() { HorizontalAlign = HorizontalAlign.Left, Text = "" });
+                tr.Cells.Add(new TableCell()
+                {
+                    HorizontalAlign = HorizontalAlign.Right,
+                    Text = marginPer < 0 ? string.Format("<span class=\"Bench\">({0}%)</span>", Math.Abs(marginPer).ToString("#0.00")) : string.Format("{0}%", marginPer.ToString("##0.00"))
+                });
+                reportTable.Rows.Add(tr);
+            }
+
+            var div = new Panel() { CssClass = "cell-pad" };
+            div.Controls.Add(reportTable);
+            using (HtmlTextWriter wr = new HtmlTextWriter(stringWriter))
+            {
+                div.RenderControl(wr);
+                outterHtml = stringWriter.ToString();
+            }
+
+            return outterHtml;
         }
 
         #region Month table from resources
@@ -1744,20 +2295,25 @@ namespace PraticeManagement.Controls.Projects
             margin.FormatStyle = NumberFormatStyle.Margin;
             //var marginText = greaterSeniorityExists ? Resources.Controls.HiddenCellText : margin.Value.ToString(CurrencyDisplayFormat);
             var reportTable = new Table() { Width = Unit.Percentage(100) };
-            var tr = new TableRow() { CssClass = "Revenue" };
-            tr.Cells.Add(new TableCell() { HorizontalAlign = HorizontalAlign.Left, Text = "" });
-
-            tr.Cells.Add(new TableCell() { HorizontalAlign = HorizontalAlign.Right, Text = string.Format(PracticeManagementCurrency.RevenueFormat, revenue.Value.ToString(CurrencyDisplayFormat)) });
-            reportTable.Rows.Add(tr);
-            tr = new TableRow();// { CssClass = "Margin" };
-            tr.Cells.Add(new TableCell() { HorizontalAlign = HorizontalAlign.Left, Text = "" });
-            tr.Cells.Add(new TableCell()
+            if (DataPoints == null || DataPoints.Contains(1))
             {
-                HorizontalAlign = HorizontalAlign.Right,
-                Text = margin.ToString(greaterSeniorityExists)//as part of #2786.
-            });
-            reportTable.Rows.Add(tr);
+                var tr = new TableRow() { CssClass = "Revenue" };
+                tr.Cells.Add(new TableCell() { HorizontalAlign = HorizontalAlign.Left, Text = "" });
 
+                tr.Cells.Add(new TableCell() { HorizontalAlign = HorizontalAlign.Right, Text = revenue.ToString() });
+                reportTable.Rows.Add(tr);
+            }
+            if (DataPoints == null || DataPoints.Contains(2))
+            {
+                var tr = new TableRow();// { CssClass = "Margin" };
+                tr.Cells.Add(new TableCell() { HorizontalAlign = HorizontalAlign.Left, Text = "" });
+                tr.Cells.Add(new TableCell()
+                {
+                    HorizontalAlign = HorizontalAlign.Right,
+                    Text = margin.ToString(greaterSeniorityExists)//as part of #2786.
+                });
+                reportTable.Rows.Add(tr);
+            }
             return reportTable;
         }
 
@@ -1785,7 +2341,14 @@ namespace PraticeManagement.Controls.Projects
         protected void btnExportToExcel_Click(object sender, EventArgs e)
         {
             DataHelper.InsertExportActivityLogMessage("Projects");
-            //var a = ExportProjectList.First(p => p.Id == 6729);
+            if (ExportType == 1)
+            {
+                if (HostingPageIsBudgetManagementReport == null || (HostingPageIsBudgetManagementReport != null && !showDetailedReport))
+                {
+                    ExportScreenOnlySummaryData();
+                    return;
+                }
+            }
 
             var projectsData = (from pro in ExportProjectList
                                 where pro != null
@@ -1810,7 +2373,7 @@ namespace PraticeManagement.Controls.Projects
                                     offering = (pro.Offering != null && pro.Offering.Name != null) ? pro.Offering.Name : string.Empty,
                                     revenue = (pro.RevenueType != null && pro.RevenueType.Name != null) ? pro.RevenueType.Name : string.Empty,
                                     Capabilities = (pro.Capabilities != null && pro.Capabilities != string.Empty) ? pro.Capabilities.TrimEnd(',', ' ') : string.Empty,
-                                    Type = Revenue,
+
                                     Salesperson = (pro.SalesPersonName != null) ? pro.SalesPersonName : string.Empty,
                                     ProjectManager = (pro.ProjectOwner != null) ? pro.ProjectOwner.Name : string.Empty,
                                     SeniorManager = (pro.SeniorManagerName != null) ? pro.SeniorManagerName : string.Empty,
@@ -1819,7 +2382,8 @@ namespace PraticeManagement.Controls.Projects
                                     PONumber = (pro.PONumber != null && pro.PONumber != null) ? pro.PONumber : string.Empty,
                                     ClientTimeEntryRequired = (pro.IsClientTimeEntryRequired ? "Yes" : "No"),
                                     PreviousProject = pro.PreviousProject != null ? pro.PreviousProject.ProjectNumber : string.Empty,
-                                    OutsourceId = (pro.OutsourceId != 3 && pro.OutsourceId != 0) ? DataHelper.GetDescription((OutsourceId)pro.OutsourceId) : string.Empty
+                                    OutsourceId = (pro.OutsourceId != 3 && pro.OutsourceId != 0) ? DataHelper.GetDescription((OutsourceId)pro.OutsourceId) : string.Empty,
+                                    Type = Revenue,
                                 }).ToList();//Note: If you add any extra property to this anonymous type object then change insertPosition of month cells in RowDataBound.
 
             var projectsDataWithMargin = (from pro in ExportProjectList
@@ -1845,7 +2409,7 @@ namespace PraticeManagement.Controls.Projects
                                               offering = (pro.Offering != null && pro.Offering.Name != null) ? pro.Offering.Name : string.Empty,
                                               revenue = (pro.RevenueType != null && pro.RevenueType.Name != null) ? pro.RevenueType.Name : string.Empty,
                                               Capabilities = (pro.Capabilities != null && pro.Capabilities != string.Empty) ? pro.Capabilities.TrimEnd(',', ' ') : string.Empty,
-                                              Type = Margin,
+
                                               Salesperson = (pro.SalesPersonName != null) ? pro.SalesPersonName : string.Empty,
                                               ProjectManager = (pro.ProjectOwner != null) ? pro.ProjectOwner.Name : string.Empty,
                                               SeniorManager = (pro.SeniorManagerName != null) ? pro.SeniorManagerName : string.Empty,
@@ -1854,22 +2418,35 @@ namespace PraticeManagement.Controls.Projects
                                               PONumber = (pro.PONumber != null && pro.PONumber != null) ? pro.PONumber : string.Empty,
                                               ClientTimeEntryRequired = (pro.IsClientTimeEntryRequired ? "Yes" : "No"),
                                               PreviousProject = pro.PreviousProject != null ? pro.PreviousProject.ProjectNumber : string.Empty,
-                                              OutsourceId = pro.OutsourceId != 3 && pro.OutsourceId != 0 ? DataHelper.GetDescription((OutsourceId)pro.OutsourceId) : string.Empty
+                                              OutsourceId = pro.OutsourceId != 3 && pro.OutsourceId != 0 ? DataHelper.GetDescription((OutsourceId)pro.OutsourceId) : string.Empty,
+                                              Type = Margin,
                                           }).ToList();
 
-            projectsData.AddRange(projectsDataWithMargin);
-            projectsData = projectsData.OrderBy(s => (s.Status == ProjectStatusType.Projected.ToString()) ? s.StartDate : s.EndDate).ThenBy(s => s.ProjectNumber).ThenByDescending(s => s.Type).ToList();
+            switch (ExportType)
+            {
+                case 2: //revenue
+                    break;
+                case 3: //Margin
+                    projectsData = projectsDataWithMargin;
+                    break;
+                case 4: //revenue & margin
+                    projectsData.AddRange(projectsDataWithMargin);
+                    break;
+            }
 
-            renderMonthColumns = true;
-            var data = PrepareDataTable(ExportProjectList, (object[])projectsData.ToArray(), false);
-            var dataActual = PrepareDataTable(ExportProjectList, (object[])projectsData.ToArray(), true);
+
+            projectsData = projectsData.OrderBy(s => (s.Status == ProjectStatusType.Projected.ToString()) ? s.StartDate : s.EndDate).ThenBy(s => s.ProjectNumber).ThenByDescending(s => s.Type).ToList();
+            //Raj
+            renderMonthColumns = HostingPageIsBudgetManagementReport != null ? false : true;
+            var dataProjected = PrepareDataTable(ExportProjectList, (object[])projectsData.ToArray());
+            //var dataActual = PrepareDataTable(ExportProjectList, (object[])projectsData.ToArray());
 
             string dateRangeTitle = string.Format(ExportDateRangeFormat, diRange.FromDate.Value.ToShortDateString(), diRange.ToDate.Value.ToShortDateString());
             DataTable header = new DataTable();
             header.Columns.Add(dateRangeTitle);
             headerRowsCount = header.Rows.Count + 3;
             List<SheetStyles> sheetStylesList = new List<SheetStyles>();
-            coloumnsCount = data.Columns.Count;
+            coloumnsCount = dataProjected.Columns.Count;
             sheetStylesList.Add(HeaderSheetStyle);
             sheetStylesList.Add(DataSheetStyle);
             sheetStylesList.Add(HeaderSheetStyle);
@@ -1877,17 +2454,18 @@ namespace PraticeManagement.Controls.Projects
 
             var dataSetList = new List<DataSet>();
             var dataset = new DataSet();
-            dataset.DataSetName = "Summary - Projected";
+            dataset.DataSetName = "Summary";
             dataset.Tables.Add(header);
-            dataset.Tables.Add(data);
+            dataset.Tables.Add(dataProjected);
             dataSetList.Add(dataset);
 
-            var datasetActual = new DataSet();
-            datasetActual.Tables.Add(header.Clone());
-            datasetActual.Tables.Add(dataActual);
-            datasetActual.DataSetName = "Summary - Actuals";
-            dataSetList.Add(datasetActual);
-            var fileName = HostingPageIsProjectSummary != null ? "Projects.xls" : "ProjectSummaryReport.xls";
+            //var datasetActual = new DataSet();
+            //datasetActual.Tables.Add(header.Clone());
+            //datasetActual.Tables.Add(dataActual);
+            //datasetActual.DataSetName = "Summary - Actuals";
+            //dataSetList.Add(datasetActual);
+
+            var fileName = HostingPageIsProjectSummary != null ? "Projects.xls" : "ProjectBudgetSummaryReport.xls";
             NPOIExcel.Export(fileName, dataSetList, sheetStylesList);
         }
 
@@ -1903,7 +2481,7 @@ namespace PraticeManagement.Controls.Projects
             return names;
         }
 
-        private DataTable PrepareDataTable(Project[] projectsList, Object[] propertyBags, bool useActuals)
+        private DataTable PrepareDataTable(Project[] projectsList, Object[] propertyBags)
         {
             var periodStart = GetMonthBegin();
             var monthsInPeriod = GetPeriodLength();
@@ -1928,16 +2506,6 @@ namespace PraticeManagement.Controls.Projects
             data.Columns.Add("Offering");
             data.Columns.Add("RevenueType");
             data.Columns.Add("Capabilities");
-            data.Columns.Add("Type");
-            //Add Month and Total columns.
-            if (renderMonthColumns)
-            {
-                for (int i = 0; i < monthsInPeriod; i++)
-                {
-                    data.Columns.Add(periodStart.AddMonths(i).ToString(Constants.Formatting.EntryDateFormat));
-                }
-            }
-            data.Columns.Add("Total");
             data.Columns.Add("Salesperson");
             data.Columns.Add("Project Manager");
             data.Columns.Add("Engagement Manager");
@@ -1947,6 +2515,37 @@ namespace PraticeManagement.Controls.Projects
             data.Columns.Add("Client Time Entry Required");
             data.Columns.Add("Previous Project Number");
             data.Columns.Add("Outsource Id Indicator");
+            data.Columns.Add("Type");
+            //Add Month and Total columns.
+            if (renderMonthColumns)
+            {
+                for (int i = 0; i < monthsInPeriod; i++)
+                {
+                    data.Columns.Add(periodStart.AddMonths(i).ToString(Constants.Formatting.EntryDateFormat));
+                }
+            }
+
+            if (HostingPageIsBudgetManagementReport != null)
+            {
+                data.Columns.Add("Budget");
+                if (CalculationsType != 3)
+                {
+                    data.Columns.Add(GetTotalColumnHeader() + " Total");
+                    data.Columns.Add("$ Variance");
+                    data.Columns.Add("% Variance");
+                }
+            }
+            else
+            {
+                data.Columns.Add(GetTotalColumnHeader() + " Total");
+                data.Columns.Add("Budget");
+                data.Columns.Add("Actual");
+                data.Columns.Add("Projected Remaining");
+                data.Columns.Add("ETC");
+                data.Columns.Add("Budget to ETC $ Variance");
+                data.Columns.Add("Budget to ETC % Variance");
+            }
+
             foreach (var propertyBag in propertyBags)
             {
                 var objects = new object[data.Columns.Count];
@@ -1959,6 +2558,10 @@ namespace PraticeManagement.Controls.Projects
                         objects[column] = (property.GetValue(propertyBag) == Revenue) ? ServiceRevenue : property.GetValue(propertyBag);
                         if (property.Name == "ProjectNumber")
                         {
+                            if (property.GetValue(propertyBag).ToString() == "P001123")
+                            {
+
+                            }
                             project = projectsList.Where(p => p.ProjectNumber == property.GetValue(propertyBag).ToString()).FirstOrDefault();
                         }
                         if (property.Name == "Type")
@@ -1992,7 +2595,30 @@ namespace PraticeManagement.Controls.Projects
                                         {
                                             if (IsInMonth(interestValue.Key, monthStart, monthEnd))
                                             {
-                                                columnValue = isMargin ? (useActuals ? interestValue.Value.ActualGrossMargin : interestValue.Value.GrossMargin) : (useActuals ? interestValue.Value.ActualRevenue : interestValue.Value.Revenue);
+                                                PracticeManagementCurrency revenue = new PracticeManagementCurrency();
+                                                PracticeManagementCurrency margin = new PracticeManagementCurrency();
+
+                                                switch (CalculationsType)
+                                                {
+                                                    case 1:
+                                                        revenue = interestValue.Value.Revenue;
+                                                        margin = interestValue.Value.GrossMargin;
+                                                        break;
+                                                    case 2:
+                                                        revenue = interestValue.Value.ActualRevenue;
+                                                        margin = interestValue.Value.ActualGrossMargin;
+                                                        break;
+                                                    case 3:
+                                                        revenue = interestValue.Value.BudgetRevenue;
+                                                        margin = interestValue.Value.BudgetGrossMargin;
+                                                        break;
+                                                    case 4:
+                                                        revenue = interestValue.Value.EACRevenue;
+                                                        margin = interestValue.Value.EACGrossMargin;
+                                                        break;
+                                                }
+
+                                                columnValue = isMargin ? margin : revenue;
                                                 break;
                                             }
                                         }
@@ -2005,12 +2631,85 @@ namespace PraticeManagement.Controls.Projects
 
                             column++;
                             columnValue = 0M;
+
+                            var budgetValue = 0M;
+                            var actualValue = 0M;
+                            var ETCValue = 0M;
+                            var projRemainingValue = 0M;
+                            var budgetToETCVar = 0M;
+                            var budgetToETCPer = 0M;
+                            var budgetToSelVar = 0M;
+                            var budgetToSelVarPer = 0M;
+
+
+                            PracticeManagementCurrency totalRevenue = new PracticeManagementCurrency();
+                            PracticeManagementCurrency totalMargin = new PracticeManagementCurrency();
+
                             if (project.ComputedFinancials != null && !greaterSeniorityExists)
                             {
-                                columnValue = isMargin ? (useActuals ? project.ComputedFinancials.ActualGrossMargin : project.ComputedFinancials.GrossMargin) : (useActuals ? project.ComputedFinancials.ActualRevenue : project.ComputedFinancials.Revenue);
+
+                                switch (CalculationsType)
+                                {
+                                    case 1:
+                                        totalRevenue = project.ComputedFinancials.Revenue;
+                                        totalMargin = project.ComputedFinancials.GrossMargin;
+                                        break;
+                                    case 2:
+                                        totalRevenue = project.ComputedFinancials.ActualRevenue;
+                                        totalMargin = project.ComputedFinancials.ActualGrossMargin;
+                                        break;
+                                    case 3:
+                                        totalRevenue = project.ComputedFinancials.BudgetRevenue;
+                                        totalMargin = project.ComputedFinancials.BudgetGrossMargin;
+                                        break;
+                                    case 4:
+                                        totalRevenue = project.ComputedFinancials.EACRevenue;
+                                        totalMargin = project.ComputedFinancials.EACGrossMargin;
+                                        break;
+                                }
+                                columnValue = isMargin ? totalMargin : totalRevenue;
+                                budgetValue = isMargin ? project.ComputedFinancials.BudgetGrossMargin : project.ComputedFinancials.BudgetRevenue;
+                                budgetToSelVar = columnValue - budgetValue;
+                                budgetToSelVarPer = columnValue != 0M ? budgetToSelVar / (columnValue) : 0M;
                             }
-                            string totalColomncolor = columnValue < 0 ? "red" : isMargin ? "purple" : "green";
-                            objects[column] = string.Format(NPOIExcel.CustomColorKey, totalColomncolor, greaterSeniorityExists && isMargin ? (object)"(Hidden)" : columnValue);
+
+                            if (HostingPageIsBudgetManagementReport != null)
+                            {
+                                objects[column] = string.Format(NPOIExcel.CustomColorKey, budgetValue < 0 ? "red" : isMargin ? "purple" : "green", greaterSeniorityExists && isMargin ? (object)"(Hidden)" : budgetValue);
+                                column++;
+                                if (CalculationsType != 3)
+                                {
+                                    objects[column] = string.Format(NPOIExcel.CustomColorKey, columnValue < 0 ? "red" : isMargin ? "purple" : "green", greaterSeniorityExists && isMargin ? (object)"(Hidden)" : columnValue);
+                                    column++;
+                                    objects[column] = string.Format(NPOIExcel.CustomColorKey, budgetToSelVar < 0 ? "red" : isMargin ? "purple" : "green", greaterSeniorityExists && isMargin ? (object)"(Hidden)" : budgetToSelVar);
+                                    column++;
+                                    objects[column] = string.Format(NPOIExcel.CustomColorKey, budgetToSelVarPer < 0 ? "red" : "black", greaterSeniorityExists && isMargin ? (object)"(Hidden)" : budgetToSelVarPer.ToString());
+                                }
+                            }
+                            else
+                            {
+                                if (project.ComputedFinancials != null && !greaterSeniorityExists)
+                                {
+                                    actualValue = isMargin ? project.ComputedFinancials.ActualGrossMargin : project.ComputedFinancials.ActualRevenue;
+                                    projRemainingValue = isMargin ? (project.ComputedFinancials.EACGrossMargin - project.ComputedFinancials.ActualGrossMargin) : (project.ComputedFinancials.EACRevenue - project.ComputedFinancials.ActualRevenue);
+                                    ETCValue = isMargin ? project.ComputedFinancials.EACGrossMargin : project.ComputedFinancials.EACRevenue;
+                                    budgetToETCVar = isMargin ? (project.ComputedFinancials.EACGrossMargin - project.ComputedFinancials.BudgetGrossMargin) : (project.ComputedFinancials.EACRevenue - project.ComputedFinancials.BudgetRevenue);
+                                    budgetToETCPer = isMargin ? (project.ComputedFinancials.EACGrossMargin != 0M ? budgetToETCVar / (project.ComputedFinancials.EACGrossMargin.Value) : 0M) : (project.ComputedFinancials.EACRevenue != 0M ? budgetToETCVar / (project.ComputedFinancials.EACRevenue.Value) : 0M);
+                                }
+                                objects[column] = string.Format(NPOIExcel.CustomColorKey, columnValue < 0 ? "red" : isMargin ? "purple" : "green", greaterSeniorityExists && isMargin ? (object)"(Hidden)" : columnValue);
+                                column++;
+                                objects[column] = string.Format(NPOIExcel.CustomColorKey, budgetValue < 0 ? "red" : isMargin ? "purple" : "green", greaterSeniorityExists && isMargin ? (object)"(Hidden)" : budgetValue);
+                                column++;
+                                objects[column] = string.Format(NPOIExcel.CustomColorKey, actualValue < 0 ? "red" : isMargin ? "purple" : "green", greaterSeniorityExists && isMargin ? (object)"(Hidden)" : actualValue);
+                                column++;
+                                objects[column] = string.Format(NPOIExcel.CustomColorKey, projRemainingValue < 0 ? "red" : isMargin ? "purple" : "green", greaterSeniorityExists && isMargin ? (object)"(Hidden)" : projRemainingValue);
+                                column++;
+                                objects[column] = string.Format(NPOIExcel.CustomColorKey, ETCValue < 0 ? "red" : isMargin ? "purple" : "green", greaterSeniorityExists && isMargin ? (object)"(Hidden)" : ETCValue);
+                                column++;
+                                objects[column] = string.Format(NPOIExcel.CustomColorKey, budgetToETCVar < 0 ? "red" : isMargin ? "purple" : "green", greaterSeniorityExists && isMargin ? (object)"(Hidden)" : budgetToETCVar);
+                                column++;
+                                objects[column] = string.Format(NPOIExcel.CustomColorKey, budgetToETCPer < 0 ? "red" : "black", greaterSeniorityExists && isMargin ? (object)"(Hidden)" : budgetToETCPer.ToString());
+                            }
                         }
                         else if (property.Name == "ProjectManagers")
                         {
@@ -2019,122 +2718,545 @@ namespace PraticeManagement.Controls.Projects
                         column++;
                     }
                 }
-
                 data.Rows.Add(objects);
+            }
+
+            var emptyRow = new object[data.Columns.Count];
+            for (int i = 0; i < data.Columns.Count; i++)
+            {
+                emptyRow[i] = string.Empty;
+            }
+            data.Rows.Add(emptyRow);
+
+            var summary = CalculateSummaryTotals(projectsList, periodStart, PeriodEnd);
+
+
+            if (ExportType == 2 || ExportType == 4)
+            {
+                int columnCount = 0;
+                var totalRow = new object[data.Columns.Count];
+                totalRow[0] = string.Format(NPOIExcel.CustomColorWithBoldKey, "black", "Total");
+                columnCount++;
+                for (int i = 1; i < 27; i++)
+                {
+                    totalRow[i] = string.Empty;
+                    columnCount++;
+                }
+
+                totalRow[27] = "Services Revenue";
+                columnCount++;
+                if (renderMonthColumns)
+                {
+                    var monthStart = periodStart;
+                    // Displaying the month values 
+                    for (int i = 28, k = 0;
+                     k < monthsInPeriod;
+                     i++, k++, monthStart = monthStart.AddMonths(1))
+                    {
+                        DateTime monthEnd = GetMonthEnd(ref monthStart);
+
+                        foreach (KeyValuePair<DateTime, ComputedFinancials> interestValue in
+                            summary.ProjectedFinancialsByMonth)
+                        {
+                            if (IsInMonth(interestValue.Key, monthStart, monthEnd))
+                            {
+                                var colValue = interestValue.Value.Revenue.Value;
+                                totalRow[i] = string.Format(NPOIExcel.CustomColorKey, colValue < 0 ? "red" : "green", colValue);
+                            }
+                        }
+                        columnCount++;
+                    }
+                }
+
+                if (HostingPageIsBudgetManagementReport != null)
+                {
+                    var budgetValue = summary.ComputedFinancials.BudgetRevenue.Value;
+                    totalRow[columnCount] = string.Format(NPOIExcel.CustomColorKey, budgetValue < 0 ? "red" : "green", budgetValue);
+
+                    if (CalculationsType != 3)
+                    {
+                        var columnValue = summary.ComputedFinancials.Revenue.Value;
+                        totalRow[columnCount + 1] = string.Format(NPOIExcel.CustomColorKey, columnValue < 0 ? "red" : "green", columnValue);
+                        var budgetToSelVar = budgetValue - columnValue;
+                        var budgetToSelVarPer = budgetValue != 0M ? budgetToSelVar / (budgetValue) : 0M;
+                        totalRow[columnCount + 2] = string.Format(NPOIExcel.CustomColorKey, budgetToSelVar < 0 ? "red" : "green", budgetToSelVar);
+                        totalRow[columnCount + 3] = string.Format(NPOIExcel.CustomColorKey, budgetToSelVarPer < 0 ? "red" : "black", budgetToSelVarPer.ToString());
+                    }
+                }
+                else
+                {
+                    var columnValue = summary.ComputedFinancials.Revenue.Value;
+                    var budgetValue = summary.ComputedFinancials.BudgetRevenue.Value;
+                    var ETCValue = summary.ComputedFinancials.EACRevenue.Value;
+                    var actualValue = summary.ComputedFinancials.ActualRevenue.Value;
+                    var projRemainingValue = ETCValue - actualValue;
+                    var budgetToETCVar = budgetValue - ETCValue;
+                    var budgetToETCPer = budgetValue != 0 ? budgetToETCVar / budgetValue : 0M;
+
+                    totalRow[columnCount] = string.Format(NPOIExcel.CustomColorKey, columnValue < 0 ? "red" : "green", columnValue);
+                    totalRow[columnCount + 1] = string.Format(NPOIExcel.CustomColorKey, budgetValue < 0 ? "red" : "green", budgetValue);
+
+                    totalRow[columnCount + 2] = string.Format(NPOIExcel.CustomColorKey, actualValue < 0 ? "red" : "green", actualValue);
+
+                    totalRow[columnCount + 3] = string.Format(NPOIExcel.CustomColorKey, projRemainingValue < 0 ? "red" : "green", projRemainingValue);
+                    totalRow[columnCount + 4] = string.Format(NPOIExcel.CustomColorKey, ETCValue < 0 ? "red" : "green", ETCValue);
+                    totalRow[columnCount + 5] = string.Format(NPOIExcel.CustomColorKey, budgetToETCVar < 0 ? "red" : "green", budgetToETCVar);
+                    totalRow[columnCount + 6] = string.Format(NPOIExcel.CustomColorKey, budgetToETCPer < 0 ? "red" : "black", budgetToETCPer);
+                }
+
+
+                data.Rows.Add(totalRow);
+            }
+
+
+            if (ExportType == 3 || ExportType == 4)
+            {
+                int columnCount = 0;
+                var totalRow = new object[data.Columns.Count];
+                totalRow[0] = string.Format(NPOIExcel.CustomColorWithBoldKey, "black", "Total");
+                columnCount++;
+                for (int i = 1; i < 27; i++)
+                {
+                    totalRow[i] = string.Empty;
+                    columnCount++;
+                }
+
+                totalRow[27] = "Cont. Margin";
+                columnCount++;
+                if (renderMonthColumns)
+                {
+                    var monthStart = periodStart;
+                    // Displaying the month values 
+                    for (int i = 28, k = 0;
+                     k < monthsInPeriod;
+                     i++, k++, monthStart = monthStart.AddMonths(1))
+                    {
+                        DateTime monthEnd = GetMonthEnd(ref monthStart);
+
+                        foreach (KeyValuePair<DateTime, ComputedFinancials> interestValue in
+                            summary.ProjectedFinancialsByMonth)
+                        {
+                            if (IsInMonth(interestValue.Key, monthStart, monthEnd))
+                            {
+                                var colValue = interestValue.Value.GrossMargin.Value;
+                                totalRow[i] = string.Format(NPOIExcel.CustomColorKey, colValue < 0 ? "red" : "purple", colValue);
+                            }
+                        }
+                        columnCount++;
+                    }
+                }
+                if (HostingPageIsBudgetManagementReport != null)
+                {
+                    var budgetValue = summary.ComputedFinancials.BudgetGrossMargin.Value;
+                    totalRow[columnCount] = string.Format(NPOIExcel.CustomColorKey, budgetValue < 0 ? "red" : "purple", budgetValue);
+
+                    if (CalculationsType != 3)
+                    {
+                        var columnValue = summary.ComputedFinancials.GrossMargin.Value;
+                        totalRow[columnCount + 1] = string.Format(NPOIExcel.CustomColorKey, columnValue < 0 ? "red" : "purple", columnValue);
+                        var budgetToSelVar = budgetValue - columnValue;
+                        var budgetToSelVarPer = budgetValue != 0M ? budgetToSelVar / (budgetValue) : 0M;
+                        totalRow[columnCount + 2] = string.Format(NPOIExcel.CustomColorKey, budgetToSelVar < 0 ? "red" : "purple", budgetToSelVar);
+                        totalRow[columnCount + 3] = string.Format(NPOIExcel.CustomColorKey, budgetToSelVarPer < 0 ? "red" : "purple", budgetToSelVarPer.ToString());
+                    }
+                }
+                else
+                {
+                    var columnValue = summary.ComputedFinancials.GrossMargin.Value;
+                    var budgetValue = summary.ComputedFinancials.BudgetGrossMargin.Value;
+                    var ETCValue = summary.ComputedFinancials.EACGrossMargin.Value;
+                    var actualValue = summary.ComputedFinancials.ActualGrossMargin.Value;
+                    var projRemainingValue = ETCValue - actualValue;
+                    var budgetToETCVar = budgetValue - ETCValue;
+                    var budgetToETCPer = budgetValue != 0 ? budgetToETCVar / budgetValue : 0M;
+
+                    totalRow[columnCount] = string.Format(NPOIExcel.CustomColorKey, columnValue < 0 ? "red" : "purple", columnValue);
+                    totalRow[columnCount + 1] = string.Format(NPOIExcel.CustomColorKey, budgetValue < 0 ? "red" : "purple", budgetValue);
+                    totalRow[columnCount + 2] = string.Format(NPOIExcel.CustomColorKey, actualValue < 0 ? "red" : "purple", actualValue);
+                    totalRow[columnCount + 3] = string.Format(NPOIExcel.CustomColorKey, projRemainingValue < 0 ? "red" : "purple", projRemainingValue);
+                    totalRow[columnCount + 4] = string.Format(NPOIExcel.CustomColorKey, ETCValue < 0 ? "red" : "purple", ETCValue);
+                    totalRow[columnCount + 5] = string.Format(NPOIExcel.CustomColorKey, budgetToETCVar < 0 ? "red" : "purple", budgetToETCVar);
+                    totalRow[columnCount + 6] = string.Format(NPOIExcel.CustomColorKey, budgetToETCPer < 0 ? "red" : "black", budgetToETCPer);
+                }
+
+                data.Rows.Add(totalRow);
             }
 
             return data;
         }
 
-        protected void btnExportAllToExcel_Click(object sender, EventArgs e)
+        private void ExportScreenOnlySummaryData()
         {
-            DataHelper.InsertExportActivityLogMessage("Projects");
-
-            var projectsList = ExportAllProjectList.OrderBy(proj => proj.Id);
-
-            var projectsData = (from pro in projectsList
+            var projectsData = (from pro in UIProjectList
                                 where pro != null
                                 select new
                                 {
                                     ProjectID = pro.Id != null ? pro.Id.ToString() : string.Empty,
                                     ProjectNumber = pro.ProjectNumber != null ? pro.ProjectNumber.ToString() : string.Empty,
                                     Account = (pro.Client != null && pro.Client.Name != null) ? pro.Client.Name.ToString() : string.Empty,
-                                    HouseAccount = (pro.Client != null && pro.Client.IsHouseAccount == true) ? "Yes" : string.Empty,
-                                    BusinessGroup = (pro.BusinessGroup != null && pro.BusinessGroup.Name != null) ? pro.BusinessGroup.Name : string.Empty,
-                                    BusinessUnit = (pro.Group != null && pro.Group.Name != null) ? pro.Group.Name : string.Empty,
-                                    Buyer = pro.BuyerName != null ? pro.BuyerName : string.Empty,
                                     ProjectName = pro.Name != null ? pro.Name : string.Empty,
-                                    BusinessType = (pro.BusinessType != (BusinessType)0) ? DataHelper.GetDescription(pro.BusinessType).ToString() : string.Empty,
                                     Status = (pro.Status != null && pro.Status.Name != null) ? pro.Status.Name.ToString() : string.Empty,
                                     StartDate = pro.StartDate.HasValue ? pro.StartDate.Value.ToString(Constants.Formatting.EntryDateFormat) : string.Empty,
                                     EndDate = pro.EndDate.HasValue ? pro.EndDate.Value.ToString(Constants.Formatting.EntryDateFormat) : string.Empty,
-                                    Divsion = (pro.Division != null && pro.Division.Name != null) ? pro.Division.Name : string.Empty,
-                                    PracticeArea = (pro.Practice != null && pro.Practice.Name != null) ? pro.Practice.Name : string.Empty,
-
-                                    channel = (pro.Channel != null && pro.Channel.Name != null) ? pro.Channel.Name : string.Empty,
-                                    subchannel = (pro.SubChannel != null) ? pro.SubChannel : string.Empty,
-                                    offering = (pro.Offering != null && pro.Offering.Name != null) ? pro.Offering.Name : string.Empty,
-                                    revenue = (pro.RevenueType != null && pro.RevenueType.Name != null) ? pro.RevenueType.Name : string.Empty,
-                                    Capabilities = (pro.Capabilities != null && pro.Capabilities != string.Empty) ? pro.Capabilities.TrimEnd(',', ' ') : string.Empty,
                                     Type = Revenue,
-                                    Salesperson = (pro.SalesPersonName != null) ? pro.SalesPersonName : string.Empty,
-                                    ProjectManager = (pro.ProjectOwner != null) ? pro.ProjectOwner.Name : string.Empty,
-                                    SeniorManager = (pro.SeniorManagerName != null) ? pro.SeniorManagerName : string.Empty,
-                                    Director = (pro.Director != null && pro.Director.Name != null) ? pro.Director.Name.ToString() : string.Empty,
-                                    PricingList = (pro.PricingList != null && pro.PricingList.Name != null) ? pro.PricingList.Name : string.Empty,
-                                    PONumber = (pro.PONumber != null && pro.PONumber != null) ? pro.PONumber : string.Empty,
-                                    ClientTimeEntryRequired = (pro.IsClientTimeEntryRequired ? "Yes" : "No"),
-                                    PreviousProject = pro.PreviousProject != null ? pro.PreviousProject.ProjectNumber : string.Empty,
-                                    OutsourceId = pro.OutsourceId != 3 ? DataHelper.GetDescription((OutsourceId)pro.OutsourceId) : string.Empty
-                                }).ToList();//Note:- Change insertPosition Of Total cell in RowDataBound if any modifications in projectsData.
+                                }).ToList();
 
-            var projectsDataWithMargin = (from pro in projectsList
+            var projectsDataWithMargin = (from pro in UIProjectList
                                           where pro != null
                                           select new
                                           {
                                               ProjectID = pro.Id != null ? pro.Id.ToString() : string.Empty,
                                               ProjectNumber = pro.ProjectNumber != null ? pro.ProjectNumber.ToString() : string.Empty,
                                               Account = (pro.Client != null && pro.Client.Name != null) ? pro.Client.Name.ToString() : string.Empty,
-                                              HouseAccount = (pro.Client != null && pro.Client.IsHouseAccount == true) ? "Yes" : string.Empty,
-                                              BusinessGroup = (pro.BusinessGroup != null && pro.BusinessGroup.Name != null) ? pro.BusinessGroup.Name : string.Empty,
-                                              BusinessUnit = (pro.Group != null && pro.Group.Name != null) ? pro.Group.Name : string.Empty,
-                                              Buyer = pro.BuyerName != null ? pro.BuyerName : string.Empty,
                                               ProjectName = pro.Name != null ? pro.Name : string.Empty,
-                                              BusinessType = (pro.BusinessType != (BusinessType)0) ? DataHelper.GetDescription(pro.BusinessType).ToString() : string.Empty,
                                               Status = (pro.Status != null && pro.Status.Name != null) ? pro.Status.Name.ToString() : string.Empty,
                                               StartDate = pro.StartDate.HasValue ? pro.StartDate.Value.ToString(Constants.Formatting.EntryDateFormat) : string.Empty,
                                               EndDate = pro.EndDate.HasValue ? pro.EndDate.Value.ToString(Constants.Formatting.EntryDateFormat) : string.Empty,
-                                              Divsion = (pro.Division != null && pro.Division.Name != null) ? pro.Division.Name : string.Empty,
-                                              PracticeArea = (pro.Practice != null && pro.Practice.Name != null) ? pro.Practice.Name : string.Empty,
-
-                                              channel = (pro.Channel != null && pro.Channel.Name != null) ? pro.Channel.Name : string.Empty,
-                                              subchannel = (pro.SubChannel != null) ? pro.SubChannel : string.Empty,
-                                              offering = (pro.Offering != null && pro.Offering.Name != null) ? pro.Offering.Name : string.Empty,
-                                              revenue = (pro.RevenueType != null && pro.RevenueType.Name != null) ? pro.RevenueType.Name : string.Empty,
-                                              Capabilities = (pro.Capabilities != null && pro.Capabilities != string.Empty) ? pro.Capabilities.TrimEnd(',', ' ') : string.Empty,
                                               Type = Margin,
-                                              Salesperson = (pro.SalesPersonName != null) ? pro.SalesPersonName : string.Empty,
-                                              ProjectManager = (pro.ProjectOwner != null) ? pro.ProjectOwner.Name : string.Empty,
-                                              SeniorManager = (pro.SeniorManagerName != null) ? pro.SeniorManagerName : string.Empty,
-                                              Director = (pro.Director != null && pro.Director.Name != null) ? pro.Director.Name.ToString() : string.Empty,
-                                              PricingList = (pro.PricingList != null && pro.PricingList.Name != null) ? pro.PricingList.Name : string.Empty,
-                                              PONumber = (pro.PONumber != null && pro.PONumber != null) ? pro.PONumber : string.Empty,
-                                              ClientTimeEntryRequired = (pro.IsClientTimeEntryRequired ? "Yes" : "No"),
-                                              PreviousProject = pro.PreviousProject != null ? pro.PreviousProject.ProjectNumber : string.Empty,
-                                              OutsourceId = pro.OutsourceId != 3 ? DataHelper.GetDescription((OutsourceId)pro.OutsourceId) : string.Empty
                                           }).ToList();
 
-            projectsData.AddRange(projectsDataWithMargin);
-            projectsData = projectsData.OrderBy(s => s.ProjectID).ThenByDescending(s => s.Type).ToList();
+            if (DataPoints == null || (DataPoints.Contains(2) && DataPoints.Contains(1)))
+            {
+                projectsData.AddRange(projectsDataWithMargin);
+            }
+            else if (DataPoints.Contains(2))
+            {
+                projectsData = projectsDataWithMargin;
+            }
+            //Raj
+            renderMonthColumns = HostingPageIsBudgetManagementReport != null ? false : true;
+            projectsData = projectsData.OrderBy(s => (s.Status == ProjectStatusType.Projected.ToString()) ? s.StartDate : s.EndDate).ThenBy(s => s.ProjectNumber).ThenByDescending(s => s.Type).ToList();
 
-            renderMonthColumns = false;
-            var data = PrepareDataTable(projectsList.ToArray(), (object[])projectsData.ToArray(), false);
-            var dataActual = PrepareDataTable(projectsList.ToArray(), (object[])projectsData.ToArray(), true);
+            ExportRowsCount = projectsData.Count();
 
+            var data = PrepareScreenOnlyDataTable(ExportProjectList, (object[])projectsData.ToArray());
+
+            string dateRangeTitle = string.Format(ExportDateRangeFormat, diRange.FromDate.Value.ToShortDateString(), diRange.ToDate.Value.ToShortDateString());
+            DataTable header = new DataTable();
+            header.Columns.Add(dateRangeTitle);
+            headerRowsCount = header.Rows.Count + 3;
             List<SheetStyles> sheetStylesList = new List<SheetStyles>();
-
-            sheetStylesList.Add(DataSheetStyle);
-            sheetStylesList.Add(DataSheetStyle);
+            coloumnsCount = data.Columns.Count;
+            sheetStylesList.Add(HeaderSheetStyle);
+            sheetStylesList.Add(ScreenOnlySheetStyle);
 
             var dataSetList = new List<DataSet>();
             var dataset = new DataSet();
-            dataset.DataSetName = "Summary - Projected";
+            dataset.DataSetName = "Summary - ScreenOnly";
+            dataset.Tables.Add(header);
             dataset.Tables.Add(data);
             dataSetList.Add(dataset);
-
-            var datasetActual = new DataSet();
-            datasetActual.Tables.Add(dataActual);
-            datasetActual.DataSetName = "Summary - Actuals";
-            dataSetList.Add(datasetActual);
-            NPOIExcel.Export("Projects.xls", dataSetList, sheetStylesList);
+            var fileName = HostingPageIsProjectSummary != null ? "Projects.xls" : "ProjectBudgetSummaryReport.xls";
+            NPOIExcel.Export(fileName, dataSetList, sheetStylesList);
         }
 
-        private Project[] GetProjectListAll()
+        private DataTable PrepareScreenOnlyDataTable(Project[] projectsList, Object[] propertyBags)
         {
-            using (var serviceClient = new ProjectService.ProjectServiceClient())
+            var periodStart = GetMonthBegin();
+            var monthsInPeriod = GetPeriodLength();
+
+            DataTable data = new DataTable();
+
+            data.Columns.Add("Project Number");
+            data.Columns.Add("Account");
+            data.Columns.Add("Project Name");
+            data.Columns.Add("Status");
+            data.Columns.Add("Start Date");
+            data.Columns.Add("End Date");
+            data.Columns.Add("Type");
+            //Add Month and Total columns.
+            if (renderMonthColumns)
             {
-                return serviceClient.AllProjectsWithFinancialTotalsAndPersons();
+                for (int i = 0; i < monthsInPeriod; i++)
+                {
+                    data.Columns.Add(periodStart.AddMonths(i).ToString(Constants.Formatting.EntryDateFormat));
+                }
             }
+            data.Columns.Add(HostingPageIsBudgetManagementReport != null ? "Budget" : GetTotalColumnHeader());
+            if (CalculationsType != 3)
+            {
+                data.Columns.Add(HostingPageIsBudgetManagementReport != null ? GetTotalColumnHeader() : "Budget");
+                data.Columns.Add(HostingPageIsBudgetManagementReport != null ? "$ Variance" : "Budget to Selection Variance");
+                data.Columns.Add(HostingPageIsBudgetManagementReport != null ? "% Variance" : "Budget to Selection % Variance");
+            }
+
+            foreach (var propertyBag in propertyBags)
+            {
+                var objects = new object[data.Columns.Count];
+                int column = 0;
+                Project project = new Project();
+                foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(propertyBag))
+                {
+                    if (property.Name != "ProjectID")
+                    {
+                        objects[column] = (property.GetValue(propertyBag) == Revenue) ? ServiceRevenue : property.GetValue(propertyBag);
+                        if (property.Name == "ProjectNumber")
+                        {
+                            project = projectsList.Where(p => p.ProjectNumber == property.GetValue(propertyBag).ToString()).FirstOrDefault();
+                        }
+                        if (property.Name == "Type")
+                        {
+                            bool isMargin = property.GetValue(propertyBag).ToString() == Margin;
+                            //Add month columns.
+
+                            SeniorityAnalyzer personListAnalyzer = new SeniorityAnalyzer(DataHelper.CurrentPerson);
+                            personListAnalyzer.OneWithGreaterSeniorityExists(project.ProjectPersons);
+                            bool greaterSeniorityExists = personListAnalyzer != null && personListAnalyzer.GreaterSeniorityExists;
+
+                            var columnValue = 0M;
+                            if (renderMonthColumns)
+                            {
+                                var monthStart = periodStart;
+                                // Displaying the month values (main cell data)
+                                for (int k = 0;
+                                    k < monthsInPeriod;
+                                    k++, monthStart = monthStart.AddMonths(1))
+                                {
+                                    column++;
+                                    columnValue = 0M;
+                                    DateTime monthEnd = GetMonthEnd(ref monthStart);
+
+                                    if (project.ProjectedFinancialsByMonth != null)
+                                    {
+                                        foreach (KeyValuePair<DateTime, ComputedFinancials> interestValue in
+                                            project.ProjectedFinancialsByMonth)
+                                        {
+                                            if (IsInMonth(interestValue.Key, monthStart, monthEnd))
+                                            {
+                                                PracticeManagementCurrency revenue = new PracticeManagementCurrency();
+                                                PracticeManagementCurrency margin = new PracticeManagementCurrency();
+
+                                                switch (CalculationsType)
+                                                {
+                                                    case 1:
+                                                        revenue = interestValue.Value.Revenue;
+                                                        margin = interestValue.Value.GrossMargin;
+                                                        break;
+                                                    case 2:
+                                                        revenue = interestValue.Value.ActualRevenue;
+                                                        margin = interestValue.Value.ActualGrossMargin;
+                                                        break;
+                                                    case 3:
+                                                        revenue = interestValue.Value.BudgetRevenue;
+                                                        margin = interestValue.Value.BudgetGrossMargin;
+                                                        break;
+                                                    case 4:
+                                                        revenue = interestValue.Value.EACRevenue;
+                                                        margin = interestValue.Value.EACGrossMargin;
+                                                        break;
+                                                }
+
+                                                columnValue = isMargin ? margin : revenue;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    string color = columnValue < 0 ? "red" : isMargin ? "purple" : "green";
+                                    objects[column] = string.Format(NPOIExcel.CustomColorKey, color, greaterSeniorityExists && isMargin ? (object)"(Hidden)" : columnValue);
+                                }
+                            }
+
+                            column++;
+                            columnValue = 0M;
+
+                            var budgetValue = 0M;
+
+                            var budgetToSelVar = 0M;
+                            var budgetToSelPer = 0M;
+                            if (project.ComputedFinancials != null && !greaterSeniorityExists)
+                            {
+                                PracticeManagementCurrency totalRevenue = new PracticeManagementCurrency();
+                                PracticeManagementCurrency totalMargin = new PracticeManagementCurrency();
+                                switch (CalculationsType)
+                                {
+                                    case 1:
+                                        totalRevenue = project.ComputedFinancials.Revenue;
+                                        totalMargin = project.ComputedFinancials.GrossMargin;
+                                        break;
+                                    case 2:
+                                        totalRevenue = project.ComputedFinancials.ActualRevenue;
+                                        totalMargin = project.ComputedFinancials.ActualGrossMargin;
+                                        break;
+                                    case 3:
+                                        totalRevenue = project.ComputedFinancials.BudgetRevenue;
+                                        totalMargin = project.ComputedFinancials.BudgetGrossMargin;
+                                        break;
+                                    case 4:
+                                        totalRevenue = project.ComputedFinancials.EACRevenue;
+                                        totalMargin = project.ComputedFinancials.EACGrossMargin;
+                                        break;
+                                }
+                                columnValue = isMargin ? totalMargin : totalRevenue;
+                                budgetValue = isMargin ? project.ComputedFinancials.BudgetGrossMargin : project.ComputedFinancials.BudgetRevenue;
+                                budgetToSelVar = columnValue - budgetValue;
+                                budgetToSelPer = columnValue != 0M ? budgetToSelVar / columnValue : 0M;
+                            }
+                            string totalColomncolor = columnValue < 0 ? "red" : isMargin ? "purple" : "green";
+                            objects[column] = HostingPageIsBudgetManagementReport != null ? string.Format(NPOIExcel.CustomColorKey, budgetValue < 0 ? "red" : isMargin ? "purple" : "green", greaterSeniorityExists && isMargin ? (object)"(Hidden)" : budgetValue) : string.Format(NPOIExcel.CustomColorKey, totalColomncolor, greaterSeniorityExists && isMargin ? (object)"(Hidden)" : columnValue);
+                            if (CalculationsType != 3)
+                            {
+                                column++;
+                                objects[column] = HostingPageIsBudgetManagementReport != null ? string.Format(NPOIExcel.CustomColorKey, totalColomncolor, greaterSeniorityExists && isMargin ? (object)"(Hidden)" : columnValue) : string.Format(NPOIExcel.CustomColorKey, budgetValue < 0 ? "red" : isMargin ? "purple" : "green", greaterSeniorityExists && isMargin ? (object)"(Hidden)" : budgetValue);
+                                column++;
+                                objects[column] = string.Format(NPOIExcel.CustomColorKey, budgetToSelVar < 0 ? "red" : isMargin ? "purple" : "green", greaterSeniorityExists && isMargin ? (object)"(Hidden)" : budgetToSelVar);
+                                column++;
+                                objects[column] = string.Format(NPOIExcel.CustomColorKey, budgetToSelPer < 0 ? "red" : "black", greaterSeniorityExists && isMargin ? (object)"(Hidden)" : budgetToSelPer.ToString());
+                            }
+                        }
+                        column++;
+                    }
+                }
+
+                data.Rows.Add(objects);
+            }
+
+            //Total Cell
+            var emptyRow = new object[data.Columns.Count];
+            for (int i = 0; i < data.Columns.Count; i++)
+            {
+                emptyRow[i] = string.Empty;
+            }
+            data.Rows.Add(emptyRow);
+
+            var summary = CalculateSummaryTotals(projectsList, periodStart, PeriodEnd);
+
+            if (DataPoints == null || DataPoints.Contains(1))
+            {
+                int columnCount = 0;
+                var totalRow = new object[data.Columns.Count];
+                totalRow[0] = string.Format(NPOIExcel.CustomColorWithBoldKey, "black", "Total");
+                columnCount++;
+                for (int i = 1; i < 6; i++)
+                {
+                    totalRow[i] = string.Empty;
+                    columnCount++;
+                }
+
+                totalRow[6] = "Services Revenue";
+                columnCount++;
+                if (renderMonthColumns)
+                {
+                    var monthStart = periodStart;
+                    // Displaying the month values 
+                    for (int i = 7, k = 0;
+                     k < monthsInPeriod;
+                     i++, k++, monthStart = monthStart.AddMonths(1))
+                    {
+                        DateTime monthEnd = GetMonthEnd(ref monthStart);
+
+                        foreach (KeyValuePair<DateTime, ComputedFinancials> interestValue in
+                            summary.ProjectedFinancialsByMonth)
+                        {
+                            if (IsInMonth(interestValue.Key, monthStart, monthEnd))
+                            {
+                                var colValue = interestValue.Value.Revenue.Value;
+                                totalRow[i] = string.Format(NPOIExcel.CustomColorKey, colValue < 0 ? "red" : "green", colValue);
+                            }
+                        }
+                        columnCount++;
+                    }
+                }
+
+                PracticeManagementCurrency totalRevenue = 0M;
+
+
+                // Calculate Total Revenue and Margin for current Project
+                if (summary.ComputedFinancials != null)
+                {
+                    totalRevenue = summary.ComputedFinancials.Revenue;
+                }
+
+                if (CalculationsType == 3)
+                {
+                    totalRow[columnCount] = string.Format(NPOIExcel.CustomColorKey, totalRevenue.Value < 0 ? "red" : "green", totalRevenue.Value);
+                    columnCount++;
+                }
+                else
+                {
+                    var val1 = HostingPageIsBudgetManagementReport != null ? summary.ComputedFinancials.BudgetRevenue.Value : totalRevenue.Value;
+                    totalRow[columnCount] = string.Format(NPOIExcel.CustomColorKey, val1 < 0 ? "red" : "green", val1);
+                    var val2 = HostingPageIsBudgetManagementReport != null ? totalRevenue.Value : summary.ComputedFinancials.BudgetRevenue.Value;
+                    totalRow[columnCount + 1] = string.Format(NPOIExcel.CustomColorKey, val2 < 0 ? "red" : "green", val2);
+                    totalRow[columnCount + 2] = string.Format(NPOIExcel.CustomColorKey, summary.ComputedFinancials.EACRevenue.Value < 0 ? "red" : "green", summary.ComputedFinancials.EACRevenue.Value);
+                    var budgetRevenue = summary.ComputedFinancials.BudgetRevenue;
+                    var budgetMargin = summary.ComputedFinancials.BudgetGrossMargin;
+                    totalRevenue = summary.ComputedFinancials.EACRevenue;
+                    decimal revenuePerc = budgetRevenue.Value != 0M ? totalRevenue.Value / budgetRevenue.Value : 0M;
+                    totalRow[columnCount + 3] = string.Format(NPOIExcel.CustomColorKey, revenuePerc < 0 ? "red" : "black", revenuePerc); ;
+                }
+
+                data.Rows.Add(totalRow);
+            }
+            if (DataPoints == null || DataPoints.Contains(2))
+            {
+                int columnCount = 0;
+                var totalRow = new object[data.Columns.Count];
+                totalRow[0] = string.Format(NPOIExcel.CustomColorWithBoldKey, "black", "Total");
+                columnCount++;
+                for (int i = 1; i < 6; i++)
+                {
+                    totalRow[i] = string.Empty;
+                    columnCount++;
+                }
+
+                totalRow[6] = "Cont. Margin";
+                columnCount++;
+                if (renderMonthColumns)
+                {
+                    var monthStart = periodStart;
+                    // Displaying the month values 
+                    for (int i = 7, k = 0;
+                     k < monthsInPeriod;
+                     i++, k++, monthStart = monthStart.AddMonths(1))
+                    {
+                        DateTime monthEnd = GetMonthEnd(ref monthStart);
+
+                        foreach (KeyValuePair<DateTime, ComputedFinancials> interestValue in
+                            summary.ProjectedFinancialsByMonth)
+                        {
+                            if (IsInMonth(interestValue.Key, monthStart, monthEnd))
+                            {
+                                var colValue = interestValue.Value.GrossMargin.Value;
+                                totalRow[i] = string.Format(NPOIExcel.CustomColorKey, colValue < 0 ? "red" : "purple", colValue);
+                            }
+                        }
+                        columnCount++;
+                    }
+                }
+
+                PracticeManagementCurrency totalMargin = 0M;
+                totalMargin.FormatStyle = NumberFormatStyle.Margin;
+
+                // Calculate Total Revenue and Margin for current Project
+                if (summary.ComputedFinancials != null)
+                {
+                    totalMargin = summary.ComputedFinancials.GrossMargin.Value;
+                }
+
+                if (CalculationsType == 3)
+                {
+                    totalRow[columnCount] = string.Format(NPOIExcel.CustomColorKey, totalMargin < 0 ? "red" : "purple", totalMargin.Value); ;
+                    columnCount++;
+                }
+                else
+                {
+                    var val1 = HostingPageIsBudgetManagementReport != null ? summary.ComputedFinancials.BudgetGrossMargin.Value : totalMargin.Value;
+                    totalRow[columnCount] = string.Format(NPOIExcel.CustomColorKey, val1 < 0 ? "red" : "purple", val1);
+                    var val2 = HostingPageIsBudgetManagementReport != null ? totalMargin.Value : summary.ComputedFinancials.BudgetGrossMargin.Value;
+                    totalRow[columnCount + 1] = string.Format(NPOIExcel.CustomColorKey, val2 < 0 ? "red" : "purple", val2);
+                    totalRow[columnCount + 2] = string.Format(NPOIExcel.CustomColorKey, summary.ComputedFinancials.EACGrossMargin.Value < 0 ? "red" : "purple", summary.ComputedFinancials.EACGrossMargin.Value);
+                    var budgetMargin = summary.ComputedFinancials.BudgetGrossMargin;
+                    totalMargin = summary.ComputedFinancials.EACGrossMargin;
+                    decimal marginPerc = budgetMargin.Value != 0M ? totalMargin.Value / budgetMargin.Value : 0M;
+                    totalRow[columnCount + 3] = string.Format(NPOIExcel.CustomColorKey, marginPerc < 0 ? "red" : "purple", marginPerc);
+                }
+
+                data.Rows.Add(totalRow);
+            }
+
+
+            return data;
         }
 
         private void FormatExcelReport(GridView projectsGrid)
@@ -2231,24 +3353,32 @@ namespace PraticeManagement.Controls.Projects
             var dpProject = GetPager();
             dpProject.SetPageProperties(e.StartRowIndex, e.MaximumRows, false);
 
-            lvProjects.DataSource = ProjectList;
+            lvProjects.DataSource = UIProjectList;
             lvProjects.DataBind();
         }
 
         protected void lvProjects_OnDataBound(object sender, EventArgs e)
         {
-
-            if (HostingPageIsProjectsReport == null)
+            if (HostingPageIsBudgetManagementReport != null)
             {
-
-                ScriptManager.RegisterStartupScript(this.Page, Page.GetType(), "", "HideColumns();", true);
+                SetHeaderMonths(false);
+                if (showDetailedReport)
+                {
+                    ScriptManager.RegisterStartupScript(this.Page, Page.GetType(), "", "ShowDetailedColumns();", true);
+                }
+                else
+                {
+                    ScriptManager.RegisterStartupScript(this.Page, Page.GetType(), "", "HideDetailedColumns();", true);
+                }
             }
             else
             {
-                ScriptManager.RegisterStartupScript(this.Page, Page.GetType(), "", "ShowColumns();", true);
+                SetHeaderMonths(true);
+                ScriptManager.RegisterStartupScript(this.Page, Page.GetType(), "", "HideColumns();", true);
             }
-            SetHeaderMonths();
+
             var pager = GetPager();
+
             if (pager != null)
             {
                 pager.Visible = (pager.PageSize < pager.TotalRowCount);
@@ -2260,7 +3390,7 @@ namespace PraticeManagement.Controls.Projects
             }
         }
 
-        private void SetHeaderMonths()
+        private void SetHeaderMonths(bool strShowMonths)
         {
             var row = lvProjects.FindControl("lvHeader") as System.Web.UI.HtmlControls.HtmlTableRow;
             if (row != null)
@@ -2268,10 +3398,15 @@ namespace PraticeManagement.Controls.Projects
                 var periodStart = diRange.FromDate.Value;
                 var monthsInPeriod = GetPeriodLength();
                 Page.Validate(valsPerformance.ValidationGroup);
-                if (!IsPostBack || Page.IsValid)
-                    AddMonthColumn(row, periodStart, monthsInPeriod, NumberOfFixedColumns);
 
-                string totalHeaderText = string.Format(TotalHeaderFormat, ddlCalculateRange.SelectedItem.Text);
+                //Raj
+                if (!IsPostBack || Page.IsValid)
+                {
+                    AddMonthColumn(row, periodStart, monthsInPeriod, numberOfFixedCol, strShowMonths);
+                }
+
+
+                string totalHeaderText = HostingPageIsBudgetManagementReport != null ? "Budget" : GetTotalColumnHeader();
                 var div = new Panel() { CssClass = CompPerfHeaderDivCssClass };
                 div.Controls.Add(new Label() { Text = totalHeaderText });
 
@@ -2281,32 +3416,106 @@ namespace PraticeManagement.Controls.Projects
                     div.RenderControl(wr);
                     var s = stringWriter.ToString();
                     row.Cells[row.Cells.Count - 1].InnerHtml = s;
+                    row.Cells[row.Cells.Count - 1].Attributes["class"] = ".no-wrap alignCenter BorderRightC5C5C5";
                 }
 
-                for (int i = NumberOfFixedColumns; i < row.Cells.Count - 1; i++)
+                for (int i = numberOfFixedCol; i < row.Cells.Count - 1; i++)
                 {
                     PopulateMiniReportCell(row, i);
+                }
+
+                if (CalculationsType != 3)
+                {
+                    for (int i = 1; i < 4; i++)
+                    {
+                        var budgetColumn = new HtmlTableCell("td");
+                        row.Cells.Insert(row.Cells.Count, budgetColumn);
+                        row.Cells[row.Cells.Count - 1].Attributes["class"] = "alignCenter BorderRightC5C5C5";
+                    }
+                    string headerText = "Total";// string.Format(TotalHeaderFormat, ddlCalculateRange.SelectedItem.Text);
+                    var divHeader = new Panel() { CssClass = CompPerfHeaderDivCssClass };
+                    divHeader.Controls.Add(new Label() { Text = totalHeaderText });
+
+
+                    using (HtmlTextWriter wr = new HtmlTextWriter(stringWriter))
+                    {
+                        div.RenderControl(wr);
+                        var s = stringWriter.ToString();
+                        row.Cells[row.Cells.Count - 1].InnerHtml = s;
+                        row.Cells[row.Cells.Count - 1].Attributes["class"] = ".no-wrap alignCenter BorderRightC5C5C5";
+                    }
+                    row.Cells[row.Cells.Count - 3].InnerHtml = PrepareHeader(HostingPageIsBudgetManagementReport != null ? GetTotalColumnHeader() : "Budget");
+                    row.Cells[row.Cells.Count - 2].InnerHtml = PrepareHeader(HostingPageIsBudgetManagementReport != null ? "$ Variance" : "Budget Selection Variance");
+                    row.Cells[row.Cells.Count - 1].InnerHtml = PrepareHeader(HostingPageIsBudgetManagementReport != null ? "% Variance" : "Budget Selection % Variance");
                 }
 
                 // fill summary
                 row = lvProjects.FindControl("lvSummary") as System.Web.UI.HtmlControls.HtmlTableRow;
                 var tdSummary = row.FindControl("tdSummary") as System.Web.UI.HtmlControls.HtmlTableCell;
-                tdSummary.ColSpan = HostingPageIsProjectsReport != null ? 15 : 6;
+                tdSummary.ColSpan = HostingPageIsBudgetManagementReport != null && showDetailedReport ? 28 : 6;
                 while (row.Cells.Count > 1)
                 {
                     row.Cells.RemoveAt(1);
                 }
-
+                //Raj
+                if (HostingPageIsBudgetManagementReport != null)
+                {
+                    monthsInPeriod = 0;
+                }
                 for (int i = 0; i < monthsInPeriod + 1; i++)   // + 1 means a cell for total column
                 {
                     var td = new HtmlTableCell() { };
                     td.Attributes["class"] = "CompPerfMonthSummary";
                     row.Cells.Insert(row.Cells.Count, td);
                 }
-                var summary = CalculateSummaryTotals(ProjectList, periodStart, PeriodEnd);
+                if (CalculationsType != 3)
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        var td = new HtmlTableCell() { };
+                        td.Attributes["class"] = "CompPerfMonthSummary";
+                        row.Cells.Insert(row.Cells.Count, td);
+                    }
+                }
+
+                var summary = CalculateSummaryTotals(UIProjectList, periodStart, PeriodEnd);
 
                 FillSummaryTotalRow(monthsInPeriod, summary, row);
             }
+        }
+
+        private string GetTotalColumnHeader()
+        {
+            string headerText = "";
+            switch (CalculationsType)
+            {
+                case 1:
+                    headerText = "Projected";
+                    break;
+                case 2:
+                    headerText = "Actual";
+                    break;
+                case 3:
+                    headerText = "Budget";
+                    break;
+                case 4:
+                    headerText = "ETC";
+                    break;
+            }
+            return headerText;
+        }
+
+        private string PrepareHeader(string headerText)
+        {
+            var div = new Panel() { CssClass = CompPerfHeaderDivCssClass };
+            div.Controls.Add(new Label() { Text = headerText });
+
+            var stringWriter = new System.IO.StringWriter();
+            using (HtmlTextWriter wr = new HtmlTextWriter(stringWriter))
+            {
+                div.RenderControl(wr);
+            }
+            return stringWriter.ToString();
         }
 
         protected void Pager_PagerCommand(object sender, DataPagerCommandEventArgs e)
