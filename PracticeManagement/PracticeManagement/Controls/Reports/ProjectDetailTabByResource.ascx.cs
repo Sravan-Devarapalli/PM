@@ -63,15 +63,14 @@ namespace PraticeManagement.Controls.Reports
 
                 var dataCurrancyCellStyle = new CellStyles { DataFormat = "$#,##0.00_);($#,##0.00)" };
 
-                var dataCellStylearray = new List<CellStyles>() { dataCellStyle,
-                                                    dataCellStyle, 
+                var dataCellStylearray = new List<CellStyles>() {
                                                     dataCellStyle,
                                                     dataDateCellStyle,
                                                     dataCellStyle,
-                                                    dataCellStyle, 
                                                     dataCellStyle,
                                                     dataCellStyle,
-                                                    dataCellStyle, 
+                                                    dataCellStyle,
+                                                    dataCellStyle,
                                                     dataCellStyle,
                                                     dataCurrancyCellStyle,
                                                     dataCellStyle
@@ -180,6 +179,14 @@ namespace PraticeManagement.Controls.Reports
             }
         }
 
+        //private DateTime? ActualsEndDate
+        //{
+        //    get
+        //    {
+        //        return HostingPage.ActualsEndDate;
+        //    }
+        //}
+
         private string ProjectRange
         {
             get
@@ -192,18 +199,18 @@ namespace PraticeManagement.Controls.Reports
             }
         }
 
-        private string ProjectRoles
-        {
-            get
-            {
-                if (Page is PraticeManagement.Reporting.TimePeriodSummaryReport)
-                {
-                    return null;
-                }
+        //private string ProjectRoles
+        //{
+        //    get
+        //    {
+        //        if (Page is PraticeManagement.Reporting.TimePeriodSummaryReport)
+        //        {
+        //            return null;
+        //        }
 
-                return HostingControl.cblProjectRolesControl.SelectedItemsXmlFormat;
-            }
-        }
+        //        return HostingControl.cblProjectRolesControl.SelectedItemsXmlFormat;
+        //    }
+        //}
 
         private int sectionId;
 
@@ -418,14 +425,6 @@ namespace PraticeManagement.Controls.Reports
             var project = ServiceCallers.Custom.Project(p => p.GetProjectShortByProjectNumber(ProjectNumber, MilestoneId, StartDate, EndDate));
             List<PersonLevelGroupedHours> report = GetReportData(true);
 
-            string filterApplied = "Filters applied to columns: ";
-            bool isFilterApplied = false;
-            if (HostingControl != null && !HostingControl.cblProjectRolesControl.AllItemsSelected)
-            {
-                filterApplied = filterApplied + " ProjectRoles.";
-                isFilterApplied = true;
-            }
-
             var filename = string.Format("{0}_{1}_{2}.xls", project.ProjectNumber, project.Name, "_ByResourceDetail");
             filename = filename.Replace(' ', '_');
             if (report.Count > 0)
@@ -450,12 +449,6 @@ namespace PraticeManagement.Controls.Reports
                 header1.Rows.Add(row3.ToArray());
 
                 var row4 = new List<object>();
-                if (isFilterApplied)
-                {
-                    row4.Add(filterApplied);
-                    row4.Add("");
-                    header1.Rows.Add(row4.ToArray());
-                }
                 headerRowsCount = header1.Rows.Count + 3;
 
                 var data = PrepareDataTable(report);
@@ -490,9 +483,7 @@ namespace PraticeManagement.Controls.Reports
             List<object> rownew;
             List<object> row;
 
-            data.Columns.Add("Employee Id");
             data.Columns.Add("Resource");
-            data.Columns.Add("Project Role");
             data.Columns.Add("Date");
             data.Columns.Add("WorkType");
             data.Columns.Add("WorkType Name");
@@ -512,9 +503,7 @@ namespace PraticeManagement.Controls.Reports
                         foreach (var byWorkType in byDateList.DayTotalHoursList)
                         {
                             row = new List<object>();
-                            row.Add(timeEntriesGroupByClientAndProject.Person.EmployeeNumber);
                             row.Add(timeEntriesGroupByClientAndProject.Person.HtmlEncodedName);
-                            row.Add(timeEntriesGroupByClientAndProject.Person.ProjectRoleName);
                             row.Add(byDateList.Date);
                             row.Add(byWorkType.TimeType.Code);
                             row.Add(byWorkType.TimeType.Name);
@@ -522,7 +511,7 @@ namespace PraticeManagement.Controls.Reports
                             row.Add(byWorkType.NonBillableHours);
                             row.Add(byWorkType.TotalHours);
                             row.Add(byWorkType.ForecastedHoursDaily);
-                            row.Add(byWorkType.BillingType == "Fixed" ? "FF" : byWorkType.BillRate.ToString());
+                            row.Add(byWorkType.BillRate.ToString());
                             row.Add(byWorkType.NoteForExport);
                             data.Rows.Add(row.ToArray());
                         }
@@ -581,7 +570,7 @@ namespace PraticeManagement.Controls.Reports
             List<PersonLevelGroupedHours> list =
                 ServiceCallers.Custom.Report(r => r.ProjectDetailReportByResource(ProjectNumber, MilestoneId,
                     PeriodSelected == "*" ? null : StartDate, PeriodSelected == "*" ? null : EndDate,
-                    ProjectRoles, fromExport)).ToList();
+                    null, fromExport)).ToList();
 
             if (Page is PraticeManagement.Reporting.TimePeriodSummaryReport)
             {
