@@ -124,6 +124,33 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to BudgetResetDeclineMailTemplateName.
+        /// </summary>
+        internal static string BudgetResetDeclineMailTemplateName {
+            get {
+                return ResourceManager.GetString("BudgetResetDeclineMailTemplateName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to BudgetResetMailTemplateName.
+        /// </summary>
+        internal static string BudgetResetMailTemplateName {
+            get {
+                return ResourceManager.GetString("BudgetResetMailTemplateName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to BudgetResetRequestMailTemplateName.
+        /// </summary>
+        internal static string BudgetResetRequestMailTemplateName {
+            get {
+                return ResourceManager.GetString("BudgetResetRequestMailTemplateName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ClientAddedTemplate.
         /// </summary>
         internal static string ClientAddedTemplateName {
@@ -192,6 +219,24 @@ namespace Resources {
         internal static string LockedOutEmailTemplateName {
             get {
                 return ResourceManager.GetString("LockedOutEmailTemplateName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MarginExceptionRequest.
+        /// </summary>
+        internal static string MarginExceptionRequest {
+            get {
+                return ResourceManager.GetString("MarginExceptionRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MarginExceptionResponse.
+        /// </summary>
+        internal static string MarginExceptionResponse {
+            get {
+                return ResourceManager.GetString("MarginExceptionResponse", resourceCulture);
             }
         }
         
