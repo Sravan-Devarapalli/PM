@@ -20,6 +20,9 @@ using Resources;
 using ProjectAttachment = PraticeManagement.AttachmentService.ProjectAttachment;
 using ProjectCSAT = PraticeManagement.Controls.Projects.ProjectCSAT;
 using System.Text.RegularExpressions;
+using System.Web.Services;
+using PraticeManagement.Utils.Excel;
+using System.Data;
 
 namespace PraticeManagement
 {
@@ -89,6 +92,14 @@ namespace PraticeManagement
             get
             {
                 return Request.QueryString[ProjectNumberArgument];
+            }
+        }
+
+        private string ShowPersonsTab
+        {
+            get
+            {
+                return Request.QueryString["ShowPersonsTab"];
             }
         }
 
@@ -321,6 +332,14 @@ namespace PraticeManagement
             }
         }
 
+        public static string TierOneTwo1
+        {
+            get
+            {
+                return TierOneTwo;
+            }
+        }
+
         #endregion Properties
 
         public bool IsErrorPanelDisplay;
@@ -340,6 +359,7 @@ namespace PraticeManagement
                     e.IsValid = false;
                 }
             }
+
         }
 
         protected void custPOAmount_ServerValidate(object sender, ServerValidateEventArgs e)
@@ -490,18 +510,19 @@ namespace PraticeManagement
             {
                 tblProjectTypeViewSwitch.Visible = false;
             }
-            bool userIsAdministrator = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.AdministratorRoleName);
-            bool userIsOperations = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.OperationsRoleName);
+            UserIsAdministrator = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.AdministratorRoleName);
+            UserIsOperations = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.OperationsRoleName);
+
+            UserIsSalesPerson = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.SalespersonRoleName);
+            UserIsPracticeManager = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.PracticeManagerRoleName);
+            UserIsBusinessUnitManager = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.BusinessUnitManagerRoleName);
+            UserIsDirector = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.DirectorRoleName);// #2817: DirectorRoleName is added as per the requirement.
+            UserIsSeniorLeadership = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.SeniorLeadershipRoleName);// #2913: userIsSeniorLeadership is added as per the requirement.
+            UserIsProjectLead = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.ProjectLead);
+
             if (!IsPostBack)
             {
-                bool userIsSalesPerson = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.SalespersonRoleName);
-                bool userIsPracticeManager = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.PracticeManagerRoleName);
-                bool userIsBusinessUnitManager = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.BusinessUnitManagerRoleName);
-                bool userIsDirector = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.DirectorRoleName);// #2817: DirectorRoleName is added as per the requirement.
-                bool userIsSeniorLeadership = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.SeniorLeadershipRoleName);// #2913: userIsSeniorLeadership is added as per the requirement.
-                bool userIsProjectLead = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.ProjectLead);
-
-                if (ProjectId.HasValue && (!userIsAdministrator && !userIsOperations))
+                if (ProjectId.HasValue && (!UserIsAdministrator && !UserIsOperations))
                 {
                     if (IsUserHasPermissionOnProject.HasValue && !IsUserHasPermissionOnProject.Value
                         && IsUserisOwnerOfProject.HasValue && !IsUserisOwnerOfProject.Value)
@@ -511,14 +532,14 @@ namespace PraticeManagement
                 }
 
                 if (!ProjectId.HasValue &&
-                    userIsProjectLead && !(userIsAdministrator || userIsSalesPerson || userIsPracticeManager || userIsBusinessUnitManager || userIsDirector || userIsSeniorLeadership)
+                    UserIsProjectLead && !(UserIsAdministrator || UserIsSalesPerson || UserIsPracticeManager || UserIsBusinessUnitManager || UserIsDirector || UserIsSeniorLeadership)
                     )
                 {
                     Response.Redirect(Constants.ApplicationPages.AccessDeniedPage);
                 }
 
-                ddlNotes.Enabled = (userIsAdministrator || userIsOperations || userIsDirector || (IsUserIsProjectOwner.HasValue && IsUserIsProjectOwner.Value));
-                ddlClientTimeEntry.Enabled = (userIsAdministrator || userIsSeniorLeadership);
+                ddlNotes.Enabled = (UserIsAdministrator || UserIsOperations || UserIsDirector || (IsUserIsProjectOwner.HasValue && IsUserIsProjectOwner.Value));
+                ddlClientTimeEntry.Enabled = (UserIsAdministrator || UserIsSeniorLeadership);
                 txtProjectName.Focus();
 
                 ShowTabs();
@@ -537,9 +558,7 @@ namespace PraticeManagement
 
             btnUpload.Attributes["onclick"] = "startUpload(); return false;";
 
-            ddlCSATOwner.Enabled = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.AdministratorRoleName);
-
-
+            ddlCSATOwner.Enabled = UserIsAdministrator;// Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.AdministratorRoleName);
         }
 
         public void ShowTabs()
@@ -550,7 +569,6 @@ namespace PraticeManagement
                 cellProjectTools.Visible = true;
                 cellProjectCSAT.Visible = true;
                 cellCommissions.Visible = true;
-                cellFeedback.Visible = true;
             }
         }
 
@@ -567,6 +585,12 @@ namespace PraticeManagement
                 cellExpenses.Visible = false;
                 cellCommissions.Visible = false;
             }
+            cellBudgetMgmt.Visible = ProjectId.HasValue && Project != null && Project.Status != null && Project.Status.Id == (int)ProjectStatusType.Active;
+            if (ProjectId.HasValue && Project != null && Project.Status != null && Project.Status.Id != (int)ProjectStatusType.Active && mvProjectDetailTab.ActiveViewIndex == 10)
+            {
+
+                btnView_Command(btnMilestones, new CommandEventArgs("", "0"));
+            }
             if (ddlProjectGroup.Items.Count > 0)
                 ddlProjectGroup.SortByText();
             AddStatusIcon();
@@ -578,16 +602,15 @@ namespace PraticeManagement
             imgMailToProjectOwner.Visible =
             imgMailToClientDirector.Visible =
             imgMailToSalesperson.Visible = !txtProjectNameFirstTime.Visible;
+            if (!IsPostBack && ShowPersonsTab == "true")
+            {
+                btnView_Command(btnPersons, new CommandEventArgs("", "6"));
+            }
 
             if (!IsPostBack && !string.IsNullOrEmpty(CSAT) && CSAT == "true" && cellProjectCSAT.Visible)
             {
-                btnView_Command(btnProjectCSAT, new CommandEventArgs("", "10"));
+                btnView_Command(btnProjectCSAT, new CommandEventArgs("", "9"));
             }
-            if (!IsPostBack && !string.IsNullOrEmpty(Feedback) && Feedback == "true" && cellFeedback.Visible)
-            {
-                btnView_Command(btnFeedback, new CommandEventArgs("", "1"));
-            }
-
         }
 
         private void PopulateProjectLink()
@@ -609,8 +632,53 @@ namespace PraticeManagement
             }
         }
 
+        public bool UserIsAdministrator
+        {
+            get;
+            set;
+        }
 
+        public bool UserIsOperations
+        {
+            get;
+            set;
+        }
 
+        public bool UserIsSalesPerson
+        {
+            get;
+            set;
+        }
+
+        public bool UserIsPracticeManager
+        {
+            get;
+            set;
+        }
+
+        public bool UserIsBusinessUnitManager
+        {
+            get;
+            set;
+        }
+
+        public bool UserIsDirector
+        {
+            get;
+            set;
+        }
+
+        public bool UserIsSeniorLeadership
+        {
+            get;
+            set;
+        }
+
+        public bool UserIsProjectLead
+        {
+            get;
+            set;
+        }
         /// <summary>
         /// Emits a JavaScript which prevent the loss of non-saved data.
         /// </summary>
@@ -626,31 +694,15 @@ namespace PraticeManagement
                 SetDefaultsToClientDependancyControls();
             }
 
-            bool userIsAdministrator =
-                Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.AdministratorRoleName);
-            bool userIsOperations =
-              Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.OperationsRoleName);
-            bool userIsSalesPerson =
-                Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.SalespersonRoleName);
-            bool userIsPracticeManager =
-                Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.PracticeManagerRoleName);
-            bool userIsBusinessUnitManager = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.BusinessUnitManagerRoleName);
-            bool userIsDirector =
-                Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.DirectorRoleName); // #2817: userIsDirector is added as per the requirement.
-            bool userIsSeniorLeadership =
-               Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.SeniorLeadershipRoleName);// #2913: userIsSeniorLeadership is added as per the requirement.
-            bool userIsProjectLead =
-                Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.ProjectLead);//added Project Lead as per #2941.
-
             //isReadOnly  variable can be removed as only this roles can access the page.
-            bool isReadOnly = !userIsOperations && !userIsAdministrator && !userIsSalesPerson && !userIsPracticeManager && !userIsBusinessUnitManager && !userIsDirector && !userIsSeniorLeadership && !userIsProjectLead;// #2817: userIsDirector is added as per the requirement.
+            bool isReadOnly = !UserIsOperations && !UserIsAdministrator && !UserIsSalesPerson && !UserIsPracticeManager && !UserIsBusinessUnitManager && !UserIsDirector && !UserIsSeniorLeadership && !UserIsProjectLead;// #2817: userIsDirector is added as per the requirement.
 
             txtProjectName.ReadOnly = isReadOnly;
             ddlClientName.Enabled = !isReadOnly;
             ddlPractice.Enabled = !isReadOnly && ddlDivision.SelectedIndex != 0;
             ddlSalesperson.Enabled = ddlProjectGroup.Enabled = !string.IsNullOrEmpty(ddlClientName.SelectedValue) && !isReadOnly;
             ddlPricingList.Enabled = !string.IsNullOrEmpty(ddlClientName.SelectedValue);
-            if ((userIsPracticeManager || userIsBusinessUnitManager || userIsProjectLead) && !cblProjectManagers.Enabled && !ProjectId.HasValue)
+            if ((UserIsPracticeManager || UserIsBusinessUnitManager || UserIsProjectLead) && !cblProjectManagers.Enabled && !ProjectId.HasValue)
             {
                 try
                 {
@@ -665,12 +717,13 @@ namespace PraticeManagement
                 // add new project mode
                 !ProjectId.HasValue ||
                 // Administrators always can change the project status
-                userIsOperations ||
-                userIsAdministrator ||
+                UserIsOperations ||
+                UserIsAdministrator ||
                 // Practice Managers and Sales persons can change the status from Experimental, Inactive or Projected
                 IsStatusValidForNonadmin(Project);
 
             btnAddMilistone.Visible = btnSave.Visible = !isReadOnly;
+            btnAddMilistone.Visible = btnSave.Enabled = Project == null || !(Project.TierOneExceptionStatus == 1 || (Project.TierOneExceptionStatus != 3 && Project.TierTwoExceptionStatus == 1));
 
             AllowContinueWithoutSave = ProjectId.HasValue;
 
@@ -685,7 +738,7 @@ namespace PraticeManagement
             bool userIsHR = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.HRRoleName);
             bool userIsRecruiter = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.RecruiterRoleName);
 
-            if (userIsProjectLead && !(userIsOperations || userIsAdministrator || userIsSalesPerson || userIsPracticeManager || userIsBusinessUnitManager || userIsDirector || userIsSeniorLeadership || userIsHR || userIsRecruiter))
+            if (UserIsProjectLead && !(UserIsOperations || UserIsAdministrator || UserIsSalesPerson || UserIsPracticeManager || UserIsBusinessUnitManager || UserIsDirector || UserIsSeniorLeadership || userIsHR || userIsRecruiter))
             {
                 cellProjectTools.Visible = false;
                 ddlSalesperson.Enabled = txtSowBudget.Enabled = txtPOAmount.Enabled = ddlDirector.Enabled = false;
@@ -723,7 +776,6 @@ namespace PraticeManagement
                 }
             }
         }
-
 
         protected void custProjectDesciption_ServerValidation(object source, ServerValidateEventArgs args)
         {
@@ -860,7 +912,7 @@ namespace PraticeManagement
             }
         }
 
-        private void ValidateSaveAndPopulate(bool showSuccessPopup)
+        private void ValidateSaveAndPopulate(bool showSuccessPopup, bool isBudgetReset = false)
         {
             if (ValidateAndSave())
             {
@@ -941,22 +993,6 @@ namespace PraticeManagement
             }
         }
 
-        protected void ddlBusinessOptions_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            int bussinesType;
-            int.TryParse(ddlBusinessOptions.SelectedValue, out bussinesType);
-
-            if ((BusinessType)bussinesType == BusinessType.Extension)
-            {
-                txtPrevProjectLink.Enabled = rfvPrevProjectLink.Enabled = cvPreviousProjectNumber.Enabled = true;
-            }
-            else
-            {
-                txtPrevProjectLink.Text = string.Empty;
-                txtPrevProjectLink.Enabled = rfvPrevProjectLink.Enabled = cvPreviousProjectNumber.Enabled = false;
-            }
-            imgNavigateToProject.Visible = false;
-        }
 
         /// <summary>
         /// Sets the client discount
@@ -973,14 +1009,6 @@ namespace PraticeManagement
 
                 populateOutsourceId((int)OutsourceId.NotApplicable);
             }
-        }
-
-
-
-        protected void ddlDirector_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            activityLog.Update();
-            PopulateCSATOwnerList();
         }
 
         private void SetDefaultsToClientDependancyControls()
@@ -1013,10 +1041,10 @@ namespace PraticeManagement
 
             if (client != null)
             {
-                if (ddlSalesperson.SelectedIndex == 0 && Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.SalespersonRoleName)
-                    && !Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.AdministratorRoleName)
-                    && !Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.DirectorRoleName)
-                    && !Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.SeniorLeadershipRoleName))
+                if (ddlSalesperson.SelectedIndex == 0 && UserIsSalesPerson
+                    && !UserIsAdministrator
+                    && !UserIsDirector
+                    && !UserIsSeniorLeadership)
                 {
                     AddListItemIfNotExists(ddlSalesperson, DataHelper.CurrentPerson.Id.Value.ToString(), DataHelper.CurrentPerson);
                     ddlSalesperson.SelectedValue = DataHelper.CurrentPerson.Id.Value.ToString();
@@ -1024,10 +1052,10 @@ namespace PraticeManagement
                 else
                 {
                     if (ddlSalesperson.SelectedValue != DataHelper.CurrentPerson.Id.Value.ToString()
-                        && Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.SalespersonRoleName)
-                        && !Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.AdministratorRoleName)
-                        && !Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.DirectorRoleName)
-                        && !Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.SeniorLeadershipRoleName))
+                        && UserIsSalesPerson
+                        && !UserIsAdministrator
+                        && !UserIsDirector
+                        && !UserIsSeniorLeadership)
                     {
                         AddListItemIfNotExists(ddlSalesperson, client.DefaultSalespersonId.ToString(), null);
                         ddlSalesperson.SelectedIndex =
@@ -1064,9 +1092,7 @@ namespace PraticeManagement
                         ddlNotes.SelectedValue = Project.IsNoteRequired ? "1" : "0";
                     }
 
-                    bool userIsAdministrator = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.AdministratorRoleName);
-                    bool userIsDirector = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.DirectorRoleName);// #2817: DirectorRoleName is added as per the requirement.
-                    ddlNotes.Enabled = (userIsAdministrator || userIsDirector || (IsUserIsProjectOwner.HasValue && IsUserIsProjectOwner.Value));
+                    ddlNotes.Enabled = (UserIsAdministrator || UserIsDirector || (IsUserIsProjectOwner.HasValue && IsUserIsProjectOwner.Value));
                 }
 
                 var pricingLists = ServiceCallers.Custom.Client(clients => clients.GetPricingLists(client.Id));
@@ -1256,6 +1282,16 @@ namespace PraticeManagement
 
         protected void DropDown_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (ddlProjectStatus.SelectedValue == ((int)ProjectStatusType.AtRisk).ToString())
+            {
+                divStatusYellow.Attributes.Add("style", "background-color: yellow");
+                ddlProjectStatus.Attributes.Add("style", "background: transparent");
+            }
+            else
+            {
+                divStatusYellow.Attributes.Add("style", "background: transparent");
+            }
+
             activityLog.Update();
             // Only set an input focus
             ((Control)sender).Focus();
@@ -1263,6 +1299,7 @@ namespace PraticeManagement
             {
                 ucCSAT.PopulateData(null);
             }
+            ViewState["projectedFinancials"] = null;
         }
 
         private void AddStatusIcon()
@@ -1317,9 +1354,9 @@ namespace PraticeManagement
                   (IsStatusValidForNonadmin(currentStatus) && IsStatusValidForNonadmin(Project)) ||
                   // Status was not changed
                   currentStatus == (Project != null && Project.Status != null ? Project.Status.Id : 0);
-
             }
         }
+
         protected void custAtRiskStatus_ServerValidate(object sender, ServerValidateEventArgs e)
         {
             int currentStatus = 0;
@@ -1327,21 +1364,13 @@ namespace PraticeManagement
             {
                 currentStatus = int.Parse(ddlProjectStatus.SelectedValue);
             }
-            if ((!string.IsNullOrEmpty(ddlProjectStatus.SelectedValue) && (int)ProjectStatusType.AtRisk == currentStatus))
+            if (!string.IsNullOrEmpty(ddlProjectStatus.SelectedValue) && (int)ProjectStatusType.AtRisk == currentStatus && currentStatus != (Project != null && Project.Status != null ? Project.Status.Id : 0))
             {
                 e.IsValid =
                 // Administrators, Oprations can set At Risk status
                 Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.AdministratorRoleName) || Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.OperationsRoleName);
                 //return;
             }
-
-            //if (!string.IsNullOrEmpty(ddlProjectStatus.SelectedValue) && ((int)ProjectStatusType.AtRisk == (Project != null && Project.Status != null ? Project.Status.Id : 0) && (int)ProjectStatusType.AtRisk != currentStatus))
-            //{
-            //    e.IsValid =
-            //       // Administrators, Oprations can set At Risk status to any
-            //       Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.AdministratorRoleName) || (Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.OperationsRoleName) && (currentStatus != (int)ProjectStatusType.Active && currentStatus != (int)ProjectStatusType.Completed));
-            //    //return;
-            //}
         }
 
         protected void custActiveStatus_ServerValidate(object sender, ServerValidateEventArgs e)
@@ -1351,13 +1380,22 @@ namespace PraticeManagement
             {
                 e.IsValid = !noMileStones;
             }
+
         }
 
+        protected void cvActivestatusWithoutFinance_ServerValidate(object sender, ServerValidateEventArgs e)
+        {
+            e.IsValid = true;
+            if (!string.IsNullOrEmpty(ddlProjectStatus.SelectedValue) && (int)ProjectStatusType.Active == Convert.ToInt32(ddlProjectStatus.SelectedValue))
+            {
+                e.IsValid = !(hdnProjectHasRevenue.Value == false.ToString());
+            }
+        }
 
         protected void cvPreviousProjectNumber_ServerValidate(object sender, ServerValidateEventArgs e)
         {
             e.IsValid = true;
-            if (txtPrevProjectLink.Enabled && !string.IsNullOrEmpty(txtPrevProjectLink.Text))
+            if (ddlBusinessOptions.SelectedValue == "2" && !string.IsNullOrEmpty(txtPrevProjectLink.Text))
             {
                 var project = ServiceCallers.Custom.Project(p => p.GetProjectShortByProjectNumber(txtPrevProjectLink.Text, null, null, null));
 
@@ -1426,7 +1464,7 @@ namespace PraticeManagement
                 ucProjectTimeTypes.PopulateControls();
             }
             int viewIndex = mvProjectDetailTab.ActiveViewIndex;
-            btnView_Command(btnProjectTimeTypes, new CommandEventArgs("", "2"));
+            btnView_Command(btnProjectTimeTypes, new CommandEventArgs("", "1"));
             Page.Validate(vsumProject.ValidationGroup);
             if (!Page.IsValid)
             {
@@ -1442,7 +1480,7 @@ namespace PraticeManagement
             if (!ProjectId.HasValue || Project == null || Project.Milestones == null || Project.Milestones.Count <= 0)
                 return true;
             int viewIndex = mvProjectDetailTab.ActiveViewIndex;
-            btnView_Command(btnCommissions, new CommandEventArgs("", "5"));
+            btnView_Command(btnCommissions, new CommandEventArgs("", "4"));
             projectAttribution.ValidateCommissionsTab();
             if (!Page.IsValid)
             {
@@ -1456,6 +1494,7 @@ namespace PraticeManagement
         protected override bool ValidateAndSave()
         {
             bool result = false;
+            rfvPrevProjectLink.Enabled = cvPreviousProjectNumber.Enabled = ddlBusinessOptions.SelectedValue == "2";
             Page.Validate(vsumProject.ValidationGroup);
             if (Page.IsValid && ValidateProjectTimeTypesTab() && (CompletedStatus || ValidateCompleStatusPopup()) && ValidateCommissionsTab())
             {
@@ -1471,7 +1510,7 @@ namespace PraticeManagement
                     IsErrorPanelDisplay = true;
                 }
                 int viewIndex = mvProjectDetailTab.ActiveViewIndex;
-                if (viewIndex == 10)
+                if (viewIndex == 9)
                 {
                     ucCSAT.PopulateData(null);
                 }
@@ -1609,7 +1648,6 @@ namespace PraticeManagement
 
         protected override void Display()
         {
-
             DataHelper.FillOfferingsList(ddlOffering, "-- Select Offering --");
             DataHelper.FillRevenueTypeList(ddlRevenueType, "-- Select Revenue Type --");
             DataHelper.FillChannelList(ddlChannel, "-- Select Channel --");
@@ -1626,6 +1664,8 @@ namespace PraticeManagement
             DataHelper.FillSalespersonListOnlyActiveForLoginPerson(ddlSalesperson, person, "-- Select Salesperson --");
             DataHelper.FillProjectStatusList(ddlProjectStatus, string.Empty);
             DataHelper.FillProjectStatusList(ddlCloneProjectStatus, string.Empty, null, true);
+            ListItem activiItem = ddlCloneProjectStatus.Items.FindByValue("3");
+            ddlCloneProjectStatus.Items.Remove(activiItem);
             DataHelper.FillBusinessTypes(ddlBusinessOptions);
             PopulateDirectorsList();
             PopulateCSATOwnerList();
@@ -1634,6 +1674,12 @@ namespace PraticeManagement
             Person[] persons = ServiceCallers.Custom.Person(p => p.OwnerListAllShort(statusids));
             DataHelper.FillListDefault(cblProjectManagers, "All People with Project Access", persons, false, "Id", "PersonLastFirstName");
             DataHelper.FillListDefault(ddlProjectOwner, "-- Select Project Manager --", persons, false, "Id", "PersonLastFirstName");
+
+            var exceptionReasons = ServiceCallers.Custom.Project(p => p.GetAllMarginExceptionReasons());
+            DataHelper.FillListDefault(cblExceptionReason, "All Reasons", exceptionReasons, false, "Id", "Reason");
+            DataHelper.FillListDefault(cblExceptionResponseReasons, "All Reasons", exceptionReasons, false, "Id", "Reason");
+            DataHelper.FillListDefault(cblBudgetRevisionReason, "All Reasons", exceptionReasons, false, "Id", "Reason");
+
 
             if (ProjectId.HasValue)
             {
@@ -1730,7 +1776,7 @@ namespace PraticeManagement
             if (project != null)
             {
                 lblProjectNumber.Text = !string.IsNullOrEmpty(project.ProjectNumber) ? project.ProjectNumber + " - " : string.Empty;
-
+                hdnProjectNumber.Value = project.ProjectNumber;
                 lblProjectName.Text = project.HtmlEncodedName;
                 txtProjectNameFirstTime.Text = txtProjectName.Text = project.Name;
                 lblProjectRange.Text = string.IsNullOrEmpty(project.ProjectRange) ? string.Empty : string.Format("({0})", project.ProjectRange);
@@ -1747,6 +1793,16 @@ namespace PraticeManagement
                 populateOutsourceId(project.OutsourceId);
                 ddlProjectStatus.SelectedValue = project.Status != null ? project.Status.Id.ToString() : string.Empty;
 
+                if (project.Status != null && project.Status.Id == (int)ProjectStatusType.AtRisk)
+                {
+                    divStatusYellow.Attributes.Add("style", "background-color: yellow");
+                    ddlProjectStatus.Attributes.Add("style", "background: transparent");
+                }
+                else
+                {
+                    divStatusYellow.Attributes.Add("style", "background: transparent");
+                }
+
                 ddlRevenueType.SelectedValue = project.RevenueType != null ? project.RevenueType.Id.ToString() : ddlRevenueType.SelectedValue;
                 ddlOffering.SelectedValue = project.Offering != null ? project.Offering.Id.ToString() : string.Empty;
                 ddlDivision.SelectedValue = project.Division != null ? project.Division.Id.ToString() : string.Empty;
@@ -1755,6 +1811,8 @@ namespace PraticeManagement
                 ddlChannel.SelectedValue = project.Channel != null ? project.Channel.Id.ToString() : ddlChannel.SelectedValue;
                 PopulateChannelAndSubchannel();
                 PopulateProjectLink();
+                PopulateBudgetControls();
+
                 if (ddlSubChannel.Visible)
                 {
                     ListItem selectedItem = project.SubChannel != null ? ddlSubChannel.Items.FindByText(project.SubChannel) : ddlSubChannel.Items.FindByValue(string.Empty);
@@ -1773,7 +1831,7 @@ namespace PraticeManagement
 
                 PopulateProjectManagerDropDown(project);
                 PopulateSalesPersonDropDown(project);
-                financials.Project = project;
+                //financials.Project = project;
                 txtBuyerName.Text = project.BuyerName;
                 if (project.Director != null && project.Director.Id.HasValue)
                 {
@@ -1824,15 +1882,161 @@ namespace PraticeManagement
                     ddlProjectOwner.SelectedValue = project.ProjectOwner.Id.ToString();
                 }
                 int viewIndex = mvProjectDetailTab.ActiveViewIndex;
-                if (viewIndex == 8) //History
+                if (viewIndex == 7) //History
                 {
                     activityLog.Update();
                 }
+
+                //Populate Margin Notifications.
+                PopulateMarginNotifications(project);
             }
 
             PopulateAttachmentControl(project);
             ucProjectTimeTypes.ResetSearchTextFilters();
             ucProjectTimeTypes.PopulateControls();
+        }
+
+        private void PopulateMarginNotifications(Project project)
+        {
+            if (project.StartDate.HasValue)
+            {
+                bool isActiveProject = project.Status.Id == (int)ProjectStatusType.Active;
+                ComputedFinancials projectedFinancials = null;
+
+                if (ViewState["projectedFinancials"] != null)
+                {
+                    projectedFinancials = ViewState["projectedFinancials"] as ComputedFinancials;
+                }
+                else
+                {
+                    projectedFinancials = isActiveProject ? ServiceCallers.Custom.Project(p => p.EACFinancialsByProject(project.Id.Value)) : ServiceCallers.Custom.Project(p => p.FinancialsByProject(project.Id.Value));
+                    ViewState["projectedFinancials"] = projectedFinancials;
+                }
+
+                if (projectedFinancials != null)
+                {
+                    hdnProjectHasRevenue.Value = (projectedFinancials.Revenue > 0).ToString();
+                    var currentPerson = DataHelper.CurrentPerson;
+                    var currentPersonId = currentPerson.Id.Value;
+                    bool userIsCFO = currentPerson.Title.TitleName == "Chief Financial Officer";
+                    var userIsPracticeDirector = ServiceCallers.Custom.Person(p => p.GetPersonDivisions()).ToList().Any(d => d.DivisionOwner.Id.Value == currentPersonId);
+
+                    txtMarginExc.Text = project.ExceptionMargin != null ? string.Format(Constants.Formatting.PercentageFormat, project.ExceptionMargin.Value) : "N/A";
+
+                    // 1 Request Pending
+                    // 2 Accept
+                    // 3 Decline
+
+                    ClientMarginException[] thresholds = ServiceCallers.Custom.Project(p => p.GetMarginExceptionThresholdsForPeriod(project.StartDate.Value, project.EndDate.Value, project.Client.Id.Value));
+                    ClientMarginException tierOneThreshold = null;
+                    ClientMarginException tierTwoThreshold = null;
+                    if (thresholds != null && thresholds.Count() > 0)
+                    {
+                        tierOneThreshold = thresholds.FirstOrDefault(t => t.Level.Id == 1);
+                        tierTwoThreshold = thresholds.FirstOrDefault(t => t.Level.Id == 2);
+                    }
+
+                    if (Project.TierOneExceptionStatus == 1)
+                    {
+                        btnMrgAccept.Visible = btnMrgDecline.Visible = (userIsPracticeDirector || UserIsAdministrator || UserIsOperations);
+                        btnMrgAccept.Attributes.Add("Level", "1");
+                        btnMrgDecline.Attributes.Add("Level", "1");
+                    }
+                    else if (Project.TierOneExceptionStatus == 2 && Project.TierTwoExceptionStatus == 1)
+                    {
+                        btnMrgAccept.Visible = btnMrgDecline.Visible = (userIsCFO || UserIsAdministrator || UserIsOperations);
+                        btnMrgAccept.Attributes.Add("Level", "2");
+                        btnMrgDecline.Attributes.Add("Level", "2");
+                    }
+                    else
+                    {
+                        btnMrgAccept.Visible = btnMrgDecline.Visible = false;
+                    }
+                    bool isTierOneException = false;
+                    bool isTierTwoException = false;
+
+
+                    if (project.TierOneExceptionStatus == 1 || (project.TierOneExceptionStatus != 3 && project.TierTwoExceptionStatus == 1))
+                    {
+                        btnMrgSubmit.Visible = true;
+                        btnMrgSubmit.Enabled = false;
+                        divExceptionOne.Visible = divExceptionTwo.Visible = false;
+                        btnBudgetResetReq.Enabled = !(isActiveProject);
+                    }
+                    else
+                    {
+                        decimal marginGoal = tierOneThreshold != null ? tierOneThreshold.MarginGoal : tierTwoThreshold != null ? tierTwoThreshold.MarginGoal : 50;
+
+                        if (project.ExceptionMargin != null)
+                        {
+                            marginGoal = Math.Min(project.ExceptionMargin.Value, marginGoal);
+                        }
+
+                        var targetMargin = decimal.Round(projectedFinancials.TargetMargin, 2, MidpointRounding.AwayFromZero);
+                        decimal marginvariance = (targetMargin - marginGoal);
+
+                        // Tier One Exception
+                        isTierOneException = tierOneThreshold != null ? (marginvariance < -tierOneThreshold.MarginThreshold || (isActiveProject && targetMargin < marginGoal) || ((Project.BusinessType == BusinessType.NewBusiness && !isActiveProject && Project.TierOneExceptionStatus != 2) ? projectedFinancials.Revenue.Value > (project.ExceptionRevenue != null ? project.ExceptionRevenue.Value : tierOneThreshold.Revenue) : false)) : false;
+
+                        //Tier Two Exception
+                        isTierTwoException = tierTwoThreshold != null ? (marginvariance < -tierTwoThreshold.MarginThreshold || ((Project.BusinessType == BusinessType.NewBusiness && !isActiveProject && Project.TierOneExceptionStatus != 2) ? projectedFinancials.Revenue > (project.ExceptionRevenue != null ? project.ExceptionRevenue.Value : tierTwoThreshold.Revenue) : false)) : false;
+
+                        btnMrgSubmit.Attributes.Add("Level", isTierTwoException ? "2" : isTierOneException ? "1" : "0");
+                        btnSubmitException.Attributes.Add("TargetMargin", targetMargin.ToString());
+                        btnSubmitException.Attributes.Add("TargetRevenue", projectedFinancials.Revenue.Value.ToString());
+                        if (isTierOneException)
+                        {
+                            hdnIsRevenueException.Value = (!(marginvariance < -tierOneThreshold.MarginThreshold)).ToString();
+                            hdnIsMarginException.Value = ((!isActiveProject || (isActiveProject && project.showBudgetRequest)) && ((project.TierOneExceptionStatus == 0 || project.TierOneExceptionStatus == 3 || project.TierTwoExceptionStatus == 3) || ((project.TierTwoExceptionStatus == 2 || project.TierTwoExceptionStatus == 0) && project.TierOneExceptionStatus == 2))).ToString();
+                            btnMrgSubmit.Visible = (project.Status.Id != (int)ProjectStatusType.Completed) && (!isActiveProject || (isActiveProject && project.showBudgetRequest)) && (currentPersonId == project.Director.Id.Value || currentPersonId == project.ProjectOwner.Id.Value || currentPersonId == project.SeniorManagerId || UserIsAdministrator || project.ProjectManagers.Exists(p => p.Id.Value == currentPersonId));
+                            divExceptionOne.Visible = (project.Status.Id != (int)ProjectStatusType.Completed) && (!isActiveProject && ((project.TierOneExceptionStatus == 0 || project.TierOneExceptionStatus == 3 || project.TierTwoExceptionStatus == 3) || ((project.TierTwoExceptionStatus == 2 || project.TierTwoExceptionStatus == 0) && project.TierOneExceptionStatus == 2)));// Red
+                            divExceptionTwo.Visible = isActiveProject && !(project.TierOneExceptionStatus == 1 || (project.TierOneExceptionStatus != 3 && project.TierTwoExceptionStatus == 1));// Yellow
+                            btnMrgSubmit.Enabled = true;
+                        }
+                        else
+                        {
+                            divExceptionOne.Visible = divExceptionTwo.Visible = false;
+                            hdnIsMarginException.Value = string.Empty;
+                            btnMrgSubmit.Visible = false;
+                        }
+
+                        btnBudgetResetReq.Enabled = !(isActiveProject && isTierOneException);
+                    }
+
+                    divExceptionTierOne.Visible = project.TierOneExceptionStatus == 1; // Tier-1
+                    divExceptionTierTwo.Visible = project.TierOneExceptionStatus != 3 && project.TierTwoExceptionStatus == 1; //Tier-2
+
+
+                    spanBudgetAsterisk.Style["display"] = !btnBudgetResetReq.Enabled && btnBudgetResetReq.Style["display"] == "" ? "" : "none";
+                }
+                else
+                {
+                    hdnProjectHasRevenue.Value = false.ToString();
+                }
+            }
+            else
+            {
+                hdnProjectHasRevenue.Value = false.ToString();
+            }
+        }
+
+        private void PopulateBudgetControls()
+        {
+            bool isEnable = (ProjectId.HasValue) && (Project != null) && (Project.Status != null) && (Project.Status.Id == (int)ProjectStatusType.Active || Project.Status.Id == (int)ProjectStatusType.Completed);
+            bool isUserAllowed = Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.AdministratorRoleName) || Roles.IsUserInRole(DataTransferObjects.Constants.RoleNames.OperationsRoleName);
+            txtBudget.Enabled = (isEnable) && isUserAllowed;
+            txtBudget.Text = (isEnable) && Project.Budget.HasValue ? Project.Budget.Value.ToString("$###,###,###,###,##0") : string.Empty;
+            btnBudgetResetDecline.Style["display"] = btnResetBudget.Style["display"] = isEnable && Project.IsBudgetResetPending && isUserAllowed && (Project.Status.Id == (int)ProjectStatusType.Active) ? "" : "none";
+            btnBudgetResetReq.Style["display"] = isEnable && Project.showBudgetRequest && !Project.IsBudgetResetPending && (Project.Status.Id == (int)ProjectStatusType.Active) ? "" : "none";
+            if (isEnable)
+            {
+                btnBudgetResetReq.Attributes.Add("RequestId", Project.BudgetResetRequestId.ToString());
+
+            }
+            imgReset.Style["display"] = isEnable && Project.IsBudgetReset ? "" : "none";
+            spanBudgetAsterisk.Style["display"] = !btnBudgetResetReq.Enabled && btnBudgetResetReq.Style["display"] == "" ? "" : "none";
+            txtPOAmount.ReadOnly = txtSowBudget.ReadOnly = Project != null && Project.Budget.HasValue && !isUserAllowed;
+            //var a = ProjectId.HasValue ? ServiceCallers.Custom.Project(p => p.FinancialsByProject(ProjectId.Value)).Revenue.Value.ToString(): "";
         }
 
         private void populateOutsourceId(int id)
@@ -1842,14 +2046,12 @@ namespace PraticeManagement
             if (ddlClientName.SelectedItem.Text == "Microsoft")
             {
                 reqOutsourceId.Enabled = true;
-                divOutsource.Style["display"] = "";
+                divOutsource.Style["visibility"] = "";
             }
             else
             {
                 reqOutsourceId.Enabled = false;
-                divOutsource.Style["display"] = "none";
-
-                var x = rbOutsourcedId.SelectedValue;
+                divOutsource.Style["visibility"] = "hidden";
             }
             if (id == (int)OutsourceId.Yes)
             {
@@ -1982,7 +2184,6 @@ namespace PraticeManagement
             }
         }
 
-
         private void PopulateProjectGroupDropDown(Project project)
         {
             if (project != null && project.Group != null)
@@ -2032,8 +2233,8 @@ namespace PraticeManagement
             project.Status = new ProjectStatus { Id = int.Parse(ddlProjectStatus.SelectedValue) };
             project.ProjectManagerIdsList = cblProjectManagers.SelectedItems;
             project.IsInternal = false; //AS per Matt Reilly MattR@logic2020.com
-            //date: Sat, Mar 17, 2012 at 1:53 AM
-            //subject: RE: Time Entry conversion - deployment step
+                                        //date: Sat, Mar 17, 2012 at 1:53 AM
+                                        //subject: RE: Time Entry conversion - deployment step
             project.BusinessType = (BusinessType)Enum.Parse(typeof(BusinessType), ddlBusinessOptions.SelectedValue == string.Empty ? "0" : ddlBusinessOptions.SelectedValue);
             project.CanCreateCustomWorkTypes = true;
             PopulateProjectGroup(project);
@@ -2081,15 +2282,15 @@ namespace PraticeManagement
             int viewIndex = int.Parse((string)e.CommandArgument);
             SelectView((Control)sender, viewIndex);
             tblProjectDetailTabViewSwitch_ActiveViewIndex = viewIndex;
-            if (viewIndex == 8) //History
+            if (viewIndex == 7) //History
             {
                 activityLog.Update();
             }
-            else if (viewIndex == 4 && ProjectId.HasValue)
+            else if (viewIndex == 3 && ProjectId.HasValue)
             {
                 financials.Project = GetCurrentProject(ProjectId.Value);
             }
-            else if (viewIndex == 10 && ProjectId.HasValue)
+            else if (viewIndex == 9 && ProjectId.HasValue)
             {
                 ucCSAT.PopulateData(null);
             }
@@ -2185,7 +2386,8 @@ namespace PraticeManagement
                         ProjectStatus = new ProjectStatus
                         {
                             Id = Convert.ToInt32(ddlCloneProjectStatus.SelectedValue)
-                        }
+                        },
+                        ProjectRevenueType = Convert.ToInt32(ddlCloneRevenueType.SelectedValue)
                     });
 
             Generic.RedirectWithReturnTo(
@@ -2317,6 +2519,368 @@ namespace PraticeManagement
         }
 
         #endregion Implementation of IPostBackEventHandler
+
+        protected void btnBudgetResetReq_Click(object sender, EventArgs e)
+        {
+            lblBudgetPopUpHeader.Text = "Budget Revision Request";
+            hdnBudgetStatus.Value = BudgetRevision.Submit.ToString();
+            lblPrjName.Text = (!string.IsNullOrEmpty(Project.ProjectNumber) ? Project.ProjectNumber + " - " : string.Empty) + Project.HtmlEncodedName;
+            lblBudgetResetRequestor.Text = LoggedInPersonFirstLastName;
+            txtBudgetRejectionComments.Text = string.Empty;
+            int viewIndex = mvProjectDetailTab.ActiveViewIndex;
+            if (viewIndex == 7) //History
+            {
+                activityLog.Update();
+            }
+            //rbnBudgetResetType.SelectedValue = string.Empty;
+            dtpBudgetToDate.DateValue = DateTime.Now;
+            rbnBudgetResetType.Items.FindByValue("2").Enabled = rbnBudgetResetType.Items.FindByValue("1").Enabled = Project.IsCOMilestoneExists;
+            if (rbnBudgetResetType.SelectedValue == "1" || rbnBudgetResetType.SelectedValue == "")
+            {
+                spBudgetToDate.Attributes.Add("style", "display: none");
+            }
+            else
+            {
+                spBudgetToDate.Attributes.Add("style", "display: inline");
+            }
+            tblRevisionReason.Visible = true;
+            divResetParameters.Visible = true;
+            mpeBudgetReset.Show();
+        }
+
+        protected void btnResetBudget_Click(object sender, EventArgs e)
+        {
+            lblBudgetPopUpHeader.Text = "Revise Budget";
+            hdnBudgetStatus.Value = BudgetRevision.Reset.ToString();
+            lblPrjName.Text = (!string.IsNullOrEmpty(Project.ProjectNumber) ? Project.ProjectNumber + " - " : string.Empty) + Project.HtmlEncodedName;
+            lblBudgetResetRequestor.Text = Project.BudgetRequestorName;
+            txtBudgetRejectionComments.Text = string.Empty;
+            int viewIndex = mvProjectDetailTab.ActiveViewIndex;
+            if (viewIndex == 7) //History
+            {
+                activityLog.Update();
+            }
+            //rbnBudgetResetType.SelectedValue = string.Empty;
+            dtpBudgetToDate.DateValue = Project.BudgetToDate != null ? Project.BudgetToDate.Value : DateTime.Now;
+            rbnBudgetResetType.Items.FindByValue("2").Enabled = rbnBudgetResetType.Items.FindByValue("1").Enabled = Project.IsCOMilestoneExists;
+            if (rbnBudgetResetType.SelectedValue == "1" || rbnBudgetResetType.SelectedValue == "")
+            {
+                spBudgetToDate.Attributes.Add("style", "display: none");
+            }
+            else
+            {
+                spBudgetToDate.Attributes.Add("style", "display: inline");
+            }
+            tblRevisionReason.Visible = false;
+            divResetParameters.Visible = true;
+            mpeBudgetReset.Show();
+        }
+
+        private const string TierOne = "Tier 1 - Practice Director";
+        private const string TierTwo = "Tier 2 - CFO";
+        private const string TierOneTwo = "Tier 1 - Practice Director, Tier 2 - CFO";
+
+        protected void btnMrgSubmit_Click(object sender, EventArgs e)
+        {
+            lblProject.Text = (!string.IsNullOrEmpty(Project.ProjectNumber) ? Project.ProjectNumber + " - " : string.Empty) + Project.HtmlEncodedName;
+            lblExceptionRequestor.Text = LoggedInPersonFirstLastName;
+
+            var level = btnMrgSubmit.Attributes["Level"];
+
+            if (level == "2")
+            {
+                lblExceptionLevel.Text = TierOneTwo;
+            }
+            else if (level == "1")
+            {
+                lblExceptionLevel.Text = TierOne;
+            }
+            int viewIndex = mvProjectDetailTab.ActiveViewIndex;
+            if (viewIndex == 7) //History
+            {
+                activityLog.Update();
+            }
+            cblExceptionResponseReasons.SelectedIndex = 0;
+            txtExceptionSubmitComments.Text = string.Empty;
+            mpeExceptionSubmit.Show();
+        }
+
+        protected void btnMrgAccept_Click(object sender, EventArgs e)
+        {
+            lblProjectResponse.Text = (!string.IsNullOrEmpty(Project.ProjectNumber) ? Project.ProjectNumber + " - " : string.Empty) + Project.HtmlEncodedName;
+            var requestor = ServiceCallers.Custom.Person(p => p.GetPersonDetailsShort(Project.MarginExceptionRequestorId));
+            lblRequestor.Text = requestor.FirstName + ", " + requestor.LastName;
+            lblResponse.Text = "Accept";
+            var level = btnMrgAccept.Attributes["Level"];
+            if (level == "2")
+            {
+                lblResponseApprovalLevel.Text = TierTwo;
+            }
+            else if (level == "1")
+            {
+                lblResponseApprovalLevel.Text = TierOne;
+            }
+            int viewIndex = mvProjectDetailTab.ActiveViewIndex;
+            if (viewIndex == 7) //History
+            {
+                activityLog.Update();
+            }
+            cblExceptionResponseReasons.SelectedIndex = -1;
+            txtResponseComments.Text = string.Empty;
+            mpeMarginExceptionResponse.Show();
+        }
+
+        protected void btnMrgDecline_Click(object sender, EventArgs e)
+        {
+            lblProjectResponse.Text = (!string.IsNullOrEmpty(Project.ProjectNumber) ? Project.ProjectNumber + " - " : string.Empty) + Project.HtmlEncodedName;
+            var requestor = ServiceCallers.Custom.Person(p => p.GetPersonDetailsShort(Project.MarginExceptionRequestorId));
+            lblRequestor.Text = requestor.FirstName + ", " + requestor.LastName;
+            lblResponse.Text = "Decline";
+            var level = btnMrgAccept.Attributes["Level"];
+            if (level == "2")
+            {
+                lblResponseApprovalLevel.Text = TierTwo;
+            }
+            else if (level == "1")
+            {
+                lblResponseApprovalLevel.Text = TierOne;
+            }
+            int viewIndex = mvProjectDetailTab.ActiveViewIndex;
+            if (viewIndex == 7) //History
+            {
+                activityLog.Update();
+            }
+            cblExceptionResponseReasons.SelectedIndex = -1;
+            txtResponseComments.Text = string.Empty;
+            mpeMarginExceptionResponse.Show();
+
+        }
+
+        protected void btnSubmitException_Click(object sender, EventArgs e)
+        {
+            Page.Validate(vsMarginExceptionSubmit.ValidationGroup);
+
+            if (Page.IsValid)
+            {
+                var reasons = cblExceptionReason.SelectedItemsText;
+                reasons = reasons.Remove(reasons.Length - 1);
+                bool isTierTwoException = lblExceptionLevel.Text == TierOneTwo;
+
+                var targetMargin = Convert.ToDecimal(btnSubmitException.Attributes["TargetMargin"]);
+                var targetRevenue = Convert.ToDecimal(btnSubmitException.Attributes["TargetRevenue"]);
+                var isRevenueException = Convert.ToBoolean(hdnIsRevenueException.Value);
+                ServiceCallers.Custom.Project(p => p.SendMarginExceptionRequest(ProjectId.Value, User.Identity.Name, targetMargin, reasons, txtExceptionSubmitComments.Text, LoggedInPersonFirstLastName, isTierTwoException, targetRevenue, isRevenueException));
+                Project = GetCurrentProject(ProjectId);
+                PopulateMarginNotifications(Project);
+
+            }
+            else
+            {
+                mpeExceptionSubmit.Show();
+                IsOtherPanelDisplay = true;
+                return;
+            }
+            int viewIndex = mvProjectDetailTab.ActiveViewIndex;
+            if (viewIndex == 7) //History
+            {
+                activityLog.Update();
+            }
+        }
+
+        protected void btnSubmitExceptionResponse_Click(object sender, EventArgs e)
+        {
+            Page.Validate(valsMarginExceptionResponse.ValidationGroup);
+
+            int viewIndex = mvProjectDetailTab.ActiveViewIndex;
+            if (viewIndex == 7) //History
+            {
+                activityLog.Update();
+            }
+            if (Page.IsValid)
+            {
+                var reasons = cblExceptionResponseReasons.SelectedItemsText;
+                reasons = reasons.Remove(reasons.Length - 1);
+                var comments = txtResponseComments.Text;
+                int responseStatus = lblResponse.Text == "Accept" ? 2 : 3;
+                bool isResponseTierTwo = lblResponseApprovalLevel.Text == TierTwo;
+
+                ServiceCallers.Custom.Project(p => p.SendMarginExceptionResponse(responseStatus, User.Identity.Name, Project.MarginExceptionId, reasons, comments, LoggedInPersonFirstLastName, ProjectId.Value, isResponseTierTwo));
+                Project = GetCurrentProject(ProjectId);
+                PopulateMarginNotifications(Project);
+            }
+            else
+            {
+                mpeMarginExceptionResponse.Show();
+                IsOtherPanelDisplay = true;
+                return;
+            }
+
+            btnView_Command(rowSwitcher.Cells[viewIndex].Controls[0], new CommandEventArgs("", viewIndex.ToString()));
+        }
+
+        protected void cvMarginException_ServerValidate(object source, ServerValidateEventArgs e)
+        {
+            e.IsValid = true;
+            if (!string.IsNullOrEmpty(ddlProjectStatus.SelectedValue) && (int)ProjectStatusType.Active == Convert.ToInt32(ddlProjectStatus.SelectedValue))
+            {
+                e.IsValid = !(hdnIsMarginException.Value == true.ToString());
+            }
+        }
+
+        protected void cvExpResonseReason_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            args.IsValid = cblExceptionResponseReasons.SelectedValues != null && cblExceptionResponseReasons.SelectedValues.Count > 0;
+        }
+
+        protected void cvMarginExceptionSubmit_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            args.IsValid = cblExceptionReason.SelectedValues != null && cblExceptionReason.SelectedValues.Count > 0;
+        }
+
+        protected void btnBudgetResetSubmit_Click(object sender, EventArgs e)
+        {
+            rfvBudgetResetType.Enabled = hdnBudgetStatus.Value != BudgetRevision.Decline.ToString();
+            if (rbnBudgetResetType.SelectedValue == "1" || hdnBudgetStatus.Value == BudgetRevision.Decline.ToString())
+            {
+                reqBudgetToDate.Enabled = compBudgetToDate.Enabled = cvBudgetToDate.Enabled = false;
+            }
+            else
+            {
+                reqBudgetToDate.Enabled = compBudgetToDate.Enabled = cvBudgetToDate.Enabled = true;
+            }
+
+            Page.Validate(valSumBudgetRejection.ValidationGroup);
+
+            int viewIndex = mvProjectDetailTab.ActiveViewIndex;
+            if (viewIndex == 7) //History
+            {
+                activityLog.Update();
+            }
+
+            if (Page.IsValid)
+            {
+                var comments = txtBudgetRejectionComments.Text;
+
+
+                if (hdnBudgetStatus.Value == BudgetRevision.Decline.ToString())
+                {
+                    ServiceCallers.Custom.Project(p => p.SendProjectBudgetResetDecline(Project.Id.Value, User.Identity.Name, Project.BudgetResetRequestId, comments));
+                    Project = GetCurrentProject(ProjectId);
+                    PopulateBudgetControls();
+                }
+                else if (hdnBudgetStatus.Value == BudgetRevision.Submit.ToString())
+                {
+                    var reasons = cblBudgetRevisionReason.SelectedItemsText;
+                    reasons = reasons.Remove(reasons.Length - 1);
+
+                    if (Project != null && Project.Status != null && Project.Status.Id == (int)ProjectStatusType.Active)
+                    {
+                        int resetType = int.Parse(rbnBudgetResetType.SelectedValue);
+                        ServiceCallers.Custom.Project(p => p.SendBudgetResetRequest(Project.Id.Value, User.Identity.Name, comments, resetType, resetType != 1 ? (DateTime?)dtpBudgetToDate.DateValue : null, reasons, LoggedInPersonFirstLastName));
+                    }
+                    Project = GetCurrentProject(ProjectId);
+                    PopulateBudgetControls();
+                }
+                else if (hdnBudgetStatus.Value == BudgetRevision.Reset.ToString())
+                {
+                    if (Page.IsValid && ProjectId.HasValue)
+                    {
+                        if (Project != null && Project.Status != null && Project.Status.Id == (int)ProjectStatusType.Active)
+                        {
+                            int resetType = int.Parse(rbnBudgetResetType.SelectedValue);
+                            ServiceCallers.Custom.Project(p => p.ResetProjectBudget(Project.Id.Value, User.Identity.Name, Project.BudgetResetRequestId, resetType, resetType != 1 ? (DateTime?)dtpBudgetToDate.DateValue : null, comments));
+                        }
+                        Project = GetCurrentProject(ProjectId);
+                        PopulateBudgetControls();
+                    }
+                    btnView_Command(rowSwitcher.Cells[viewIndex].Controls[0], new CommandEventArgs("", viewIndex.ToString()));
+                }
+
+            }
+            else
+            {
+                if (hdnBudgetStatus.Value != BudgetRevision.Decline.ToString())
+                {
+                    if (rbnBudgetResetType.SelectedValue == "1" || rbnBudgetResetType.SelectedValue == "")
+                    {
+                        spBudgetToDate.Attributes.Add("style", "display: none");
+                    }
+                    else
+                    {
+                        spBudgetToDate.Attributes.Add("style", "display: inline");
+                    }
+                }
+
+                mpeBudgetReset.Show();
+                IsOtherPanelDisplay = true;
+                return;
+            }
+        }
+
+        protected void btnBudgetResetDecline_Click(object sender, EventArgs e)
+        {
+            lblBudgetPopUpHeader.Text = "Budget Revision Rejection";
+            hdnBudgetStatus.Value = BudgetRevision.Decline.ToString();
+            lblPrjName.Text = (!string.IsNullOrEmpty(Project.ProjectNumber) ? Project.ProjectNumber + " - " : string.Empty) + Project.HtmlEncodedName;
+            lblBudgetResetRequestor.Text = Project.BudgetRequestorName;
+            txtBudgetRejectionComments.Text = string.Empty;
+            int viewIndex = mvProjectDetailTab.ActiveViewIndex;
+            if (viewIndex == 7) //History
+            {
+                activityLog.Update();
+            }
+            tblRevisionReason.Visible = false;
+            divResetParameters.Visible = false;
+            mpeBudgetReset.Show();
+        }
+
+        protected void cvBudgetToDate_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            if (rbnBudgetResetType.SelectedValue == "2" || rbnBudgetResetType.SelectedValue == "3")
+            {
+                if (Project == null)
+                {
+                    Project = GetCurrentProject(ProjectId);
+                    var a = Project.Milestones;
+                }
+
+                var budgetToDate = dtpBudgetToDate.DateValue;
+                args.IsValid = Project.StartDate <= budgetToDate && budgetToDate <= Project.EndDate;
+            }
+            else
+            {
+                args.IsValid = true;
+            }
+        }
+
+        protected void cvFFBudgetResetDate_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            if (rbnBudgetResetType.SelectedValue == "2" || rbnBudgetResetType.SelectedValue == "3")
+            {
+                if (Project == null)
+                {
+                    Project = GetCurrentProject(ProjectId);
+                }
+                var budgetToDate = dtpBudgetToDate.DateValue;
+                args.IsValid = Project.Milestones.Any(_ => _.IsHourlyAmount == false) ? budgetToDate.Day == 1 : true;
+            }
+            else
+            {
+                args.IsValid = true;
+            }
+        }
+
+        protected void cvBudgetRevisionReason_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            if (hdnBudgetStatus.Value == BudgetRevision.Submit.ToString())
+            {
+                args.IsValid = cblBudgetRevisionReason.SelectedValues != null && cblBudgetRevisionReason.SelectedValues.Count > 0;
+            }
+            else
+            {
+                args.IsValid = true;
+            }
+        }
     }
 }
 
