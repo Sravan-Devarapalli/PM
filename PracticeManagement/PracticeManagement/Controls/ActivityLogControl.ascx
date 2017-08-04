@@ -275,7 +275,7 @@
                         <RowStyle CssClass="al-row" />
                         <Columns>
                             <asp:TemplateField>
-                                <ItemStyle CssClass="Width11Percent" />
+                                <ItemStyle CssClass="Width15Percent" />
                                 <HeaderTemplate>
                                     <div class="ie-bg">
                                         Modified / User</div>
@@ -287,7 +287,7 @@
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField>
-                                <ItemStyle CssClass="WordWrapActivityLog Width12Percent" />
+                                <ItemStyle CssClass="WordWrapActivityLog Width15Percent" />
                                 <HeaderTemplate>
                                     <div class="ie-bg">
                                         Activity</div>
@@ -299,7 +299,7 @@
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField>
-                                <ItemStyle CssClass="WordWrapActivityLog width77P" />
+                                <ItemStyle CssClass="WordWrapActivityLog Width70Per" />
                                 <HeaderTemplate>
                                     <div class="ie-bg">
                                         Changes</div>
@@ -312,13 +312,14 @@
                         </Columns>
                     </asp:GridView>
                     <asp:ObjectDataSource ID="odsProjects" runat="server" SelectMethod="GetProjectListCustom"
-                        TypeName="PraticeManagement.ProjectService.ProjectServiceClient">
+                        TypeName="PraticeManagement.ProjectService.ProjectServiceClient" OnSelecting="odsProjects_Selecting">
                         <SelectParameters>
                             <asp:Parameter DefaultValue="true" Name="projected" Type="Boolean" />
                             <asp:Parameter DefaultValue="true" Name="completed" Type="Boolean" />
                             <asp:Parameter DefaultValue="true" Name="active" Type="Boolean" />
                             <asp:Parameter DefaultValue="true" Name="experimantal" Type="Boolean" />
                             <asp:Parameter DefaultValue="true" Name="proposed" Type="Boolean" />
+                            <asp:Parameter DefaultValue="false" Name="IsMilestone" Type="Boolean" />
                         </SelectParameters>
                     </asp:ObjectDataSource>
                     <asp:ObjectDataSource ID="odsPersons" runat="server" SelectMethod="GetAllPersons"
@@ -350,6 +351,8 @@
                             <asp:Parameter Name="channel" Type="Boolean" />
                             <asp:Parameter Name="offering" Type="Boolean" />
                             <asp:Parameter Name="revenueType" Type="Boolean" />
+                            <asp:Parameter Name="budget" Type="Boolean" />
+                            <asp:Parameter Name="margin" Type="Boolean" />
                         </SelectParameters>
                     </asp:ObjectDataSource>
                 </td>
