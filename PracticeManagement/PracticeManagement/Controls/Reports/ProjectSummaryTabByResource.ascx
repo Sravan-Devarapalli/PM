@@ -10,13 +10,11 @@
 </script>
 <table class="WholeWidthWithHeight">
     <tr>
-        <td colspan="4" class="Width90Percent">
-        </td>
+        <td colspan="4" class="Width90Percent"></td>
         <td class="Width10Percent padRight5">
             <table class="WholeWidth">
                 <tr>
-                    <td>
-                        Export:
+                    <td>Export:
                     </td>
                     <td>
                         <asp:Button ID="btnExportToExcel" runat="server" Text="Excel" OnClick="btnExportToExcel_OnClick"
@@ -31,26 +29,17 @@
         </td>
     </tr>
 </table>
-<asp:Panel ID="pnlFilterProjectRoles" Style="display: none;" runat="server">
-    <uc:FilteredCheckBoxList ID="cblProjectRoles" runat="server" />
-</asp:Panel>
-<asp:Button ID="btnUpdate" runat="server" OnClick="btnUpdate_OnClick" Style="display: none;" />
+
 <asp:Repeater ID="repResource" runat="server" OnItemDataBound="repResource_ItemDataBound">
     <HeaderTemplate>
         <div class="minheight250Px">
             <table id="tblProjectSummaryByResource" class="tablesorter PersonSummaryReport WholeWidth">
                 <thead>
                     <tr>
-                        <th class="ProjectColum">
-                            Resource
+                        <th class="ProjectColum">Resource
                         </th>
-                        <th class="Width130px">
-                            Project Role
-                            <img alt="Filter" title="Filter" src="../../Images/search_filter.png" runat="server"
-                                id="imgProjectRoleFilter" class="FilterImg" />
-                            <AjaxControlToolkit:PopupControlExtender ID="pceProjectRole" runat="server" TargetControlID="imgProjectRoleFilter"
-                                PopupControlID="pnlFilterProjectRoles" Position="Bottom">
-                            </AjaxControlToolkit:PopupControlExtender>
+                        <th class="Width120Px">
+                            <asp:Label ID="lblBudgetHours" runat="server" Text="Budget Hours"></asp:Label>
                         </th>
                         <th class="Width125Px">
                             <asp:Label ID="lblProjectedHours" runat="server" Text="Projected Hours"></asp:Label>
@@ -58,11 +47,15 @@
                         <th class="Width100Px">
                             <asp:Label ID="lblBillable" runat="server" Text="Billable"></asp:Label>
                         </th>
-                        <th class="Width100Px">
+                        <th class="Width100Px" id="thNonBillable" runat="server">
                             <asp:Label ID="lblNonBillable" runat="server" Text="Non-Billable"></asp:Label>
                         </th>
                         <th class="Width120Px">
                             <asp:Label ID="lblActualHours" runat="server" Text="Actual Hours"></asp:Label>
+                        </th>
+
+                        <th class="Width120Px">
+                            <asp:Label ID="lblEACHours" runat="server" Text="ETC Hours"></asp:Label>
                         </th>
                         <th class="Width100Px">
                             <asp:Label ID="lblBillRate" runat="server" Text="Hourly Rate"></asp:Label>
@@ -90,8 +83,8 @@
                 <asp:Image ID="imgOffshore" runat="server" ImageUrl="~/Images/Offshore_Icon.png"
                     ToolTip="Resource is an offshore employee" Visible='<%# (bool)Eval("Person.IsOffshore")%>' />
             </td>
-            <td class="t-center padLeft5">
-                <%# Eval("Person.ProjectRoleName")%>
+            <td>
+                <%# GetDoubleFormat((double)Eval("BudgetHours"))%>
             </td>
             <td>
                 <%# GetDoubleFormat((double)Eval("ForecastedHours"))%>
@@ -99,13 +92,17 @@
             <td>
                 <%# GetDoubleFormat((double)Eval("BillableHours"))%>
             </td>
-            <td>
+            <td id="tdNonBillable" runat="server">
                 <%# GetDoubleFormat((double)Eval("NonBillableHours"))%>
             </td>
             <td>
                 <asp:LinkButton ID="lnkActualHours" runat="server" ToolTip='<%# GetDoubleFormat((double)Eval("TotalHours"))%>'
                     OnClientClick="OpenUrlInNewWindow(this);return false;" Text='<%# GetDoubleFormat((double)Eval("TotalHours"))%>'
                     target="_blank"></asp:LinkButton>
+            </td>
+
+            <td>
+                <%# GetDoubleFormat((double)Eval("ETCHours"))%>
             </td>
             <td sorttable_customkey='<%# Eval("BillRate") %>'>
                 <%# Eval("FormattedBillRate")%>
@@ -157,24 +154,21 @@
 <asp:Panel ID="pnlTotalActualHours" Style="display: none;" runat="server" CssClass="pnlTotal">
     <table>
         <tr>
-            <td class="fontBold">
-                Total Billable:
+            <td class="fontBold">Total Billable:
             </td>
             <td>
                 <asp:Label ID="lblTotalBillablePanlActual" runat="server"></asp:Label>
             </td>
         </tr>
         <tr>
-            <td class="fontBold">
-                Total Non-Billable:
+            <td class="fontBold">Total Non-Billable:
             </td>
             <td>
                 <asp:Label ID="lblTotalNonBillablePanlActual" runat="server"></asp:Label>
             </td>
         </tr>
         <tr>
-            <td class="fontBold padRight15">
-                Total Actual Hours:
+            <td class="fontBold padRight15">Total Actual Hours:
             </td>
             <td>
                 <asp:Label ID="lblTotalActualHours" runat="server"></asp:Label>
@@ -205,26 +199,27 @@
                     ToolTip="Close" Text="X"></asp:Button>
             </td>
         </tr>
-         <tr>
+        <tr>
             <td>
-            <br />
+                <br />
             </td>
         </tr>
         <tr>
             <td>
-            <p>   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For a time period that includes today's date, the Billable Hours Variance is calculated as the number of Billable Hours <b>up to and including today</b> minus the number of Projected Hours <b>up to and including today</b>.</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For a time period that includes today's date, the Billable Hours Variance is calculated as the number of Billable Hours <b>up to and including today</b> minus the number of Projected Hours <b>up to and including today</b>.</p>
             </td>
         </tr>
         <tr>
             <td>
-            <br />
+                <br />
             </td>
         </tr>
         <tr>
             <td>
-            <p>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For historical time periods, the system calculates Billable Hours Variance as Projected
-                Hours minus Actual Hours.</p>
+                <p>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For historical time periods, the system calculates Billable Hours Variance as Projected
+                Hours minus Actual Hours.
+                </p>
             </td>
         </tr>
     </table>
