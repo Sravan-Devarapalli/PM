@@ -537,12 +537,122 @@ namespace DataTransferObjects
             set;
         }
 
+        [DataMember]
+        public int? Budget
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public int? ETC
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public bool IsBudgetResetPending
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public int BudgetResetRequestId
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public bool showBudgetRequest
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public bool IsBudgetReset
+        {
+            get; set;
+        }
+
+        [DataMember]
+        public bool IsCOMilestoneExists
+        {
+            get; set;
+        }
+
+        [DataMember]
+        public DateTime? BudgetToDate
+        {
+            get;
+            set;
+        }
+
         public bool HasMilestones
         {
             get
             {
                 return Milestones != null && Milestones.Any();
             }
+        }
+
+        [DataMember]
+        public decimal? ExceptionMargin
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public decimal? ExceptionRevenue
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public int TierOneExceptionStatus
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public int TierTwoExceptionStatus
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public int MarginExceptionId
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public bool IsRevenueException
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public int MarginExceptionRequestorId
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        public string BudgetRequestorName
+        {
+            get;
+            set;
         }
 
         #endregion Properties
