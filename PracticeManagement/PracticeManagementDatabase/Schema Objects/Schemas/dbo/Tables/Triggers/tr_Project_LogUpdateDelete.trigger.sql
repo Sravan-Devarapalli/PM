@@ -57,6 +57,10 @@ BEGIN
 				,i.PreviousProjectNumber
 				,CASE WHEN i.IsClientTimeEntryRequired=1 THEN 'Required'
 						ELSE 'Not-Required' END AS 'ClientSystemTimeEntry'
+				,CASE WHEN i.ExceptionMargin IS NOT NULL THEN CONVERT(nvarchar(10),i.ExceptionMargin)+'%'
+					  ELSE '' END AS ExceptionMargin
+				,CASE WHEN i.Budget IS NOT NULL THEN '$'+PARSENAME(CONVERT(VARCHAR,CAST(i.Budget AS MONEY),1),2)
+					  ELSE '' END AS 'BudgetAmount'
 		  FROM inserted AS i
 		       INNER JOIN dbo.Client AS c ON i.ClientId = c.ClientId
 		       INNER JOIN dbo.Practice AS p ON i.PracticeId = p.PracticeId
@@ -124,6 +128,10 @@ BEGIN
 				,d.PreviousProjectNumber
 				,CASE WHEN d.IsClientTimeEntryRequired=1 THEN 'Required'
 						ELSE 'Not-Required' END AS 'ClientSystemTimeEntry'
+				,CASE WHEN d.ExceptionMargin IS NOT NULL THEN CONVERT(nvarchar(10),d.ExceptionMargin)+'%'
+					  ELSE '' END AS ExceptionMargin
+				,CASE WHEN d.Budget IS NOT NULL THEN '$'+PARSENAME(CONVERT(VARCHAR,CAST(d.Budget AS MONEY),1),2)
+					  ELSE '' END AS 'BudgetAmount'
 		  FROM deleted AS d
 		       INNER JOIN dbo.Client AS c ON d.ClientId = c.ClientId
 		       INNER JOIN dbo.Practice AS p ON d.PracticeId = p.PracticeId
@@ -229,6 +237,8 @@ BEGIN
 		OR ISNULL(i.[SalesPersonId], 0) <> ISNULL(d.[SalesPersonId], 0)
 		OR i.IsClientTimeEntryRequired<>d.IsClientTimeEntryRequired
 		OR ISNULL(i.PreviousProjectNumber,'')<>ISNULL(d.PreviousProjectNumber,'')
+		OR ISNULL(i.Budget,0)<>ISNULL(d.Budget,0)
+		OR ISNULL(i.ExceptionMargin, 0)<>ISNULL(i.ExceptionMargin,0)
 	-------------------
 	;WITH NEW_VALUES AS
 	(
@@ -278,6 +288,10 @@ BEGIN
 				,i.PreviousProjectNumber
 				,CASE WHEN i.IsClientTimeEntryRequired=1 THEN 'Required'
 						ELSE 'Not-Required' END AS 'ClientSystemTimeEntry'
+				,CASE WHEN i.ExceptionMargin IS NOT NULL THEN CONVERT(nvarchar(10),i.ExceptionMargin)+'%'
+					  ELSE '' END AS ExceptionMargin
+				,CASE WHEN i.Budget IS NOT NULL THEN '$'+PARSENAME(CONVERT(VARCHAR,CAST(i.Budget AS MONEY),1),2)
+					  ELSE '' END AS 'BudgetAmount'
 		  FROM inserted AS i
 		       INNER JOIN dbo.Client AS c ON i.ClientId = c.ClientId
 		       INNER JOIN dbo.Practice AS p ON i.PracticeId = p.PracticeId
@@ -346,6 +360,10 @@ BEGIN
 				,d.PreviousProjectNumber
 				,CASE WHEN d.IsClientTimeEntryRequired=1 THEN 'Required'
 						ELSE 'Not-Required' END AS 'ClientSystemTimeEntry'
+				,CASE WHEN d.ExceptionMargin IS NOT NULL THEN CONVERT(nvarchar(10),d.ExceptionMargin)+'%'
+					  ELSE '' END AS ExceptionMargin
+				,CASE WHEN d.Budget IS NOT NULL THEN '$'+PARSENAME(CONVERT(VARCHAR,CAST(d.Budget AS MONEY),1),2)
+					  ELSE '' END AS 'BudgetAmount'
 		  FROM deleted AS d
 		       INNER JOIN dbo.Client AS c ON d.ClientId = c.ClientId
 		       INNER JOIN dbo.Practice AS p ON d.PracticeId = p.PracticeId
@@ -865,7 +883,38 @@ BEGIN
 	       FULL JOIN deleted AS d ON i.ProjectId = d.ProjectId
 	       INNER JOIN dbo.SessionLogData AS l ON l.SessionID = @@SPID
 	 WHERE i.ProjectId IS NULL OR ISNULL(i.[SalesPersonId], 0) <> ISNULL(d.[SalesPersonId], 0)
-		
+	UNION ALL
+	 SELECT CASE
+	           WHEN d.ProjectId IS NULL THEN 3 -- Actually is redundant
+	           WHEN i.ProjectId IS NULL THEN 5
+	           ELSE 4
+	       END AS ActivityTypeID,l.SessionID,l.SystemUser,l.Workstation,l.ApplicationName,l.UserLogin,l.PersonID,l.LastName,l.FirstName,
+		   Data = CONVERT(NVARCHAR(MAX),(SELECT NEW_VALUES.ProjectId,NEW_VALUES.Name,NEW_VALUES.BudgetAmount,OLD_VALUES.ProjectId,OLD_VALUES.NewName as Name,OLD_VALUES.BudgetAmount
+					    FROM NEW_VALUES
+					         FULL JOIN OLD_VALUES ON NEW_VALUES.ProjectId = OLD_VALUES.ProjectId
+			           WHERE NEW_VALUES.ProjectId = ISNULL(i.ProjectId, d.ProjectId) OR OLD_VALUES.ProjectId = ISNULL(i.ProjectId, d.ProjectId)
+					  FOR XML AUTO, ROOT('Project'))),
+			@CurrentPMTime
+	  FROM inserted AS i
+	       FULL JOIN deleted AS d ON i.ProjectId = d.ProjectId
+	       INNER JOIN dbo.SessionLogData AS l ON l.SessionID = @@SPID
+	 WHERE i.ProjectId IS NULL OR ISNULL(i.Budget, 0) <> ISNULL(d.Budget, 0) 
+	 UNION ALL
+	 SELECT CASE
+	           WHEN d.ProjectId IS NULL THEN 3 -- Actually is redundant
+	           WHEN i.ProjectId IS NULL THEN 5
+	           ELSE 4
+	       END AS ActivityTypeID,l.SessionID,l.SystemUser,l.Workstation,l.ApplicationName,l.UserLogin,l.PersonID,l.LastName,l.FirstName,
+		   Data = CONVERT(NVARCHAR(MAX),(SELECT NEW_VALUES.ProjectId,NEW_VALUES.Name,NEW_VALUES.ExceptionMargin,OLD_VALUES.ProjectId,OLD_VALUES.NewName as Name,OLD_VALUES.ExceptionMargin
+					    FROM NEW_VALUES
+					         FULL JOIN OLD_VALUES ON NEW_VALUES.ProjectId = OLD_VALUES.ProjectId
+			           WHERE NEW_VALUES.ProjectId = ISNULL(i.ProjectId, d.ProjectId) OR OLD_VALUES.ProjectId = ISNULL(i.ProjectId, d.ProjectId)
+					  FOR XML AUTO, ROOT('Project'))),
+			@CurrentPMTime
+	  FROM inserted AS i
+	       FULL JOIN deleted AS d ON i.ProjectId = d.ProjectId
+	       INNER JOIN dbo.SessionLogData AS l ON l.SessionID = @@SPID
+	 WHERE i.ProjectId IS NULL OR ISNULL(i.ExceptionMargin, 0) <> ISNULL(d.ExceptionMargin, 0) 
 	-- End logging session
 	 EXEC dbo.SessionLogUnprepare
 END
