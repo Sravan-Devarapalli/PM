@@ -35,6 +35,7 @@ namespace DataTransferObjects
 
         public class Formatting
         {
+            public const string CompPerfMonthYearFormat = "MMM-yy";
             public const string EntryDateFormat = "MM/dd/yyyy";
             public const string CurrencyFormat = "$###,###,###,###,###,###,##0";
             public const string CurrencyWithDecimalsFormat = "$###,###,###,###,###,###,##0.00";
