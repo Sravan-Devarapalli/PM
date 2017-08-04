@@ -50,6 +50,18 @@ namespace DataTransferObjects.Filters
             set;
         }
 
+        public bool ShowNonBillableHours
+        {
+            get;
+            set;
+        }
+
+        public string ActualsEndDate
+        {
+            get;
+            set;
+        }
+
     }
 }
 
