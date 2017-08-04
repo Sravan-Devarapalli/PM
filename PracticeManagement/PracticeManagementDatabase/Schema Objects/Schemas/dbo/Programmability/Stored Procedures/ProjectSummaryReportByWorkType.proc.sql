@@ -129,7 +129,11 @@ AS
 															  AND ( ( @MilestoneIdLocal IS NULL )
 															  OR ( TE.ChargeCodeDate BETWEEN @MilestoneStartDate
 															  AND
-															  @MilestoneEndDate )
+															  @MilestoneEndDate and ( ( @StartDateLocal IS NULL
+								AND @EndDateLocal IS NULL
+							  )
+							  OR ( TE.ChargeCodeDate BETWEEN @StartDateLocal AND @EndDateLocal )
+							) )
 															  )
 															  AND ( ( @StartDateLocal IS NULL
 															  AND @EndDateLocal IS NULL
