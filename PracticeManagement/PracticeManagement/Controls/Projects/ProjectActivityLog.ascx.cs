@@ -48,8 +48,8 @@ namespace PraticeManagement.Controls.Projects
             new Dictionary<ActivityEventSource, string>();
 
         //  Provides mapping between even sources and target drop-downs to set value at
-        private static readonly Dictionary<ActivityEventSource, DropDownList> ControlMapping =
-            new Dictionary<ActivityEventSource, DropDownList>();
+        //private static readonly Dictionary<ActivityEventSource, DropDownList> ControlMapping =
+        //    new Dictionary<ActivityEventSource, DropDownList>();
 
         private string _currentUrl;
         private XsltArgumentList _argumentList;
@@ -70,14 +70,14 @@ namespace PraticeManagement.Controls.Projects
         /// </summary>
         public ProjectActivityLog()
         {
-            ControlMapping.Clear();
-            ControlMapping.Add(ActivityEventSource.Project, ddlProjects);
-            ControlMapping.Add(ActivityEventSource.Person, ddlPersonName);
+            //ControlMapping.Clear();
+            //ControlMapping.Add(ActivityEventSource.Project, ddlProjects);
+            //ControlMapping.Add(ActivityEventSource.Person, ddlPersonName);
         }
 
         protected void InitXsltParams()
         {
-            _currentUrl = HttpUtility.UrlEncode(Request.Url.AbsoluteUri) + (IsActivityLogPage ? (Request.Url.Query.Length > 0 ? string.Empty : Constants.FilterKeys.QueryStringOfApplyFilterFromCookie) : string.Empty);
+            _currentUrl = HttpUtility.UrlEncode(Request.Url.AbsoluteUri);
 
             _argumentList = new XsltArgumentList();
             _argumentList.AddParam("currentUrl", string.Empty, _currentUrl);
@@ -90,56 +90,56 @@ namespace PraticeManagement.Controls.Projects
         /// <summary>
         /// 	Defines whether to show Display drop-down or not
         /// </summary>
-        public bool ShowDisplayDropDown
-        {
-            get
-            {
-                var obj = ViewState[ViewstateDisplayVisible];
+        //public bool ShowDisplayDropDown
+        //{
+        //    get
+        //    {
+        //        var obj = ViewState[ViewstateDisplayVisible];
 
-                if (obj != null)
-                    return (bool)obj;
+        //        if (obj != null)
+        //            return (bool)obj;
 
-                return true;
-            }
+        //        return true;
+        //    }
 
-            set { ViewState[ViewstateDisplayVisible] = value; }
-        }
-
-        /// <summary>
-        /// 	Defines whether to show Project drop-down or not
-        /// </summary>
-        public bool ShowProjectDropDown
-        {
-            get
-            {
-                var obj = ViewState[ProjectDisplayViewstate];
-
-                if (obj != null)
-                    return (bool)obj;
-
-                return true;
-            }
-
-            set { ViewState[ProjectDisplayViewstate] = value; }
-        }
+        //    set { ViewState[ViewstateDisplayVisible] = value; }
+        //}
 
         /// <summary>
         /// 	Defines whether to show Project drop-down or not
         /// </summary>
-        public bool ShowPersonDropDown
-        {
-            get
-            {
-                var obj = ViewState[PersonDisplayViewstate];
+        //public bool ShowProjectDropDown
+        //{
+        //    get
+        //    {
+        //        var obj = ViewState[ProjectDisplayViewstate];
 
-                if (obj != null)
-                    return (bool)obj;
+        //        if (obj != null)
+        //            return (bool)obj;
 
-                return true;
-            }
+        //        return true;
+        //    }
 
-            set { ViewState[PersonDisplayViewstate] = value; }
-        }
+        //    set { ViewState[ProjectDisplayViewstate] = value; }
+        //}
+
+        /// <summary>
+        /// 	Defines whether to show Project drop-down or not
+        /// </summary>
+        //public bool ShowPersonDropDown
+        //{
+        //    get
+        //    {
+        //        var obj = ViewState[PersonDisplayViewstate];
+
+        //        if (obj != null)
+        //            return (bool)obj;
+
+        //        return true;
+        //    }
+
+        //    set { ViewState[PersonDisplayViewstate] = value; }
+        //}
 
         /// <summary>
         /// 	Defines whether to show Display drop-down or not
@@ -195,7 +195,7 @@ namespace PraticeManagement.Controls.Projects
 
         public bool IsFreshRequest { get; set; }
 
-        public bool IsActivityLogPage { get; set; }
+        //public bool IsActivityLogPage { get; set; }
 
         public bool ValidationSummaryEnabled
         {
@@ -243,6 +243,9 @@ namespace PraticeManagement.Controls.Projects
             }
             set { ViewState["MaxRow"] = value; }
         }
+
+        public bool Margin { get { return (bool)ViewState["Margin"]; } set { ViewState["Margin"] = value; } }
+        public bool Budget { get { return (bool)ViewState["Budget"]; } set { ViewState["Budget"] = value; } }
         public bool PracticeAreas { get { return (bool)ViewState["PracticeAreas"]; } set { ViewState["PracticeAreas"] = value; } }
         public bool Division { get { return (bool)ViewState["Division"]; } set { ViewState["Division"] = value; } }
         public bool Channel { get { return (bool)ViewState["Channel"]; } set { ViewState["Channel"] = value; } }
@@ -279,7 +282,7 @@ namespace PraticeManagement.Controls.Projects
             set { diRange.ToDate = value; }
         }
 
-        public bool IsFiltersReadingFromCookie { get; set; }
+        //public bool IsFiltersReadingFromCookie { get; set; }
 
         private SheetStyles HeaderSheetStyle
         {
@@ -325,7 +328,7 @@ namespace PraticeManagement.Controls.Projects
                 CellStyles dateCellStyle = new CellStyles();
                 dateCellStyle.DataFormat = "[$-409]m/d/yyyy h:mm AM/PM;@";
 
-                CellStyles[] dataCellStylearray = { dateCellStyle, 
+                CellStyles[] dataCellStylearray = { dateCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle
@@ -355,19 +358,25 @@ namespace PraticeManagement.Controls.Projects
         {
             if (!IsPostBack || IsFreshRequest)
             {
-                FillEventList();
+                //FillEventList();
                 FillFields();
-                ddlProjects.DataBind();
+
+                var entityId = Page.Request[Constants.QueryStringParameterNames.Id];
+                if (!string.IsNullOrEmpty(entityId))
+                {
+                    entityId = entityId.Trim();
+                    ListItem project = new ListItem { Value = entityId, Text = "" };
+                    ddlProjects.Items.Add(project);
+                }
                 ddlPersonName.DataBind();
 
-                if (!IsActivityLogPage)
-                {
-                    var display = ShowDisplayDropDown;
-                    ddlEventSource.Visible = display;
-                    lblDisplay.Visible = display;
-                    spnProjects.Visible = ShowProjectDropDown;
-                    spnPersons.Visible = ShowPersonDropDown;
-                }
+
+                //var display = false;
+                //ddlEventSource.Visible = display;
+                //lblDisplay.Visible = display;
+                spnProjects.Visible = false;
+                spnPersons.Visible = true;
+
             }
 
             InitXsltParams();
@@ -377,7 +386,7 @@ namespace PraticeManagement.Controls.Projects
                 ResetFilters();
             }
 
-            ddlEventSource.Width = Unit.Pixel(100);
+            //ddlEventSource.Width = Unit.Pixel(100);
             ddlPersonName.Width = Unit.Pixel(150);
             ddlProjects.Width = Unit.Pixel(150);
         }
@@ -388,7 +397,7 @@ namespace PraticeManagement.Controls.Projects
             List<SheetStyles> sheetStylesList = new List<SheetStyles>();
             var dataSetList = new List<DataSet>();
 
-            var report = ActivityLogHelper.GetActivities(SourceFilter, StartDateFilter, EndDateFilter, PersonId, ProjectId,"0", OpportunityIdFilter, MilestoneIdFilter, StartRow, MaxRow, PracticeAreas, SowBudget, Director, POAmount, Capabilites, NewOrExtension, PoNumber, ProjectStatus, SalesPerson, ProjectOwner, true).ToList();
+            var report = ActivityLogHelper.GetActivities(SourceFilter, StartDateFilter, EndDateFilter, PersonId, ProjectId, "0", OpportunityIdFilter, MilestoneIdFilter, StartRow, MaxRow, PracticeAreas, SowBudget, Director, POAmount, Capabilites, NewOrExtension, PoNumber, ProjectStatus, SalesPerson, ProjectOwner, true, Division, Channel, Offering, RevenueType, Budget, Margin).ToList();
 
             if (report.Count > 0)
             {
@@ -473,6 +482,8 @@ namespace PraticeManagement.Controls.Projects
             fieldsList.Add(new ListItem("Project Status", "ProjectStatus"));
             fieldsList.Add(new ListItem("Sales Person", "SalesPerson"));
             fieldsList.Add(new ListItem("Project Manager", "ProjectOwner"));
+            fieldsList.Add(new ListItem("Budget", "Budget"));
+            fieldsList.Add(new ListItem("Margin", "Margin"));
             DataHelper.FillListDefault(cblFields, "All Fields", fieldsList.ToArray(), false, "Value", "Text");
             //cblFields.DataSource = fieldsList;
             //cblFields.DataBind();
@@ -481,32 +492,33 @@ namespace PraticeManagement.Controls.Projects
 
         private void ResetFilters()
         {
-            if (!IsFiltersReadingFromCookie)
-            {
-                SetPeriodSelection(-7);
-            }
-
-            if (IsActivityLogPage)
-            {
-                if (!IsFiltersReadingFromCookie)
-                {
-                    ddlPeriod.SelectedValue = "-7";
-                    ddlEventSource.SelectedIndex = ddlPersonName.SelectedIndex = ddlProjects.SelectedIndex = 0;
-                    hdnResetFilter.Value = "false";
-                    btnResetFilter.Enabled = false;
-                }
-                ActivityLogOnChangeEvents();
-            }
-            else
-            {
-                ddlPeriod.Attributes["onchange"] = "CheckAndShowCustomDatesPoup(this);";
-            }
+            //if (!IsFiltersReadingFromCookie)
+            //{
+            //    SetPeriodSelection(-7);
+            //}
+            SetPeriodSelection(-7);
+            //if (IsActivityLogPage)
+            //{
+            //    if (!IsFiltersReadingFromCookie)
+            //    {
+            //        ddlPeriod.SelectedValue = "-7";
+            //        //ddlEventSource.SelectedIndex =
+            //        ddlPersonName.SelectedIndex = ddlProjects.SelectedIndex = 0;
+            //        hdnResetFilter.Value = "false";
+            //        btnResetFilter.Enabled = false;
+            //    }
+            //    ActivityLogOnChangeEvents();
+            //}
+            //else
+            //{
+            ddlPeriod.Attributes["onchange"] = "CheckAndShowCustomDatesPoup(this);";
+            //}
         }
 
         private void ActivityLogOnChangeEvents()
         {
             ddlPeriod.Attributes["onchange"] = "EnableResetButton(); CheckAndShowCustomDatesPoup(this);";
-            ddlEventSource.Attributes["onchange"] = "disableProjectsDropDown(); EnableResetButton();";
+            //ddlEventSource.Attributes["onchange"] = "disableProjectsDropDown(); EnableResetButton();";
             ddlPersonName.Attributes["onchange"] = ddlProjects.Attributes["onchange"] = "EnableResetButton();";
             diRange.OnClientChange = "EnableResetButtonForDateIntervalChange";
         }
@@ -514,15 +526,15 @@ namespace PraticeManagement.Controls.Projects
         protected void Page_Prerender(object sender, EventArgs e)
         {
 
-            if (IsActivityLogPage)
-            {
-                ActivityLogOnChangeEvents();
-                EnableProjectsDropDown();
-            }
-            else
-            {
+            //if (IsActivityLogPage)
+            //{
+            //    ActivityLogOnChangeEvents();
+            //    //EnableProjectsDropDown();
+            //}
+            //else
+            //{
                 ddlPeriod.Attributes["onchange"] = "CheckAndShowCustomDatesPoup(this);";
-            }
+            //}
 
             if (!Request.Url.AbsolutePath.Contains("PersonDetail.aspx"))
             {
@@ -556,11 +568,11 @@ namespace PraticeManagement.Controls.Projects
             hdnEndDateCalExtenderBehaviourId.Value = clToDate.BehaviorID;
         }
 
-        private void EnableProjectsDropDown()
-        {
-            int eventSourceValue = Convert.ToInt32(ddlEventSource.SelectedValue);
-            ddlProjects.Enabled = !((eventSourceValue >= 3 && eventSourceValue <= 5) || (eventSourceValue >= 32 && eventSourceValue <= 42) || (eventSourceValue >= 21 && eventSourceValue <= 27));
-        }
+        //private void EnableProjectsDropDown()
+        //{
+        //    int eventSourceValue = Convert.ToInt32(ddlEventSource.SelectedValue);
+        //    ddlProjects.Enabled = !((eventSourceValue >= 3 && eventSourceValue <= 5) || (eventSourceValue >= 32 && eventSourceValue <= 42) || (eventSourceValue >= 21 && eventSourceValue <= 27));
+        //}
 
         private void SaveFilterSettings()
         {
@@ -572,7 +584,7 @@ namespace PraticeManagement.Controls.Projects
         {
             var filter = new ActivityLogFilter
             {
-                EventSourceSelected = ddlEventSource.SelectedValue,
+                EventSourceSelected = "7",// ddlEventSource.SelectedValue,
                 FromDateFilterValue = FromDateFilterValue,
                 ToDateFilterValue = ToDateFilterValue,
                 PersonSelected = ddlPersonName.SelectedValue.Trim(),
@@ -584,12 +596,12 @@ namespace PraticeManagement.Controls.Projects
             return filter;
         }
 
-        private void FillEventList()
-        {
-            ddlEventSource.DataBind();
+        //private void FillEventList()
+        //{
+        //    ddlEventSource.DataBind();
 
-            ddlEventSource.SelectedValue = GetStringByValue(DisplayDropDownValue);
-        }
+        //    ddlEventSource.SelectedValue = GetStringByValue(DisplayDropDownValue);
+        //}
 
         /// <summary>
         /// If we're on the page with ID parameter, select corresponding entity
@@ -600,19 +612,19 @@ namespace PraticeManagement.Controls.Projects
             if (!string.IsNullOrEmpty(entityId))
             {
                 entityId = entityId.Trim();
-                var selectedValue = ddlEventSource.SelectedValue;
+                //var selectedValue = ddlEventSource.SelectedValue;
 
-                if (selectedValue == GetStringByValue(ActivityEventSource.Project))
-                {
-                    PrepareDropDown(entityId, ddlProjects);
-                }
-                else if (selectedValue == GetStringByValue(ActivityEventSource.TargetPerson))
-                    PrepareDropDown(entityId, ddlPersonName);
+                //if (selectedValue == GetStringByValue(ActivityEventSource.Project))
+                //{
+                PrepareDropDown(entityId, ddlProjects);
+                //}
+                //else if (selectedValue == GetStringByValue(ActivityEventSource.TargetPerson))
+                //    PrepareDropDown(entityId, ddlPersonName);
             }
             else
             {
-                var selectedValue = ddlEventSource.SelectedValue;
-                if (selectedValue == GetStringByValue(ActivityEventSource.Project) && HostingPage.ProjectId.HasValue)
+                //var selectedValue = ddlEventSource.SelectedValue;
+                if (HostingPage.ProjectId.HasValue)
                 {
                     entityId = HostingPage.ProjectId.Value.ToString();
                     PrepareDropDown(entityId, ddlProjects);
@@ -681,10 +693,10 @@ namespace PraticeManagement.Controls.Projects
         protected void gvActivities_OnDataBound(object sender, EventArgs e)
         {
             //btnExcel.Enabled = true;
-            if (IsActivityLogPage)
-            {
-                SaveFilterSettings();
-            }
+            //if (IsActivityLogPage)
+            //{
+            //    SaveFilterSettings();
+            //}
         }
 
         protected void ddlProjects_OnDataBound(object sender, EventArgs e)
@@ -745,10 +757,7 @@ namespace PraticeManagement.Controls.Projects
 
         protected void odsActivities_Selecting(object sender, ObjectDataSourceSelectingEventArgs e)
         {
-            if (ddlProjects.SelectedValue == "0")
-            {
-                //ddlProjects.DataBind();
-            }
+            
             if (ddlPeriod.SelectedValue == "0")
             {
                 e.InputParameters["startDateFilter"] = StartDateFilter = diRange.FromDate.HasValue ? (DateTime)diRange.FromDate : SettingsHelper.GetCurrentPMTime().AddYears(-1);
@@ -776,7 +785,7 @@ namespace PraticeManagement.Controls.Projects
                 e.InputParameters["startDateFilter"] = StartDateFilter = startMonth;
                 e.InputParameters["endDateFilter"] = EndDateFilter = new DateTime(endMonth.Year, endMonth.Month, DateTime.DaysInMonth(endMonth.Year, endMonth.Month));
             }
-            e.InputParameters["sourceFilter"] = SourceFilter = ddlEventSource.SelectedValue;
+            e.InputParameters["sourceFilter"] = SourceFilter = "7";// ddlEventSource.SelectedValue;
             e.InputParameters["opportunityId"] = OpportunityIdFilter = (this.OpportunityId == null ? null : this.OpportunityId.ToString());
             e.InputParameters["milestoneId"] = MilestoneIdFilter = (this.MilestoneId == null ? null : this.MilestoneId.ToString());
             e.InputParameters["personId"] = PersonId = string.IsNullOrEmpty(ddlPersonName.SelectedValue) ?
@@ -798,6 +807,8 @@ namespace PraticeManagement.Controls.Projects
             e.InputParameters["projectStatus"] = ProjectStatus = selectedFields == null ? true : selectedFields.Contains("ProjectStatus");
             e.InputParameters["salesPerson"] = SalesPerson = selectedFields == null ? true : selectedFields.Contains("SalesPerson");
             e.InputParameters["projectOwner"] = ProjectOwner = selectedFields == null ? true : selectedFields.Contains("ProjectOwner");
+            e.InputParameters["budget"] = Budget = selectedFields == null ? true : selectedFields.Contains("Budget");
+            e.InputParameters["margin"] = Margin = selectedFields == null ? true : selectedFields.Contains("Margin");
             e.InputParameters["recordPerChange"] = true;
         }
 
@@ -893,6 +904,10 @@ namespace PraticeManagement.Controls.Projects
 
         public string NoNeedToShowActivityType(object activityName)
         {
+            if (activityName.ToString().ToLower() == "budget" || activityName.ToString().ToLower() == "margin exception")
+            {
+                return string.Empty;
+            }
             return activityName.ToString().ToLower() == LoggedInActivity ? string.Empty : activityName.ToString();
         }
     }
