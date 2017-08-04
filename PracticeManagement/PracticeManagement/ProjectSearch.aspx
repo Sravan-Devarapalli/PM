@@ -19,36 +19,30 @@
 </asp:Content>
 <asp:Content ID="cntBody" ContentPlaceHolderID="body" runat="server">
     <style type="text/css">
-        .collapsePanel .colPanel
-        {
+        .collapsePanel .colPanel {
             display: none;
         }
-        
-        .collapsePanel .chevron
-        {
+
+        .collapsePanel .chevron {
             background-image: url("Images/expand.jpg");
         }
-        
-        .chevron
-        {
+
+        .chevron {
             background: url("Images/collapse.jpg") no-repeat;
             cursor: pointer;
             padding-left: 10px;
             display: inline;
         }
-        
-        .FltPanel .panel
-        {
+
+        .FltPanel .panel {
             display: none;
         }
-        
-        .FilterDiv .Filter
-        {
+
+        .FilterDiv .Filter {
             background-image: url("Images/expand.jpg");
         }
-        
-        .Filter
-        {
+
+        .Filter {
             background: url("Images/collapse.jpg") no-repeat;
             cursor: pointer;
             padding-left: 10px;
@@ -223,13 +217,11 @@
                             <asp:TextBox ID="txtSearchText" runat="server" CssClass="WholeWidth" MaxLength="255">
                             </asp:TextBox>
                         </td>
-                        <td class="Width5Percent">
-                        </td>
+                        <td class="Width5Percent"></td>
                         <td>
                             <table class="Height80Px" cellpadding="5">
                                 <tr class="tb-header">
-                                    <td colspan="3" class="ProjectSummaryProjectTypeTd">
-                                        Project Status
+                                    <td colspan="3" class="ProjectSummaryProjectTypeTd">Project Status
                                     </td>
                                 </tr>
                                 <tr>
@@ -263,8 +255,7 @@
                                         <asp:CheckBox ID="chbExperimental" runat="server" Text="Experimental" Checked="True"
                                             EnableViewState="False" />
                                     </td>
-                                    <td>
-                                    </td>
+                                    <td></td>
                                 </tr>
                             </table>
                         </td>
@@ -274,8 +265,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                        </td>
+                        <td></td>
                         <td colspan="3">
                             <asp:ValidationSummary ID="vsumProjectSearch" runat="server" EnableClientScript="false" />
                         </td>
@@ -295,38 +285,26 @@
                             <div id="divProjectFilter" runat="server">
                                 <table class="WholeWidth Height80Px">
                                     <tr class="tb-header ProjectSummaryAdvancedFiltersHeader">
-                                        <th>
-                                            Account / Business Unit
+                                        <th>Account / Business Unit
                                         </th>
-                                        <td class="Padding5 Width10Px">
-                                        </td>
-                                        <th>
-                                            Sales Team
+                                        <td class="Padding5 Width10Px"></td>
+                                        <th>Sales Team
                                         </th>
-                                        <td class="Padding5 Width10Px">
-                                        </td>
-                                        <th>
-                                            Division / Practice Area
+                                        <td class="Padding5 Width10Px"></td>
+                                        <th>Division / Practice Area
                                         </th>
-                                        <td class="Padding5 Width10Px">
-                                        </td>
-                                        <th>
-                                            Revenue Type / Offering
+                                        <td class="Padding5 Width10Px"></td>
+                                        <th>Revenue Type / Offering
                                         </th>
-                                        <td class="Padding5 Width10Px">
-                                        </td>
-                                        <th>
-                                            Channel
+                                        <td class="Padding5 Width10Px"></td>
+                                        <th>Channel
                                         </th>
-                                        <td class="Padding5 Width10Px">
-                                        </td>
-                                        <td rowspan="3">
-                                        </td>
+                                        <td class="Padding5 Width10Px"></td>
+                                        <td rowspan="3"></td>
                                         <td rowspan="3">
                                             <table class="textRight WholeWidth">
                                                 <tr>
-                                                    <td>
-                                                    </td>
+                                                    <td></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="PaddingTop10" style="padding-right: 40px">
@@ -346,8 +324,7 @@
                                                 UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                             </ext:ScrollableDropdownExtender>
                                         </td>
-                                        <td>
-                                        </td>
+                                        <td></td>
                                         <td>
                                             <pmc:ScrollingDropDown ID="cblSalesperson" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                                 onclick="scrollingDropdown_onclick('cblSalesperson','Salesperson')" DropDownListType="Salesperson" />
@@ -355,8 +332,7 @@
                                                 UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                             </ext:ScrollableDropdownExtender>
                                         </td>
-                                        <td>
-                                        </td>
+                                        <td></td>
                                         <td>
                                             <pmc:ScrollingDropDown ID="cblDivision" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                                 onclick="scrollingDropdown_onclick('cblDivision','Division')" DropDownListType="Division" />
@@ -364,8 +340,7 @@
                                                 UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                             </ext:ScrollableDropdownExtender>
                                         </td>
-                                        <td>
-                                        </td>
+                                        <td></td>
                                         <td>
                                             <pmc:ScrollingDropDown ID="cblRevenueType" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                                 onclick="scrollingDropdown_onclick('cblRevenueType','RevenueType')" DropDownListType="Revenue Type" />
@@ -373,8 +348,7 @@
                                                 UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                             </ext:ScrollableDropdownExtender>
                                         </td>
-                                        <td>
-                                        </td>
+                                        <td></td>
                                         <td>
                                             <pmc:ScrollingDropDown ID="cblChannel" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                                 onclick="scrollingDropdown_onclick('cblChannel','Channel')" DropDownListType="Channel" />
@@ -382,8 +356,7 @@
                                                 UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                             </ext:ScrollableDropdownExtender>
                                         </td>
-                                        <td>
-                                        </td>
+                                        <td></td>
                                     </tr>
                                     <tr>
                                         <td class="Padding5">
@@ -394,8 +367,7 @@
                                                 UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                             </ext:ScrollableDropdownExtender>
                                         </td>
-                                        <td>
-                                        </td>
+                                        <td></td>
                                         <td>
                                             <pmc:ScrollingDropDown ID="cblProjectOwner" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                                 onclick="scrollingDropdown_onclick('cblProjectOwner','Project Access','es','Project Accesses',33);"
@@ -405,8 +377,7 @@
                                                 UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                             </ext:ScrollableDropdownExtender>
                                         </td>
-                                        <td>
-                                        </td>
+                                        <td></td>
                                         <td>
                                             <pmc:ScrollingDropDown ID="cblPractice" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                                 onclick="scrollingDropdown_onclick('cblPractice','Practice Area')" DropDownListType="Practice Area" />
@@ -414,8 +385,7 @@
                                                 UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                             </ext:ScrollableDropdownExtender>
                                         </td>
-                                        <td>
-                                        </td>
+                                        <td></td>
                                         <td>
                                             <pmc:ScrollingDropDown ID="cblOffering" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown"
                                                 onclick="scrollingDropdown_onclick('cblOffering','Offering')" DropDownListType="Offering" />
@@ -423,8 +393,7 @@
                                                 UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="240px">
                                             </ext:ScrollableDropdownExtender>
                                         </td>
-                                        <td>
-                                        </td>
+                                        <td></td>
                                         <td>
                                     </tr>
                                 </table>
@@ -447,11 +416,13 @@
                         </td>
                         <td class="CompPerfProjectState AddLeftPadding">
                             <div class="ie-bg">
-                                Project #</div>
+                                Project #
+                            </div>
                         </td>
                         <td class="CompPerfProjectNumber AddLeftPadding">
                             <div class="ie-bg">
-                                Account</div>
+                                Account
+                            </div>
                         </td>
                         <td class="CompPerfClient AddLeftPadding">
                             <div class="ie-bg">
@@ -481,8 +452,7 @@
             </LayoutTemplate>
             <ItemTemplate>
                 <tr runat="server" id="boundingRow" class="MinHeight25Px vTop">
-                    <td class="PaddingTop4Px">
-                    </td>
+                    <td class="PaddingTop4Px"></td>
                     <td class="CompPerfProjectState AddLeftPadding">
                         <asp:LinkButton ID="btnProjectNumber" runat="server" Text='<%# HighlightFound(Eval("ProjectNumber")) %>'
                             CommandArgument='<%# Eval("Id") %>' OnCommand="Project_Command"></asp:LinkButton>
@@ -529,8 +499,7 @@
             </ItemTemplate>
             <AlternatingItemTemplate>
                 <tr runat="server" id="boundingRow" class="rowEven MinHeight20Px vTop">
-                    <td class="PaddingTop4Px">
-                    </td>
+                    <td class="PaddingTop4Px"></td>
                     <td class="CompPerfProjectState AddLeftPadding">
                         <asp:LinkButton ID="btnProjectNumber" runat="server" Text='<%# HighlightFound(Eval("ProjectNumber")) %>'
                             CommandArgument='<%# Eval("Id") %>' OnCommand="Project_Command"></asp:LinkButton>
@@ -575,14 +544,9 @@
                     </td>
                 </tr>
             </AlternatingItemTemplate>
-            <EmptyDataTemplate>
-                <tr runat="server" id="EmptyDataRow">
-                    <td>
-                        No projects found.
-                    </td>
-                </tr>
-            </EmptyDataTemplate>
         </asp:ListView>
+        <asp:Label ID="lblProjectPermission" runat="server" Visible="false">User does not have access to this project. </asp:Label>
+        <asp:Label ID="lblNoProjects" runat="server" Visible="false">No projects found. </asp:Label>
     </asp:Panel>
     <asp:Panel ID="pnlProjectToolTipHolder" runat="server" CssClass="ToolTip WordWrap PanelOppNameToolTipHolder">
         <table>
@@ -591,27 +555,20 @@
                     <div class="tail">
                     </div>
                 </td>
-                <td class="tbor">
-                </td>
-                <td class="rt">
-                </td>
+                <td class="tbor"></td>
+                <td class="rt"></td>
             </tr>
             <tr class="middle">
-                <td class="lbor">
-                </td>
+                <td class="lbor"></td>
                 <td class="content WordWrap">
                     <asp:Label ID="lblProjectTooltip" CssClass="WordWrap" runat="server"></asp:Label>
                 </td>
-                <td class="rbor">
-                </td>
+                <td class="rbor"></td>
             </tr>
             <tr class="bottom">
-                <td class="lb">
-                </td>
-                <td class="bbor">
-                </td>
-                <td class="rb">
-                </td>
+                <td class="lb"></td>
+                <td class="bbor"></td>
+                <td class="rb"></td>
             </tr>
         </table>
     </asp:Panel>
