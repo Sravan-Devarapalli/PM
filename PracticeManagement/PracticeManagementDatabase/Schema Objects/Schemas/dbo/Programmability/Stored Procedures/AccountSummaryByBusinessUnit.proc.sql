@@ -52,6 +52,44 @@ BEGIN
 				   AND PC.Date BETWEEN MPE.StartDate AND MPE.EndDate
 			GROUP BY  Pro.ProjectId,Pro.GroupId
 		),
+
+		BudgetResources
+		AS
+		(
+			SELECT  PBPE.ProjectId,
+					PBPE.MilestoneId,
+					PBPE.StartDate,
+					PBPE.EndDate,
+					PBPE.HoursPerDay,
+					PBPE.PersonId
+			FROM ProjectBudgetPersonEntry PBPE
+			JOIN dbo.Project P on P.ProjectId = PBPE.ProjectId
+			WHERE  P.ClientId = @AccountId
+		),
+
+		PersonBudgetHours
+		AS
+		(	
+			SELECT    Pro.ProjectId,
+					 Pro.GroupId
+					,SUM(CASE WHEN P.IsStrawman = 0 THEN dbo.PersonProjectedHoursPerDay(PC.DayOff,PC.CompanyDayOff,PC.TimeOffHours,PR.HoursPerDay) ELSE 0 END)  AS BudgetHours
+			FROM	dbo.Project Pro
+				LEFT JOIN BudgetResources PR ON PR.ProjectId=Pro.ProjectId
+				LEFT JOIN Milestone M on M.MilestoneId=PR.MilestoneId
+				LEFT JOIN dbo.person AS P ON P.PersonId = PR.PersonId 
+				LEFT JOIN dbo.PersonCalendarAuto PC ON PC.PersonId = PR.PersonId 
+						AND PC.Date BETWEEN PR.StartDate AND PR.EndDate 
+						AND PC.Date BETWEEN @StartDateLocal AND @EndDateLocal 
+						  
+		WHERE (@BusinessUnitIds IS NULL OR (Pro.GroupId IN (SELECT Id FROM @BusinessUnitIdsTable))) AND Pro.ClientId = @AccountId
+				   AND (@ProjectStatusIds IS NULL OR Pro.ProjectStatusId IN (SELECT Ids FROM @ProjectStatusIdsTable))
+				   AND Pro.StartDate IS NOT NULL AND Pro.EndDate IS NOT NULL
+				   AND PC.Date BETWEEN @StartDateLocal AND @EndDateLocal
+				   AND PC.Date BETWEEN PR.StartDate AND PR.EndDate
+			GROUP BY  Pro.ProjectId,Pro.GroupId
+		),
+
+
 		 ProjectsDoNotHaveMilestonePersonEntries
 		AS
 		(
@@ -135,9 +173,11 @@ BEGIN
 				ROUND(ISNULL(SUM(TH.BillableHours),0), 2) as BillableHours,
 				ROUND(ISNULL(SUM(TH.BillableHoursUntilToday),0), 2) as BillableHoursUntilToday,
 				ROUND(ISNULL(SUM(TH.NonBillableHours),0), 2) as NonBillableHours,
-				ROUND(ISNULL(SUM(TH.BusinessDevelopmentHours),0), 2) as BusinessDevelopmentHours
+				ROUND(ISNULL(SUM(TH.BusinessDevelopmentHours),0), 2) as BusinessDevelopmentHours,
+				CAST((ROUND(ISNULL(SUM(BH.BudgetHours),0), 2)) AS float) as BudgetHours
 		FROM TimeEntryHours TH  
 		FULL JOIN ProjectedHours PH ON PH.ProjectId = TH.ProjectId
+		FULL JOIN PersonBudgetHours BH ON BH.ProjectId=PH.ProjectId
 		FULL JOIN ProjectsDoNotHaveMilestonePersonEntries PNP ON PNP.ProjectId = PH.ProjectId OR PNP.ProjectId = TH.ProjectId 
 		LEFT JOIN ProjectGroup PG ON PG.GroupId = ISNULL(ISNULL(PH.GroupId, TH.ProjectGroupId),PNP.GroupId)
 		LEFT JOIN dbo.Project P ON P.ProjectId =  ISNULL(ISNULL(PH.ProjectId, TH.ProjectId),PNP.ProjectId)
