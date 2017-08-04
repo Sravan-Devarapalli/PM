@@ -19,5 +19,9 @@
 	[DivisionId]		  INT			  NULL,
 	[VendorId]			  INT			  NULL
 );
+GO
 
-
+CREATE NONCLUSTERED INDEX [IX_Pay_StartDate]
+ON [dbo].[Pay] ([StartDate])
+INCLUDE ([Timescale])
+GO
