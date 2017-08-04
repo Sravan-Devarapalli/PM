@@ -363,7 +363,7 @@ namespace PraticeManagement
                 {
                     try
                     {
-                        string searchText = string.IsNullOrEmpty(txtSearchText.Text) ? null : txtSearchText.Text;
+                        string searchText = string.IsNullOrEmpty(txtSearchText.Text) ? null : txtSearchText.Text.Trim();
                         var projects =
                             serviceClient.ProjectSearchText(
                                 searchText,
@@ -403,8 +403,8 @@ namespace PraticeManagement
                             project.Milestones = milestones;
                             groupedProjects.Add(project);
                         }
-
-                        if (IsTextProjectNumberFormat(searchText) && groupedProjects.Count == 1)
+                        bool isTextProjectNumberFormat = IsTextProjectNumberFormat(searchText);
+                        if (isTextProjectNumberFormat && groupedProjects.Count == 1)
                         {
                             Project project = groupedProjects.First();
                             RedirectWithBack(string.Format(Constants.ApplicationPages.DetailRedirectFormat,
@@ -412,10 +412,24 @@ namespace PraticeManagement
                                                             project.Id),
                                             Constants.ApplicationPages.Projects);
                         }
+                        else if (isTextProjectNumberFormat && ServiceCallers.Custom.Project(p => p.CheckIfProjectNumberExists(searchText)) && groupedProjects.Count == 0)
+                        {
+                            lblProjectPermission.Visible = true;
+                            lblNoProjects.Visible = false;
+                        }
                         else
                         {
+                            lblProjectPermission.Visible = false;
                             lvProjects.DataSource = groupedProjects;
                             lvProjects.DataBind();
+                            if (groupedProjects.Count > 0)
+                            {
+                                lblNoProjects.Visible = false;
+                            }
+                            else
+                            {
+                                lblNoProjects.Visible = true;
+                            }
                         }
                     }
                     catch (CommunicationException)
