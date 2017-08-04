@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="By Project" Language="C#" MasterPageFile="~/PracticeManagementMain.Master"
     AutoEventWireup="true" CodeBehind="ProjectSummaryReport.aspx.cs" Inherits="PraticeManagement.Reporting.ProjectSummaryReport" %>
-    
+
 <%@ Import Namespace="PraticeManagement.Utils" %>
 <%@ Register Src="~/Controls/Generic/Filtering/DateInterval.ascx" TagPrefix="uc"
     TagName="DateInterval" %>
@@ -123,7 +123,7 @@
 
             var displayPanel = $("#" + hiddenpnl);
             displayPanel.hide();
-        }   
+        }
 
     </script>
     <uc:TimeEntryReportsHeader ID="timeEntryReportHeader" runat="server"></uc:TimeEntryReportsHeader>
@@ -132,21 +132,18 @@
         <ContentTemplate>
             <table class="WholeWidth">
                 <tr>
-                    <td class="height30P vBottom fontBold">
-                        2.&nbsp;Select report parameters:
+                    <td class="height30P vBottom fontBold">2.&nbsp;Select report parameters:
                     </td>
                 </tr>
             </table>
             <table class="WholeWidth Height160Px">
                 <tr>
-                    <td id="tdFirst" runat="server" class="Width35Percent">
-                        &nbsp;
+                    <td id="tdFirst" runat="server" class="Width35Percent">&nbsp;
                     </td>
                     <td class="ReportTdSecond" id="tdSecond" runat="server">
                         <table class="ReportParametersTable">
                             <tr>
-                                <td class="FirstTd40">
-                                    Project Number:&nbsp;
+                                <td class="FirstTd40">Project Number:&nbsp;
                                 </td>
                                 <td class="SecondTd150">
                                     <table>
@@ -168,19 +165,16 @@
                             </tr>
                         </table>
                     </td>
-                    <td id="tdThird" runat="server" class="Width35Percent">
-                        &nbsp;
+                    <td id="tdThird" runat="server" class="Width35Percent">&nbsp;
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        &nbsp;
+                    <td>&nbsp;
                     </td>
                     <td class="ReportTdSecond">
                         <table class="ReportParametersTable">
                             <tr>
-                                <td class="FirstTd40">
-                                    Range:&nbsp;
+                                <td class="FirstTd40">Range:&nbsp;
                                 </td>
                                 <td class="SecondTd157">
                                     <pmc:CustomDropDown ID="ddlPeriod" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlPeriod_SelectedIndexChanged">
@@ -205,19 +199,16 @@
                             </tr>
                         </table>
                     </td>
-                    <td>
-                        &nbsp;
+                    <td>&nbsp;
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        &nbsp;
+                    <td>&nbsp;
                     </td>
                     <td class="ReportTdSecond">
                         <table class="ReportParametersTable">
                             <tr>
-                                <td class="FirstTd40">
-                                    &nbsp;
+                                <td class="FirstTd40">&nbsp;
                                 </td>
                                 <td class="SecondTd157">
                                     <asp:HiddenField ID="hdnStartDate" runat="server" Value="" />
@@ -228,19 +219,16 @@
                             </tr>
                         </table>
                     </td>
-                    <td>
-                        &nbsp;
+                    <td>&nbsp;
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        &nbsp;
+                    <td>&nbsp;
                     </td>
                     <td class="ReportTdSecond">
                         <table class="ReportParametersTable">
                             <tr>
-                                <td class="FirstTd40">
-                                    View:&nbsp;
+                                <td class="FirstTd40">View:&nbsp;
                                 </td>
                                 <td class="SecondTd157">
                                     <asp:DropDownList ID="ddlView" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlView_SelectedIndexChanged">
@@ -252,13 +240,48 @@
                             </tr>
                         </table>
                     </td>
-                    <td>
-                        &nbsp;
+                    <td>&nbsp;
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        &nbsp;
+                    <td></td>
+                    <td class="ReportTdSecond">
+                        <table class="ReportParametersTable">
+                            <tr>
+                                <td class="FirstTd40">
+                                    <asp:CheckBox ID="chbShowNonBillable" runat="server" Checked="true" AutoPostBack="true" OnCheckedChanged="chbShowNonBillable_CheckedChanged" />&nbsp;
+                                </td>
+                                <td class="SecondTd157">Show Non-Billable Hours
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td></td>
+                </tr>
+               <%-- <tr>
+                    <td>&nbsp;
+                    </td>
+                    <td class="ReportTdSecond">
+                        <table class="ReportParametersTable">
+                            <tr>
+                                <td class="FirstTd40">Actual Values:&nbsp;
+                                </td>
+                                <td class="SecondTd157">
+                                    <asp:DropDownList ID="ddlActualPeriod" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlActualPeriod_SelectedIndexChanged">
+                                        <asp:ListItem Selected="True" Text="Today" Value="1"></asp:ListItem>
+                                        <asp:ListItem Text="Prior Month End" Value="30"></asp:ListItem>
+                                        <asp:ListItem Text="Last Pay Period" Value="15"></asp:ListItem>
+                                          <asp:ListItem Value="0">All</asp:ListItem>
+                                    </asp:DropDownList>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>&nbsp;
+                    </td>
+                </tr>--%>
+                <tr>
+                    <td>&nbsp;
                     </td>
                     <td class="ReportTdSecond">
                         <table class="ReportParametersTable">
@@ -270,19 +293,17 @@
                             </tr>
                         </table>
                     </td>
-                    <td>
-                        &nbsp;
+                    <td>&nbsp;
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="3" class="ReportBorderBottom">
-                    </td>
+                    <td colspan="3" class="ReportBorderBottom"></td>
                 </tr>
             </table>
             <AjaxControlToolkit:ModalPopupExtender ID="mpeCustomDates" runat="server" TargetControlID="imgCalender"
                 BackgroundCssClass="modalBackground" PopupControlID="pnlCustomDates" BehaviorID="bhCustomDates"
                 DropShadow="false" />
-            <asp:Panel ID="pnlCustomDates" runat="server" CssClass="ConfirmBoxClass CustomDatesPopUp" style="display:none;">
+            <asp:Panel ID="pnlCustomDates" runat="server" CssClass="ConfirmBoxClass CustomDatesPopUp" Style="display: none;">
                 <table class="WholeWidth">
                     <tr>
                         <td align="center">
@@ -309,11 +330,10 @@
             <AjaxControlToolkit:ModalPopupExtender ID="mpeProjectSearch" runat="server" TargetControlID="imgProjectSearch"
                 BackgroundCssClass="modalBackground" PopupControlID="pnlProjectSearch" BehaviorID="mpeProjectSearch"
                 DropShadow="false" />
-            <asp:Panel ID="pnlProjectSearch" runat="server" CssClass="popUp ProjectSearch" style="display:none;">
+            <asp:Panel ID="pnlProjectSearch" runat="server" CssClass="popUp ProjectSearch" Style="display: none;">
                 <table class="WholeWidth">
                     <tr class="PopUpHeader">
-                        <th>
-                            Project Search
+                        <th>Project Search
                             <asp:Button ID="btnclose" runat="server" CssClass="mini-report-closeNew" ToolTip="Close"
                                 OnClick="btnclose_OnClick" Text="X"></asp:Button>
                         </th>
@@ -322,8 +342,7 @@
                         <td class="WholeWidth">
                             <table class="WholeWidth">
                                 <tr>
-                                    <td class="Width100Px textRight">
-                                        Account:
+                                    <td class="Width100Px textRight">Account:
                                     </td>
                                     <td>
                                         <asp:DropDownList ID="ddlClients" runat="server" CssClass="Width250Px" OnSelectedIndexChanged="ddlClients_OnSelectedIndexChanged"
@@ -338,8 +357,7 @@
                         <td class="WholeWidth">
                             <table class="WholeWidth">
                                 <tr>
-                                    <td class="Width100Px textRight">
-                                        Project:
+                                    <td class="Width100Px textRight">Project:
                                     </td>
                                     <td>
                                         <pmc:CustomDropDown ID="ddlProjects" runat="server" Enabled="false" AutoPostBack="true"
