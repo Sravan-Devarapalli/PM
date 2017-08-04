@@ -170,10 +170,6 @@
                                 UseSubmitBehavior="false" ToolTip="Export To Excel" />
                         </td>
                         <td>
-                            <asp:Button ID="btnExportToPDF" runat="server" Text="PDF" OnClick="btnExportToPDF_OnClick"
-                                Enabled="false" UseSubmitBehavior="false" ToolTip="Export To PDF" />
-                        </td>
-                        <td>
                             <asp:Button ID="btnPayCheckExport" runat="server" Text="ADP" OnClick="btnPayCheckExport_OnClick"
                                 UseSubmitBehavior="false" ToolTip="Export ADP" />
                         </td>
