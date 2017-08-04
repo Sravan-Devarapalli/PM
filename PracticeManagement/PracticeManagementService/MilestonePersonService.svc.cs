@@ -176,24 +176,27 @@ namespace PracticeManagementService
             MilestonePersonDAL.MilestonePersonDelete(milestonePerson);
         }
 
-        public void DeleteMilestonePersonEntry(int milestonePersonEntryId, string userName)
+        public void DeleteMilestonePersonEntry(int milestonePersonEntryId, string userName, int? milestoneId)
         {
             MilestonePersonDAL.DeleteMilestonePersonEntry(milestonePersonEntryId, userName);
         }
 
         public int UpdateMilestonePersonEntry(MilestonePersonEntry entry, string userName)
         {
-            return MilestonePersonDAL.UpdateMilestonePersonEntry(entry, userName);
+            var result = MilestonePersonDAL.UpdateMilestonePersonEntry(entry, userName);
+            return result;
         }
 
         public int MilestonePersonEntryInsert(MilestonePersonEntry entry, string userName)
         {
-            return MilestonePersonDAL.MilestonePersonEntryInsert(entry, userName);
+            var result = MilestonePersonDAL.MilestonePersonEntryInsert(entry, userName);
+            return result;
         }
 
         public int MilestonePersonAndEntryInsert(MilestonePerson milestonePerson, string userName)
         {
-            return MilestonePersonDAL.MilestonePersonAndEntryInsert(milestonePerson, userName);
+            var result = MilestonePersonDAL.MilestonePersonAndEntryInsert(milestonePerson, userName);
+            return result;
         }
 
         public bool IsPersonAlreadyAddedtoMilestone(int mileStoneId, int personId)
@@ -204,6 +207,8 @@ namespace PracticeManagementService
         public void MilestoneResourceUpdate(Milestone milestone, MilestoneUpdateObject milestoneUpdateObj, string userName)
         {
             MilestonePersonDAL.MilestoneResourceUpdate(milestone, milestoneUpdateObj, userName);
+            MilestoneDAL.UpdateMilestoneDiscount(milestone.Id.Value);
+
         }
 
         #endregion IMilestonePersonService Members
