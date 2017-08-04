@@ -39,3 +39,13 @@
 	TargetUtilization	INT						NULL
 );
 
+GO
+CREATE NONCLUSTERED INDEX [IX_Person_PersonStatusId]
+ON [dbo].[Person] ([PersonStatusId])
+INCLUDE ([HireDate],[TerminationDate],[Alias],[DefaultPractice],[FirstName],[LastName],[EmployeeNumber],[SeniorityId],[ManagerId],[TelephoneNumber],[PreferredFirstName])
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Person_IsStrawman]
+ON [dbo].[Person] ([IsStrawman])
+INCLUDE ([HireDate],[TerminationDate],[DefaultPractice],[FirstName],[LastName],[PersonStatusId],[IsDefaultManager],[PreferredFirstName])
+GO
