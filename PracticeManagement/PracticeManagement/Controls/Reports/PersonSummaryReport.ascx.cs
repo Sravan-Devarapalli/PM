@@ -9,6 +9,7 @@ using System.Text;
 using PraticeManagement.Utils.Excel;
 using System.Data;
 using PraticeManagement.Utils;
+using System.Web.UI.HtmlControls;
 
 namespace PraticeManagement.Controls.Reports
 {
@@ -38,7 +39,7 @@ namespace PraticeManagement.Controls.Reports
                 CellStyles[] dataCellStylearray = { dataCellStyle };
                 RowStyles datarowStyle = new RowStyles(dataCellStylearray);
 
-                RowStyles[] rowStylearray = { headerrowStyle};
+                RowStyles[] rowStylearray = { headerrowStyle };
 
                 SheetStyles sheetStyle = new SheetStyles(rowStylearray);
                 sheetStyle.IsAutoResize = false;
@@ -64,22 +65,25 @@ namespace PraticeManagement.Controls.Reports
                 dataPercentCellStyle.DataFormat = "0.00%";
 
                 CellStyles[] dataCellStylearray = { dataCellStyle,
-                                                    dataCellStyle, 
                                                     dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
-                                                    dataCellStyle, 
                                                     dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
-                                                    dataCellStyle, 
                                                     dataCellStyle,
                                                     dataCellStyle,
-                                                    dataCellStyle,
-                                                    dataPercentCellStyle
+                                                    dataCellStyle
                                                   };
-
-                RowStyles datarowStyle = new RowStyles(dataCellStylearray);
+                var dataCellStyleList = dataCellStylearray.ToList();
+                if (HostingPage.ShowNonBillableHours)
+                {
+                    dataCellStyleList.Add(dataCellStyle);
+                }
+                dataCellStyleList.Add(dataCellStyle);
+                dataCellStyleList.Add(dataCellStyle);
+                dataCellStyleList.Add(dataPercentCellStyle);
+                RowStyles datarowStyle = new RowStyles(dataCellStyleList.ToArray());
 
                 RowStyles[] rowStylearray = { headerrowStyle, datarowStyle };
                 SheetStyles sheetStyle = new SheetStyles(rowStylearray);
@@ -117,9 +121,15 @@ namespace PraticeManagement.Controls.Reports
                 LblNonBillable = e.Item.FindControl("lblNonBillable") as Label;
                 LblActualHours = e.Item.FindControl("lblActualHours") as Label;
                 LblBillableHoursVariance = e.Item.FindControl("lblBillableHoursVariance") as Label;
+                var thNonBillable = e.Item.FindControl("thNonBillable") as HtmlTableCell;
+                thNonBillable.Visible = HostingPage.ShowNonBillableHours;
+            }
+            else if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
+            {
+                var tdNonBillable = e.Item.FindControl("tdNonBillable") as HtmlTableCell;
+                tdNonBillable.Visible = HostingPage.ShowNonBillableHours;
             }
         }
-
         public void DatabindRepepeaterSummary(List<TimeEntriesGroupByClientAndProject> timeEntriesGroupByClientAndProjectList)
         {
             if (timeEntriesGroupByClientAndProjectList.Count > 0)
@@ -173,7 +183,7 @@ namespace PraticeManagement.Controls.Reports
 
         protected void btnExportToExcel_OnClick(object sender, EventArgs e)
         {
-            
+
             DataHelper.InsertExportActivityLogMessage(PersonSummaryReportExport);
             List<SheetStyles> sheetStylesList = new List<SheetStyles>();
             var dataSetList = new List<DataSet>();
@@ -225,7 +235,7 @@ namespace PraticeManagement.Controls.Reports
                 }
                 //“[LastName]_[FirstName]-[“Summary” or “Detail”]-[StartOfRange]_[EndOfRange].xls”.  
                 //example :Hong-Turney_Jason-Summary-03.01.2012_03.31.2012.xlsx
-                
+
                 NPOIExcel.Export(filename, dataSetList, sheetStylesList);
             }
         }
@@ -236,9 +246,7 @@ namespace PraticeManagement.Controls.Reports
             List<object> rownew;
             List<object> row;
 
-            data.Columns.Add("Account");
             data.Columns.Add("Account Name");
-            data.Columns.Add("Business Unit");
             data.Columns.Add("Business Unit Name");
             data.Columns.Add("Project");
             data.Columns.Add("Project Name");
@@ -246,16 +254,19 @@ namespace PraticeManagement.Controls.Reports
             data.Columns.Add("Billing");
             data.Columns.Add("Projected Hours");
             data.Columns.Add("Billable");
-            data.Columns.Add("Non-Billable");
+            if (HostingPage.ShowNonBillableHours)
+            {
+                data.Columns.Add("Non-Billable");
+            }
             data.Columns.Add("Actual Hours");
+            data.Columns.Add("Budget Hours");
+            data.Columns.Add("ETC Hours");
             data.Columns.Add("Billable Hours Variance");
             data.Columns.Add("Percent of Total Hours this Period");
             foreach (var timeEntriesGroupByClientAndProject in report)
             {
                 row = new List<object>();
-                row.Add(timeEntriesGroupByClientAndProject.Client.Code);
                 row.Add(timeEntriesGroupByClientAndProject.Client.HtmlEncodedName);
-                row.Add(timeEntriesGroupByClientAndProject.Project.Group.Code);
                 row.Add(timeEntriesGroupByClientAndProject.Project.Group.HtmlEncodedName);
                 row.Add(timeEntriesGroupByClientAndProject.Project.ProjectNumber);
                 row.Add(timeEntriesGroupByClientAndProject.Project.HtmlEncodedName);
@@ -263,18 +274,18 @@ namespace PraticeManagement.Controls.Reports
                 row.Add(timeEntriesGroupByClientAndProject.BillableType);
                 row.Add(GetDoubleFormat(timeEntriesGroupByClientAndProject.ProjectedHours));
                 row.Add(GetDoubleFormat(timeEntriesGroupByClientAndProject.BillableHours));
-                row.Add(GetDoubleFormat(timeEntriesGroupByClientAndProject.NonBillableHours));
+                if (HostingPage.ShowNonBillableHours)
+                {
+                    row.Add(GetDoubleFormat(timeEntriesGroupByClientAndProject.NonBillableHours));
+                }
+                row.Add(GetDoubleFormat(timeEntriesGroupByClientAndProject.BudgetHours));
+                row.Add(GetDoubleFormat(timeEntriesGroupByClientAndProject.ETCHours));
                 row.Add(GetDoubleFormat(timeEntriesGroupByClientAndProject.TotalHours));
                 row.Add(GetDoubleFormat(timeEntriesGroupByClientAndProject.BillableHoursVariance));
-                row.Add((double)timeEntriesGroupByClientAndProject.ProjectTotalHoursPercent/100);
+                row.Add((double)timeEntriesGroupByClientAndProject.ProjectTotalHoursPercent / 100);
                 data.Rows.Add(row.ToArray());
             }
             return data;
-        }
-
-        protected void btnExportToPDF_OnClick(object sender, EventArgs e)
-        {
-
         }
 
     }
