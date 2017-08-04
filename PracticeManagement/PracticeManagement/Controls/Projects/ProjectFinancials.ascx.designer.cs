@@ -22,6 +22,15 @@ namespace PraticeManagement.Controls.Projects {
         protected global::System.Web.UI.WebControls.Panel pnlFinancials;
         
         /// <summary>
+        /// lblBudgetRevenue control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblBudgetRevenue;
+        
+        /// <summary>
         /// lblEstimatedRevenue control.
         /// </summary>
         /// <remarks>
@@ -29,6 +38,51 @@ namespace PraticeManagement.Controls.Projects {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblEstimatedRevenue;
+        
+        /// <summary>
+        /// lblActualRevenue control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblActualRevenue;
+        
+        /// <summary>
+        /// lblProjRemRevenue control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblProjRemRevenue;
+        
+        /// <summary>
+        /// lblEACRevenue control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblEACRevenue;
+        
+        /// <summary>
+        /// lblVarcRevenue control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblVarcRevenue;
+        
+        /// <summary>
+        /// lblBudgetReimExpenses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblBudgetReimExpenses;
         
         /// <summary>
         /// lblReimbursedExpenses control.
@@ -40,6 +94,42 @@ namespace PraticeManagement.Controls.Projects {
         protected global::System.Web.UI.WebControls.Label lblReimbursedExpenses;
         
         /// <summary>
+        /// lblActualReimExpenses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblActualReimExpenses;
+        
+        /// <summary>
+        /// lblProjRemReimExpenses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblProjRemReimExpenses;
+        
+        /// <summary>
+        /// lblEACReimExpenses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblEACReimExpenses;
+        
+        /// <summary>
+        /// lblVarcReimExpenses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblVarcReimExpenses;
+        
+        /// <summary>
         /// lblDiscount control.
         /// </summary>
         /// <remarks>
@@ -47,6 +137,15 @@ namespace PraticeManagement.Controls.Projects {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblDiscount;
+        
+        /// <summary>
+        /// lblBudgetDiscount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblBudgetDiscount;
         
         /// <summary>
         /// lblDiscountAmount control.
@@ -58,6 +157,51 @@ namespace PraticeManagement.Controls.Projects {
         protected global::System.Web.UI.WebControls.Label lblDiscountAmount;
         
         /// <summary>
+        /// lblActDiscount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblActDiscount;
+        
+        /// <summary>
+        /// lblProjRemDiscount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblProjRemDiscount;
+        
+        /// <summary>
+        /// lblEACDiscount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblEACDiscount;
+        
+        /// <summary>
+        /// lblVarcDiscount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblVarcDiscount;
+        
+        /// <summary>
+        /// lblBudgetRevenueNet control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblBudgetRevenueNet;
+        
+        /// <summary>
         /// lblRevenueNet control.
         /// </summary>
         /// <remarks>
@@ -65,6 +209,51 @@ namespace PraticeManagement.Controls.Projects {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblRevenueNet;
+        
+        /// <summary>
+        /// lblActRevenueNet control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblActRevenueNet;
+        
+        /// <summary>
+        /// lblProjRemRevenueNet control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblProjRemRevenueNet;
+        
+        /// <summary>
+        /// lblEACRevenueNet control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblEACRevenueNet;
+        
+        /// <summary>
+        /// lblVarRevenueNet control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblVarRevenueNet;
+        
+        /// <summary>
+        /// lblBudgetCogs control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblBudgetCogs;
         
         /// <summary>
         /// lblEstimatedCogs control.
@@ -76,6 +265,51 @@ namespace PraticeManagement.Controls.Projects {
         protected global::System.Web.UI.WebControls.Label lblEstimatedCogs;
         
         /// <summary>
+        /// lblActCogs control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblActCogs;
+        
+        /// <summary>
+        /// lblProjRemCogs control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblProjRemCogs;
+        
+        /// <summary>
+        /// lblEACCogs control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblEACCogs;
+        
+        /// <summary>
+        /// lblVarcCogs control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblVarcCogs;
+        
+        /// <summary>
+        /// lblBudgetExpense control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblBudgetExpense;
+        
+        /// <summary>
         /// lblExpenses control.
         /// </summary>
         /// <remarks>
@@ -83,6 +317,105 @@ namespace PraticeManagement.Controls.Projects {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblExpenses;
+        
+        /// <summary>
+        /// lblActExpenses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblActExpenses;
+        
+        /// <summary>
+        /// lblProjRemExpenses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblProjRemExpenses;
+        
+        /// <summary>
+        /// lblEACExpenses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblEACExpenses;
+        
+        /// <summary>
+        /// lblVarcExpenses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblVarcExpenses;
+        
+        /// <summary>
+        /// lblBudgetTotalExpenes control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblBudgetTotalExpenes;
+        
+        /// <summary>
+        /// lblTotalExpenses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblTotalExpenses;
+        
+        /// <summary>
+        /// lblActTotalExpenses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblActTotalExpenses;
+        
+        /// <summary>
+        /// lblProjRemTotalExpenses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblProjRemTotalExpenses;
+        
+        /// <summary>
+        /// lblEACTotalExpenses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblEACTotalExpenses;
+        
+        /// <summary>
+        /// lblVarcTotalExpenses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblVarcTotalExpenses;
+        
+        /// <summary>
+        /// lblBudgetGrossMargin control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblBudgetGrossMargin;
         
         /// <summary>
         /// lblGrossMargin control.
@@ -94,31 +427,94 @@ namespace PraticeManagement.Controls.Projects {
         protected global::System.Web.UI.WebControls.Label lblGrossMargin;
         
         /// <summary>
-        /// tdTargetMargin control.
+        /// lblActGrossMargin control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableCell tdTargetMargin;
+        protected global::System.Web.UI.WebControls.Label lblActGrossMargin;
         
         /// <summary>
-        /// lblTargetMargin control.
+        /// lblProjRemGrossMargin control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblTargetMargin;
+        protected global::System.Web.UI.WebControls.Label lblProjRemGrossMargin;
         
         /// <summary>
-        /// lblEstimatedMargin control.
+        /// lblEACGrossMargin control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblEstimatedMargin;
+        protected global::System.Web.UI.WebControls.Label lblEACGrossMargin;
+        
+        /// <summary>
+        /// lblVarcGrossMargin control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblVarcGrossMargin;
+        
+        /// <summary>
+        /// lblBudgetMarginPerc control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblBudgetMarginPerc;
+        
+        /// <summary>
+        /// lblMarginPerc control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMarginPerc;
+        
+        /// <summary>
+        /// lblActMarginPerc control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblActMarginPerc;
+        
+        /// <summary>
+        /// lblProjRemMarginPer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblProjRemMarginPer;
+        
+        /// <summary>
+        /// lblEACMarginPerc control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblEACMarginPerc;
+        
+        /// <summary>
+        /// lblVarcMarginPerc control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblVarcMarginPerc;
     }
 }
 
