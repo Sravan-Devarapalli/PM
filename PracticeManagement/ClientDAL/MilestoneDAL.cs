@@ -55,6 +55,11 @@ namespace DataAccess
         private const string GetMilestoneAndCSATCountsByProjectProcedure = "GetMilestoneAndCSATCountsByProject";
         private const string DefaultMileStoneInsertProcedure = "dbo.DefaultMilestoneSettingInsert";
         private const string DefaultMileStoneGetProcedure = "dbo.GetDefaultMilestoneSetting";
+        private const string UpdateFixedFeeMilestoneDiscountProcedure = "dbo.UpdateFixedFeeMilestoneDiscount";
+        private const string SaveFixedMilestoneMonthlyRevenuesProc = "dbo.SaveFixedMilestoneMonthlyRevenues";
+        private const string DeleteFixedMilestoneMonthlyRevenuesProc = "dbo.DeleteFixedMilestoneMonthlyRevenues";
+        private const string UpdateFixedMilestoneMonthlyRevenuesProc = "dbo.UpdateFixedMilestoneMonthlyRevenues";
+        private const string GetMonthlyRevenuesForMilestoneProc = "dbo.GetMonthlyRevenuesForMilestone";
 
         public const string GetPersonMilestonesAfterTerminationDateProcedure =
             "dbo.GetPersonMilestonesAfterTerminationDate";
@@ -220,17 +225,17 @@ namespace DataAccess
             while (reader.Read())
             {
                 Milestone milestone = new Milestone
-                    {
-                        Id = reader.GetInt32(milestoneIdIndex),
-                        Description = reader.GetString(descriptionIndex),
-                        Project =
+                {
+                    Id = reader.GetInt32(milestoneIdIndex),
+                    Description = reader.GetString(descriptionIndex),
+                    Project =
                             new Project
-                                {
-                                    Id = reader.GetInt32(projectIdIndex),
-                                    Name = reader.GetString(projectNameIndex),
-                                    ProjectNumber = reader.GetString(projectNumberIndex)
-                                }
-                    };
+                            {
+                                Id = reader.GetInt32(projectIdIndex),
+                                Name = reader.GetString(projectNameIndex),
+                                ProjectNumber = reader.GetString(projectNumberIndex)
+                            }
+                };
 
                 result.Add(milestone);
             }
@@ -347,11 +352,16 @@ namespace DataAccess
                 command.Parameters.AddWithValue(IsHourlyAmountParam, milestone.IsHourlyAmount);
                 command.Parameters.AddWithValue(UserLoginParam,
                                                 !string.IsNullOrEmpty(userName) ? (object)userName : DBNull.Value);
+                command.Parameters.AddWithValue(Constants.ParameterNames.MilestoneType, milestone.milestoneType);
+                command.Parameters.AddWithValue(Constants.ParameterNames.DiscountParam, milestone.PremiumDiscount.HasValue ? (object)milestone.PremiumDiscount.Value : DBNull.Value);
+                command.Parameters.AddWithValue(Constants.ParameterNames.DiscountType, milestone.PremiumType);
+                command.Parameters.AddWithValue(Constants.ParameterNames.IsDiscountAtMilestone, milestone.IsDiscountAtMilestoneLevel);
+                command.Parameters.AddWithValue(Constants.ParameterNames.IsAmountAtMilestone, milestone.IsAmountAtMilestone);
 
                 SqlParameter milestoneIdParam = new SqlParameter(MilestoneIdParam, SqlDbType.Int)
-                    {
-                        Direction = ParameterDirection.Output
-                    };
+                {
+                    Direction = ParameterDirection.Output
+                };
                 command.Parameters.Add(milestoneIdParam);
 
                 connection.Open();
@@ -401,6 +411,11 @@ namespace DataAccess
                 command.Parameters.AddWithValue(IsHourlyAmountParam, milestone.IsHourlyAmount);
                 command.Parameters.AddWithValue(UserLoginParam,
                                                 !string.IsNullOrEmpty(userName) ? (object)userName : DBNull.Value);
+                command.Parameters.AddWithValue(Constants.ParameterNames.MilestoneType, milestone.milestoneType);
+                command.Parameters.AddWithValue(Constants.ParameterNames.DiscountParam, milestone.PremiumDiscount.HasValue ? (object)milestone.PremiumDiscount.Value : DBNull.Value);
+                command.Parameters.AddWithValue(Constants.ParameterNames.DiscountType, milestone.PremiumType);
+                command.Parameters.AddWithValue(Constants.ParameterNames.IsDiscountAtMilestone, milestone.IsDiscountAtMilestoneLevel);
+                command.Parameters.AddWithValue(Constants.ParameterNames.IsAmountAtMilestone, milestone.IsAmountAtMilestone);
 
                 connection.Open();
 
@@ -491,7 +506,7 @@ namespace DataAccess
             try
             {
                 if (!reader.HasRows) return;
-              
+
                 int projectIdIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectId);
                 int projectNameIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectName);
                 int projectNumberIndex = reader.GetOrdinal(Constants.ColumnNames.ProjectNumber);
@@ -696,6 +711,42 @@ namespace DataAccess
             int milestoneIsChargeableIndex = reader.GetOrdinal(Constants.ColumnNames.MilestoneIsChargeable);
             int consultantsCanAdjustIndex = reader.GetOrdinal(Constants.ColumnNames.ConsultantsCanAdjust);
             int isMarginColorInfoEnabledIndex = -1;
+            int milestoneTypeIndex = -1;
+            int PremiumDiscountIndex = -1;
+            int PremiumTypeIndex = -1;
+            int isAmountAtMilestoneIndex = -1;
+            int isDiscountAtMilestoneIndex = -1;
+            try
+            {
+                isDiscountAtMilestoneIndex = reader.GetOrdinal(Constants.ColumnNames.IsDiscountAtMilestone);
+            }
+            catch { }
+            try
+            {
+                isAmountAtMilestoneIndex = reader.GetOrdinal(Constants.ColumnNames.IsAmountAtMilestone);
+            }
+            catch { }
+
+            try
+            {
+                PremiumDiscountIndex = reader.GetOrdinal(Constants.ColumnNames.PremiumDiscount);
+            }
+            catch { }
+
+            try
+            {
+                PremiumTypeIndex = reader.GetOrdinal(Constants.ColumnNames.DiscountTypeIndex);
+            }
+            catch { }
+
+            try
+            {
+                milestoneTypeIndex = reader.GetOrdinal("MilestoneType");
+            }
+            catch
+            {
+                milestoneTypeIndex = -1;
+            }
 
             try
             {
@@ -729,40 +780,40 @@ namespace DataAccess
             while (reader.Read())
             {
                 Milestone milestone = new Milestone
+                {
+                    Id = reader.GetInt32(milestoneIdIndex),
+                    Description = reader.GetString(descriptionIndex),
+                    Amount = !reader.IsDBNull(amountIndex) ? (decimal?)reader.GetDecimal(amountIndex) : null,
+                    StartDate = reader.GetDateTime(startDateIndex),
+                    ProjectedDeliveryDate = reader.GetDateTime(projectedDeliveryDateIndex),
+                    IsHourlyAmount = reader.GetBoolean(isHourlyAmountIndex),
+                    ExpectedHours = reader.GetDecimal(expectedHoursIndex),
+                    PersonCount = reader.GetInt32(personCountIndex),
+                    ProjectedDuration = reader.GetInt32(projectedDurationIndex),
+                    IsChargeable = reader.GetBoolean(milestoneIsChargeableIndex),
+                    ConsultantsCanAdjust = reader.GetBoolean(consultantsCanAdjustIndex),
+                    Project = new Project
                     {
-                        Id = reader.GetInt32(milestoneIdIndex),
-                        Description = reader.GetString(descriptionIndex),
-                        Amount = !reader.IsDBNull(amountIndex) ? (decimal?)reader.GetDecimal(amountIndex) : null,
-                        StartDate = reader.GetDateTime(startDateIndex),
-                        ProjectedDeliveryDate = reader.GetDateTime(projectedDeliveryDateIndex),
-                        IsHourlyAmount = reader.GetBoolean(isHourlyAmountIndex),
-                        ExpectedHours = reader.GetDecimal(expectedHoursIndex),
-                        PersonCount = reader.GetInt32(personCountIndex),
-                        ProjectedDuration = reader.GetInt32(projectedDurationIndex),
-                        IsChargeable = reader.GetBoolean(milestoneIsChargeableIndex),
-                        ConsultantsCanAdjust = reader.GetBoolean(consultantsCanAdjustIndex),
-                        Project = new Project
-                            {
-                                Id = reader.GetInt32(projectIdIndex),
-                                Name = reader.GetString(projectNameIndex),
-                                Discount = reader.GetDecimal(discountIndex),
-                                StartDate = reader.GetDateTime(projectStartDateIndex),
-                                EndDate = reader.GetDateTime(projectEndDateIndex),
-                                Client = new Client
-                                    {
-                                        Id = reader.GetInt32(clientIdIndex),
-                                        Name = reader.GetString(clientNameIndex)
-                                    }
-                            }
-                    };
+                        Id = reader.GetInt32(projectIdIndex),
+                        Name = reader.GetString(projectNameIndex),
+                        Discount = reader.GetDecimal(discountIndex),
+                        StartDate = reader.GetDateTime(projectStartDateIndex),
+                        EndDate = reader.GetDateTime(projectEndDateIndex),
+                        Client = new Client
+                        {
+                            Id = reader.GetInt32(clientIdIndex),
+                            Name = reader.GetString(clientNameIndex)
+                        }
+                    }
+                };
 
                 if (projectStatusIdIndex >= 0 && projectStatusNameIndex >= 0)
                 {
                     milestone.Project.Status = new ProjectStatus
-                        {
-                            Id = reader.GetInt32(projectStatusIdIndex),
-                            Name = reader.GetString(projectStatusNameIndex)
-                        };
+                    {
+                        Id = reader.GetInt32(projectStatusIdIndex),
+                        Name = reader.GetString(projectStatusNameIndex)
+                    };
                 }
                 if (projectNumberIndex >= 0)
                 {
@@ -780,6 +831,27 @@ namespace DataAccess
                     }
                 }
 
+                if (milestoneTypeIndex >= 0)
+                {
+                    milestone.milestoneType = reader.GetInt32(milestoneTypeIndex);
+                }
+                if (PremiumDiscountIndex >= 0)
+                {
+                    milestone.PremiumDiscount = !reader.IsDBNull(PremiumDiscountIndex) ? (decimal?)reader.GetDecimal(PremiumDiscountIndex) : null;
+                }
+                if (PremiumTypeIndex >= 0)
+                {
+                    milestone.PremiumType = !reader.IsDBNull(PremiumTypeIndex) ? reader.GetInt32(PremiumTypeIndex) : 0;
+                }
+                if (isAmountAtMilestoneIndex >= 0)
+                {
+                    milestone.IsAmountAtMilestone = reader.GetBoolean(isAmountAtMilestoneIndex);
+                }
+                if (isDiscountAtMilestoneIndex >= 0)
+                {
+                    milestone.IsDiscountAtMilestoneLevel = reader.GetInt32(isDiscountAtMilestoneIndex);
+                }
+
                 result.Add(milestone);
             }
         }
@@ -791,10 +863,10 @@ namespace DataAccess
             while (reader.Read())
             {
                 Milestone milestone = new Milestone
-                    {
-                        Id = reader.GetInt32(milestoneIdIndex),
-                        Description = reader.GetString(descriptionIndex)
-                    };
+                {
+                    Id = reader.GetInt32(milestoneIdIndex),
+                    Description = reader.GetString(descriptionIndex)
+                };
 
                 result.Add(milestone);
             }
@@ -851,7 +923,7 @@ namespace DataAccess
                     connection.Open();
                     using (var reader = command.ExecuteReader())
                     {
-                        ReadProjectAttributionValues(reader,result);
+                        ReadProjectAttributionValues(reader, result);
                     }
                 }
             }
@@ -941,7 +1013,7 @@ namespace DataAccess
             return extendAttributionList;
         }
 
-        public static List<MSBadge> GetPeopleAssignedInOtherProjectsForGivenRange(DateTime milestoneNewStartDate,DateTime milestoneNewEnddate,int milestoneId)
+        public static List<MSBadge> GetPeopleAssignedInOtherProjectsForGivenRange(DateTime milestoneNewStartDate, DateTime milestoneNewEnddate, int milestoneId)
         {
             using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
             using (var command = new SqlCommand(Constants.ProcedureNames.MilestonePerson.GetPeopleAssignedInOtherProjectsForGivenRange, connection))
@@ -999,6 +1071,163 @@ namespace DataAccess
                 }
             }
 
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static void UpdateMilestoneDiscount(int milestoneId)
+        {
+            using (SqlConnection connection = new SqlConnection(DataSourceHelper.DataConnection))
+            using (SqlCommand command = new SqlCommand(UpdateFixedFeeMilestoneDiscountProcedure, connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = connection.ConnectionTimeout;
+
+                command.Parameters.AddWithValue(MilestoneIdParam, milestoneId);
+                connection.Open();
+                try
+                {
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
+        public static void SaveFixedMilestoneMonthlyRevenues(int milestoneId, List<MonthlyRevenue> monthlyRevenues)
+        {
+            DeleteFixedMilestoneMonthlyRevenues(milestoneId);
+            if (monthlyRevenues != null && monthlyRevenues.Count > 0)
+            {
+                foreach (var monthlyRevenue in monthlyRevenues)
+                {
+                    using (SqlConnection connection = new SqlConnection(DataSourceHelper.DataConnection))
+                    using (SqlCommand command = new SqlCommand(SaveFixedMilestoneMonthlyRevenuesProc, connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.CommandTimeout = connection.ConnectionTimeout;
+
+                        command.Parameters.AddWithValue(MilestoneIdParam, milestoneId);
+                        command.Parameters.AddWithValue(Constants.ParameterNames.StartDate, monthlyRevenue.StartDate);
+                        command.Parameters.AddWithValue(Constants.ParameterNames.EndDate, monthlyRevenue.EndDate);
+                        command.Parameters.AddWithValue(Constants.ParameterNames.AmountParam, monthlyRevenue.Amount);
+
+                        connection.Open();
+                        try
+                        {
+                            command.ExecuteNonQuery();
+                        }
+                        catch (Exception ex)
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void DeleteFixedMilestoneMonthlyRevenues(int milestoneId)
+        {
+            using (SqlConnection connection = new SqlConnection(DataSourceHelper.DataConnection))
+            using (SqlCommand command = new SqlCommand(DeleteFixedMilestoneMonthlyRevenuesProc, connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = connection.ConnectionTimeout;
+
+                command.Parameters.AddWithValue(MilestoneIdParam, milestoneId);
+
+                connection.Open();
+                try
+                {
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+
+                }
+                connection.Close();
+            }
+        }
+
+        public static void UpdateFixedMilestoneMonthlyRevenues(int milestoneId, List<MonthlyRevenue> monthlyRevenues)
+        {
+            if (monthlyRevenues != null && monthlyRevenues.Count > 0)
+            {
+                foreach (var monthlyRevenue in monthlyRevenues)
+                {
+                    using (SqlConnection connection = new SqlConnection(DataSourceHelper.DataConnection))
+                    using (SqlCommand command = new SqlCommand(UpdateFixedMilestoneMonthlyRevenuesProc, connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.CommandTimeout = connection.ConnectionTimeout;
+
+                        command.Parameters.AddWithValue(MilestoneIdParam, milestoneId);
+                        command.Parameters.AddWithValue(Constants.ParameterNames.IdParam, monthlyRevenue.Id);
+                        command.Parameters.AddWithValue(Constants.ParameterNames.StartDate, monthlyRevenue.StartDate);
+                        command.Parameters.AddWithValue(Constants.ParameterNames.EndDate, monthlyRevenue.EndDate);
+                        command.Parameters.AddWithValue(Constants.ParameterNames.AmountParam, monthlyRevenue.Amount);
+
+                        connection.Open();
+                        try
+                        {
+                            command.ExecuteNonQuery();
+                        }
+                        catch (Exception ex)
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+            }
+        }
+
+        public static List<MonthlyRevenue> GetMonthlyRevenuesForMilestone(int milestoneId)
+        {
+            using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
+            using (var command = new SqlCommand(GetMonthlyRevenuesForMilestoneProc, connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = connection.ConnectionTimeout;
+                command.Parameters.AddWithValue(MilestoneIdParam, milestoneId);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    var result = new List<MonthlyRevenue>();
+                    ReadMonthlyRevenues(reader, result);
+                    return result;
+                }
+            }
+        }
+
+        public static void ReadMonthlyRevenues(SqlDataReader reader, List<MonthlyRevenue> result)
+        {
+            try
+            {
+                if (!reader.HasRows) return;
+                int idIndex = reader.GetOrdinal(Constants.ColumnNames.Id);
+                int milestoneIdIndex = reader.GetOrdinal(Constants.ColumnNames.MilestoneId);
+                int startDateIndex = reader.GetOrdinal(Constants.ColumnNames.StartDate);
+                int endDateIndex = reader.GetOrdinal(Constants.ColumnNames.EndDate);
+                int AmountIndex = reader.GetOrdinal(Constants.ColumnNames.Amount);
+
+                while (reader.Read())
+                {
+                    var monthExpense = new MonthlyRevenue()
+                    {
+                        Id = reader.GetInt32(idIndex),
+                        MilestoneId = reader.GetInt32(milestoneIdIndex),
+                        StartDate = reader.GetDateTime(startDateIndex),
+                        EndDate = reader.GetDateTime(endDateIndex),
+                        Amount = reader.GetDecimal(AmountIndex)
+                    };
+                    result.Add(monthExpense);
+                }
+            }
             catch (Exception ex)
             {
                 throw ex;
