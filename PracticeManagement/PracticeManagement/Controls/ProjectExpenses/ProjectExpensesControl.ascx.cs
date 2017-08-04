@@ -46,36 +46,43 @@ namespace PraticeManagement.Controls.ProjectExpenses
 
         protected void gvProjectExpenses_OnRowDataBound(object sender, GridViewRowEventArgs e)
         {
-            var row = e.Row;
-            switch (row.RowType)
+            try
             {
-                case DataControlRowType.DataRow:
-                    var expense = row.DataItem as ProjectExpense;
-                   
-                    if (expense != null)
-                    {
-                        _totalAmount += expense.Amount;
-                        _totalReimbursed += expense.Reimbursement;
-                        _totalReimbursementAmount += expense.ReimbursementAmount;
-                        _totalExpAmount += expense.ExpectedAmount;
-                        _expensesCount++;
+                var row = e.Row;
+                switch (row.RowType)
+                {
+                    case DataControlRowType.DataRow:
+                        var expense = row.DataItem as ProjectExpense;
 
-                        // Hide rows with null values.
-                        // These are special rows that are used not to show
-                        //      empty data grid message
-                        if (!expense.Id.HasValue)
-                            row.Visible = false;
-                    }
+                        if (expense != null)
+                        {
+                            _totalAmount += expense.Amount != null ? expense.Amount.Value : 0;
+                            _totalReimbursed += expense.Reimbursement;
+                            _totalReimbursementAmount += expense.ReimbursementAmount;
+                            _totalExpAmount += expense.ExpectedAmount;
+                            _expensesCount++;
 
-                    break;
+                            // Hide rows with null values.
+                            // These are special rows that are used not to show
+                            //      empty data grid message
+                            if (!expense.Id.HasValue)
+                                row.Visible = false;
+                        }
 
-                case DataControlRowType.Footer:
-                    SetRowValue(row, LblTotalamount, _totalAmount);
-                    SetRowValue(row, LblTotalExpAmount, _totalExpAmount);
-                    SetRowValue(row, LblTotalreimbursement, string.Format("{0:0}%", (_totalReimbursed / _expensesCount)));
-                    SetRowValue(row, LblTotalreimbursementamount, _totalReimbursementAmount);
+                        break;
 
-                    break;
+                    case DataControlRowType.Footer:
+                        SetRowValue(row, LblTotalamount, _totalAmount);
+                        SetRowValue(row, LblTotalExpAmount, _totalExpAmount);
+                        SetRowValue(row, LblTotalreimbursement, string.Format("{0:0}%", (_totalReimbursed / _expensesCount)));
+                        SetRowValue(row, LblTotalreimbursementamount, _totalReimbursementAmount);
+
+                        break;
+                }
+            }
+            catch (Exception eee)
+            {
+
             }
         }
 
