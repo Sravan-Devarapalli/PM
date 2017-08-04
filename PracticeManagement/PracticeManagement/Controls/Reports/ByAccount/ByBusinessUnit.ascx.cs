@@ -65,15 +65,13 @@ namespace PraticeManagement.Controls.Reports.ByAccount
 
                 CellStyles dataCellStyle = new CellStyles();
 
-                CellStyles[] dataCellStylearray = { dataCellStyle, 
+                CellStyles[] dataCellStylearray = { dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
-                                                    dataCellStyle, 
                                                     dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
-                                                    dataCellStyle, 
                                                     dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
@@ -104,17 +102,7 @@ namespace PraticeManagement.Controls.Reports.ByAccount
         {
             get
             {
-                if (HostingPage.BusinessUnitsFilteredIds == null)
-                {
-                    return HostingPage.BusinessUnitIds;
-                }
-
-                if (HostingPage.BusinessUnitsFilteredIds != null)
-                {
-                    return HostingPage.BusinessUnitsFilteredIds;
-                }
-                HostingPage.BusinessUnitsFilteredIds = cblBusinessUnits.SelectedItems;
-                return cblBusinessUnits.SelectedItems;
+                return HostingPage.BusinessUnitIds;
             }
         }
 
@@ -122,28 +110,25 @@ namespace PraticeManagement.Controls.Reports.ByAccount
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            cblBusinessUnits.OKButtonId = btnFilterOK.ClientID;
         }
 
         protected void repBusinessUnit_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
             if (e.Item.ItemType == ListItemType.Header)
             {
-                ImgBusinessUnitFilter = e.Item.FindControl("imgBusinessUnitFilter") as HtmlImage;
+                var thNonBillable = e.Item.FindControl("thNonBillable") as HtmlTableCell;
+                thNonBillable.Visible = HostingPage.ShowNonBillableHours;
             }
             else if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
             {
                 var dataItem = (BusinessUnitLevelGroupedHours)e.Item.DataItem;
                 var lblExclamationMark = e.Item.FindControl("lblExclamationMark") as Label;
+                var tdNonBillable = e.Item.FindControl("tdNonBillable") as HtmlTableCell;
+                tdNonBillable.Visible = HostingPage.ShowNonBillableHours;
                 lblExclamationMark.Visible = dataItem.BillableHoursVariance < 0;
             }
         }
 
-        protected void btnFilterOK_OnClick(object sender, EventArgs e)
-        {
-            HostingPage.BusinessUnitsFilteredIds = cblBusinessUnits.SelectedItems;
-            PopulateByBusinessUnitReport(false);
-        }
 
         protected string GetDoubleFormat(double value)
         {
@@ -161,9 +146,7 @@ namespace PraticeManagement.Controls.Reports.ByAccount
             {
                 report = ServiceCallers.Custom.Report(r => r.AccountSummaryReportByBusinessUnit(HostingPage.AccountId, BusinessUnitIds, HostingPage.ProjectStatusIds, HostingPage.StartDate.Value, HostingPage.EndDate.Value));
             }
-
             DataBindBusinesUnit(report.GroupedBusinessUnits.ToArray(), isPopulateFilters);
-
             SetHeaderSectionValues(report);
         }
 
@@ -185,19 +168,13 @@ namespace PraticeManagement.Controls.Reports.ByAccount
         public void DataBindBusinesUnit(BusinessUnitLevelGroupedHours[] reportData, bool isPopulateFilters)
         {
             var reportDataList = reportData.ToList();
-            if (isPopulateFilters)
-            {
-                PopulateFilterPanels(reportDataList);
-            }
-            if (reportDataList.Count > 0 || cblBusinessUnits.Items.Count > 1)
+
+            if (reportDataList.Count > 0)
             {
                 divEmptyMessage.Style["display"] = "none";
                 repBusinessUnit.Visible = btnExportToExcel.Enabled = true;
                 repBusinessUnit.DataSource = reportDataList;
                 repBusinessUnit.DataBind();
-                cblBusinessUnits.SaveSelectedIndexesInViewState();
-                ImgBusinessUnitFilter.Attributes["onclick"] = string.Format("Filter_Click(\'{0}\',\'{1}\',\'{2}\',\'{3}\');", cblBusinessUnits.FilterPopupClientID,
-                  cblBusinessUnits.SelectedIndexes, cblBusinessUnits.CheckBoxListObject.ClientID, cblBusinessUnits.WaterMarkTextBoxBehaviorID);
             }
             else
             {
@@ -206,42 +183,6 @@ namespace PraticeManagement.Controls.Reports.ByAccount
             }
         }
 
-        private void PopulateFilterPanels(List<BusinessUnitLevelGroupedHours> reportData)
-        {
-            if (HostingPage.SetSelectedFilters)
-            {
-
-                var report = ServiceCallers.Custom.Report(r => r. AccountSummaryReportByBusinessUnit(HostingPage.AccountId, HostingPage.BusinessUnitIds, HostingPage.ProjectStatusIds, HostingPage.StartDate.Value, HostingPage.EndDate.Value));
-
-                var businessUnitList = report.GroupedBusinessUnits.Select(r => new ProjectGroup { Name = r.BusinessUnit.Name, Id = r.BusinessUnit.Id }).Distinct().ToList().OrderBy(s => s.Name).ToArray();
-
-                PopulateBusinessUnitFilter(businessUnitList);
-
-                foreach (ListItem item in cblBusinessUnits.Items)
-                {
-                    if (reportData.Any(r => r.BusinessUnit.Id.Value.ToString() == item.Value))
-                    {
-                        item.Selected = true;
-                    }
-                    else
-                    {
-                        item.Selected = false;
-                    }
-                }
-            }
-            else
-            {
-                var businessUnitList = reportData.Select(r => new ProjectGroup { Name = r.BusinessUnit.Name, Id = r.BusinessUnit.Id }).Distinct().ToList().OrderBy(s => s.Name).ToArray();
-                PopulateBusinessUnitFilter(businessUnitList);
-                cblBusinessUnits.SelectAllItems(true);
-            }
-        }
-
-        private void PopulateBusinessUnitFilter(ProjectGroup[] businessUnits)
-        {
-            DataHelper.FillListDefault(cblBusinessUnits.CheckBoxListObject, "All Business Units", businessUnits, false, "Id", "HtmlEncodedName");
-
-        }
 
         protected void btnExportToExcel_OnClick(object sender, EventArgs e)
         {
@@ -257,10 +198,6 @@ namespace PraticeManagement.Controls.Reports.ByAccount
 
                 string filterApplied = "Filters applied to columns: ";
                 List<string> filteredColoums = new List<string>();
-                if (!cblBusinessUnits.AllItemsSelected)
-                {
-                    filteredColoums.Add("Business Unit");
-                }
 
                 var account = ServiceCallers.Custom.Client(c => c.GetClientDetailsShort(HostingPage.AccountId));
 
@@ -336,47 +273,49 @@ namespace PraticeManagement.Controls.Reports.ByAccount
         public DataTable PrepareDataTable(GroupByAccount report, List<BusinessUnitLevelGroupedHours> reportData)
         {
             DataTable data = new DataTable();
-            List<object> rownew;
             List<object> row;
 
-            data.Columns.Add("Account");
+
             data.Columns.Add("Account Name");
-            data.Columns.Add("Business Unit");
             data.Columns.Add("Business Unit Name");
             data.Columns.Add("# of Active Projects");
             data.Columns.Add("# of Completed Projects");
             data.Columns.Add("Projected Hours");
             data.Columns.Add("Billable");
-            data.Columns.Add("Non-Billable");
+            if (HostingPage.ShowNonBillableHours)
+            {
+                data.Columns.Add("Non-Billable");
+            }
             data.Columns.Add("Actual Hours");
-            data.Columns.Add("BD");
+            data.Columns.Add("Budget Hours");
+            data.Columns.Add("ETC Hours");
             data.Columns.Add("Total BU Hours");
             data.Columns.Add("Billable Hours Variance");
+
             foreach (var businessUnitLevelGroupedHours in reportData)
             {
-
                 row = new List<object>();
-                row.Add(report.Account.Code);
+
                 row.Add(report.Account.HtmlEncodedName);
-                row.Add(businessUnitLevelGroupedHours.BusinessUnit.Code);
+
                 row.Add(businessUnitLevelGroupedHours.BusinessUnit.HtmlEncodedName);
                 row.Add(businessUnitLevelGroupedHours.ActiveProjectsCount);
                 row.Add(businessUnitLevelGroupedHours.CompletedProjectsCount);
                 row.Add(GetDoubleFormat(businessUnitLevelGroupedHours.ForecastedHours));
                 row.Add(GetDoubleFormat(businessUnitLevelGroupedHours.BillableHours));
-                row.Add(GetDoubleFormat(businessUnitLevelGroupedHours.NonBillableHours));
+                if (HostingPage.ShowNonBillableHours)
+                {
+                    row.Add(GetDoubleFormat(businessUnitLevelGroupedHours.NonBillableHours));
+                }
                 row.Add(GetDoubleFormat(businessUnitLevelGroupedHours.ActualHours));
-                row.Add(GetDoubleFormat(businessUnitLevelGroupedHours.BusinessDevelopmentHours));
+                row.Add(GetDoubleFormat(businessUnitLevelGroupedHours.BudgetHours));
+                row.Add(GetDoubleFormat(businessUnitLevelGroupedHours.ETCHours));
                 row.Add(GetDoubleFormat(businessUnitLevelGroupedHours.TotalHours));
                 row.Add(GetDoubleFormat(businessUnitLevelGroupedHours.BillableHoursVariance));
+
                 data.Rows.Add(row.ToArray());
             }
             return data;
-        }
-
-        protected void btnExportToPDF_OnClick(object sender, EventArgs e)
-        {
-
         }
     }
 }
