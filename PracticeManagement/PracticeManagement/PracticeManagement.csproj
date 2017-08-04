@@ -114,8 +114,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Third Party Tools\PdfGenerator\itextsharp.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.WindowsAzure.ServiceRuntime, Version=2.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <Private>False</Private>
+    <Reference Include="Microsoft.WindowsAzure.ServiceRuntime, Version=2.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files\Microsoft SDKs\Azure\.NET SDK\v2.9\ref\Microsoft.WindowsAzure.ServiceRuntime.dll</HintPath>
     </Reference>
     <Reference Include="NPOI, Version=2.1.3.1, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -153,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ActivityLog.aspx" />
+    <Content Include="BudgetManagement.aspx" />
     <Content Include="ckeditor\adapters\jquery.js" />
     <Content Include="ckeditor\CHANGES.html" />
     <Content Include="ckeditor\ckeditor.js" />
@@ -374,6 +376,7 @@
     <Content Include="ckeditor\skins\v2\templates.css" />
     <Content Include="ckeditor\themes\default\theme.js" />
     <Content Include="Config\Divisions.aspx" />
+    <Content Include="Config\MarginThreshold.aspx" />
     <Content Include="Config\PersonReport.aspx" />
     <Content Include="Config\PracticeCapabilities.aspx" />
     <Content Include="Config\ProjectsReport.aspx" />
@@ -389,6 +392,7 @@
     <EmbeddedResource Include="Controls\Generic\EnableDisableExtForAdminSection\EnableDisableExtForAdminSection.js" />
     <EmbeddedResource Include="Controls\Generic\BillableNonBillableAndTotal\BillableNonBillableAndTotalExtender.js" />
     <Content Include="Controls\Clients\ClientBusinessGroups.ascx" />
+    <Content Include="Controls\Clients\ClientMarginGoals.ascx" />
     <Content Include="Controls\Clients\ClientPricingList.ascx" />
     <Content Include="Controls\Configuration\RecruitingMetricsHeader.ascx" />
     <Content Include="Controls\FilteredCheckBoxList.ascx" />
@@ -399,6 +403,7 @@
     <Content Include="Controls\Persons\MSBadge.ascx" />
     <Content Include="Controls\Persons\PersonBadgeHistory.ascx" />
     <Content Include="Controls\Persons\PersonSummary.ascx" />
+    <Content Include="Controls\Projects\BudgetManagementByProject.ascx" />
     <Content Include="Controls\Projects\CommissionsAttribution.ascx" />
     <Content Include="Controls\Projects\ProjectActivityLog.ascx" />
     <Content Include="Controls\Projects\ProjectCSAT.ascx" />
@@ -456,6 +461,7 @@
     <Content Include="Css\BrowserSpecific\IEMenu6.min.css">
       <DependentUpon>IEMenu6.chirp.css</DependentUpon>
     </Content>
+    <Content Include="Css\style.css" />
     <Content Include="Css\TableSortStyle.chirp.css" />
     <Content Include="Css\Menu.chirp.css" />
     <Content Include="Css\datepicker.chirp.css" />
@@ -477,6 +483,7 @@
     <Content Include="Images\arrow_16x16.png" />
     <Content Include="Images\asc.gif" />
     <Content Include="Images\bg.gif" />
+    <Content Include="Images\budget_change_icon.jpg" />
     <Content Include="Images\close_24.png" />
     <Content Include="Images\close_inactive16.png" />
     <Content Include="Images\copy.png" />
@@ -487,6 +494,7 @@
     <Content Include="Images\email_envelope.png" />
     <Content Include="Images\favicon.ico" />
     <Content Include="Images\favicon_new.ico" />
+    <Content Include="Images\FF_Revenue_Schedule.png" />
     <Content Include="Images\hint1.png" />
     <Content Include="Images\link.png" />
     <Content Include="Images\logic2020_New.png" />
@@ -501,6 +509,7 @@
     <Content Include="Images\printer.png" />
     <Content Include="Images\Profile-16x16.png" />
     <Content Include="Images\Recursive.png" />
+    <Content Include="Images\resource_add_icon.png" />
     <Content Include="Images\save24.png" />
     <Content Include="Images\saveToDisk.png" />
     <Content Include="Images\search_24.png" />
@@ -588,6 +597,8 @@
     <Content Include="Reports\Badge\ResourceByPracticeReport.aspx" />
     <Content Include="Reports\Badge\ResourcesByTechnicalConsultants.aspx" />
     <Content Include="Reports\BillingReport.aspx" />
+    <Content Include="Reports\BudgetComparison.aspx" />
+    <Content Include="Reports\BurnReport.aspx" />
     <Content Include="Reports\CalendarReport.aspx" />
     <Content Include="Reports\ConsultingCapacity.aspx" />
     <Content Include="Reports\ConsultingDemand.aspx" />
@@ -618,21 +629,31 @@
     <None Include="Properties\DataSources\DataTransferObjects.Attribution.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.BusinessGroup.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.Channel.datasource" />
+    <Content Include="Properties\DataSources\DataTransferObjects.ClientMarginException.datasource" />
+    <Content Include="Properties\DataSources\DataTransferObjects.ClientMarginThreshold.datasource" />
+    <Content Include="Properties\DataSources\DataTransferObjects.ClientMarginGoal.datasource" />
+    <Content Include="Properties\DataSources\DataTransferObjects.ClientMarginGoalLog.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.CohortAssignment.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.CompositeObjects.PersonTimeEntries2.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.Employment.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.ExpenseType.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.Location3.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.Lockout.datasource" />
+    <Content Include="Properties\DataSources\DataTransferObjects.MonthlyRevenue.datasource" />
+    <Content Include="Properties\DataSources\DataTransferObjects.MarginExceptionReason.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.MSBadge12.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.MSBadge3.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.Offering.datasource" />
+    <Content Include="Properties\DataSources\DataTransferObjects.OpenTask.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.Owner1.datasource" />
+    <Content Include="Properties\DataSources\DataTransferObjects.PeriodicalExpense.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.PersonBadgeHistories.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.PersonDivision.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.PersonWorkingHoursDetailsWithinThePeriod.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.PracticeCapability1.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.PricingList.datasource" />
+    <Content Include="Properties\DataSources\DataTransferObjects.ProjectBudgetResource.datasource" />
+    <Content Include="Properties\DataSources\DataTransferObjects.ProjectBudgetManagement.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.ProjectCSAT.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.ProjectDivision.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.ProjectFeedback.datasource" />
@@ -661,11 +682,13 @@
     <None Include="Properties\DataSources\DataTransferObjects.Reports.GroupbyTitle.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.Reports.HumanCapital.TerminationPersonsInRange.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.Reports.ManagementMeetingReport6.datasource" />
+    <Content Include="Properties\DataSources\DataTransferObjects.Reports.PersonBudgetComparison.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.Reports.PersonLevelGroupedHours2.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.Reports.PersonLevelPayCheck.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.Reports.PersonLevelPayCheck1.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.Reports.PersonLevelTimeEntriesHistory.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.Reports.PersonTimeEntriesTotals1.datasource" />
+    <Content Include="Properties\DataSources\DataTransferObjects.Reports.ProjectBurnFinancials.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.Reports.ProjectLevelGroupedHours2.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.Reports.ProjectLevelTimeEntriesHistory.datasource" />
     <None Include="Properties\DataSources\DataTransferObjects.Reports.ResourceExceptionReport.datasource" />
@@ -686,7 +709,9 @@
     <None Include="Scripts\uploader.fla" />
     <None Include="Scripts\uploaderRemovedFolder.fla" />
     <None Include="Scripts\uploaderRemovedFolder1.fla" />
-    <None Include="Service References\ActivityLogService\ActivityLogService1.wsdl" />
+    <None Include="Service References\ActivityLogService\ActivityLogService1.wsdl">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\ActivityLogService\ActivityLogService1.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -697,6 +722,15 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ActivityLogService\ActivityLogService16.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ActivityLogService\ActivityLogService17.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ActivityLogService\ActivityLogService18.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ActivityLogService\ActivityLogService19.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ActivityLogService\ActivityLogService2.xsd">
@@ -721,7 +755,6 @@
     <None Include="Service References\AuthService\AuthService2.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ActivityLogService\ActivityLogService1.disco" />
     <None Include="Service References\AuthService\AuthService1.disco" />
     <None Include="Service References\CalendarService\CalendarService1.disco" />
     <None Include="Service References\CalendarService\CalendarService1.wsdl" />
@@ -744,6 +777,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ClientService\ClientService12.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ClientService\ClientService13.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ClientService\ClientService2.wsdl" />
@@ -794,13 +830,21 @@
     <None Include="Service References\ConfigurationService\ConfigurationService18.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\ConfigurationService\ConfigurationService19.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ConfigurationService\ConfigurationService20.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ConfigurationService\ConfigurationService21.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ConfigurationService\ConfigurationService22.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\ConfigurationService\ConfigurationService25.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ClientService\ClientService1.disco" />
-    <None Include="Service References\ConfigurationService\ConfigurationService1.disco" />
-    <None Include="Service References\ExpenseCategoryService\ExpenseCategoryService1.disco" />
-    <None Include="Service References\ExpenseService\ExpenseService1.disco" />
     <None Include="Service References\ConfigurationService\ConfigurationService5.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -816,6 +860,8 @@
     <None Include="Service References\ConfigurationService\ConfigurationService9.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\ExpenseCategoryService\ExpenseCategoryService1.disco" />
+    <None Include="Service References\ExpenseService\ExpenseService1.disco" />
     <None Include="Service References\ExpenseCategoryService\ExpenseCategoryService1.wsdl" />
     <None Include="Service References\ExpenseCategoryService\ExpenseCategoryService1.xsd">
       <SubType>Designer</SubType>
@@ -856,12 +902,17 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\MembershipService\MembershipService1.disco" />
-    <None Include="Service References\MilestonePersonService\MilestonePersonService1.disco" />
     <None Include="Service References\MilestonePersonService\MilestonePersonService1.wsdl" />
     <None Include="Service References\MilestonePersonService\MilestonePersonService20.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\MilestonePersonService\MilestonePersonService21.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MilestonePersonService\MilestonePersonService22.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MilestonePersonService\MilestonePersonService23.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\MilestonePersonService\MilestonePersonService3.xsd">
@@ -887,6 +938,9 @@
     </None>
     <None Include="Service References\MilestoneService\MilestoneService1.wsdl" />
     <None Include="Service References\MilestoneService\MilestoneService11.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MilestoneService\MilestoneService13.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\MilestoneService\MilestoneService14.xsd">
@@ -1118,7 +1172,6 @@
     <None Include="Service References\ProjectService\ProjectService26.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ProjectStatusService\ProjectStatusService1.disco" />
     <None Include="Service References\ProjectStatusService\ProjectStatusService1.wsdl" />
     <None Include="Service References\ProjectStatusService\ProjectStatusService3.xsd">
       <SubType>Designer</SubType>
@@ -1177,6 +1230,17 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\RoleService\RoleService1.disco" />
+    <None Include="Service References\ActivityLogService\ActivityLogService1.disco" />
+    <None Include="Service References\ConfigurationService\ConfigurationService1.disco" />
+    <None Include="Service References\ClientService\ClientService1.disco" />
+    <None Include="Service References\MilestonePersonService\MilestonePersonService1.disco" />
+    <Content Include="Scripts\html2canvas.js" />
+    <Content Include="Scripts\html2canvas.min.js" />
+    <Content Include="Scripts\jquery.tablesorter.staticrow.js" />
+    <Content Include="Scripts\jquery.tablesorter.staticrow.min.js" />
+    <Content Include="Scripts\MilestoneDetail.js" />
+    <None Include="Service References\ProjectStatusService\ProjectStatusService1.disco" />
+    <Content Include="Scripts\ProjectDetail.js" />
     <Content Include="Service References\TimeEntryService\PraticeManagement.TimeEntryService.TimeEntriesGroupedByPerson.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Content>
@@ -1636,12 +1700,26 @@
     <Compile Include="AttachProjectToOpportunityHandler.ashx.cs">
       <DependentUpon>AttachProjectToOpportunityHandler.ashx</DependentUpon>
     </Compile>
+    <Compile Include="BudgetManagement.aspx.cs">
+      <DependentUpon>BudgetManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="BudgetManagement.aspx.designer.cs">
+      <DependentUpon>BudgetManagement.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Config\Divisions.aspx.cs">
       <DependentUpon>Divisions.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Config\Divisions.aspx.designer.cs">
       <DependentUpon>Divisions.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Config\MarginThreshold.aspx.cs">
+      <DependentUpon>MarginThreshold.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Config\MarginThreshold.aspx.designer.cs">
+      <DependentUpon>MarginThreshold.aspx</DependentUpon>
     </Compile>
     <Compile Include="Config\PersonReport.aspx.cs">
       <DependentUpon>PersonReport.aspx</DependentUpon>
@@ -1705,6 +1783,13 @@
     </Compile>
     <Compile Include="Controls\Clients\ClientBusinessGroups.ascx.designer.cs">
       <DependentUpon>ClientBusinessGroups.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Clients\ClientMarginGoals.ascx.cs">
+      <DependentUpon>ClientMarginGoals.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Clients\ClientMarginGoals.ascx.designer.cs">
+      <DependentUpon>ClientMarginGoals.ascx</DependentUpon>
     </Compile>
     <Compile Include="Controls\Clients\ClientPricingList.ascx.cs">
       <DependentUpon>ClientPricingList.ascx</DependentUpon>
@@ -1799,6 +1884,13 @@
     </Compile>
     <Compile Include="Controls\Projects\AttachmentUpload.ashx.cs">
       <DependentUpon>AttachmentUpload.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Projects\BudgetManagementByProject.ascx.cs">
+      <DependentUpon>BudgetManagementByProject.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Projects\BudgetManagementByProject.ascx.designer.cs">
+      <DependentUpon>BudgetManagementByProject.ascx</DependentUpon>
     </Compile>
     <Compile Include="Controls\Projects\CommissionsAttribution.ascx.cs">
       <DependentUpon>CommissionsAttribution.ascx</DependentUpon>
@@ -2601,6 +2693,20 @@
     </Compile>
     <Compile Include="Reports\BillingReport.aspx.designer.cs">
       <DependentUpon>BillingReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\BudgetComparison.aspx.cs">
+      <DependentUpon>BudgetComparison.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\BudgetComparison.aspx.designer.cs">
+      <DependentUpon>BudgetComparison.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\BurnReport.aspx.cs">
+      <DependentUpon>BurnReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\BurnReport.aspx.designer.cs">
+      <DependentUpon>BurnReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\CalendarReport.aspx.cs">
       <DependentUpon>CalendarReport.aspx</DependentUpon>
@@ -3834,7 +3940,9 @@
     <Content Include="Reports\Xslt\ActivityLogChanges.xslt">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Reports\Xslt\ActivityLogItem.xslt" />
+    <Content Include="Reports\Xslt\ActivityLogItem.xslt">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Reports\Xslt\MonthMiniReport.xslt" />
     <Content Include="PracticeManagementMain.Master" />
     <Content Include="App_Browsers\CSSFriendlyAdapters.browser" />
