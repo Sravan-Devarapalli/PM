@@ -53,6 +53,18 @@ namespace PraticeManagement.Reporting
             }
         }
 
+        public bool ShowNonBillableHours
+        {
+            get
+            {
+                return chbShowNonBillable.Checked;
+            }
+            set
+            {
+                chbShowNonBillable.Checked = value;
+            }
+        }
+
         public bool UpdateHeaderSection { get; set; }
 
         public int BusinessUnitsCount { get { return Convert.ToInt32(ViewState["BusinessUnitsCount_Key"]); } set { ViewState["BusinessUnitsCount_Key"] = value; } }
@@ -76,15 +88,6 @@ namespace PraticeManagement.Reporting
             get
             {
                 return string.Format("{0} Business Unit(s), {1} Project(s), {2}", BusinessUnitsCount, ProjectsCount, PersonsCount.ToString() == "1" ? PersonsCount + " Person" : PersonsCount + " People");
-            }
-        }
-
-
-        public ByBusinessDevelopment ByBusinessDevelopmentControl
-        {
-            get
-            {
-                return tpByBusinessDevelopment;
             }
         }
 
@@ -279,17 +282,19 @@ namespace PraticeManagement.Reporting
             }
         }
 
-        public string BusinessUnitsFilteredIds
+        public string BillingTypes
         {
             get
             {
-                return ViewState["BusinessUnitsFilteredIds"] as string;
+                return cblBillingType.SelectedItems;
+
             }
             set
             {
-                ViewState["BusinessUnitsFilteredIds"] = value;
+                cblBillingType.SelectedItems = value;
             }
         }
+
 
         #endregion
 
@@ -304,64 +309,23 @@ namespace PraticeManagement.Reporting
                 var allClients = ServiceCallers.Custom.Client(c => c.ClientListAllWithoutPermissions());
                 DataHelper.FillListDefault(ddlAccount, "- - Select Account - -", allClients, false);
 
-                //var cookie = SerializationHelper.DeserializeCookie(Constants.FilterKeys.ByAccountReportFitlerCookie) as ByAccountReportFilter;
-                //if (cookie != null)
-                //{
-                //    var targetItem = ddlAccount.Items.FindByValue(cookie.AccountId);
-                //    if (targetItem != null)
-                //    {
-                //        ddlAccount.SelectedValue = targetItem.Value;
-
-                //        if (ddlAccount.SelectedIndex != 0)
-                //        {
-                //            DataHelper.FillProjectGroupListWithInactiveGroups(cblProjectGroup, Convert.ToInt32(ddlAccount.SelectedValue), null, "All Business Units", false);
-
-                //            cblProjectGroup.SelectedItems = cookie.BusinessUnitIds;
-                //        }
-                //        else
-                //        {
-                //            FillInitProjectGroupList();
-                //        }
-
-                //    }
-                //    else
-                //    {
-                //        FillInitProjectGroupList();
-                //    }
-
-                //    var targetItems = ddlPeriod.Items.FindByValue(cookie.RangeSelected.ToString());
-
-                //    ddlPeriod.SelectedValue = targetItems.Value;
-
-                //    if (cookie.RangeSelected.ToString() == "0")
-                //    {
-                //        diRange.FromDate = cookie.StartDate;
-                //        diRange.ToDate = cookie.EndDate;
-                //    }
-
-                //    //SelectView();//Updating in Prerender
-                //}
-                //else
-                //{
                 FillInitProjectGroupList();
-                //}
-
-                //ddlAccount.SelectedValue = "";
-               
-                //ddlAccount_SelectedIndexChanged(ddlAccount, new EventArgs());
 
                 ddlPeriod.SelectedValue = "30";//This Month - as per 3201 
                 DataHelper.FillProjectStatusList(cblProjectStatus, "All Project Statuses", null);
                 cblProjectStatus.SelectAll();
 
+                ListItem all = new ListItem("All Billing Types", "");
+                ListItem rev = new ListItem("Fixed", "Fixed");
+                ListItem mar = new ListItem("Hourly", "Hourly");
+
+                cblBillingType.Items.Add(all);
+                cblBillingType.Items.Add(rev);
+                cblBillingType.Items.Add(mar);
+                cblBillingType.SelectAll();
+
             }
 
-        }
-
-        protected void cblProjectStatus_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            SelectView();
-            SaveFilterValuesForSession();
         }
 
         private void FillInitProjectGroupList()
@@ -380,9 +344,8 @@ namespace PraticeManagement.Reporting
             if (!IsPostBack)
             {
                 GetFilterValuesForSession();
-                
             }
-            
+            btnUpdate.Enabled = cblProjectGroup.SelectedIndex != -1 && cblProjectStatus.SelectedIndex != -1 && cblBillingType.SelectedIndex != -1 && ddlAccount.SelectedIndex != 0 && ddlPeriod.SelectedValue != "Please Select";
             var now = Utils.Generic.GetNowWithTimeZone();
             diRange.FromDate = StartDate.HasValue ? StartDate : Utils.Calendar.WeekStartDate(now);
             diRange.ToDate = EndDate.HasValue ? EndDate : Utils.Calendar.WeekEndDate(now);
@@ -423,37 +386,23 @@ namespace PraticeManagement.Reporting
         protected void ddlAccount_SelectedIndexChanged(object sender, EventArgs e)
         {
             //Fill BusinessUnits.
-            BusinessUnitsFilteredIds = null;
-
-            FillProjectGroup();
-           
-            //ddlPeriod.SelectedValue = "Please Select";
-            SelectView();
-
-            SaveFilterValuesForSession();
+            if (ddlAccount.SelectedIndex == 0)
+            {
+                btnUpdate.Enabled = false;
+            }
+            else
+            {
+                btnUpdate.Enabled = true;
+                FillProjectGroup();
+            }
 
         }
 
-        protected void cblProjectGroup_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            BusinessUnitsFilteredIds = null;
-            SelectView();
-            SaveFilterValuesForSession();
-        }
-
-        public bool SetSelectedFilters { get; set; }
 
         protected void btnView_Command(object sender, CommandEventArgs e)
         {
 
             int viewIndex = int.Parse((string)e.CommandArgument);
-
-            if (mvAccountReport.ActiveViewIndex != viewIndex && viewIndex != 2)
-            {
-                SetSelectedFilters = true;
-
-
-            }
 
             SwitchView((Control)sender, viewIndex);
         }
@@ -463,11 +412,8 @@ namespace PraticeManagement.Reporting
             Page.Validate(valSumDateRange.ValidationGroup);
             if (Page.IsValid)
             {
-                BusinessUnitsFilteredIds = null;
                 hdnStartDate.Value = StartDate.Value.Date.ToShortDateString();
                 hdnEndDate.Value = EndDate.Value.Date.ToShortDateString();
-                SelectView();
-                SaveFilterValuesForSession();
             }
             else
             {
@@ -477,16 +423,10 @@ namespace PraticeManagement.Reporting
 
         protected void ddlPeriod_SelectedIndexChanged(object sender, EventArgs e)
         {
-            BusinessUnitsFilteredIds = null;
-            if (ddlPeriod.SelectedValue != "0")
-            {
-                SelectView();
-            }
-            else
+            if (ddlPeriod.SelectedValue == "0")
             {
                 mpeCustomDates.Show();
             }
-            SaveFilterValuesForSession();
         }
 
         protected void btnCustDatesCancel_OnClick(object sender, EventArgs e)
@@ -538,14 +478,7 @@ namespace PraticeManagement.Reporting
                 divWholePage.Style.Add("display", "none");
             }
 
-            //if (AccountId == 0 && !StartDate.HasValue && !EndDate.HasValue)
-            //{
-            //    RemoveSavedFilters();
-            //}
-            //else
-            //{
             SaveFilters();
-            //}
         }
 
         private void FillProjectGroup()
@@ -595,16 +528,20 @@ namespace PraticeManagement.Reporting
             switch (activeView)
             {
                 case 0:
-                    PopulateByBusinessUnitReport();
-                    break;
-                case 1:
+                    ShowBillingType(true);
                     PopulateByProjectReport();
                     break;
-                case 2:
-                    PopulateByBusinessDevelopmentReport();
+                case 1:
+                    ShowBillingType(false);
+                    PopulateByBusinessUnitReport();
                     break;
             }
 
+        }
+
+        private void ShowBillingType(bool value)
+        {
+            tdBillingLable.Visible = tdBillingType.Visible = value;
         }
 
         private void PopulateByBusinessUnitReport()
@@ -617,11 +554,6 @@ namespace PraticeManagement.Reporting
             tpByProject.PopulateByProjectData();
         }
 
-        private void PopulateByBusinessDevelopmentReport()
-        {
-            tpByBusinessDevelopment.PopulateByBusinessDevelopment();
-        }
-
         private void PopulateHeaderSection()
         {
             ltAccount.Text = HttpUtility.HtmlEncode(AccountName);
@@ -629,7 +561,6 @@ namespace PraticeManagement.Reporting
             ltRange.Text = Range;
             ltrlTotalActualHours.Text = TotalProjectHours.ToString(Constants.Formatting.NumberFormatWithCommasAndDecimals);
             ltrlTotalProjectedHours.Text = TotalProjectedHours.ToString(Constants.Formatting.NumberFormatWithCommasAndDecimals);
-            ltrlBDHours.Text = BDHours.ToString(Constants.Formatting.NumberFormatWithCommasAndDecimals);
             ltrlBillableHours.Text = BillableHours.ToString(Constants.Formatting.NumberFormatWithCommasAndDecimals);
             ltrlNonBillableHours.Text = NonBillableHours.ToString(Constants.Formatting.NumberFormatWithCommasAndDecimals);
 
@@ -677,6 +608,8 @@ namespace PraticeManagement.Reporting
             filter.ReportStartDate = StartDate;
             filter.ReportEndDate = EndDate;
             filter.ProjectStatusIds = ProjectStatusIds;
+            filter.ShowNonBillableHours = ShowNonBillableHours;
+            filter.BillingTypes = BillingTypes;
             ReportsFilterHelper.SaveFilterValues(ReportName.AccountSummaryReport, filter);
         }
 
@@ -692,9 +625,17 @@ namespace PraticeManagement.Reporting
                 diRange.FromDate = filters.ReportStartDate;
                 diRange.ToDate = filters.ReportEndDate;
                 cblProjectStatus.SelectedItems = filters.ProjectStatusIds;
+                cblBillingType.SelectedItems = filters.BillingTypes;
+                ShowNonBillableHours = filters.ShowNonBillableHours;
             }
         }
         #endregion
+
+        protected void btnUpdate_Click(object sender, EventArgs e)
+        {
+            SelectView();
+            SaveFilterValuesForSession();
+        }
     }
 }
 
