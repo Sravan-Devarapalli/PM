@@ -18,7 +18,8 @@ BEGIN
 			@EndDateLocal     DATETIME,
 			@CurrentMonthStartDate DATETIME,
 			@LifeToDateEndDate		DATETIME,
-			@Today DATETIME
+			@Today DATETIME,
+			@CurrentMonthEnd DATETIME
 
 	SELECT @StartDateLocal=@StartDate,
 		   @EndDateLocal=@EndDate,
@@ -26,6 +27,9 @@ BEGIN
 		   @LifeToDateEndDate= DATEADD(DD,-1,@StartDate)
 			
 	SELECT @CurrentMonthStartDate = MonthStartDate FROM dbo.Calendar WHERE CONVERT(DATE, Date) = CONVERT(DATE, @Today)
+
+	select @CurrentMonthEnd =EOMONTH ( @Today )
+
 	;WITH ActualTimeEntries
 AS 
 (
@@ -181,8 +185,8 @@ FROM ActualTimeEntries AS AE --ActualEntriesByPerson
 			f.PersonId,
 			f.Date,
 			SUM(CASE WHEN f.Date BETWEEN @StartDateLocal AND @EndDateLocal THEN f.PersonMilestoneDailyAmount ELSE 0 END) AS ProjectedRevenueperDay,
-			SUM(CASE WHEN f.IsHourlyAmount = 0 THEN f.PersonMilestoneDailyAmount ELSE 0 END ) AS FixedActualRevenuePerDay,
-			SUM(CASE WHEN f.IsHourlyAmount = 0 AND f.Date BETWEEN @StartDateLocal AND @EndDateLocal THEN f.PersonMilestoneDailyAmount ELSE 0 END ) AS FixedActualRevenuePerDayInRange,
+			SUM(CASE WHEN f.IsHourlyAmount = 0 and f.Date<=@CurrentMonthEnd  THEN f.PersonMilestoneDailyAmount ELSE 0 END ) AS FixedActualRevenuePerDay,
+			SUM(CASE WHEN f.IsHourlyAmount = 0 AND f.Date BETWEEN @StartDateLocal AND @EndDateLocal and f.Date<=@CurrentMonthEnd THEN f.PersonMilestoneDailyAmount ELSE 0 END ) AS FixedActualRevenuePerDayInRange,
 			(ISNULL(SUM(CASE WHEN f.IsHourlyAmount = 1 THEN f.BillRate* f.ActualHoursPerDay ELSE 0 END),0) / ISNULL(NULLIF(SUM(CASE WHEN f.IsHourlyAmount = 1 THEN f.ActualHoursPerDay ELSE 0 END),0),1)) * MAX(CASE WHEN f.IsHourlyAmount = 1 THEN  f.BillableHOursPerDay ELSE 0 END) HourlyActualRevenuePerDay,
 			(ISNULL(SUM(CASE WHEN f.IsHourlyAmount = 1 AND f.Date BETWEEN @StartDateLocal AND @EndDateLocal THEN f.BillRate* f.ActualHoursPerDay ELSE 0 END),0) / ISNULL(NULLIF(SUM(CASE WHEN f.IsHourlyAmount = 1 AND f.Date BETWEEN @StartDateLocal AND @EndDateLocal THEN f.ActualHoursPerDay ELSE 0 END),0),1)) * MAX(CASE WHEN f.IsHourlyAmount = 1 AND f.Date BETWEEN @StartDateLocal AND @EndDateLocal THEN  f.BillableHOursPerDay ELSE 0 END) HourlyActualRevenuePerDayInRange
 	FROM FinancialsRetro AS f
