@@ -35,9 +35,9 @@ DECLARE @StartDateLocal   DATETIME,
 	ORDER BY ET.Name
 	
 	SELECT  pexp.ExpenseTypeId,
-			CONVERT(DECIMAL(18,2),SUM(pexp.Amount/((DATEDIFF(dd,pexp.StartDate,pexp.EndDate)+1)))) Expense,
+			CONVERT(DECIMAL(18,2),SUM(ISNULL(pexp.Amount,0)/((DATEDIFF(dd,pexp.StartDate,pexp.EndDate)+1)))) Expense,
 			CONVERT(DECIMAL(18,2),SUM(pexp.ExpectedAmount/((DATEDIFF(dd,pexp.StartDate,pexp.EndDate)+1)))) ExpectedExpenseAmount,
-			CONVERT(DECIMAL(18,2),SUM(pexp.Reimbursement*0.01*pexp.Amount /((DATEDIFF(dd,pexp.StartDate,pexp.EndDate)+1)))) ReimbursedExpense,
+			CONVERT(DECIMAL(18,2),SUM(pexp.Reimbursement*0.01*ISNULL(pexp.Amount ,0)/((DATEDIFF(dd,pexp.StartDate,pexp.EndDate)+1)))) ReimbursedExpense,
 			C.MonthStartDate AS FinancialDate,
 			C.MonthEndDate AS MonthEnd,
 			C.MonthNumber
