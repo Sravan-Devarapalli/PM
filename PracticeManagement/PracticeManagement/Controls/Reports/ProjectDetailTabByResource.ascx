@@ -16,8 +16,7 @@
         <td class="Width10Percent padRight5">
             <table class="WholeWidth">
                 <tr>
-                    <td>
-                        Export:
+                    <td>Export:
                     </td>
                     <td>
                         <asp:Button ID="btnExportToExcel" runat="server" Text="Excel" OnClick="btnExportToExcel_OnClick"
@@ -38,11 +37,9 @@
     <ItemTemplate>
         <table class="WholeWidthWithHeight">
             <tr class="textLeft">
-                <td colspan="4" class="ProjectAccountName Width95Percent no-wrap">               
+                <td colspan="4" class="ProjectAccountName Width95Percent no-wrap">
                     <asp:Label ID="lbProject" Style="display: none;" runat="server"></asp:Label>
                     <%# Eval("Person.HtmlEncodedName")%>
-                    <b class="fontStyleNormal">
-                        <%# GetPersonRole((string)Eval("Person.ProjectRoleName"))%></b>
                     <asp:Image ID="imgOffshore" runat="server" ImageUrl="~/Images/Offshore_Icon.png"
                         ToolTip="Resource is an offshore employee" Visible='<%# (bool)Eval("Person.IsOffshore")%>' />
                 </td>
@@ -81,8 +78,7 @@
                                     </tr>
                                 </table>
                             </td>
-                            <td class="Width80Px">
-                            </td>
+                            <td class="Width80Px"></td>
                         </tr>
                     </table>
                     <asp:Panel ID="pnlDateDetails" runat="server">
@@ -93,16 +89,16 @@
                                         <td class="FirstTrTd1">
                                             <%# Eval("TimeType.Name")%>
                                         </td>
-                                        <td class="FirstTrTd2">
-                                            B -
+                                        <td class="FirstTrTd4">Bill Rate-
+                                             <%# Eval("FormattedBillRate") %>
+                                        </td>
+                                        <td class="FirstTrTd2">B -
                                             <%# GetDoubleFormat( (double)Eval("BillableHours")) %>
                                         </td>
-                                        <td class="FirstTrTd3">
-                                            NB -
+                                        <td class="FirstTrTd3">NB -
                                             <%# GetDoubleFormat((double)Eval("NonBillableHours"))%>
                                         </td>
-                                        <td colspan="2" class="FirstTrTd4">
-                                        </td>
+                                        <td colspan="2" class="FirstTrTd4"></td>
                                     </tr>
                                     <tr class="SecondTr" id="trNote" runat="server" visible='<%# (bool)GetNoteVisibility((String)Eval("Note"))%>'>
                                         <td class="wrapword SecondTrTd1">
@@ -117,8 +113,7 @@
                                                 </tr>
                                             </table>
                                         </td>
-                                        <td colspan="4">
-                                        </td>
+                                        <td colspan="5"></td>
                                     </tr>
                                 </ItemTemplate>
                                 <AlternatingItemTemplate>
@@ -126,16 +121,16 @@
                                         <td class="FirstTrTd1">
                                             <%# Eval("TimeType.Name")%>
                                         </td>
-                                        <td class="FirstTrTd2">
-                                            B -
+                                        <td class="FirstTrTd4">Bill Rate-
+                                             <%# Eval("FormattedBillRate") %>
+                                        </td>
+                                        <td class="FirstTrTd2">B -
                                             <%# GetDoubleFormat( (double)Eval("BillableHours")) %>
                                         </td>
-                                        <td class="FirstTrTd3">
-                                            NB -
+                                        <td class="FirstTrTd3">NB -
                                             <%# GetDoubleFormat((double)Eval("NonBillableHours"))%>
                                         </td>
-                                        <td colspan="2" class="FirstTrTd4">
-                                        </td>
+                                        <td colspan="2" class="FirstTrTd4"></td>
                                     </tr>
                                     <tr class="SecondTr" id="trNote" runat="server" visible='<%# (bool)GetNoteVisibility((String)Eval("Note"))%>'>
                                         <td class="wrapword SecondTrTd1">
@@ -150,8 +145,7 @@
                                                 </tr>
                                             </table>
                                         </td>
-                                        <td colspan="4">
-                                        </td>
+                                        <td colspan="5"></td>
                                     </tr>
                                 </AlternatingItemTemplate>
                             </asp:Repeater>
@@ -184,8 +178,7 @@
                                     </tr>
                                 </table>
                             </td>
-                            <td class="Width80Px">
-                            </td>
+                            <td class="Width80Px"></td>
                         </tr>
                     </table>
                     <asp:Panel ID="pnlDateDetails" runat="server">
@@ -196,16 +189,16 @@
                                         <td class="FirstTrTd1">
                                             <%# Eval("TimeType.Name")%>
                                         </td>
-                                        <td class="FirstTrTd2">
-                                            B -
+                                        <td class="FirstTrTd4">Bill Rate-
+                                             <%#Eval("FormattedBillRate") %>
+                                        </td>
+                                        <td class="FirstTrTd2">B -
                                             <%# GetDoubleFormat( (double)Eval("BillableHours")) %>
                                         </td>
-                                        <td class="FirstTrTd3">
-                                            NB -
+                                        <td class="FirstTrTd3">NB -
                                             <%# GetDoubleFormat((double)Eval("NonBillableHours"))%>
                                         </td>
-                                        <td colspan="2" class="FirstTrTd4">
-                                        </td>
+                                        <td colspan="2" class="FirstTrTd4"></td>
                                     </tr>
                                     <tr class="SecondTr" id="trNote" runat="server" visible='<%# (bool)GetNoteVisibility((String)Eval("Note"))%>'>
                                         <td class="wrapword SecondTrTd1">
@@ -220,8 +213,7 @@
                                                 </tr>
                                             </table>
                                         </td>
-                                        <td colspan="4">
-                                        </td>
+                                        <td colspan="5"></td>
                                     </tr>
                                 </ItemTemplate>
                                 <AlternatingItemTemplate>
@@ -229,16 +221,16 @@
                                         <td class="FirstTrTd1">
                                             <%# Eval("TimeType.Name")%>
                                         </td>
-                                        <td class="FirstTrTd2">
-                                            B -
+                                        <td class="FirstTrTd4">Bill Rate-
+                                             <%# Eval("FormattedBillRate") %>
+                                        </td>
+                                        <td class="FirstTrTd2">B -
                                             <%# GetDoubleFormat( (double)Eval("BillableHours")) %>
                                         </td>
-                                        <td class="FirstTrTd3">
-                                            NB -
+                                        <td class="FirstTrTd3">NB -
                                             <%# GetDoubleFormat((double)Eval("NonBillableHours"))%>
                                         </td>
-                                        <td colspan="2" class="FirstTrTd4">
-                                        </td>
+                                        <td colspan="2" class="FirstTrTd4"></td>
                                     </tr>
                                     <tr class="SecondTr" id="trNote" runat="server" visible='<%# (bool)GetNoteVisibility((String)Eval("Note"))%>'>
                                         <td class="wrapword SecondTrTd1">
@@ -253,8 +245,7 @@
                                                 </tr>
                                             </table>
                                         </td>
-                                        <td colspan="4">
-                                        </td>
+                                        <td colspan="5"></td>
                                     </tr>
                                 </AlternatingItemTemplate>
                             </asp:Repeater>
@@ -273,7 +264,7 @@
     <ItemTemplate>
         <table class="WholeWidthWithHeight">
             <tr class="textLeft">
-                <td colspan="4" class="ProjectAccountName Width95Percent no-wrap">                   
+                <td colspan="4" class="ProjectAccountName Width95Percent no-wrap">
                     <asp:Label ID="lbDate" Style="display: none;" runat="server"></asp:Label>
                     <%# GetDateFormat((DateTime)Eval("Date"))%>
                 </td>
@@ -298,8 +289,7 @@
                                 <asp:Image ID="imgProject" runat="server" ImageUrl="~/Images/collapse.jpg" ToolTip="Expand Person Details" />
                                 <asp:Label ID="lbProject" Style="display: none;" runat="server"></asp:Label>
                                 <%# Eval("Person.HtmlEncodedName")%>
-                                <b class="fontStyleNormal">
-                                    <%# GetPersonRole((string)Eval("Person.ProjectRoleName"))%></b>
+
                                 <asp:Image ID="imgOffshore" runat="server" ImageUrl="~/Images/Offshore_Icon.png"
                                     ToolTip="Resource is an offshore employee" Visible='<%# (bool)Eval("Person.IsOffshore")%>' />
                             </td>
@@ -316,8 +306,7 @@
                                     </tr>
                                 </table>
                             </td>
-                            <td class="Width80Px">
-                            </td>
+                            <td class="Width80Px"></td>
                         </tr>
                     </table>
                     <asp:Panel ID="pnlProject2Details" runat="server">
@@ -325,19 +314,19 @@
                             <asp:Repeater ID="repWorktype" runat="server">
                                 <ItemTemplate>
                                     <tr class="FirstTr">
-                                        <td class="FirstTrTd1">
-                                            <%# Eval("TimeType.Name")%>
+                                        <td class="FirstTrTd4">Bill Rate-
+                                             <%# Eval("FormattedBillRate") %>
                                         </td>
-                                        <td class="FirstTrTd2">
-                                            B -
+                                        <td>Bill Rate-
+                                             <%# GetDoubleFormat( (double)Eval("BillableHours")) %>
+                                        </td>
+                                        <td class="FirstTrTd2">B -
                                             <%# GetDoubleFormat( (double)Eval("BillableHours")) %>
                                         </td>
-                                        <td class="FirstTrTd3">
-                                            NB -
+                                        <td class="FirstTrTd3">NB -
                                             <%# GetDoubleFormat((double)Eval("NonBillableHours"))%>
                                         </td>
-                                        <td colspan="2" class="FirstTrTd4">
-                                        </td>
+                                        <td colspan="2" class="FirstTrTd4"></td>
                                     </tr>
                                     <tr class="SecondTr" id="trNote" runat="server" visible='<%# (bool)GetNoteVisibility((String)Eval("Note"))%>'>
                                         <td class="wrapword SecondTrTd1">
@@ -352,8 +341,7 @@
                                                 </tr>
                                             </table>
                                         </td>
-                                        <td colspan="4">
-                                        </td>
+                                        <td colspan="5"></td>
                                     </tr>
                                 </ItemTemplate>
                                 <AlternatingItemTemplate>
@@ -361,16 +349,16 @@
                                         <td class="FirstTrTd1">
                                             <%# Eval("TimeType.Name")%>
                                         </td>
-                                        <td class="FirstTrTd2">
-                                            B -
+                                        <td class="FirstTrTd4">Bill Rate-
+                                             <%#Eval("FormattedBillRate") %>
+                                        </td>
+                                        <td class="FirstTrTd2">B -
                                             <%# GetDoubleFormat( (double)Eval("BillableHours")) %>
                                         </td>
-                                        <td class="FirstTrTd3">
-                                            NB -
+                                        <td class="FirstTrTd3">NB -
                                             <%# GetDoubleFormat((double)Eval("NonBillableHours"))%>
                                         </td>
-                                        <td colspan="2" class="FirstTrTd4">
-                                        </td>
+                                        <td colspan="2" class="FirstTrTd4"></td>
                                     </tr>
                                     <tr class="SecondTr" id="trNote" runat="server" visible='<%# (bool)GetNoteVisibility((String)Eval("Note"))%>'>
                                         <td class="wrapword SecondTrTd1">
@@ -385,8 +373,7 @@
                                                 </tr>
                                             </table>
                                         </td>
-                                        <td colspan="4">
-                                        </td>
+                                        <td colspan="5"></td>
                                     </tr>
                                 </AlternatingItemTemplate>
                             </asp:Repeater>
@@ -405,8 +392,7 @@
                                 <asp:Image ID="imgProject" runat="server" ImageUrl="~/Images/collapse.jpg" ToolTip="Expand Person Details" />
                                 <asp:Label ID="lbProject" Style="display: none;" runat="server"></asp:Label>
                                 <%# Eval("Person.HtmlEncodedName")%>
-                                <b class="fontStyleNormal">
-                                    <%# GetPersonRole((string)Eval("Person.ProjectRoleName"))%></b>
+
                                 <asp:Image ID="imgOffshore" runat="server" ImageUrl="~/Images/Offshore_Icon.png"
                                     ToolTip="Resource is an offshore employee" Visible='<%# (bool)Eval("Person.IsOffshore")%>' />
                             </td>
@@ -423,8 +409,7 @@
                                     </tr>
                                 </table>
                             </td>
-                            <td class="Width80Px">
-                            </td>
+                            <td class="Width80Px"></td>
                         </tr>
                     </table>
                     <asp:Panel ID="pnlProject2Details" runat="server">
@@ -435,16 +420,16 @@
                                         <td class="FirstTrTd1">
                                             <%# Eval("TimeType.Name")%>
                                         </td>
-                                        <td class="FirstTrTd2">
-                                            B -
+                                        <td class="FirstTrTd4">Bill Rate-
+                                             <%#Eval("FormattedBillRate") %>
+                                        </td>
+                                        <td class="FirstTrTd2">B -
                                             <%# GetDoubleFormat( (double)Eval("BillableHours")) %>
                                         </td>
-                                        <td class="FirstTrTd3">
-                                            NB -
+                                        <td class="FirstTrTd3">NB -
                                             <%# GetDoubleFormat((double)Eval("NonBillableHours"))%>
                                         </td>
-                                        <td colspan="2" class="FirstTrTd4">
-                                        </td>
+                                        <td colspan="2" class="FirstTrTd4"></td>
                                     </tr>
                                     <tr class="SecondTr" id="trNote" runat="server" visible='<%# (bool)GetNoteVisibility((String)Eval("Note"))%>'>
                                         <td class="wrapword SecondTrTd1">
@@ -459,8 +444,7 @@
                                                 </tr>
                                             </table>
                                         </td>
-                                        <td colspan="4">
-                                        </td>
+                                        <td colspan="5"></td>
                                     </tr>
                                 </ItemTemplate>
                                 <AlternatingItemTemplate>
@@ -468,16 +452,16 @@
                                         <td class="FirstTrTd1">
                                             <%# Eval("TimeType.Name")%>
                                         </td>
-                                        <td class="FirstTrTd2">
-                                            B -
+                                        <td class="FirstTrTd4">Bill Rate-
+                                             <%# Eval("FormattedBillRate") %>
+                                        </td>
+                                        <td class="FirstTrTd2">B -
                                             <%# GetDoubleFormat( (double)Eval("BillableHours")) %>
                                         </td>
-                                        <td class="FirstTrTd3">
-                                            NB -
+                                        <td class="FirstTrTd3">NB -
                                             <%# GetDoubleFormat((double)Eval("NonBillableHours"))%>
                                         </td>
-                                        <td colspan="2" class="FirstTrTd4">
-                                        </td>
+                                        <td colspan="2" class="FirstTrTd4"></td>
                                     </tr>
                                     <tr class="SecondTr" id="trNote" runat="server" visible='<%# (bool)GetNoteVisibility((String)Eval("Note"))%>'>
                                         <td class="wrapword SecondTrTd1">
@@ -492,8 +476,7 @@
                                                 </tr>
                                             </table>
                                         </td>
-                                        <td colspan="4">
-                                        </td>
+                                        <td colspan="5"></td>
                                     </tr>
                                 </AlternatingItemTemplate>
                             </asp:Repeater>
