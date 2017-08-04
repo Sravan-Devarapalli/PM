@@ -31,7 +31,12 @@ AS
 		   p.IsAllowedToShow,
 		   p.ProjectManagerId,
 		   p.SalesPersonId,
-		   p.PONumber
+		   p.PONumber,
+		   m.MilestoneType,
+		   m.Discount as PremiumDiscount,
+		   m.DiscountType, --0 for percentage, 1 for Dollar
+		   m.IsAmountAtMilestone,
+		   m.IsDiscountAtMilestone
 	  FROM dbo.Milestone AS m
 	       INNER JOIN dbo.Project AS p ON m.ProjectId = p.ProjectId
 	       INNER JOIN dbo.Client AS c ON p.ClientId = c.ClientId
