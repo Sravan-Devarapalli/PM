@@ -21,7 +21,9 @@
 	@division      BIT = 1,
 	@Channel       BIT = 1,
 	@Offering	   BIT = 1,
-	@RevenueType   BIT = 1
+	@RevenueType   BIT = 1,
+	@Budget		   BIT = 1,
+	@Margin		   BIT =1
 )
 AS
 BEGIN
@@ -99,17 +101,32 @@ BEGIN
 				  OR (
 						((@EventSource = 'Project'  OR @EventSource = 'All') 
 							AND (CONVERT(XML,a.Data).exist('/Project') = 1 
+							  OR CONVERT(XML,a.Data).exist('/Budget') = 1
+							  OR CONVERT(XML,a.Data).exist('/Margin') = 1
 								OR CONVERT(XML,a.Data).exist('/ProjectAttachment') = 1
 								OR CONVERT(XML,a.Data).exist('/Attribution') = 1
 								OR (CONVERT(XML,a.Data).exist('/ProjectCapabilities') = 1 
+								
 								AND (ISNULL(CONVERT(XML,a.Data).value('(/ProjectCapabilities/NEW_VALUES/@ProjectId)[1]', 'int'),CONVERT(XML,a.Data).value('(/ProjectCapabilities/NEW_VALUES/OLD_VALUES/@ProjectId)[1]', 'int')) = @ProjectId 
 											AND @Capabilities = 1) )
 								 )
 						)
 						AND 
 						(@ProjectId IS NULL 
-							OR (CONVERT(XML,a.Data).value('(/Project/NEW_VALUES/@ProjectId)[1]', 'int') = @ProjectId 
-										AND ( (CASE WHEN (CONVERT(XML,a.Data).exist('(/Project)') = 1) AND @PracticeAreas = 1 AND CONVERT(XML, a.Data).value('(/Project/NEW_VALUES/@PracticeName)[1]', 'NVARCHAR(100)') <> CONVERT(XML, a.Data).value('(/Project/NEW_VALUES/OLD_VALUES/@PracticeName)[1]', 'NVARCHAR(100)')
+							OR ((CONVERT(XML,a.Data).value('(/Project/NEW_VALUES/@ProjectId)[1]', 'int') = @ProjectId or CONVERT(XML,a.Data).value('(/Budget/NEW_VALUES/@ProjectId)[1]', 'int') = @ProjectId OR CONVERT(XML,a.Data).value('(/Margin/NEW_VALUES/@ProjectId)[1]', 'int') = @ProjectId)
+										AND ( (CASE WHEN (CONVERT(XML,a.Data).exist('(/Budget)') = 1) AND @Budget = 1 AND (a.ActivityTypeID=30)
+											   THEN 1 
+											   ELSE 0 END)+
+											   (CASE WHEN (CONVERT(XML,a.Data).exist('(/Margin)') = 1) AND @Margin = 1 AND a.ActivityTypeID = 40
+											   THEN 1 
+											   ELSE 0 END)+
+											   (CASE WHEN (CONVERT(XML,a.Data).exist('(/Project)') = 1) AND @Budget = 1 AND CONVERT(XML, a.Data).value('(/Project/NEW_VALUES/@BudgetAmount)[1]', 'NVARCHAR(100)') <> CONVERT(XML, a.Data).value('(/Project/NEW_VALUES/OLD_VALUES/@BudgetAmount)[1]', 'NVARCHAR(100)')
+											   THEN 1 
+											   ELSE 0 END) +
+											   (CASE WHEN (CONVERT(XML,a.Data).exist('(/Project)') = 1) AND @Margin = 1 AND CONVERT(XML, a.Data).value('(/Project/NEW_VALUES/@ExceptionMargin)[1]', 'NVARCHAR(100)') <> CONVERT(XML, a.Data).value('(/Project/NEW_VALUES/OLD_VALUES/@ExceptionMargin)[1]', 'NVARCHAR(100)')
+											   THEN 1 
+											   ELSE 0 END) +
+											  (CASE WHEN (CONVERT(XML,a.Data).exist('(/Project)') = 1) AND @PracticeAreas = 1 AND CONVERT(XML, a.Data).value('(/Project/NEW_VALUES/@PracticeName)[1]', 'NVARCHAR(100)') <> CONVERT(XML, a.Data).value('(/Project/NEW_VALUES/OLD_VALUES/@PracticeName)[1]', 'NVARCHAR(100)')
 											   THEN 1 
 											   ELSE 0 END) +
 											   (CASE WHEN (CONVERT(XML,a.Data).exist('(/Project)') = 1) AND @division = 1 AND CONVERT(XML, a.Data).value('(/Project/NEW_VALUES/@Division)[1]', 'NVARCHAR(100)') <> CONVERT(XML, a.Data).value('(/Project/NEW_VALUES/OLD_VALUES/@Division)[1]', 'NVARCHAR(100)')
@@ -285,6 +302,8 @@ BEGIN
 					 )
 					)
 					AND (@ProjectId IS NULL 
+						 OR CONVERT(XML,a.Data).value('(/Budget/NEW_VALUES/@ProjectId)[1]', 'int') = @ProjectId
+						 OR CONVERT(XML,a.Data).value('(/Margin/NEW_VALUES/@ProjectId)[1]', 'int') = @ProjectId
 						 OR CONVERT(XML,a.Data).value('(/Project/NEW_VALUES/@ProjectId)[1]', 'int') = @ProjectId
 						 OR CONVERT(XML,a.Data).value('(/Milestone/NEW_VALUES/@MilestoneProjectId)[1]', 'int') = @ProjectId
 						 OR CONVERT(XML,a.Data).value('(/MilestonePerson/NEW_VALUES/@MilestoneProjectId)[1]', 'int') = @ProjectId
