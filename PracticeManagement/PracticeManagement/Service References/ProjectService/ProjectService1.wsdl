@@ -32,6 +32,18 @@
   <wsdl:message name="IProjectService_GetProjectsComputedFinancials_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetProjectsComputedFinancialsResponse" />
   </wsdl:message>
+  <wsdl:message name="IProjectService_FinancialsByProject_InputMessage">
+    <wsdl:part name="parameters" element="tns:FinancialsByProject" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_FinancialsByProject_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FinancialsByProjectResponse" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_EACFinancialsByProject_InputMessage">
+    <wsdl:part name="parameters" element="tns:EACFinancialsByProject" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_EACFinancialsByProject_OutputMessage">
+    <wsdl:part name="parameters" element="tns:EACFinancialsByProjectResponse" />
+  </wsdl:message>
   <wsdl:message name="IProjectService_GetProjectMilestonesFinancials_InputMessage">
     <wsdl:part name="parameters" element="tns:GetProjectMilestonesFinancials" />
   </wsdl:message>
@@ -422,6 +434,60 @@
   <wsdl:message name="IProjectService_GetProjectsForClients_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetProjectsForClientsResponse" />
   </wsdl:message>
+  <wsdl:message name="IProjectService_SendBudgetResetRequest_InputMessage">
+    <wsdl:part name="parameters" element="tns:SendBudgetResetRequest" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_SendBudgetResetRequest_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SendBudgetResetRequestResponse" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_ResetProjectBudget_InputMessage">
+    <wsdl:part name="parameters" element="tns:ResetProjectBudget" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_ResetProjectBudget_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ResetProjectBudgetResponse" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_SendProjectBudgetResetDecline_InputMessage">
+    <wsdl:part name="parameters" element="tns:SendProjectBudgetResetDecline" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_SendProjectBudgetResetDecline_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SendProjectBudgetResetDeclineResponse" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_GetAllMarginExceptionReasons_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllMarginExceptionReasons" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_GetAllMarginExceptionReasons_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllMarginExceptionReasonsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_GetMarginExceptionThresholdsForPeriod_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMarginExceptionThresholdsForPeriod" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_GetMarginExceptionThresholdsForPeriod_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMarginExceptionThresholdsForPeriodResponse" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_SendMarginExceptionRequest_InputMessage">
+    <wsdl:part name="parameters" element="tns:SendMarginExceptionRequest" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_SendMarginExceptionRequest_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SendMarginExceptionRequestResponse" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_SendMarginExceptionResponse_InputMessage">
+    <wsdl:part name="parameters" element="tns:SendMarginExceptionResponse" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_SendMarginExceptionResponse_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SendMarginExceptionResponseResponse" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_GetBudgetManagementDataForProject_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetBudgetManagementDataForProject" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_GetBudgetManagementDataForProject_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetBudgetManagementDataForProjectResponse" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_GetProjectShortByProjectNumberForPerson_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetProjectShortByProjectNumberForPerson" />
+  </wsdl:message>
+  <wsdl:message name="IProjectService_GetProjectShortByProjectNumberForPerson_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetProjectShortByProjectNumberForPersonResponse" />
+  </wsdl:message>
   <wsdl:portType name="IProjectService">
     <wsdl:operation name="ProjectGetById">
       <wsdl:input wsaw:Action="http://tempuri.org/IProjectService/ProjectGetById" message="tns:IProjectService_ProjectGetById_InputMessage" />
@@ -434,6 +500,14 @@
     <wsdl:operation name="GetProjectsComputedFinancials">
       <wsdl:input wsaw:Action="http://tempuri.org/IProjectService/GetProjectsComputedFinancials" message="tns:IProjectService_GetProjectsComputedFinancials_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IProjectService/GetProjectsComputedFinancialsResponse" message="tns:IProjectService_GetProjectsComputedFinancials_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FinancialsByProject">
+      <wsdl:input wsaw:Action="http://tempuri.org/IProjectService/FinancialsByProject" message="tns:IProjectService_FinancialsByProject_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IProjectService/FinancialsByProjectResponse" message="tns:IProjectService_FinancialsByProject_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="EACFinancialsByProject">
+      <wsdl:input wsaw:Action="http://tempuri.org/IProjectService/EACFinancialsByProject" message="tns:IProjectService_EACFinancialsByProject_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IProjectService/EACFinancialsByProjectResponse" message="tns:IProjectService_EACFinancialsByProject_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetProjectMilestonesFinancials">
       <wsdl:input wsaw:Action="http://tempuri.org/IProjectService/GetProjectMilestonesFinancials" message="tns:IProjectService_GetProjectMilestonesFinancials_InputMessage" />
@@ -695,6 +769,42 @@
       <wsdl:input wsaw:Action="http://tempuri.org/IProjectService/GetProjectsForClients" message="tns:IProjectService_GetProjectsForClients_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IProjectService/GetProjectsForClientsResponse" message="tns:IProjectService_GetProjectsForClients_OutputMessage" />
     </wsdl:operation>
+    <wsdl:operation name="SendBudgetResetRequest">
+      <wsdl:input wsaw:Action="http://tempuri.org/IProjectService/SendBudgetResetRequest" message="tns:IProjectService_SendBudgetResetRequest_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IProjectService/SendBudgetResetRequestResponse" message="tns:IProjectService_SendBudgetResetRequest_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ResetProjectBudget">
+      <wsdl:input wsaw:Action="http://tempuri.org/IProjectService/ResetProjectBudget" message="tns:IProjectService_ResetProjectBudget_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IProjectService/ResetProjectBudgetResponse" message="tns:IProjectService_ResetProjectBudget_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SendProjectBudgetResetDecline">
+      <wsdl:input wsaw:Action="http://tempuri.org/IProjectService/SendProjectBudgetResetDecline" message="tns:IProjectService_SendProjectBudgetResetDecline_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IProjectService/SendProjectBudgetResetDeclineResponse" message="tns:IProjectService_SendProjectBudgetResetDecline_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMarginExceptionReasons">
+      <wsdl:input wsaw:Action="http://tempuri.org/IProjectService/GetAllMarginExceptionReasons" message="tns:IProjectService_GetAllMarginExceptionReasons_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IProjectService/GetAllMarginExceptionReasonsResponse" message="tns:IProjectService_GetAllMarginExceptionReasons_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMarginExceptionThresholdsForPeriod">
+      <wsdl:input wsaw:Action="http://tempuri.org/IProjectService/GetMarginExceptionThresholdsForPeriod" message="tns:IProjectService_GetMarginExceptionThresholdsForPeriod_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IProjectService/GetMarginExceptionThresholdsForPeriodResponse" message="tns:IProjectService_GetMarginExceptionThresholdsForPeriod_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SendMarginExceptionRequest">
+      <wsdl:input wsaw:Action="http://tempuri.org/IProjectService/SendMarginExceptionRequest" message="tns:IProjectService_SendMarginExceptionRequest_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IProjectService/SendMarginExceptionRequestResponse" message="tns:IProjectService_SendMarginExceptionRequest_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SendMarginExceptionResponse">
+      <wsdl:input wsaw:Action="http://tempuri.org/IProjectService/SendMarginExceptionResponse" message="tns:IProjectService_SendMarginExceptionResponse_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IProjectService/SendMarginExceptionResponseResponse" message="tns:IProjectService_SendMarginExceptionResponse_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBudgetManagementDataForProject">
+      <wsdl:input wsaw:Action="http://tempuri.org/IProjectService/GetBudgetManagementDataForProject" message="tns:IProjectService_GetBudgetManagementDataForProject_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IProjectService/GetBudgetManagementDataForProjectResponse" message="tns:IProjectService_GetBudgetManagementDataForProject_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProjectShortByProjectNumberForPerson">
+      <wsdl:input wsaw:Action="http://tempuri.org/IProjectService/GetProjectShortByProjectNumberForPerson" message="tns:IProjectService_GetProjectShortByProjectNumberForPerson_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IProjectService/GetProjectShortByProjectNumberForPersonResponse" message="tns:IProjectService_GetProjectShortByProjectNumberForPerson_OutputMessage" />
+    </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_IProjectService" type="tns:IProjectService">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
@@ -718,6 +828,24 @@
     </wsdl:operation>
     <wsdl:operation name="GetProjectsComputedFinancials">
       <soap:operation soapAction="http://tempuri.org/IProjectService/GetProjectsComputedFinancials" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FinancialsByProject">
+      <soap:operation soapAction="http://tempuri.org/IProjectService/FinancialsByProject" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EACFinancialsByProject">
+      <soap:operation soapAction="http://tempuri.org/IProjectService/EACFinancialsByProject" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -1303,6 +1431,87 @@
     </wsdl:operation>
     <wsdl:operation name="GetProjectsForClients">
       <soap:operation soapAction="http://tempuri.org/IProjectService/GetProjectsForClients" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendBudgetResetRequest">
+      <soap:operation soapAction="http://tempuri.org/IProjectService/SendBudgetResetRequest" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ResetProjectBudget">
+      <soap:operation soapAction="http://tempuri.org/IProjectService/ResetProjectBudget" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendProjectBudgetResetDecline">
+      <soap:operation soapAction="http://tempuri.org/IProjectService/SendProjectBudgetResetDecline" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMarginExceptionReasons">
+      <soap:operation soapAction="http://tempuri.org/IProjectService/GetAllMarginExceptionReasons" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMarginExceptionThresholdsForPeriod">
+      <soap:operation soapAction="http://tempuri.org/IProjectService/GetMarginExceptionThresholdsForPeriod" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendMarginExceptionRequest">
+      <soap:operation soapAction="http://tempuri.org/IProjectService/SendMarginExceptionRequest" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendMarginExceptionResponse">
+      <soap:operation soapAction="http://tempuri.org/IProjectService/SendMarginExceptionResponse" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBudgetManagementDataForProject">
+      <soap:operation soapAction="http://tempuri.org/IProjectService/GetBudgetManagementDataForProject" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProjectShortByProjectNumberForPerson">
+      <soap:operation soapAction="http://tempuri.org/IProjectService/GetProjectShortByProjectNumberForPerson" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
