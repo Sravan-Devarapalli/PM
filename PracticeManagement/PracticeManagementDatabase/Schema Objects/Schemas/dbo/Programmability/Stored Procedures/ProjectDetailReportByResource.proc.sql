@@ -75,30 +75,31 @@ AS
 						WITH PersonForeCastedHoursRoleValues
 					AS
 					(	
-						SELECT   MP.PersonId ,
-								AVG(MPE.Amount) AS BillRate,
-								PC.Date,								
-								SUM(dbo.PersonProjectedHoursPerDay(PC.DayOff,PC.CompanyDayOff,PC.TimeOffHours,MPE.HoursPerDay)) AS ForecastedHours,
-								MAX(ISNULL(PR.RoleValue, 0)) AS MaxRoleValue ,
-								MIN(CAST(M.IsHourlyAmount AS INT)) MinimumValue ,
-								MAX(CAST(M.IsHourlyAmount AS INT)) MaximumValue 
-						FROM     dbo.MilestonePersonEntry AS MPE
-								INNER JOIN dbo.MilestonePerson AS MP ON MP.MilestonePersonId = MPE.MilestonePersonId
-								INNER JOIN dbo.Milestone AS M ON M.MilestoneId = MP.MilestoneId
-								INNER JOIN dbo.person AS P ON P.PersonId = MP.PersonId AND P.IsStrawman = 0
-								INNER JOIN dbo.PersonCalendarAuto PC ON PC.PersonId = MP.PersonId
-														AND PC.Date BETWEEN MPE.StartDate AND MPE.EndDate	
-								LEFT  JOIN dbo.PersonRole AS PR ON PR.PersonRoleId = MPE.PersonRoleId
-						WHERE    M.ProjectId = @ProjectId
+						SELECT   V.PersonId ,
+								CONVERT(DECIMAL(18,2),AVG(V.BillRate)) AS BillRate, -- add
+								PC.Date,
+								SUM(CASE WHEN PC.Date <= @Today THEN (dbo.PersonProjectedHoursPerDay(PC.DayOff,PC.CompanyDayOff,PC.TimeOffHours,V.ActualHoursPerDay)) -- MPE.HoursPerDay == ActualHoursPerDay
+									ELSE 0
+								END) AS ForecastedHoursUntilToday,
+								SUM(dbo.PersonProjectedHoursPerDay(PC.DayOff,PC.CompanyDayOff,PC.TimeOffHours,V.ActualHoursPerDay)) AS ForecastedHours,
+								MAX(ISNULL(PR.RoleValue, 0)) AS MaxRoleValue , -- add
+								MIN(CAST(V.IsHourlyAmount AS INT)) MinimumValue ,
+								MAX(CAST(V.IsHourlyAmount AS INT)) MaximumValue 
+						FROM    v_FinancialsRetrospective V
+								INNER JOIN dbo.PersonCalendarAuto PC ON PC.PersonId = V.PersonId
+														AND PC.Date =V.Date
+								LEFT  JOIN dbo.PersonRole AS PR ON PR.PersonRoleId = V.PersonRoleId
+								
+						WHERE    V.ProjectId = @ProjectId
 								AND ( @MilestoneIdLocal IS NULL
-										OR M.MilestoneId = @MilestoneIdLocal
+										OR V.MilestoneId = @MilestoneIdLocal
 									)
 								AND ( ( @StartDateLocal IS NULL
 										AND @EndDateLocal IS NULL
 										)
 										OR ( PC.Date BETWEEN @StartDateLocal AND @EndDateLocal )
 									)
-						GROUP BY MP.PersonId,PC.Date 
+						GROUP BY V.PersonId,PC.Date 
 					)
 					,PersonForeCastedHours
 					AS
@@ -123,6 +124,11 @@ AS
 															  AND TE.ChargeCodeDate BETWEEN PTSH.StartDate
 															  AND ISNULL(PTSH.EndDate,@FutureDate)
 						INNER JOIN dbo.TimeType TT ON TT.TimeTypeId = CC.TimeTypeId
+						WHERE ( ( @StartDateLocal IS NULL
+										AND @EndDateLocal IS NULL
+										)
+										OR ( TE.ChargeCodeDate BETWEEN @StartDateLocal AND @EndDateLocal )
+									)
 					)
 
 						SELECT	P.PersonId ,
@@ -139,16 +145,16 @@ AS
 																  P.PersonId)
 									   ELSE TEP.Note
 								  END ) AS Note,
-								(
-								  CASE 
-										WHEN ( (PFR.MinimumValue = PFR.MaximumValue AND PFR.MinimumValue = 1) 
-												OR PFR.MinimumValue <> PFR.MaximumValue) 
-										THEN ISNULL(PFR.BillRate,0) 
-										ELSE 0 
-								END)  BillRate,
+								ISNULL(PFR.BillRate,0) BillRate,
 								TEP.TimeEntrySectionId ,
 								P.EmployeeNumber,
-
+								( 
+								CASE	WHEN ( PFR.MinimumValue IS NULL ) THEN ''
+										WHEN ( PFR.MinimumValue = PFR.MaximumValue AND PFR.MinimumValue = 0 ) THEN 'Fixed'
+	 									WHEN ( PFR.MinimumValue = PFR.MaximumValue AND PFR.MinimumValue = 1) THEN 'Hourly'
+								ELSE 'Both'
+								END 
+							) AS BillingType ,
 								ROUND(SUM(CASE WHEN TEP.IsChargeable = 1  AND @ProjectNumberLocal != 'P031000'
 										   THEN TEP.ActualHours
 										   ELSE 0
@@ -158,6 +164,7 @@ AS
 										   ELSE 0
 									  END), 2) AS NonBillableHours ,
 							ISNULL(PR.Name, '') AS ProjectRoleName ,
+							ROUND(MAX(ISNULL(PFR.ForecastedHours, 0)), 2) AS ForecastedHoursDaily,
 							ROUND(MAX(ISNULL(PFH.ForecastedHours, 0)), 2) AS ForecastedHours
 						FROM PersonForeCastedHoursRoleValues	PFR
 						FULL JOIN TimeEntryPersons TEP ON TEP.PersonId = PFR.PersonId AND TEP.ChargeCodeDate = PFR.Date
