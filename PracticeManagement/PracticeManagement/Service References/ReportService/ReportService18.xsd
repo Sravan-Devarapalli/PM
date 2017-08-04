@@ -14,6 +14,7 @@
       <xs:element minOccurs="0" name="BillableHours" type="xs:double" />
       <xs:element minOccurs="0" name="BillableHoursUntilToday" type="xs:double" />
       <xs:element minOccurs="0" name="BillableType" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="BudgetHours" type="xs:double" />
       <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="Client" nillable="true" type="q1:Client" />
       <xs:element minOccurs="0" name="DayTotalHours" nillable="true" type="tns:ArrayOfTimeEntriesGroupByDate" />
       <xs:element minOccurs="0" name="GrandTotal" type="xs:double" />
@@ -84,6 +85,7 @@
       <xs:element minOccurs="0" name="BillableHours" type="xs:double" />
       <xs:element minOccurs="0" name="BillableHoursUntilToday" type="xs:double" />
       <xs:element minOccurs="0" name="BillingType" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="BudgetHours" type="xs:double" />
       <xs:element minOccurs="0" name="BusinessDevelopmentHours" type="xs:double" />
       <xs:element minOccurs="0" name="DayTotalHours" nillable="true" type="tns:ArrayOfTimeEntriesGroupByDate" />
       <xs:element minOccurs="0" name="EstimatedBillings" type="xs:double" />
@@ -98,6 +100,7 @@
       <xs:element minOccurs="0" name="PTOHours" type="xs:double" />
       <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="Person" nillable="true" type="q5:Person" />
       <xs:element minOccurs="0" name="ProjectNonBillableHours" type="xs:double" />
+      <xs:element minOccurs="0" name="RemainingProjectedHours" type="xs:double" />
       <xs:element minOccurs="0" name="SickOrSafeLeaveHours" type="xs:double" />
       <xs:element minOccurs="0" name="TimeEntrySectionId" type="xs:int" />
       <xs:element minOccurs="0" name="UnpaidHours" type="xs:double" />
@@ -115,6 +118,7 @@
       <xs:element minOccurs="0" name="BillableHours" type="xs:double" />
       <xs:element minOccurs="0" name="BillableHoursUntilToday" type="xs:double" />
       <xs:element minOccurs="0" name="BillingType" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="BudgetHours" type="xs:double" />
       <xs:element minOccurs="0" name="EstimatedBillings" type="xs:double" />
       <xs:element minOccurs="0" name="ForecastedHours" type="xs:double" />
       <xs:element minOccurs="0" name="ForecastedHoursUntilToday" type="xs:double" />
@@ -348,12 +352,55 @@
       <xs:element xmlns:q26="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="Expense" nillable="true" type="q26:ProjectExpense" />
       <xs:element minOccurs="0" name="MonthEndDate" type="xs:dateTime" />
       <xs:element minOccurs="0" name="MonthStartDate" type="xs:dateTime" />
-      <xs:element xmlns:q27="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="MonthlyExpectedExpenses" nillable="true" type="q27:ArrayOfKeyValueOfdateTimedecimal" />
-      <xs:element xmlns:q28="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="MonthlyExpenses" nillable="true" type="q28:ArrayOfKeyValueOfdateTimedecimal" />
-      <xs:element xmlns:q29="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="MonthlyReimburseExpense" nillable="true" type="q29:ArrayOfKeyValueOfdateTimedecimal" />
-      <xs:element xmlns:q30="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="Project" nillable="true" type="q30:Project" />
-      <xs:element xmlns:q31="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="Type" nillable="true" type="q31:ExpenseType" />
+      <xs:element xmlns:q27="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="MonthlyBudgetExpenses" nillable="true" type="q27:ArrayOfKeyValueOfdateTimedecimal" />
+      <xs:element xmlns:q28="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="MonthlyEACExpenses" nillable="true" type="q28:ArrayOfKeyValueOfdateTimedecimal" />
+      <xs:element xmlns:q29="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="MonthlyExpectedExpenses" nillable="true" type="q29:ArrayOfKeyValueOfdateTimedecimal" />
+      <xs:element xmlns:q30="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="MonthlyExpenses" nillable="true" type="q30:ArrayOfKeyValueOfdateTimedecimal" />
+      <xs:element xmlns:q31="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="MonthlyReimburseExpense" nillable="true" type="q31:ArrayOfKeyValueOfdateTimedecimal" />
+      <xs:element xmlns:q32="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="Project" nillable="true" type="q32:Project" />
+      <xs:element xmlns:q33="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="Type" nillable="true" type="q33:ExpenseType" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="ExpenseSummary" nillable="true" type="tns:ExpenseSummary" />
+  <xs:complexType name="ProjectBurnFinancials">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="BudgetAmount" nillable="true" type="xs:int" />
+      <xs:element xmlns:q34="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="Expenses" nillable="true" type="q34:ArrayOfProjectExpense" />
+      <xs:element xmlns:q35="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Financials" nillable="true" type="q35:ArrayOfKeyValueOfdateTimeComputedFinancialsfLTn8SS5" />
+      <xs:element minOccurs="0" name="MarginGoal" type="xs:decimal" />
+      <xs:element minOccurs="0" name="ProjectId" type="xs:int" />
+      <xs:element minOccurs="0" name="RemainingDays" type="xs:int" />
+      <xs:element xmlns:q36="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="Resources" nillable="true" type="q36:ArrayOfProjectBudgetResource" />
+      <xs:element minOccurs="0" name="TotalProjectDays" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ProjectBurnFinancials" nillable="true" type="tns:ProjectBurnFinancials" />
+  <xs:complexType name="ArrayOfPersonBudgetComparison">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PersonBudgetComparison" nillable="true" type="tns:PersonBudgetComparison" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPersonBudgetComparison" nillable="true" type="tns:ArrayOfPersonBudgetComparison" />
+  <xs:complexType name="PersonBudgetComparison">
+    <xs:sequence>
+      <xs:element xmlns:q37="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="ActualHours" nillable="true" type="q37:ArrayOfKeyValueOfdateTimedecimal" />
+      <xs:element xmlns:q38="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="BudgetBillRate" nillable="true" type="q38:ArrayOfKeyValueOfdateTimePayRatelNKOc9JJ" />
+      <xs:element xmlns:q39="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="BudgetHours" nillable="true" type="q39:ArrayOfKeyValueOfdateTimedecimal" />
+      <xs:element xmlns:q40="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="EACHours" nillable="true" type="q40:ArrayOfKeyValueOfdateTimedecimal" />
+      <xs:element xmlns:q41="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="Financials" nillable="true" type="q41:ComputedFinancials" />
+      <xs:element xmlns:q42="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="Person" nillable="true" type="q42:Person" />
+      <xs:element xmlns:q43="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="ProjectedAndActualBillRate" nillable="true" type="q43:ArrayOfKeyValueOfdateTimePayRatelNKOc9JJ" />
+      <xs:element xmlns:q44="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="ProjectedHours" nillable="true" type="q44:ArrayOfKeyValueOfdateTimedecimal" />
+      <xs:element xmlns:q45="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="ProjectedRemainingHours" nillable="true" type="q45:ArrayOfKeyValueOfdateTimedecimal" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PersonBudgetComparison" nillable="true" type="tns:PersonBudgetComparison" />
+  <xs:complexType name="PayRate">
+    <xs:sequence>
+      <xs:element xmlns:q46="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="BillRate" type="q46:PracticeManagementCurrency" />
+      <xs:element xmlns:q47="http://schemas.datacontract.org/2004/07/DataTransferObjects" minOccurs="0" name="PersonCost" type="q47:PracticeManagementCurrency" />
+      <xs:element minOccurs="0" name="PersonId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PayRate" nillable="true" type="tns:PayRate" />
 </xs:schema>
