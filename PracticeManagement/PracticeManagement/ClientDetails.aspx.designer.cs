@@ -31,78 +31,6 @@ namespace PraticeManagement {
         protected global::System.Web.UI.UpdatePanel upClientPage;
         
         /// <summary>
-        /// TabContainer1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::AjaxControlToolkit.TabContainer TabContainer1;
-        
-        /// <summary>
-        /// tpMainFilters control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::AjaxControlToolkit.TabPanel tpMainFilters;
-        
-        /// <summary>
-        /// chbActive control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chbActive;
-        
-        /// <summary>
-        /// hdnchbActive control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdnchbActive;
-        
-        /// <summary>
-        /// chbHouseAccount control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chbHouseAccount;
-        
-        /// <summary>
-        /// chbIsChar control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chbIsChar;
-        
-        /// <summary>
-        /// chbIsInternal control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chbIsInternal;
-        
-        /// <summary>
-        /// chbIsNoteRequired control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chbIsNoteRequired;
-        
-        /// <summary>
         /// txtClientName control.
         /// </summary>
         /// <remarks>
@@ -139,6 +67,24 @@ namespace PraticeManagement {
         protected global::System.Web.UI.WebControls.CustomValidator custClient;
         
         /// <summary>
+        /// chbActive control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chbActive;
+        
+        /// <summary>
+        /// hdnchbActive control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdnchbActive;
+        
+        /// <summary>
         /// ddlDefaultSalesperson control.
         /// </summary>
         /// <remarks>
@@ -157,6 +103,15 @@ namespace PraticeManagement {
         protected global::System.Web.UI.WebControls.RequiredFieldValidator reqDefaultSalesperson;
         
         /// <summary>
+        /// chbHouseAccount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chbHouseAccount;
+        
+        /// <summary>
         /// ddlDefaultDirector control.
         /// </summary>
         /// <remarks>
@@ -164,6 +119,15 @@ namespace PraticeManagement {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlDefaultDirector;
+        
+        /// <summary>
+        /// chbIsChar control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chbIsChar;
         
         /// <summary>
         /// txtDefaultDiscount control.
@@ -202,6 +166,15 @@ namespace PraticeManagement {
         protected global::System.Web.UI.WebControls.RangeValidator rvDefaultDiscount;
         
         /// <summary>
+        /// chbIsInternal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chbIsInternal;
+        
+        /// <summary>
         /// ddlDefaultTerms control.
         /// </summary>
         /// <remarks>
@@ -211,6 +184,15 @@ namespace PraticeManagement {
         protected global::System.Web.UI.WebControls.DropDownList ddlDefaultTerms;
         
         /// <summary>
+        /// chbIsNoteRequired control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chbIsNoteRequired;
+        
+        /// <summary>
         /// mlConfirmation control.
         /// </summary>
         /// <remarks>
@@ -218,96 +200,6 @@ namespace PraticeManagement {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::PraticeManagement.Controls.MessageLabel mlConfirmation;
-        
-        /// <summary>
-        /// tpMarginGoals control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::AjaxControlToolkit.TabPanel tpMarginGoals;
-        
-        /// <summary>
-        /// upnlClientThrsholds control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdatePanel upnlClientThrsholds;
-        
-        /// <summary>
-        /// chbMarginThresholds control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chbMarginThresholds;
-        
-        /// <summary>
-        /// btnAddThreshold control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddThreshold;
-        
-        /// <summary>
-        /// gvClientThrsholds control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvClientThrsholds;
-        
-        /// <summary>
-        /// cvClientThresholds control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator cvClientThresholds;
-        
-        /// <summary>
-        /// cvColors control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator cvColors;
-        
-        /// <summary>
-        /// cvgvddlColorClone control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator cvgvddlColorClone;
-        
-        /// <summary>
-        /// cvgvOverLapRangeClone control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator cvgvOverLapRangeClone;
-        
-        /// <summary>
-        /// cvgvRangeClone control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator cvgvRangeClone;
         
         /// <summary>
         /// vsumClient control.
@@ -506,6 +398,42 @@ namespace PraticeManagement {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::PraticeManagement.Controls.Clients.ClientPricingList ucPricingList;
+        
+        /// <summary>
+        /// tpMarginGoal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::AjaxControlToolkit.TabPanel tpMarginGoal;
+        
+        /// <summary>
+        /// lnkMarginGoal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton lnkMarginGoal;
+        
+        /// <summary>
+        /// UpdatePanel4 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel UpdatePanel4;
+        
+        /// <summary>
+        /// ucMarginGoals control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::PraticeManagement.Controls.Clients.ClientMarginGoals ucMarginGoals;
     }
 }
 
