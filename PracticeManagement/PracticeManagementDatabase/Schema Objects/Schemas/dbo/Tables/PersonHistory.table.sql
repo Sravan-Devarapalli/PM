@@ -33,3 +33,7 @@
 	CreatedBy			INT			  NULL,
 	CONSTRAINT PK_PersonHistory PRIMARY KEY (Id)
 )
+GO
+CREATE NONCLUSTERED INDEX [IX_PersonHistory]
+ON [dbo].[PersonHistory] ([IsStrawman])
+INCLUDE ([PersonId],[HireDate],[TerminationDate],[PersonStatusId])
