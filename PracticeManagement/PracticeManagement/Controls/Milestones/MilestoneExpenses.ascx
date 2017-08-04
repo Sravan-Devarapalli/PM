@@ -3,6 +3,7 @@
 <%@ Import Namespace="DataTransferObjects" %>
 <%@ Register TagPrefix="asp" Namespace="PraticeManagement.Controls.Generic.Buttons"
     Assembly="PraticeManagement" %>
+
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
 <asp:UpdateProgress ID="updProgress" runat="server" AssociatedUpdatePanelID="updProjectExpenses">
     <ProgressTemplate>
@@ -10,7 +11,10 @@
     </ProgressTemplate>
 </asp:UpdateProgress>
 <asp:UpdatePanel ID="updProjectExpenses" runat="server" UpdateMode="Always">
+
     <ContentTemplate>
+        <asp:HiddenField ID="hdnEstAmount" runat="server" />
+        <asp:HiddenField ID="hdnActAmount" runat="server" />
         <asp:GridView ID="gvProjectExpenses" runat="server" DataSourceID="odsProjectExpenses"
             EmptyDataText="No project expenses for this milestone" ShowFooter="True" AutoGenerateColumns="False"
             AlternatingRowStyle-BackColor="#e0e0e0" DataKeyNames="Id" OnRowDataBound="gvProjectExpenses_OnRowDataBound"
@@ -27,10 +31,13 @@
                     </HeaderTemplate>
                     <ItemStyle CssClass="textCenter" />
                     <ItemTemplate>
-                        <%# ((ProjectExpense)Container.DataItem).HtmlEncodedName%>
+                        <asp:LinkButton ID="lnkExpense" runat="server" ExpenseId='<%# ((ProjectExpense)Container.DataItem).Id%>' ToolTip='<%# ((ProjectExpense)Container.DataItem).HtmlEncodedName%>'
+                            OnClick="lnkExpense_OnClick" Text='<%# ((ProjectExpense)Container.DataItem).HtmlEncodedName%>' ActAmount='<%# ((ProjectExpense)Container.DataItem).Amount!=null? ((ProjectExpense)Container.DataItem).Amount:0%>' EstAmount='<%# ((ProjectExpense)Container.DataItem).ExpectedAmount%>'
+                            StartDate='<%# ((ProjectExpense)Container.DataItem).StartDate%>' EndDate='<%# ((ProjectExpense)Container.DataItem).EndDate%>'></asp:LinkButton>
+
                     </ItemTemplate>
                     <EditItemTemplate>
-                        <asp:TextBox ID="tbEditName" runat="server" Text='<%# Bind("Name") %>' ValidationGroup="ProjectExpensesEdit" />
+                        <asp:TextBox ID="tbEditName" runat="server" Text='<%# Bind("Name") %>' ValidationGroup="ProjectExpensesEdit" ExpenseId='<%# ((ProjectExpense)Container.DataItem).Id%>' />
                         <asp:RequiredFieldValidator ID="valReqName" runat="server" ControlToValidate="tbEditName"
                             ValidationGroup="ProjectExpensesEdit" ErrorMessage="Expense name is required"
                             Text="*" />
@@ -40,8 +47,7 @@
                         <hr />
                         <table>
                             <tr>
-                                <td class="Width18Percent">
-                                    &nbsp;
+                                <td class="Width18Percent">&nbsp;
                                 </td>
                                 <td>
                                     <asp:TextBox ID="tbEditName" runat="server" ValidationGroup="ProjectExpensesAdd"
@@ -67,8 +73,7 @@
                     <EditItemTemplate>
                         <table>
                             <tr>
-                                <td class="Width18Percent">
-                                    &nbsp;
+                                <td class="Width18Percent">&nbsp;
                                 </td>
                                 <td>
                                     <asp:TextBox ID="txtStartDate" runat="server" Text='<%# Bind("StartDate", "{0:MM/dd/yyyy}") %>'
@@ -100,8 +105,7 @@
                         <hr />
                         <table class="fontNormal">
                             <tr>
-                                <td class="Width18Percent">
-                                    &nbsp;
+                                <td class="Width18Percent">&nbsp;
                                 </td>
                                 <td>
                                     <asp:TextBox ID="txtStartDate" runat="server" ValidationGroup="ProjectExpensesEdit"
@@ -141,8 +145,7 @@
                     <EditItemTemplate>
                         <table>
                             <tr>
-                                <td class="Width18Percent">
-                                    &nbsp;
+                                <td class="Width18Percent">&nbsp;
                                 </td>
                                 <td>
                                     <asp:TextBox ID="txtEndDate" runat="server" Text='<%# Bind("EndDate", "{0:MM/dd/yyyy}") %>'
@@ -177,8 +180,7 @@
                         <hr />
                         <table class="fontNormal">
                             <tr>
-                                <td class="Width18Percent">
-                                    &nbsp;
+                                <td class="Width18Percent">&nbsp;
                                 </td>
                                 <td>
                                     <asp:TextBox ID="txtEndDate" runat="server" ValidationGroup="ProjectExpensesEdit"
@@ -221,8 +223,7 @@
                     <EditItemTemplate>
                         <table>
                             <tr>
-                                <td class="Width18Percent">
-                                    &nbsp;
+                                <td class="Width18Percent">&nbsp;
                                 </td>
                                 <td>
                                     <asp:DropDownList ID="ddlExpenseType" runat="server" ValidationGroup="ProjectExpensesEdit"
@@ -243,8 +244,7 @@
                         <hr />
                         <table>
                             <tr>
-                                <td class="Width18Percent">
-                                    &nbsp;
+                                <td class="Width18Percent">&nbsp;
                                 </td>
                                 <td>
                                     <asp:DropDownList ID="ddlExpense" runat="server" ValidationGroup="ProjectExpensesAdd"
@@ -263,7 +263,7 @@
                 <asp:TemplateField>
                     <HeaderTemplate>
                         <div class="ie-bg NoBorder">
-                            Estimated Expense, $
+                            Estimated Expense
                         </div>
                     </HeaderTemplate>
                     <ItemStyle CssClass="textCenter" />
@@ -296,21 +296,18 @@
                 <asp:TemplateField>
                     <HeaderTemplate>
                         <div class="ie-bg NoBorder">
-                            Actual Expense, $
+                            Actual Expense
                         </div>
                     </HeaderTemplate>
                     <ItemStyle CssClass="textCenter" />
                     <ItemTemplate>
-                        <%# ((PracticeManagementCurrency) ((ProjectExpense) Container.DataItem).Amount).ToString() %>
+                        <%# ((ProjectExpense) Container.DataItem).Amount!=null? ((PracticeManagementCurrency) ((ProjectExpense) Container.DataItem).Amount).ToString() : string.Empty%>
                     </ItemTemplate>
                     <EditItemTemplate>
                         <asp:TextBox ID="tbEditAmount" runat="server" Text='<%# Bind("Amount") %>' ValidationGroup="ProjectExpensesEdit"
                             CssClass="Width80Px" />
-                        <asp:RequiredFieldValidator ID="valReqAmount" ValidationGroup="ProjectExpensesEdit"
-                            runat="server" ControlToValidate="tbEditAmount" ErrorMessage="Expense amount is required"
-                            Text="*" />
                         <asp:RangeValidator ID="valRangeAmout" ValidationGroup="ProjectExpensesEdit" runat="server"
-                            ControlToValidate="tbEditAmount" Type="Double" MinimumValue="0.01" MaximumValue="1000000000"
+                            ControlToValidate="tbEditAmount" Type="Double" MinimumValue="0.00" MaximumValue="1000000000"
                             ErrorMessage="Amount should be positive real" Text="*" />
                     </EditItemTemplate>
                     <FooterStyle CssClass="textCenter" />
@@ -318,18 +315,34 @@
                         <asp:Label ID="lblTotalAmount" runat="server" Text="$0" />
                         <hr />
                         <asp:TextBox ID="tbEditAmount" runat="server" ValidationGroup="ProjectExpensesAdd" />
-                        <asp:RequiredFieldValidator ID="valReqAmount" ValidationGroup="ProjectExpensesAdd"
-                            runat="server" ControlToValidate="tbEditAmount" ErrorMessage="Expense amount is required"
-                            Text="*" />
                         <asp:RangeValidator ID="valRangeAmout" ValidationGroup="ProjectExpensesAdd" runat="server"
-                            ControlToValidate="tbEditAmount" Type="Double" MinimumValue="0.01" MaximumValue="1000000000"
+                            ControlToValidate="tbEditAmount" Type="Double" MinimumValue="0.00" MaximumValue="1000000000"
                             ErrorMessage="Amount should be positive real" Text="*" />
+                    </FooterTemplate>
+                </asp:TemplateField>
+                <asp:TemplateField>
+                    <HeaderTemplate>
+                        <div class="ie-bg NoBorder">
+                            Variance
+                        </div>
+                    </HeaderTemplate>
+                    <ItemStyle CssClass="textCenter" />
+                    <ItemTemplate>
+                        <%# ((PracticeManagementCurrency) ((ProjectExpense) Container.DataItem).Difference).ToString() %>
+                    </ItemTemplate>
+                    <EditItemTemplate>
+                        <%# ((PracticeManagementCurrency) ((ProjectExpense) Container.DataItem).Difference).ToString() %>
+                    </EditItemTemplate>
+                    <FooterStyle CssClass="textCenter" />
+                    <FooterTemplate>
+                        <asp:Label ID="lblVariance" runat="server" Text="$0" />
+                        <hr />
                     </FooterTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Reimbursed, %">
                     <HeaderTemplate>
                         <div class="ie-bg NoBorder">
-                            Reimbursed, %
+                            Reimbursed
                         </div>
                     </HeaderTemplate>
                     <ItemStyle CssClass="textCenter" />
@@ -364,7 +377,7 @@
                 <asp:TemplateField HeaderText="Reimbursed, $">
                     <HeaderTemplate>
                         <div class="ie-bg NoBorder">
-                            Reimbursed, $
+                            Reimbursed
                         </div>
                     </HeaderTemplate>
                     <ItemStyle CssClass="textCenter" />
@@ -396,6 +409,7 @@
                     <FooterTemplate>
                         <asp:ShadowedTextButton ID="btnAddExpense" runat="server" Text="Add Expense" CssClass="add-btn"
                             CommandName="Insert" OnClick="lnkAdd_OnClick" ValidationGroup="ProjectExpensesAdd" />
+
                     </FooterTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField ShowHeader="False">
@@ -420,6 +434,134 @@
                 <asp:Parameter Name="milestoneId" Type="Int32" />
             </SelectParameters>
         </asp:ObjectDataSource>
+        <asp:HiddenField ID="hdnTempField" runat="server" />
+        <AjaxControlToolkit:ModalPopupExtender ID="mpeMonthlyExpense" runat="server"
+            TargetControlID="hdnTempField" CancelControlID="btnCancelMonthlyExpense"
+            BackgroundCssClass="modalBackground" PopupControlID="pnlMonthlyExpense"
+            DropShadow="false" />
+        <asp:Panel ID="pnlMonthlyExpense" Style="display: none;"
+            runat="server" CssClass="Expense_MonthlyExpensePnl">
+            <table class="WholeWidth Padding5">
+                <tr>
+                    <td class="WholeWidth">
+                        <table class="WholeWidthWithHeight">
+                            <tr class="bgColor_F5FAFF">
+                                <td class="MonthlyRevenue_Name">
+                                    <asp:Label ID="lblExpenseName" runat="server"></asp:Label>
+                                </td>
+                                <td class="MonthlyRevenue_Name">
+                                    <asp:Label ID="lblPeriod" runat="server"></asp:Label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="WholeWidth" colspan="2">
+                                    <div>
+                                        <asp:Repeater ID="repMonthlyExpense" runat="server">
+                                            <HeaderTemplate>
+                                                <div>
+                                                    <table id="tblMonthlyExpense" class="tablesorter TimePeriodByproject WholeWidth ">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="ProjectColoum no-wrap">Month
+                                                                </th>
+                                                                <th class="Width110Px no-wrap">Estimated Expense
+                                                                </th>
+                                                                <th class="Width110Px no-wrap">Actual Expense
+                                                                </th>
+                                                                <th class="Width170PxImp">Variance
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                            </HeaderTemplate>
+                                            <ItemTemplate>
+                                                <tr runat="server" id="repItem">
+                                                    <td>
+                                                        <asp:Label ID="lblMonth" runat="server" StartDate='<%#Eval("StartDate") %>' EndDate='<%#Eval("EndDate") %>' Text=' <%# ((DateTime)Eval("StartDate")).ToString(Constants.Formatting.CompPerfMonthYearFormat)%>'
+                                                            ExpenseId='<%#Eval("Id") %>' ProjectExpenseId='<%#Eval("ProjectExpenseId") %>'></asp:Label>
+                                                    </td>
+                                                    <td class="no-wrap">
+                                                        <asp:TextBox ID="txtEstExpense" runat="server" Text='<%# ((Decimal)Eval("EstimatedExpense")).ToString("##############0.##")%>'></asp:TextBox>
+                                                        <asp:RequiredFieldValidator ID="valReqEstExpense" ValidationGroup="MonthlyExpenses"
+                                                            runat="server" ControlToValidate="txtEstExpense" ErrorMessage="Expected Expense amount is required"
+                                                            Text="*" />
+                                                        <asp:RangeValidator ID="valRangeEstExpense" ValidationGroup="MonthlyExpenses" runat="server"
+                                                            ControlToValidate="txtEstExpense" Type="Double" MinimumValue="0.01" MaximumValue="1000000000"
+                                                            ErrorMessage="Expected Amount should be positive real" Text="*" />
+                                                    </td>
+                                                    <td class="no-wrap">
+                                                        <asp:TextBox ID="txtActExpense" runat="server" Text='<%#(Decimal?)Eval("ActualExpense")!=null? ((Decimal?)Eval("ActualExpense")).Value.ToString("##############0.##"):string.Empty%>'></asp:TextBox>
+                                                        <asp:RangeValidator ID="valRangeActExpense" ValidationGroup="MonthlyExpenses" runat="server"
+                                                            ControlToValidate="txtActExpense" Type="Double" MinimumValue="0.00" MaximumValue="1000000000"
+                                                            ErrorMessage="Actual Amount should be positive real" Text="*" />
+                                                    </td>
+                                                    <td>
+                                                        <%# ((Decimal)Eval("Variance")).ToString("###,###,###,###,##0.##")%>
+                                                    </td>
+                                                </tr>
+                                            </ItemTemplate>
+                                            <AlternatingItemTemplate>
+                                                <tr runat="server" id="repAltItem">
+                                                    <td>
+                                                        <asp:Label ID="lblMonth" runat="server" StartDate='<%#(DateTime)Eval("StartDate") %>' EndDate='<%#Eval("EndDate") %>' Text=' <%# ((DateTime)Eval("StartDate")).ToString(Constants.Formatting.CompPerfMonthYearFormat)%>'
+                                                            ExpenseId='<%#Eval("Id") %>' ProjectExpenseId='<%#Eval("ProjectExpenseId") %>'></asp:Label>
+                                                    </td>
+                                                    <td class="no-wrap">
+                                                        <asp:TextBox ID="txtEstExpense" runat="server" Text='<%# ((Decimal)Eval("EstimatedExpense")).ToString("##############0.##")%>'></asp:TextBox>
+                                                        <asp:RequiredFieldValidator ID="valReqEstExpense" ValidationGroup="MonthlyExpenses"
+                                                            runat="server" ControlToValidate="txtEstExpense" ErrorMessage="Expected Expense amount is required"
+                                                            Text="*" />
+                                                        <asp:RangeValidator ID="valRangeEstExpense" ValidationGroup="MonthlyExpenses" runat="server"
+                                                            ControlToValidate="txtEstExpense" Type="Double" MinimumValue="0.01" MaximumValue="1000000000"
+                                                            ErrorMessage="Expected Amount should be positive real" Text="*" />
+                                                    </td>
+                                                    <td class="no-wrap">
+                                                        <asp:TextBox ID="txtActExpense" runat="server" Text='<%# (Decimal?)Eval("ActualExpense")!=null? ((Decimal?)Eval("ActualExpense")).Value.ToString("##############0.##"):string.Empty%>'></asp:TextBox>
+                                                        <asp:RangeValidator ID="valRangeActExpense" ValidationGroup="MonthlyExpenses" runat="server"
+                                                            ControlToValidate="txtActExpense" Type="Double" MinimumValue="0.00" MaximumValue="1000000000"
+                                                            ErrorMessage="Actual Amount should be positive real" Text="*" />
+                                                    </td>
+                                                    <td>
+                                                        <%# ((Decimal)Eval("Variance")).ToString("###,###,###,###,##0.##")%>
+                                                    </td>
+                                                </tr>
+                                            </AlternatingItemTemplate>
+                                            <FooterTemplate>
+                                                </tbody></table></div>
+                                            </FooterTemplate>
+                                        </asp:Repeater>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <asp:ValidationSummary ID="vsMonthlyExpense" ValidationGroup="MonthlyExpenses"
+                                        runat="server" />
+                                    <asp:CustomValidator ID="cvEstimatedSum" runat="server"
+                                        ErrorMessage="The sum of monthly Estimated expenses should be equal to Expense Estimated amount"
+                                        ToolTip="The sum of monthly Estimated expenses should be equal to Expense Estimated amount" Text="*"
+                                        EnableClientScript="false" SetFocusOnError="true"></asp:CustomValidator>
+                                    <asp:CustomValidator ID="cvActualSum" runat="server"
+                                        ErrorMessage="The sum of monthly Actual expenses should be equal to Expense Actual amount"
+                                        ToolTip="The sum of monthly Actual expenses should be equal to Expense Actual amount" Text="*"
+                                        EnableClientScript="false" SetFocusOnError="true"></asp:CustomValidator>
+                                    <asp:Label ID="lblEstiamatedError" runat="server" ForeColor="Red" Visible="false" Text="The sum of monthly Estimated expenses should be equal to Expense Estimated amount"></asp:Label>
+                                    </br>
+                                <asp:Label ID="lblActualError" runat="server" ForeColor="Red" Visible="false" Text="The sum of monthly Actual expenses should be equal to Expense Actual amount"></asp:Label>
+                                </td>
+                            </tr>
+                            <tr class="bgColor_F5FAFF" style="text-align: center">
+                                <td colspan="2">
+                                    <asp:Button ID="btnCancelMonthlyExpense" Text="Cancel" ToolTip="Cancel" runat="server" />
+                                    <asp:Button ID="btnSave" Text="Save" ToolTip="Save" runat="server" OnClick="btnSave_Click" />
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </asp:Panel>
     </ContentTemplate>
 </asp:UpdatePanel>
+
 
