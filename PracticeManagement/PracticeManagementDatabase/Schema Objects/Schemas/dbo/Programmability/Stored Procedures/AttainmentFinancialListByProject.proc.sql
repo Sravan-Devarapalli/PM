@@ -31,12 +31,11 @@ BEGIN
 			@InsertingTime DATETIME,
 			@CurrentMonthStartDate DATETIME,
 			@CurrentMonthEndDate DATETIME
+			
 
 	SELECT @Today = CONVERT(DATE, dbo.GettingPMTime(GETUTCDATE())),@InsertingTime = dbo.InsertingTime()
-	SELECT @CurrentMonthEndDate = C.MonthEndDate,
-		   @CurrentMonthStartDate = C.MonthStartDate
-	FROM dbo.Calendar C
-	WHERE C.Date = @Today
+
+	select @CurrentMonthEndDate= EOMONTH(@Today)
 
 	SELECT @ProjectIdLocal =@ProjectId ,
 		   @StartDateLocal=@StartDate ,
@@ -155,38 +154,65 @@ BEGIN
 		WHERE s.IsHourlyAmount = 0
 		GROUP BY s.Date, s.MilestoneId
 	),
+
+	MonthlyHours
+	AS
+	(
+		SELECT C.MonthStartDate, C.MonthEndDate,C.MonthNumber, s.MilestoneId, SUM(HoursPerDay) AS HoursPerMonth
+		FROM dbo.v_MilestonePersonSchedule AS s
+		INNER JOIN dbo.Calendar C ON C.Date = s.Date 
+		WHERE s.IsHourlyAmount = 0
+		GROUP BY s.MilestoneId, C.MonthStartDate, C.MonthEndDate,C.MonthNumber
+	),
 	MilestoneRevenueRetrospective
 	AS
 	(
+					 SELECT 
+					m.MilestoneId,
+					cal.Date,
+					m.IsHourlyAmount,
+					ISNULL((FMR.Amount/ NULLIF(MH.HoursPerMonth,0))* d.HoursPerDay,0) AS MilestoneDailyAmount,
+					p.Discount,
+					d.HoursPerDay
+				FROM dbo.FixedMilestoneMonthlyRevenue FMR
+				JOIN Milestone M on M.MilestoneId=FMR.MilestoneId
+				JOIN Project p on p.ProjectId=m.ProjectId
+				INNER JOIN dbo.Calendar AS cal ON cal.Date BETWEEN FMR.StartDate AND FMR.EndDate
+				JOIN MonthlyHours MH on MH.milestoneid=M.MilestoneId AND cal.Date BETWEEN MH.MonthStartDate AND MH.MonthEndDate
+				INNER JOIN CTE AS d ON d.date = cal.Date and m.MilestoneId = d.MileStoneId
+				INNER JOIN V_WorkinHoursByYear HY ON cal.date BETWEEN HY.[YearStartDate] AND HY.[YearEndDate]
+
+				UNION ALL
+
 			SELECT -- Milestones with a fixed amount
-			m.MilestoneId,
-			m.ProjectId,
-			cal.Date,
-			m.IsHourlyAmount,
-			ISNULL((m.Amount/ NULLIF(MTHours.TotalHours,0))* d.HoursPerDay,0) AS MilestoneDailyAmount /* ((Milestone fixed amount/Milestone Total  Hours)* Milestone Total  Hours per day)  */,
-			p.Discount,
-			d.HoursPerDay/* Milestone Total  Hours per day*/
-		FROM dbo.Project AS p 
-			INNER JOIN dbo.Milestone AS m ON m.ProjectId = p.ProjectId AND P.IsAdministrative = 0 AND P.ProjectId != 174 AND  m.IsHourlyAmount = 0
-			INNER JOIN dbo.Calendar AS cal ON cal.Date BETWEEN m.StartDate AND m.ProjectedDeliveryDate
-			INNER JOIN (
-							SELECT s.MilestoneId, SUM(s.HoursPerDay) AS TotalHours
-							FROM CTE AS s 
-							GROUP BY s.MilestoneId
-						) AS MTHours  ON MTHours.MilestoneId  = m.MilestoneId
-			INNER JOIN CTE AS d ON d.date = cal.Date and m.MilestoneId = d.MileStoneId
-		UNION ALL
-		SELECT -- Milestones with a hourly amount
-				mp.MilestoneId,
-				mp.ProjectId,
-				mp.Date,
-				mp.IsHourlyAmount,
-				ISNULL(SUM(mp.Amount * mp.HoursPerDay), 0) AS MilestoneDailyAmount,
-				MAX(p.Discount) AS Discount,
-				SUM(mp.HoursPerDay) AS HoursPerDay/* Milestone Total  Hours per day*/
-			FROM MileStoneEntries mp
-				INNER JOIN dbo.Project AS p ON mp.ProjectId = p.ProjectId AND mp.IsHourlyAmount = 1
-		GROUP BY mp.MilestoneId, mp.ProjectId, mp.Date, mp.IsHourlyAmount
+					m.MilestoneId,
+					cal.Date,
+					m.IsHourlyAmount,
+					ISNULL((m.Amount/ NULLIF(MTHours.TotalHours,0))* d.HoursPerDay,0) AS MilestoneDailyAmount /* ((Milestone fixed amount/Milestone Total  Hours)* Milestone Total  Hours per day)  */,
+					p.Discount,
+					d.HoursPerDay/* Milestone Total  Hours per day*/
+				FROM dbo.Project AS p 
+					INNER JOIN dbo.Milestone AS m ON m.ProjectId = p.ProjectId AND P.IsAdministrative = 0 AND P.ProjectId != 174 AND  m.IsHourlyAmount = 0
+					INNER JOIN dbo.Calendar AS cal ON cal.Date BETWEEN m.StartDate AND m.ProjectedDeliveryDate
+					INNER JOIN (
+									SELECT s.MilestoneId, SUM(s.HoursPerDay) AS TotalHours
+									FROM CTE AS s 
+									GROUP BY s.MilestoneId
+								) AS MTHours  ON MTHours.MilestoneId  = m.MilestoneId
+					INNER JOIN CTE AS d ON d.date = cal.Date and m.MilestoneId = d.MileStoneId
+					LEFT JOIN (select distinct milestoneid from dbo.FixedMilestoneMonthlyRevenue) FMR on m.MilestoneId=FMR.MilestoneId
+				WHERE FMR.MilestoneId IS NULL
+				UNION ALL
+			SELECT -- Milestones with a hourly amount
+					mp.MilestoneId,
+					mp.Date,
+					mp.IsHourlyAmount,
+					ISNULL(SUM(mp.Amount * mp.HoursPerDay), 0) AS MilestoneDailyAmount,
+					MAX(p.Discount) AS Discount,
+					SUM(mp.HoursPerDay) AS HoursPerDay/* Milestone Total  Hours per day*/
+				FROM MileStoneEntries mp
+					INNER JOIN dbo.Project AS p ON mp.ProjectId = p.ProjectId AND mp.IsHourlyAmount = 1
+			GROUP BY mp.MilestoneId, mp.Date, mp.IsHourlyAmount
 	),
 	v_Financials
 	as
@@ -294,16 +320,15 @@ BEGIN
 																			) * ISNULL(f.PersonHoursPerDay, 0)) AS  ProjectedGrossMargin,
 			ISNULL(SUM((CASE WHEN f.SLHR >=  f.PayRate + f.MLFOverheadRate THEN f.SLHR ELSE  f.PayRate + f.MLFOverheadRate END)*ISNULL(f.PersonHoursPerDay, 0)),0) ProjectedCogsperDay,
 			
-			SUM(CASE WHEN f.IsHourlyAmount = 0 THEN f.PersonMilestoneDailyAmount ELSE 0 END ) AS FixedActualRevenuePerDay,
+			SUM(CASE WHEN (f.IsHourlyAmount = 0 and f.Date<=@CurrentMonthEndDate) THEN f.PersonMilestoneDailyAmount ELSE 0 END ) AS FixedActualRevenuePerDay,
 			(ISNULL(SUM(CASE WHEN f.IsHourlyAmount = 1 THEN f.BillRate* f.ActualHoursPerDay ELSE 0 END),0) / ISNULL(NULLIF(SUM(CASE WHEN f.IsHourlyAmount = 1 THEN f.ActualHoursPerDay ELSE 0 END),0),1)) * MAX(CASE WHEN f.IsHourlyAmount = 1 THEN  f.BillableHOursPerDay ELSE 0 END) HourlyActualRevenuePerDay,
-			SUM(CASE WHEN f.IsHourlyAmount = 0 THEN 	f.PersonMilestoneDailyAmount ELSE 0 END)- (
+			ISNULL(SUM(CASE WHEN (f.IsHourlyAmount = 0 and f.Date<=@CurrentMonthEndDate) THEN 	f.PersonMilestoneDailyAmount ELSE 0 END),0)- (
 						ISNULL( MAX( CASE WHEN f.IsHourlyAmount = 0 THEN  f.BillableHOursPerDay + f.NonBillableHoursPerDay ELSE 0 END ),0) * 
 						ISNULL( CASE WHEN ISNULL(SUM(CASE WHEN f.IsHourlyAmount = 0 THEN f.ActualHoursPerDay ELSE 0 END),0) > 0 
 									THEN SUM((CASE WHEN f.SLHR >=  f.PayRate + f.MLFOverheadRate THEN f.SLHR ELSE  f.PayRate + f.MLFOverheadRate END)* CASE WHEN f.IsHourlyAmount = 0 THEN f.ActualHoursPerDay ELSE 0 END) / SUM(CASE WHEN f.IsHourlyAmount = 0 THEN f.ActualHoursPerDay ELSE 0 END)
 									ELSE SUM((CASE WHEN f.SLHR >=  f.PayRate + f.MLFOverheadRate THEN f.SLHR ELSE  f.PayRate + f.MLFOverheadRate END)) / ISNULL(COUNT(f.PayRate),1)  
 								END ,0)
-					)
-					 AS FixedActualMarginPerDay,
+					) AS FixedActualMarginPerDay,
 				((ISNULL(SUM(CASE WHEN f.IsHourlyAmount = 1 THEN f.BillRate* f.ActualHoursPerDay ELSE 0 END),0) / ISNULL(NULLIF(SUM(CASE WHEN f.IsHourlyAmount = 1 THEN f.ActualHoursPerDay ELSE 0 END),0),1)) * MAX(CASE WHEN f.IsHourlyAmount = 1 THEN  f.BillableHOursPerDay ELSE 0 END))
 				 -  (
 						MAX( CASE WHEN f.IsHourlyAmount = 1 THEN  f.BillableHOursPerDay + f.NonBillableHoursPerDay ELSE 0 END ) * 
@@ -322,8 +347,10 @@ BEGIN
 	AS
 	(
 		SELECT pexp.ProjectId,
-			CONVERT(DECIMAL(18,2),SUM(pexp.Amount/((DATEDIFF(dd,pexp.StartDate,pexp.EndDate)+1)))) Expense,
-			CONVERT(DECIMAL(18,2),SUM(pexp.Reimbursement*0.01*pexp.Amount /((DATEDIFF(dd,pexp.StartDate,pexp.EndDate)+1)))) Reimbursement,
+			CONVERT(DECIMAL(18,2),SUM(ISNULL(pexp.Amount,0)/((DATEDIFF(dd,pexp.StartDate,pexp.EndDate)+1))  )) ActualExpense,
+			CONVERT(DECIMAL(18,2),SUM(pexp.Reimbursement*0.01*ISNULL(pexp.Amount,0) /((DATEDIFF(dd,pexp.StartDate,pexp.EndDate)+1)))) ActualReimbursement,
+			CONVERT(DECIMAL(18,2),SUM(pexp.ExpectedAmount/((DATEDIFF(dd,pexp.StartDate,pexp.EndDate)+1)))) Expense,
+			CONVERT(DECIMAL(18,2),SUM(pexp.Reimbursement*0.01*pexp.ExpectedAmount /((DATEDIFF(dd,pexp.StartDate,pexp.EndDate)+1)))) Reimbursement,
 			R.StartDate AS FinancialDate,
 			R.EndDate AS MonthEnd,
 			R.RangeType
@@ -363,13 +390,13 @@ BEGIN
 		CONVERT(DECIMAL(18,2),ISNULL(PEM.Expense,0)) Expense,
 		CONVERT(DECIMAL(18,2),ISNULL(PEM.Reimbursement,0)) ReimbursedExpense,
 		CONVERT(DECIMAL(18,6), ISNULL(APV.ActualRevenue,0)) ActualRevenue,
-		CONVERT(DECIMAL(18,6), ISNULL(APV.ActualMargin,0) - (ISNULL(APV.ActualRevenue,0) * ISNULL(APV.Discount,0)/100) + ((ISNULL(PEM.Reimbursement,0)-ISNULL(PEM.Expense,0)))) ActualGrossMargin,
+		CONVERT(DECIMAL(18,6), ISNULL(APV.ActualMargin,0) - (ISNULL(APV.ActualRevenue,0) * ISNULL(APV.Discount,0)/100) + ((ISNULL(PEM.ActualReimbursement,0)-ISNULL(PEM.ActualExpense,0)))) ActualGrossMargin,
 		CASE WHEN ISNULL(APV.FinancialDate,PEM.FinancialDate) < @CurrentMonthStartDate 
 			 THEN CONVERT(DECIMAL(18,6), ISNULL(APV.ActualRevenue,0))
 			 ELSE CONVERT(DECIMAL(18,6), ISNULL(APV.ProjectedRevenue,0))
 			 END PreviousMonthActualRevenue,
 		CASE WHEN ISNULL(APV.FinancialDate,PEM.FinancialDate) < @CurrentMonthStartDate 
-			 THEN CONVERT(DECIMAL(18,6), ISNULL(APV.ActualMargin,0) - (ISNULL(APV.ActualRevenue,0) * ISNULL(APV.Discount,0)/100) + ((ISNULL(PEM.Reimbursement,0)-ISNULL(PEM.Expense,0))))
+			 THEN CONVERT(DECIMAL(18,6), ISNULL(APV.ActualMargin,0) - (ISNULL(APV.ActualRevenue,0) * ISNULL(APV.Discount,0)/100) + ((ISNULL(PEM.ActualReimbursement,0)-ISNULL(PEM.ActualExpense,0))))
 			 ELSE CONVERT(DECIMAL(18,6), ISNULL(APV.ProjectedGrossMargin,0) + (ISNULL(PEM.Reimbursement,0)-ISNULL(PEM.Expense,0)))
 			 END PreviousMonthActualGrossMargin,
 		CONVERT(BIT,1) AS IsMonthlyRecord,
