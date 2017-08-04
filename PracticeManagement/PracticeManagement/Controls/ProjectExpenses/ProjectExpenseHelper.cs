@@ -90,30 +90,6 @@ namespace PraticeManagement.Controls.ProjectExpenses
             return expensesForMilestone;
         }
 
-        public static void AddProjectExpense(string name, string amount, string expAmount, string reimb, string projectId, DateTime startDate, DateTime endDate, string milestoneId, string expenseTypeId)
-        {
-            AddProjectExpense(
-                    new ProjectExpense
-                        {
-                            Name = name,
-                            Amount = Convert.ToDecimal(amount),
-                            ExpectedAmount=Convert.ToDecimal(expAmount),
-                            Reimbursement = Convert.ToDecimal(reimb),
-                            StartDate = startDate,
-                            EndDate = endDate,
-                            ProjectId = Convert.ToInt32(projectId),
-                            Milestone = new Milestone()
-                            {
-                                Id = Convert.ToInt32(milestoneId)
-                            },
-                            Type = new ExpenseType()
-                            {
-                                Id = Convert.ToInt32(expenseTypeId)
-                            }
-                        }
-                    );
-        }
-
         #endregion
     }
 }
