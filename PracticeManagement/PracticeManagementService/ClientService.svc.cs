@@ -116,9 +116,9 @@ namespace PracticeManagementService
             return ClientDAL.GetAllColorsForMargin();
         }
 
-        public List<ClientMarginColorInfo> GetClientMarginColorInfo(int clientId)
+        public List<ClientMarginColorInfo> GetClientMarginColorInfo(int clientId, DateTime startDate, DateTime endDate, int projectId)
         {
-            return ClientDAL.GetClientMarginColorInfo(clientId);
+            return ClientDAL.GetClientMarginColorInfo(clientId, startDate, endDate, projectId);
         }
 
         public List<Client> ClientListAllWithoutPermissions()
@@ -174,6 +174,31 @@ namespace PracticeManagementService
         public List<ProjectGroup> GetBusinessUnitsForClients(string clientIds)
         {
             return ClientDAL.GetBusinessUnitsForClients(clientIds);
+        }
+
+        public List<ClientMarginGoal> GetClientMarginGoals(int clientId)
+        {
+            return ClientDAL.GetClientMarginGoals(clientId);
+        }
+
+        public void InsertClientMargin(ClientMarginGoal marginGoal, string userAlias)
+        {
+            ClientDAL.InsertClientMargin(marginGoal, userAlias);
+        }
+
+        public void UpdateClientMarginGoal(ClientMarginGoal marginGoal, string userAlias)
+        {
+            ClientDAL.UpdateClientMarginGoal(marginGoal, userAlias);
+        }
+
+        public void DeleteClientMarginGoal(int id, string userAlias)
+        {
+            ClientDAL.DeleteClientMarginGoal(id, userAlias);
+        }
+
+        public List<ClientMarginGoalLog> GetMarginGoalLogForClient(int clientId)
+        {
+            return ClientDAL.GetMarginGoalLogForClient(clientId);
         }
 
         #endregion IClientService Members
