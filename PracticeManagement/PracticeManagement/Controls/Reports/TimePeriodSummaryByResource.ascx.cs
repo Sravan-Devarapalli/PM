@@ -82,8 +82,6 @@ namespace PraticeManagement.Controls.Reports
                                                     dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
-                                                    dataCellStyle,
-                                                    dataCellStyle,
                                                     dataPercentageCellStyle
                                                   };
 
@@ -307,11 +305,9 @@ namespace PraticeManagement.Controls.Reports
             List<object> rownew;
             List<object> row;
 
-            data.Columns.Add("Employee Id");
             data.Columns.Add("Resource");
             data.Columns.Add("Title");
             data.Columns.Add("Pay Types");
-            data.Columns.Add("Is Offshore");
             data.Columns.Add("Billable");
             data.Columns.Add("Non-Billable");
             data.Columns.Add("BD");
@@ -324,11 +320,9 @@ namespace PraticeManagement.Controls.Reports
             foreach (var item in report)
             {
                 row = new List<object>();
-                row.Add(item.Person.EmployeeNumber != null ? item.Person.EmployeeNumber : "");
                 row.Add(item.Person.HtmlEncodedName != null ? item.Person.HtmlEncodedName : "");
                 row.Add((item.Person.Title.HtmlEncodedTitleName != null) ? item.Person.Title.HtmlEncodedTitleName : "");
                 row.Add((item.Person.CurrentPay.TimescaleName != null) ? item.Person.CurrentPay.TimescaleName : "");
-                row.Add(item.Person.IsOffshore ? "Yes" : "No");
                 row.Add(GetDoubleFormat(item.BillableHours));
                 row.Add(GetDoubleFormat(item.ProjectNonBillableHours));
                 row.Add(GetDoubleFormat(item.BusinessDevelopmentHours));
@@ -340,10 +334,6 @@ namespace PraticeManagement.Controls.Reports
                 data.Rows.Add(row.ToArray());
             }
             return data;
-        }
-
-        protected void btnExportToPDF_OnClick(object sender, EventArgs e)
-        {
         }
 
         protected void btnPayCheckExport_OnClick(object sender, EventArgs e)
