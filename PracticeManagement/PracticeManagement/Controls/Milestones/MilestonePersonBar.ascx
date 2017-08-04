@@ -13,10 +13,8 @@
         <asp:ImageButton ID="btnCancel" runat="server" ImageUrl="~/Images/no.png" OnClick="btnCancel_OnClick"
             ToolTip="Cancel" />
     </td>
-    <td class="Width2Percent">
-        &nbsp;
-    </td>
-    <td class="Width14Percent">
+    <td class="Width2Percent"></td>
+    <td class="Width14Percent textLeft WS-Normal">
         <table class="WholeWidth">
             <tr>
                 <td class="Width85Percent">
@@ -164,8 +162,43 @@
             </tr>
         </table>
     </td>
-    <td class="Width6Percent">
-        &nbsp;
+    <td id="tdDiscountInsert" runat="server" class="Width5PercentImp">
+        <table class="WholeWidth">
+            <tr>
+                <td class="Width85Percent">
+                    <asp:Label ID="lblDoller" runat="server" Text="$" Visible="false" />
+                    <asp:TextBox ID="txtDiscountInsert" runat="server" CssClass="Width80Percent" OnTextChanged="txtDiscount_TextChanged"></asp:TextBox>
+                    <asp:Label ID="lblPercentage" runat="server" Text="%" Visible="false" />
+                </td>
+                <td class="Width15Percent">&nbsp;
+        <asp:CompareValidator ID="cmpDiscount" runat="server" ControlToValidate="txtDiscountInsert"
+            Display="Dynamic" EnableClientScript="false" ErrorMessage="A number with 2 decimal digits is allowed for the Discount."
+            Operator="DataTypeCheck" SetFocusOnError="true" Text="*" ToolTip="A number with 2 decimal digits is allowed for the Discount."
+            Type="Currency" ValidationGroup="<%# GetValidationGroup() %>"></asp:CompareValidator>
+                </td>
+            </tr>
+        </table>
+    </td>
+
+    <td id="tdDiscountLockInsert" runat="server" class="Width5PercentImp">
+        <table class="WholeWidth">
+            <tr>
+                <td class="Width85Percent">
+                    <asp:CheckBox ID="chbDiscountLockInsert" runat="server" />
+                </td>
+                <td class="Width15Percent">&nbsp;
+                   <asp:CustomValidator ID="cvDiscountLockInsert" runat="server"
+                       ErrorMessage="At least one user must remained unlocked for the equation to balance between individual (locked) discount/premium and top-line Revenue/Discount"
+                       ToolTip="At least one user must remained unlocked for the equation to balance between individual (locked) discount/premium and top-line Revenue/Discount"
+                       Text="*" EnableClientScript="false" SetFocusOnError="true" Display="Dynamic"
+                       ValidateEmptyText="false" ValidationGroup="<%# GetValidationGroup() %>" OnServerValidate="cvDiscountLockInsert_ServerValidate"></asp:CustomValidator>
+
+                </td>
+            </tr>
+        </table>
+    </td>
+
+    <td class="Width6Percent">&nbsp;
     </td>
     <td class="Width6Percent">
         <table class="WholeWidth">
@@ -196,27 +229,19 @@
         </table>
     </td>
     <td id="tdBadgeRequired" runat="server" class="Width4Percent">
-        <table class="WholeWidth">
-            <tr>
-                <td class="Width85Percent">
-                    <asp:CheckBox ID="chbBadgeRequiredInsert" runat="server" OnCheckedChanged="chbBadgeRequired_CheckedChanged"
-                        AutoPostBack="true" />
-                </td>
-                <td class="Width15Percent">
-                    <asp:CustomValidator ID="custBlocked" runat="server" ErrorMessage="Person is blocked from being badged, please choose another resource or uncheck this box or change the dates."
-                        ToolTip="Person is blocked from being badged, please choose another resource or uncheck this box or change the dates."
-                        Text="*" EnableClientScript="false" SetFocusOnError="true" Display="Dynamic"
-                        ValidationGroup="<%# GetValidationGroup() %>" OnServerValidate="custBlocked_ServerValidate"></asp:CustomValidator>
-                </td>
-            </tr>
-        </table>
+        <asp:CheckBox ID="chbBadgeRequiredInsert" runat="server" OnCheckedChanged="chbBadgeRequired_CheckedChanged"
+            AutoPostBack="true" />
+        <asp:CustomValidator ID="custBlocked" runat="server" ErrorMessage="Person is blocked from being badged, please choose another resource or uncheck this box or change the dates."
+            ToolTip="Person is blocked from being badged, please choose another resource or uncheck this box or change the dates."
+            Text="*" EnableClientScript="false" SetFocusOnError="true" Display="Dynamic"
+            ValidationGroup="<%# GetValidationGroup() %>" OnServerValidate="custBlocked_ServerValidate"></asp:CustomValidator>
     </td>
-    <td id="tdBadgeStart" runat="server" class="Width7Percent">
+    <td id="tdBadgeStart" runat="server" class="Width6Percent">
         <table class="WholeWidth">
             <tr>
                 <td class="Width85Percent">
                     <uc2:DatePicker ID="dpBadgeStartInsert" runat="server" ValidationGroup='<%# GetValidationGroup() %>'
-                        OnClientChange="return true;" TextBoxWidth="95%" AutoPostBack="false" />
+                        OnClientChange="return true;" TextBoxWidth="90%" AutoPostBack="false" />
                 </td>
                 <td class="Width15Percent">
                     <asp:RequiredFieldValidator ID="reqBadgeStart" runat="server" ControlToValidate="dpBadgeStartInsert"
@@ -247,12 +272,12 @@
             </tr>
         </table>
     </td>
-    <td id="tdBadgeEnd" runat="server" class="Width7Percent">
+    <td id="tdBadgeEnd" runat="server" class="Width6Percent">
         <table class="WholeWidth">
             <tr>
                 <td class="Width85Percent">
                     <uc2:DatePicker ID="dpBadgeEndInsert" runat="server" ValidationGroup='<%# GetValidationGroup() %>'
-                        OnClientChange="return true;" TextBoxWidth="95%" AutoPostBack="false" />
+                        OnClientChange="return true;" TextBoxWidth="90%" AutoPostBack="false" />
                 </td>
                 <td class="Width15Percent">
                     <asp:RequiredFieldValidator ID="reqBadgeEnd" runat="server" ControlToValidate="dpBadgeEndInsert"
@@ -304,8 +329,7 @@
                 <td class="Width85Percent">
                     <asp:Label ID="lblConsultantsEnd" runat="server"></asp:Label>
                 </td>
-                <td class="Width15Percent">
-                </td>
+                <td class="Width15Percent"></td>
             </tr>
         </table>
     </td>
@@ -318,8 +342,7 @@
                         Text="*" ToolTip="" EnableClientScript="false" SetFocusOnError="true" Display="Dynamic"
                         ValidationGroup="<%# GetValidationGroup() %>" OnServerValidate="custExceptionNotMoreThan18moEndDate_ServerValidate"></asp:CustomValidator>
                 </td>
-                <td class="Width15Percent">
-                </td>
+                <td class="Width15Percent"></td>
             </tr>
         </table>
     </td>
@@ -329,13 +352,11 @@
                 <td class="Width85Percent">
                     <asp:CheckBox ID="chbOpsApprovedInsert" runat="server" />
                 </td>
-                <td class="Width15Percent">
-                </td>
+                <td class="Width15Percent"></td>
             </tr>
         </table>
     </td>
-    <td class="Width3Percent">
-        &nbsp;
+    <td class="Width3Percent">&nbsp;
     </td>
 </tr>
 
