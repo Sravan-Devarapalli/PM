@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ServiceDefinition name="PMWebAzureService" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition">
+<ServiceDefinition name="PMWebAzureService" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2015-04.2.6">
   <WebRole name="PracticeManagement" vmsize="Medium">
     <LocalResources>
       <LocalStorage name="NETFXInstall" sizeInMB="1024" cleanOnRoleRecycle="false" />
@@ -74,7 +74,9 @@
       <Setting name="ReportServiceClient" />
       <Setting name="TitleServiceClient" />
       <Setting name="VendorServiceClient" />
+      <Setting name="DefaultMarginGoal" />
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
     </ConfigurationSettings>
   </WebRole>
 </ServiceDefinition>
+
