@@ -58,9 +58,38 @@ AS
 	WHERE s.IsHourlyAmount = 0
 	GROUP BY s.Date, s.MilestoneId
 ),
+
+MonthlyHours
+AS
+(
+	SELECT C.MonthStartDate, C.MonthEndDate,C.MonthNumber, s.MilestoneId, SUM(HoursPerDay) AS HoursPerMonth
+	FROM dbo.v_MilestonePersonSchedule AS s
+	INNER JOIN dbo.Calendar C ON C.Date = s.Date 
+	WHERE s.IsHourlyAmount = 0
+	GROUP BY s.MilestoneId, C.MonthStartDate, C.MonthEndDate,C.MonthNumber
+),
+
 MilestoneRevenueRetrospective
 AS
 (
+	 SELECT 
+			m.MilestoneId,
+			m.ProjectId,
+			cal.Date,
+			m.IsHourlyAmount,
+			ISNULL((FMR.Amount/ NULLIF(MH.HoursPerMonth,0))* d.HoursPerDay,0) AS MilestoneDailyAmount,
+			p.Discount,
+			d.HoursPerDay
+		FROM dbo.FixedMilestoneMonthlyRevenue FMR
+		JOIN Milestone M on M.MilestoneId=FMR.MilestoneId
+		JOIN Project p on p.ProjectId=m.ProjectId
+		INNER JOIN dbo.Calendar AS cal ON cal.Date BETWEEN FMR.StartDate AND FMR.EndDate
+		JOIN MonthlyHours MH on MH.milestoneid=M.MilestoneId AND cal.Date BETWEEN MH.MonthStartDate AND MH.MonthEndDate
+		INNER JOIN CTE AS d ON d.date = cal.Date and m.MilestoneId = d.MileStoneId
+		INNER JOIN V_WorkinHoursByYear HY ON cal.date BETWEEN HY.[YearStartDate] AND HY.[YearEndDate]
+
+	UNION ALL
+
 	SELECT -- Milestones with a fixed amount
 			m.MilestoneId,
 			m.ProjectId,
@@ -78,7 +107,11 @@ AS
 							GROUP BY s.MilestoneId
 						) AS MTHours  ON MTHours.MilestoneId  = m.MilestoneId
 			INNER JOIN CTE AS d ON d.date = cal.Date and m.MilestoneId = d.MileStoneId
-		UNION ALL
+			LEFT JOIN (select distinct milestoneid from dbo.FixedMilestoneMonthlyRevenue) FMR on m.MilestoneId=FMR.MilestoneId
+		WHERE FMR.MilestoneId IS NULL
+
+	UNION ALL
+
 	SELECT -- Milestones with a hourly amount
 			mp.MilestoneId,
 			mp.ProjectId,
