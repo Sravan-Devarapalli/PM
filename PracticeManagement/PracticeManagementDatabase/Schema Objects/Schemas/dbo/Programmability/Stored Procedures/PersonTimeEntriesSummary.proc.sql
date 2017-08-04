@@ -44,7 +44,36 @@ BEGIN
 									AND PC.Date BETWEEN @StartDateLocal AND @EndDateLocal
 	  WHERE MP.PersonId = @PersonIdLocal 			
 	  GROUP BY M.ProjectId
-	)
+	),
+
+
+		ProjectResources
+		AS
+		(
+			SELECT  PBPE.ProjectId,
+					PBPE.MilestoneId,
+					PBPE.StartDate,
+					PBPE.EndDate,
+					PBPE.HoursPerDay,
+					PBPE.PersonId
+			FROM ProjectBudgetPersonEntry PBPE
+			WHERE  PBPE.PersonId = @PersonIdLocal
+		),
+
+		PersonBudgetHours
+		AS
+		(	
+			SELECT   Pro.ProjectId,
+					 SUM(CASE WHEN P.IsStrawman = 0 THEN dbo.PersonProjectedHoursPerDay(PC.DayOff,PC.CompanyDayOff,PC.TimeOffHours,PR.HoursPerDay) ELSE 0 END)  AS ForecastedBudgetHours
+			FROM	dbo.Project Pro
+				LEFT JOIN ProjectResources PR ON PR.ProjectId=Pro.ProjectId
+				LEFT JOIN Milestone M on M.MilestoneId=PR.MilestoneId
+				LEFT JOIN dbo.person AS P ON P.PersonId = PR.PersonId 
+				LEFT JOIN dbo.PersonCalendarAuto PC ON PC.PersonId = PR.PersonId 
+						AND PC.Date BETWEEN PR.StartDate AND PR.EndDate 
+						AND PC.Date BETWEEN @StartDateLocal AND @EndDateLocal 
+		  GROUP BY Pro.ProjectId
+		)
 
 	SELECT  CC.TimeEntrySectionId,
 			C.Name AS  ClientName,
@@ -69,7 +98,8 @@ BEGIN
 					 ELSE 0 
 				END),2) AS NonBillableHours,
 			ROUND(PDBR.ProjectedHours,2) AS ProjectedHours,
-			ROUND(PDBR.ProjectedHoursUntilToday,2) AS ProjectedHoursUntilToday
+			ROUND(PDBR.ProjectedHoursUntilToday,2) AS ProjectedHoursUntilToday,
+			ROUND(PBH.ForecastedBudgetHours,2) as BudgetHours
 	FROM dbo.TimeEntry AS TE 
 	INNER JOIN dbo.TimeEntryHours AS TEH  ON TEH.TimeEntryId = TE.TimeEntryId 
 	INNER JOIN dbo.ChargeCode CC ON CC.Id = TE.ChargeCodeId 
@@ -79,6 +109,7 @@ BEGIN
 	INNER JOIN dbo.ProjectStatus PS ON PS.ProjectStatusId = PRO.ProjectStatusId
 	INNER JOIN dbo.PersonStatusHistory AS PTSH ON TE.ChargeCodeDate BETWEEN PTSH.StartDate AND ISNULL(PTSH.EndDate,@FutureDate) AND PTSH.PersonId = TE.PersonId
 	LEFT JOIN PersonByProjectsBillableTypes PDBR ON PDBR.ProjectId = CC.ProjectId 
+	LEFT JOIN PersonBudgetHours PBH ON PBH.ProjectId=CC.ProjectId
 	WHERE TE.PersonId = @PersonIdLocal 
 		AND TE.ChargeCodeDate BETWEEN @StartDateLocal AND @EndDateLocal
 		AND (
@@ -98,7 +129,8 @@ BEGIN
 			PDBR.MinimumValue,
 			PDBR.MaximumValue,
 			PDBR.ProjectedHours,
-			PDBR.ProjectedHoursUntilToday
+			PDBR.ProjectedHoursUntilToday,
+			PBH.ForecastedBudgetHours
 	ORDER BY CC.TimeEntrySectionId,PRO.ProjectNumber
 END	
 
