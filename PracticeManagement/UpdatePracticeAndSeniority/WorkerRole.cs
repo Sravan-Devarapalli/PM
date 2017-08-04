@@ -1677,7 +1677,7 @@ namespace UpdatePracticeAndSeniority
 
                     if (person.IsTerminatedDueToPay)//rehire due to compensation change from contract to employee
                     {
-                        var activeAccountEmailBody = string.Format(activeAccountEmailTemplate.Body, person.FirstName, person.LastName, person.HireDate.ToString(DateFormat), person.Alias, person.Title.TitleName, person.CurrentPay.TimescaleName, person.TelephoneNumber, person.IsOffshore ? "Yes" : "No", person.Manager!=null?person.Manager.FirstName:string.Empty,person.DivisionType.ToString());
+                        var activeAccountEmailBody = string.Format(activeAccountEmailTemplate.Body, person.FirstName, person.LastName, person.HireDate.ToString(DateFormat), person.Alias, person.Title.TitleName, person.CurrentPay.TimescaleName, person.TelephoneNumber, person.IsOffshore ? "Yes" : "No", person.Manager != null ? person.Manager.FirstName : string.Empty, person.DivisionType.ToString());
                         Email(activeAccountEmailTemplate.Subject, activeAccountEmailBody, true, activeAccountEmailTemplate.EmailTemplateTo, string.Empty, string.Empty, null);
                         if (person.IsAdmin || person.Seniority.Name == Constants.SeniorityNames.AdminiSeniorityName)
                         {
@@ -2342,7 +2342,7 @@ namespace UpdatePracticeAndSeniority
                             var engagementManger = feedback.Project.EngagementManagerUserID;
                             var executiveInCharge = feedback.Project.ExecutiveInChargeUserId;
 
-                            var realFeedbackManager = personId == feedback.Project.ExecutiveInChargeId ? string.Empty : ((personId != feedback.Project.ProjectManagerId && feedback.Project.ProjectManagerId != -1) ? projectManager : ((personId != feedback.Project.EngagementManagerID && feedback.Project.EngagementManagerID != -1) ? engagementManger : executiveInCharge));
+                            var realFeedbackManager = projectManager;// personId == feedback.Project.ExecutiveInChargeId ? string.Empty : ((personId != feedback.Project.ProjectManagerId && feedback.Project.ProjectManagerId != -1) ? projectManager : ((personId != feedback.Project.EngagementManagerID && feedback.Project.EngagementManagerID != -1) ? engagementManger : executiveInCharge));
 
                             sb.Append(feedback.Project.ProjectNumberName + "\t");
                             sb.Append(realFeedbackManager + "\t"); // Should replace with Employee Numbers of project accesses of the feedback project
