@@ -4,7 +4,8 @@
 	@ShowCompleted         BIT = 0,
     @ShowActive            BIT = 0,
 	@ShowExperimental      BIT = 0,
-	@ShowProposed		   BIT = 0
+	@ShowProposed		   BIT = 0,
+	@IsMilestone           BIT = 0
 )
 AS
 BEGIN
@@ -44,7 +45,7 @@ BEGIN
             OR	(@ShowCompleted = 1 AND p.ProjectStatusId = 4)
 			OR	(@ShowProposed = 1 AND p.ProjectStatusId = 7) --proposed
 	        OR	(@ShowExperimental = 1 AND (p.ProjectStatusId = 5 OR p.ProjectStatusId = 1))
-			)
+			) AND @IsMilestone = 0
     
 	ORDER BY p.Name
 END
