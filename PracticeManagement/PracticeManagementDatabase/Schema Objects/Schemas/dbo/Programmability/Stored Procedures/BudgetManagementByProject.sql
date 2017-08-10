@@ -9,12 +9,15 @@ BEGIN
 	DECLARE @ProjectIdLocal	INT,
 			@Today	DATETIME,
 			@CurrentMonthEnd DATETIME,
-			@LastMonthEnd DATETIME
+			@LastMonthEnd DATETIME,
+			@ProjRemainingDate DATETIME
 
 	SET @ProjectIdLocal = @ProjectId
 	SET @Today=dbo.GettingPMTime(GETUTCDATE())
     SET @CurrentMonthEnd =EOMONTH ( @Today )
 	SET @LastMonthEnd=convert (date,DATEADD(MONTH, DATEDIFF(MONTH, -1, @Today)-1, -1))
+
+	SELECT @ProjRemainingDate = CASE WHEN @ActualsEndDate IS NULL THEN @Today ELSE @ActualsEndDate END
 
 			
 		SELECT CC.ProjectId,
@@ -86,14 +89,14 @@ BEGIN
 							) AS HourlyActualCostPerDay,
 					SUM(ISNULL(f.BillableHOursPerDay, 0)+ ISNULL(f.NonBillableHoursPerDay,0)) AS ActualHours,
 					SUM(ISNULL(CASE WHEN (f.Date > @Today AND f.BillableHOursPerDay IS NULL AND f.NonBillableHoursPerDay IS NULL) THEN f.PersonHoursPerDay ELSE 0 END, 0)) as RemainingProjectedHours,
-					SUM(CASE WHEN f.IsHourlyAmount = 0 AND @ActualsEndDate IS NOT NULL AND f.Date > EOMONTH(@ActualsEndDate) THEN f.PersonMilestoneDailyAmount 
-							 WHEN f.IsHourlyAmount = 1 AND (f.Date > @Today AND f.BillableHOursPerDay IS NULL AND f.NonBillableHoursPerDay IS NULL) THEN f.PersonMilestoneDailyAmount
+					SUM(CASE WHEN f.IsHourlyAmount = 0 AND f.Date > EOMONTH(@ProjRemainingDate) THEN f.PersonMilestoneDailyAmount 
+							 WHEN f.IsHourlyAmount = 1 AND (f.Date > @ProjRemainingDate AND f.BillableHOursPerDay IS NULL AND f.NonBillableHoursPerDay IS NULL) THEN f.PersonMilestoneDailyAmount
 							 ELSE 0 END) AS RemainingProjectedRevenue,
-					SUM(CASE WHEN f.IsHourlyAmount = 0 AND @ActualsEndDate IS NOT NULL AND f.Date > @ActualsEndDate THEN (CASE WHEN f.Date > EOMONTH(@ActualsEndDate) THEN (f.PersonMilestoneDailyAmount - f.PersonDiscountDailyAmount) ELSE 0 END - (
+					SUM(CASE WHEN f.IsHourlyAmount = 0 AND f.BillableHOursPerDay IS NULL AND f.NonBillableHoursPerDay IS NULL AND f.Date > @ProjRemainingDate THEN (CASE WHEN f.Date > EOMONTH(@ProjRemainingDate) THEN (f.PersonMilestoneDailyAmount - f.PersonDiscountDailyAmount) ELSE 0 END - (
 																					CASE WHEN f.SLHR >= f.PayRate + f.MLFOverheadRate THEN f.SLHR 
 																					ELSE f.PayRate + f.MLFOverheadRate END
 																				) * ISNULL(f.PersonHoursPerDay, 0)) 
-							 WHEN f.IsHourlyAmount = 1 AND (f.Date > @Today AND f.BillableHOursPerDay IS NULL AND f.NonBillableHoursPerDay IS NULL) THEN (f.PersonMilestoneDailyAmount - f.PersonDiscountDailyAmount - (
+							 WHEN f.IsHourlyAmount = 1 AND (f.Date > @ProjRemainingDate AND f.BillableHOursPerDay IS NULL AND f.NonBillableHoursPerDay IS NULL) THEN (f.PersonMilestoneDailyAmount - f.PersonDiscountDailyAmount - (
 																					CASE WHEN f.SLHR >= f.PayRate + f.MLFOverheadRate THEN f.SLHR 
 																					ELSE f.PayRate + f.MLFOverheadRate END
 																				) * ISNULL(f.PersonHoursPerDay, 0)) 
@@ -105,14 +108,14 @@ BEGIN
 	  
 	   SELECT	CT.ProjectId,
 				CT.PersonId,
-				SUM(ISNULL(CT.HourlyActualRevenuePerDay, 0) + CASE WHEN @ActualsEndDate IS NULL OR CT.Date<= EOMONTH(@ActualsEndDate) THEN  ISNULL(CT.FixedActualRevenuePerDay, 0) ELSE 0 END) AS ActualRevenue,
-				SUM(ISNULL(CT.HourlyActualRevenuePerDay, 0)- ISNULL(CT.HourlyActualCostPerDay,0) + CASE WHEN @ActualsEndDate IS NULL OR CT.Date<= EOMONTH(@ActualsEndDate) THEN  ISNULL(CT.FixedActualRevenuePerDay, 0) ELSE 0 END - ISNULL(CT.FixedActualCostPerDay,0)) as ActualMargin,
+				SUM(ISNULL(CT.HourlyActualRevenuePerDay, 0) + CASE WHEN CT.Date<= EOMONTH(@ProjRemainingDate) THEN  ISNULL(CT.FixedActualRevenuePerDay, 0) ELSE 0 END) AS ActualRevenue,
+				SUM(ISNULL(CT.HourlyActualRevenuePerDay, 0)- ISNULL(CT.HourlyActualCostPerDay,0) + CASE WHEN CT.Date<= EOMONTH(@ProjRemainingDate) THEN  ISNULL(CT.FixedActualRevenuePerDay, 0) ELSE 0 END - ISNULL(CT.FixedActualCostPerDay,0)) as ActualMargin,
 				SUM(CT.ActualHours) as ActualHours,
 				SUM(ISNULL(CT.RemainingProjectedRevenue,0)) as RemainingProjectedRevenue,
 				SUM(ISNULL(CT.RemainingProjectedMargin,0)) as RemainingProjectedMargin,
 				SUM(CT.RemainingProjectedHours) as RemainingProjectedHours,
-				SUM(ISNULL(CT.RemainingProjectedRevenue,0)+ ISNULL(CT.HourlyActualRevenuePerDay, 0) + CASE WHEN  @ActualsEndDate IS NULL OR CT.Date<= EOMONTH(@ActualsEndDate) THEN  ISNULL(CT.FixedActualRevenuePerDay, 0) ELSE 0 END) as EACRevenue,
-				SUM(ISNULL(CT.RemainingProjectedMargin,0) + ISNULL(CT.HourlyActualRevenuePerDay, 0)- ISNULL(CT.HourlyActualCostPerDay,0) + CASE WHEN  @ActualsEndDate IS NULL OR CT.Date<=EOMONTH(@ActualsEndDate) THEN  ISNULL(CT.FixedActualRevenuePerDay, 0) ELSE 0 END - ISNULL(CT.FixedActualCostPerDay,0)) as EACMargin,
+				SUM(ISNULL(CT.RemainingProjectedRevenue,0)+ ISNULL(CT.HourlyActualRevenuePerDay, 0) + CASE WHEN  CT.Date<= EOMONTH(@ProjRemainingDate) THEN  ISNULL(CT.FixedActualRevenuePerDay, 0) ELSE 0 END) as EACRevenue,
+				SUM(ISNULL(CT.RemainingProjectedMargin,0) + ISNULL(CT.HourlyActualRevenuePerDay, 0)- ISNULL(CT.HourlyActualCostPerDay,0) + CASE WHEN  CT.Date<=EOMONTH(@ProjRemainingDate) THEN  ISNULL(CT.FixedActualRevenuePerDay, 0) ELSE 0 END - ISNULL(CT.FixedActualCostPerDay,0)) as EACMargin,
 				SUM(CT.ActualHours + CT.RemainingProjectedHours) as EACHours
 	    INTO #ActualAndProjected
 		FROM #ActualsValuesDaily CT
@@ -197,7 +200,7 @@ BEGIN
 	SELECT PDE.ProjectId,
 		   SUM( PDE.ActualExpense) as ActualExpense
 	FROM v_ProjectDailyExpenses PDE
-	WHERE PDE.ProjectId =@ProjectIdLocal AND (@ActualsEndDate IS NULL OR PDE.Date <= @ActualsEndDate)
+	WHERE PDE.ProjectId =@ProjectIdLocal AND (PDE.Date <= @ProjRemainingDate)
 	GROUP BY PDE.ProjectId
 	),
 
@@ -207,7 +210,7 @@ BEGIN
 	SELECT PDE.ProjectId,
 		   SUM(PDE.EstimatedAmount) as EstimatedAmount
 	FROM v_ProjectDailyExpenses PDE
-	WHERE PDE.ProjectId =@ProjectIdLocal AND @ActualsEndDate IS NOT NULL AND PDE.Date > @ActualsEndDate
+	WHERE PDE.ProjectId =@ProjectIdLocal AND PDE.Date > @ProjRemainingDate
 	GROUP BY PDE.ProjectId
 	)
 
