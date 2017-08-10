@@ -199,7 +199,7 @@
                                                             ValidationGroup="Project" Text="*" EnableClientScript="false" SetFocusOnError="true"
                                                             Display="Dynamic" OnServerValidate="cvActivestatusWithoutFinance_ServerValidate"></asp:CustomValidator>
                                                         <asp:CustomValidator ID="cvMarginException" runat="server" ControlToValidate="ddlProjectStatus"
-                                                            ErrorMessage="Project can't be moved to active with a Margin Exception." ToolTip="Project can't be moved to active with a Margin Exception."
+                                                            ErrorMessage="Project cannot be moved to active without a Margin Exception." ToolTip="Project cannot be moved to active without a Margin Exception."
                                                             ValidationGroup="Project" Text="*" EnableClientScript="false" SetFocusOnError="true"
                                                             Display="Dynamic" OnServerValidate="cvMarginException_ServerValidate"></asp:CustomValidator>
                                                     </td>
