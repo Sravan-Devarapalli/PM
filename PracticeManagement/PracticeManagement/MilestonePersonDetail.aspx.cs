@@ -538,8 +538,10 @@ namespace PraticeManagement
             {
                 var btnEdit = e.Row.FindControl("btnEdit") as LinkButton;
                 var btnDelete = e.Row.FindControl("btnDelete") as LinkButton;
-
-                btnEdit.Visible = btnDelete.Visible = EnableEdit;
+                if (e.Row.RowState != DataControlRowState.Edit)
+                {
+                    btnEdit.Visible = btnDelete.Visible = EnableEdit;
+                }
             }
         }
 
