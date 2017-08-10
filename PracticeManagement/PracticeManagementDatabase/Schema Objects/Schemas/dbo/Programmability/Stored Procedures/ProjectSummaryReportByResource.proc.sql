@@ -153,7 +153,7 @@ AS
 							WHERE PBPE.ProjectId =@ProjectId AND ( ( @StartDateLocal IS NULL
 										AND @EndDateLocal IS NULL
 										)
-										OR ( @StartDateLocal BETWEEN PBPE.StartDate AND PBPE.EndDate)
+										OR (  PBPE.StartDate between  @StartDateLocal AND @EndDateLocal)
 									)
 						),
 
