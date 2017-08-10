@@ -54,7 +54,7 @@ namespace DataTransferObjects
         }
 
         [DataMember]
-        public int MarginGoal
+        public decimal MarginGoal
         {
             get;
             set;
