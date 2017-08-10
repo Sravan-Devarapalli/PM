@@ -28,7 +28,8 @@
             $(".tdActual").css("display", "none");
         }
         else {
-            if ($("[id$='ddlCalculationsType']").val() == "2") {
+            var selectedCalculationtype = $("[id$='ddlCalculationsType']").val();
+            if (selectedCalculationtype == "2" || selectedCalculationtype == "4") {
                 $(".tdActual").css("display", "");
             }
             else {
@@ -634,9 +635,9 @@
                                         </td>
                                         <td rowspan="2" class="tdActual">
                                             <asp:DropDownList ID="ddlActualPeriod" runat="server" AutoPostBack="false" Width="150px">
-                                                <asp:ListItem Selected="True" Value="1">Today</asp:ListItem>
+                                                <asp:ListItem Value="1">Today</asp:ListItem>
                                                 <asp:ListItem Value="15">Last Pay Period</asp:ListItem>
-                                                <asp:ListItem Value="30">Prior Month End</asp:ListItem>
+                                                <asp:ListItem Value="30" Selected="True">Prior Month End</asp:ListItem>
                                                 <asp:ListItem Value="0">All</asp:ListItem>
                                             </asp:DropDownList>
                                         </td>
