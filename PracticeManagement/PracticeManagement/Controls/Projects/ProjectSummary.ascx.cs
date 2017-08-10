@@ -310,7 +310,7 @@ namespace PraticeManagement.Controls.Projects
                 {
                     return CompanyPerformanceState.ProjectList.ToList().OrderBy(p => p.ProjectNumber).ToArray();
                 }
-                catch
+                catch (Exception e)
                 {
                     return null;
                 }
@@ -429,13 +429,12 @@ namespace PraticeManagement.Controls.Projects
         {
             get
             {
-                if (CalculationsType == 2)
+                var now = Utils.Generic.GetNowWithTimeZone();
+                if (CalculationsType == 2 || CalculationsType == 4)
                 {
-                    var now = Utils.Generic.GetNowWithTimeZone();
-
                     if (HostingPageIsBudgetManagementReport != null)
                     {
-                        return now;
+                        return Utils.Calendar.MonthEndDate(now.AddMonths(-1));
                     }
                     else
                     {
@@ -460,7 +459,7 @@ namespace PraticeManagement.Controls.Projects
                 }
                 else
                 {
-                    return null;
+                    return Utils.Calendar.MonthEndDate(now.AddMonths(-1));
                 }
             }
         }
@@ -715,32 +714,6 @@ namespace PraticeManagement.Controls.Projects
 
                 RowStyles datarowStyle = new RowStyles(dataCellStyleList.ToArray());
 
-                //var dataNumberDateRevenueCellStyle = new CellStyles();
-                //dataNumberDateRevenueCellStyle.DataFormat = "$#,##0_);($#,##0)";
-                //dataNumberDateRevenueCellStyle.CellFormula = "SUMPRODUCT((MOD(ROW($H$4:$H$30),3)=0)*($B$1:$B$15))";
-
-                //CellStyles[] dataTotalCellStylearray = { dataCellStyle, dataCellStyle, dataCellStyle, dataCellStyle, dataStartDateCellStyle, dataStartDateCellStyle, dataCellStyle };
-                //List<CellStyles> dataTotalCellStylelist = dataTotalCellStylearray.ToList();
-
-                //if (renderMonthColumns)
-                //{
-                //    var monthsInPeriod = GetPeriodLength();
-                //    for (int i = 0; i < monthsInPeriod; i++)
-                //    {
-                //        dataTotalCellStylelist.Add(dataNumberDateRevenueCellStyle);
-                //    }
-                //}
-                //dataTotalCellStylelist.Add(dataNumberDateRevenueCellStyle);
-                //if (CalculationsType != 3)
-                //{
-                //    dataTotalCellStylelist.Add(dataNumberDateRevenueCellStyle);
-                //    dataTotalCellStylelist.Add(dataNumberDateRevenueCellStyle);
-                //}
-
-                //dataTotalCellStylelist.Add(dataCellStyle);
-
-                //RowStyles datarowTotalStyle = new RowStyles(dataTotalCellStylelist.ToArray());
-
                 var rowStylelist = new List<RowStyles>();
                 rowStylelist.Add(headerrowStyle);
 
@@ -748,8 +721,6 @@ namespace PraticeManagement.Controls.Projects
                 {
                     rowStylelist.Add(datarowStyle);
                 }
-
-                //rowStylelist.Add(datarowTotalStyle);
 
                 RowStyles[] rowStylearray = rowStylelist.ToArray();
 
@@ -850,7 +821,7 @@ namespace PraticeManagement.Controls.Projects
                 }
                 else
                 {
-                    if (pager.PageSize != pager.TotalRowCount)
+                    if (pager.PageSize != pager.TotalRowCount && pager.TotalRowCount != 0)
                     {
                         Response.Redirect(Request.Url.AbsoluteUri);
                     }
@@ -887,7 +858,7 @@ namespace PraticeManagement.Controls.Projects
                 {
                     pager.SetPageProperties(0, Convert.ToInt32(ddlView.SelectedValue), false);
                 }
-                else
+                else if (pager.TotalRowCount != 0)
                 {
                     pager.SetPageProperties(0, pager.TotalRowCount, false);
                 }
@@ -1333,7 +1304,6 @@ namespace PraticeManagement.Controls.Projects
 
         private static void FillStatusCell(ListViewItem e, Project project)
         {
-            //var row = e.FindControl("boundingRow") as HtmlTableRow;
             var lblStatus = e.FindControl("lblStatus") as Label;
             lblStatus.Text = project.Status.Name;
         }
@@ -1430,9 +1400,6 @@ namespace PraticeManagement.Controls.Projects
             var lblPractice = e.FindControl("lblPractice") as Label;
 
             lblPractice.Text = project.Practice != null ? project.Practice.Name : string.Empty;
-
-
-            //row.Cells[ClientNameColumnIndex].Controls.Add(btnClient);
         }
 
         private static void FillChannelCell(ListViewItem e, Project project)
@@ -1442,9 +1409,6 @@ namespace PraticeManagement.Controls.Projects
             var lblChannel = e.FindControl("lblChannel") as Label;
 
             lblChannel.Text = project.Channel != null ? project.Channel.Name : string.Empty;
-
-
-            //row.Cells[ClientNameColumnIndex].Controls.Add(btnClient);
         }
 
         private static void FillSubChannelCell(ListViewItem e, Project project)
@@ -1454,9 +1418,6 @@ namespace PraticeManagement.Controls.Projects
             var lblSubChannel = e.FindControl("lblSubChannel") as Label;
 
             lblSubChannel.Text = project.SubChannel != null ? project.SubChannel : string.Empty;
-
-
-            //row.Cells[ClientNameColumnIndex].Controls.Add(btnClient);
         }
 
         private static void FillRevenueCell(ListViewItem e, Project project)
@@ -1466,9 +1427,6 @@ namespace PraticeManagement.Controls.Projects
             var lblRevenue = e.FindControl("lblRevenue") as Label;
 
             lblRevenue.Text = project.RevenueType != null ? project.RevenueType.Name : string.Empty;
-
-
-            //row.Cells[ClientNameColumnIndex].Controls.Add(btnClient);
         }
 
         private static void FillOfferingCell(ListViewItem e, Project project)
@@ -1478,9 +1436,6 @@ namespace PraticeManagement.Controls.Projects
             var lblOffering = e.FindControl("lblOffering") as Label;
 
             lblOffering.Text = project.Offering != null ? project.Offering.Name : string.Empty;
-
-
-            //row.Cells[ClientNameColumnIndex].Controls.Add(btnClient);
         }
 
 
@@ -3382,7 +3337,14 @@ namespace PraticeManagement.Controls.Projects
             if (pager != null)
             {
                 pager.Visible = (pager.PageSize < pager.TotalRowCount);
-                lblPageCount.Text = string.Format(PageViewCountFormat, (pager.StartRowIndex + 1), (pager.StartRowIndex + GetCurrentPageCount()), GetTotalCount());
+                if (pager.TotalRowCount != 0)
+                {
+                    lblPageCount.Text = string.Format(PageViewCountFormat, (pager.StartRowIndex + 1), (pager.StartRowIndex + GetCurrentPageCount()), GetTotalCount());
+                }
+                else
+                {
+                    lblPageCount.Text = string.Format(PageViewCountFormat, 0, 0, 0);
+                }
             }
             else
             {
