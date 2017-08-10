@@ -667,6 +667,23 @@ namespace PraticeManagement.Reports
                         divEmpty.Visible = true;
                         btnExport.Enabled = false;
                     }
+                    var Weeklykeys = GetWeeksInPeriod();
+                    numberOfWeeks = Weeklykeys.Count;
+                    int noOfColumns = 3;
+                    for (int i = 0; i < numberOfWeeks; i++)
+                    {
+                        noOfColumns += 7;
+                    }
+                    if (noOfColumns < 256)
+                    {
+                        btnLimitedExport.Visible = false;
+                        btnExport.Visible = true;
+                    }
+                    else
+                    {
+                        btnLimitedExport.Visible = true;
+                        btnExport.Visible = false;
+                    }
                 }
                 else
                 {
@@ -677,24 +694,7 @@ namespace PraticeManagement.Reports
                     divProjectInfo.Visible = false;
                 }
 
-                var Weeklykeys = GetWeeksInPeriod();
-                numberOfWeeks = Weeklykeys.Count;
-                int noOfColumns = 3;
-                for (int i = 0; i < numberOfWeeks; i++)
-                {
-                    noOfColumns += 7;
-                }
-                if (noOfColumns < 256)
-                {
-                    btnLimitedExport.Visible = false;
-                    btnExport.Visible = true;
-                }
-                else
-                {
-                    btnLimitedExport.Visible = true;
-                    btnExport.Visible = false;
-                }
-                updConsReport.Update();
+                //updConsReport.Update();
                 ClearFilters();
             }
             else
@@ -703,8 +703,9 @@ namespace PraticeManagement.Reports
                 divEmpty.Visible = false;
                 btnExport.Enabled = false;
                 divProjectInfo.Visible = false;
-                updConsReport.Update();
+                //updConsReport.Update();
             }
+            updConsReport.Update();
         }
 
         private bool ValidateProject()
@@ -799,15 +800,15 @@ namespace PraticeManagement.Reports
                     lblMarginGoal.Text = "Goal: " + string.Format(Constants.Formatting.PercentageFormat, ReportData.MarginGoal);
 
                     var actualBudgetPer = (ReportData.BudgetAmount != null && ReportData.BudgetAmount != 0M) ? (decimal)(actualAmount / ReportData.BudgetAmount) : 0;
-                    pgrBudget.Attributes.CssStyle.Add("width", actualBudgetPer.ToString("#0.##%"));
+                    pgrBudget.Attributes.CssStyle.Add("width", actualBudgetPer > 100 ? 100.ToString("#0.##%") : actualBudgetPer.ToString("#0.##%"));
                     lblBudgetPer.Text = actualBudgetPer.ToString("##0%");
 
                     var EACAmountPer = EACRevenue != 0M ? actualAmount / EACRevenue : 0;
-                    pgrEACAmount.Attributes.CssStyle.Add("width", EACAmountPer.ToString("#0.##%"));
+                    pgrEACAmount.Attributes.CssStyle.Add("width", EACAmountPer > 100 ? 100.ToString("#0.##%") : EACAmountPer.ToString("#0.##%"));
                     lblEACAmountPer.Text = EACAmountPer.ToString("##0%");
 
                     var EACHrsPer = EACHours != 0M ? actualHours / EACHours : 0;
-                    pgrEACHrs.Attributes.CssStyle.Add("width", EACHrsPer.ToString("#0.##%"));
+                    pgrEACHrs.Attributes.CssStyle.Add("width", EACHrsPer > 100 ? 100.ToString("#0.##%") : EACHrsPer.ToString("#0.##%"));
                     lblEACHrsPer.Text = EACHrsPer.ToString("##0%");
 
                     pgrHrs.Attributes.CssStyle.Add("width", ((decimal)ReportData.CompletedDays / ReportData.TotalProjectDays).ToString("#.##%"));
