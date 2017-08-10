@@ -2721,7 +2721,7 @@ namespace PraticeManagement
         protected void cvMarginException_ServerValidate(object source, ServerValidateEventArgs e)
         {
             e.IsValid = true;
-            if (!string.IsNullOrEmpty(ddlProjectStatus.SelectedValue) && (int)ProjectStatusType.Active == Convert.ToInt32(ddlProjectStatus.SelectedValue))
+            if (!string.IsNullOrEmpty(ddlProjectStatus.SelectedValue) && (int)ProjectStatusType.Active == Convert.ToInt32(ddlProjectStatus.SelectedValue) && Project.Status.Id != (int)ProjectStatusType.Active)
             {
                 e.IsValid = !(hdnIsMarginException.Value == true.ToString());
             }
