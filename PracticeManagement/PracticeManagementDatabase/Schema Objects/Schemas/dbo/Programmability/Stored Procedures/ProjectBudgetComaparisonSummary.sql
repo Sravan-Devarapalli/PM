@@ -15,38 +15,21 @@ BEGIN
 				@Today DATE,
 				@FutureDate DATETIME,
 				@CurrentMonthEnd DATETIME,
-				@LastMonthEnd DATETIME
+				@LastMonthEnd DATETIME,
+				@ProjRemainingDate DATETIME
 
 		SELECT @ProjectNumberLocal = @ProjectNumber,@FutureDate = dbo.GetFutureDate()
 		SELECT @Today = CONVERT(DATE, dbo.GettingPMTime(GETUTCDATE()))
 		SELECT @CurrentMonthEnd =EOMONTH ( @Today )
 
 		SELECT @LastMonthEnd=convert (date,DATEADD(MONTH, DATEDIFF(MONTH, -1, @Today)-1, -1))
+		SELECT @ProjRemainingDate = CASE WHEN @ActualsEndDate IS NULL THEN @Today ELSE @ActualsEndDate END
 	
 		SELECT  @ProjectId = P.ProjectId
 		FROM    dbo.Project AS P
 		WHERE   P.ProjectNumber = @ProjectNumberLocal
 				AND @ProjectNumberLocal != 'P999918' and P.IsInternal =0--Business Development Project 
 
-		IF OBJECT_ID('#ActualAndProjectedValuesDaily') IS NOT NULL
-        DROP TABLE #ActualAndProjectedValuesDaily
-
-		IF OBJECT_ID('#ActualAndProjectedMonthly') IS NOT NULL
-        DROP TABLE #ActualAndProjectedMonthly
-
-		IF OBJECT_ID('#PersonBillRatePeriods') IS NOT NULL
-        DROP TABLE #PersonBillRatePeriods
-
-		IF OBJECT_ID('#BudgetValuesMonthly') IS NOT NULL
-        DROP TABLE #BudgetValuesMonthly
-
-		IF OBJECT_ID('#BudgetBillRatePeriod') IS NOT NULL
-        DROP TABLE #BudgetBillRatePeriod
-
-		IF OBJECT_ID('#BudgetValuesDaily') IS NOT NULL
-        DROP TABLE #BudgetValuesDaily
-
-		
 
 		IF ( @ProjectId IS NOT NULL ) 
 			BEGIN
@@ -311,10 +294,10 @@ BEGIN
 					ISNULL(SUM(f.PersonHoursPerDay), 0) AS ProjectedHoursPerDay,
 					SUM(f.BillableHOursPerDay + f.NonBillableHoursPerDay) as ActualHoursPerDay,
 					ISNULL(SUM(CASE WHEN (f.Date > @Today AND f.BillableHOursPerDay IS NULL AND f.NonBillableHoursPerDay IS NULL) THEN f.PersonHoursPerDay ELSE 0 END),0) as RemainingProjectedHoursPerDay,
-					SUM(CASE WHEN f.IsHourlyAmount = 0 AND @ActualsEndDate IS NOT NULL AND f.Date > EOMONTH(@ActualsEndDate)THEN f.PersonMilestoneDailyAmount 
-							 WHEN f.IsHourlyAmount = 1 AND (f.Date > @Today AND f.BillableHOursPerDay IS NULL AND f.NonBillableHoursPerDay IS NULL) THEN f.PersonMilestoneDailyAmount
+					SUM(CASE WHEN f.IsHourlyAmount = 0 AND f.Date > EOMONTH(@ProjRemainingDate)THEN f.PersonMilestoneDailyAmount 
+							 WHEN f.IsHourlyAmount = 1 AND (f.Date > @ProjRemainingDate AND f.BillableHOursPerDay IS NULL AND f.NonBillableHoursPerDay IS NULL) THEN f.PersonMilestoneDailyAmount
 							 ELSE 0 END )as  RemRevenue,
-					SUM(CASE WHEN f.IsHourlyAmount = 0 AND @ActualsEndDate IS NOT NULL AND f.Date > @ActualsEndDate THEN (CASE WHEN f.Date > EOMONTH(@ActualsEndDate) THEN (f.PersonMilestoneDailyAmount - f.PersonDiscountDailyAmount) ELSE 0 END - (
+					SUM(CASE WHEN f.IsHourlyAmount = 0 AND f.Date > @ProjRemainingDate THEN (CASE WHEN f.Date > EOMONTH(@ProjRemainingDate) THEN (f.PersonMilestoneDailyAmount - f.PersonDiscountDailyAmount) ELSE 0 END - (
 																					CASE WHEN f.SLHR >= f.PayRate + f.MLFOverheadRate THEN f.SLHR 
 																					ELSE f.PayRate + f.MLFOverheadRate END
 																				) * ISNULL(f.PersonHoursPerDay, 0)) 
@@ -344,10 +327,10 @@ BEGIN
 				   CT.PersonId,
 				   SUM(ISNULL(CT.ProjectedRevenueperDay,0)) as ProjectedRevenue,
 				   SUM(ISNULL(CT.ProjectedGrossMargin,0)) as ProjectedMargin, 
-				   SUM(ISNULL(CT.HourlyActualRevenuePerDay, 0) + CASE WHEN @ActualsEndDate IS NULL OR CT.Date<= EOMONTH(@ActualsEndDate) THEN ISNULL(CT.FixedActualRevenuePerDay, 0) ELSE 0 END) AS ActualRevenue,
-				   SUM(ISNULL(CT.HourlyActualRevenuePerDay, 0)- ISNULL(CT.HourlyActualCostPerDay,0) +  CASE WHEN @ActualsEndDate IS NULL OR CT.Date<= EOMONTH(@ActualsEndDate) THEN ISNULL(CT.FixedActualRevenuePerDay, 0) ELSE 0 END  - ISNULL(CT.FixedActualCostPerDay,0) ) as ActualMargin,
-			       SUM(ISNULL(CT.RemRevenue, 0)+ISNULL(CT.HourlyActualRevenuePerDay, 0) + CASE WHEN CT.Date<=EOMONTH(@ActualsEndDate) THEN ISNULL(CT.FixedActualRevenuePerDay, 0) ELSE 0 END) AS ETCRevenue,
-			       SUM(ISNULL(CT.RemGrossMargin,0) + ISNULL(CT.HourlyActualRevenuePerDay, 0)- ISNULL(CT.HourlyActualCostPerDay,0) +  CASE WHEN CT.Date<=EOMONTH(@ActualsEndDate) THEN ISNULL(CT.FixedActualRevenuePerDay, 0) ELSE 0 END - ISNULL(CT.FixedActualCostPerDay,0)) as ETCMargin
+				   SUM(ISNULL(CT.HourlyActualRevenuePerDay, 0) + CASE WHEN CT.Date<= EOMONTH(@ProjRemainingDate) THEN ISNULL(CT.FixedActualRevenuePerDay, 0) ELSE 0 END) AS ActualRevenue,
+				   SUM(ISNULL(CT.HourlyActualRevenuePerDay, 0)- ISNULL(CT.HourlyActualCostPerDay,0) +  CASE WHEN  CT.Date<= EOMONTH(@ProjRemainingDate) THEN ISNULL(CT.FixedActualRevenuePerDay, 0) ELSE 0 END  - ISNULL(CT.FixedActualCostPerDay,0) ) as ActualMargin,
+			       SUM(ISNULL(CT.RemRevenue, 0)+ISNULL(CT.HourlyActualRevenuePerDay, 0) + CASE WHEN CT.Date<=EOMONTH(@ProjRemainingDate) THEN ISNULL(CT.FixedActualRevenuePerDay, 0) ELSE 0 END) AS ETCRevenue,
+			       SUM(ISNULL(CT.RemGrossMargin,0) + ISNULL(CT.HourlyActualRevenuePerDay, 0)- ISNULL(CT.HourlyActualCostPerDay,0) +  CASE WHEN CT.Date<=EOMONTH(@ProjRemainingDate) THEN ISNULL(CT.FixedActualRevenuePerDay, 0) ELSE 0 END - ISNULL(CT.FixedActualCostPerDay,0)) as ETCMargin
 		   INTO #ActualAndProjectedRevenue
 		   FROM #ActualAndProjectedValuesDaily CT
 		   GROUP BY CT.ProjectId, CT.PersonId
@@ -434,10 +417,6 @@ BEGIN
 			FROM #BudgetValuesDaily B
 			GROUP BY B.ProjectId, B.PersonId
 
-
-			
-
-		
 			SELECT B.PersonId,
 				   MIN(B.Date) as StartDate,
 				   B.BillRate,
@@ -447,9 +426,7 @@ BEGIN
 			WHERE B.BillRate IS NOT NULL AND B.BillRate!=0
 			GROUP BY B.PersonId, B.BillRate, B.PersonCost
 
-
 			-- select actuals and projected Resource Data
-		
 		    select A.PersonId,
 				   P.FirstName,
 				   P.LastName,
@@ -463,7 +440,6 @@ BEGIN
 			JOIN dbo.Person P on A.PersonId = P.PersonId
 			LEFT JOIN dbo.Title AS T ON p.TitleId = T.TitleId 
 			ORDER BY P.LastName, A.FinancialDate
-
 
 			--select actuals and projected Resource Bill rate Data
 			SELECT * FROM #PersonBillRatePeriods
@@ -506,24 +482,13 @@ BEGIN
 			FROM #BudgetRevenue B
 
 		DROP TABLE #BudgetRestrospective
-
-	    IF OBJECT_ID('#ActualAndProjectedValuesDaily') IS NOT NULL
         DROP TABLE #ActualAndProjectedValuesDaily
-
-		IF OBJECT_ID('#ActualAndProjectedMonthly') IS NOT NULL
         DROP TABLE #ActualAndProjectedMonthly
-
-		IF OBJECT_ID('#PersonBillRatePeriods') IS NOT NULL
         DROP TABLE #PersonBillRatePeriods
-
-		IF OBJECT_ID('#BudgetValuesMonthly') IS NOT NULL
         DROP TABLE #BudgetValuesMonthly
-
-		IF OBJECT_ID('#BudgetBillRatePeriod') IS NOT NULL
         DROP TABLE #BudgetBillRatePeriod
-
-		IF OBJECT_ID('#BudgetValuesDaily') IS NOT NULL
         DROP TABLE #BudgetValuesDaily
+		DROP TABLE #BudgetRevenue
 		
 		
 			END
