@@ -1003,7 +1003,7 @@ namespace DataAccess
                     GrossMargin = reader.IsDBNull(grossMarginIndex) ? 0M : reader.GetDecimal(grossMarginIndex),
                     Threshold = new ClientMarginException
                     {
-                        MarginGoal = reader.GetInt32(marginGoalIndex),
+                        MarginGoal = reader.GetDecimal(marginGoalIndex),
                         Revenue = reader.IsDBNull(ExceptionRevenueIndex) ? 0M : reader.GetDecimal(ExceptionRevenueIndex),
                         MarginThreshold = reader.IsDBNull(marginThresholdIndex) ? 0 : reader.GetInt32(marginThresholdIndex)
                     }
