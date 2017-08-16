@@ -476,16 +476,24 @@ namespace PraticeManagement
         [WebMethod()]
         public static List<string> GetOpenTasks()
         {
+
             var result = new List<string>();
-            var tasks = DataHelper.GetOpenTasks(Membership.GetUser().Email);
-            if (tasks == null || tasks.Count == 0)
+            try
             {
-                return null;
+                var tasks = DataHelper.GetOpenTasks(Membership.GetUser().Email);
+                if (tasks == null || tasks.Count == 0)
+                {
+                    return null;
+                }
+                foreach (var task in tasks.Where(_ => _.Task != string.Empty))
+                {
+                    result.Add(task.Project.Id + "|" + task.Project.ProjectNumber + "-" + task.Task);
+                };
             }
-            foreach (var task in tasks.Where(_ => _.Task != string.Empty))
+            catch (Exception e)
             {
-                result.Add(task.Project.Id + "|" + task.Project.ProjectNumber + "-" + task.Task);
-            };
+            }
+
             return result;
         }
     }
