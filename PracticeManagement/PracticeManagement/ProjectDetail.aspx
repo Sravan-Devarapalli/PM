@@ -69,6 +69,17 @@
                 var btnDeleteWorkTypeId = "<%= btnDeleteWorkType.ClientID%>";
                 var hdnWorkTypeIdId = "<%= hdnWorkTypeId.ClientID%>";
                 var imgNavigateToProjectId = "<%= imgNavigateToProject.ClientID %>";
+
+                function SetBudgetManagementActualDropDown() {
+                    var selectedView = $("[id$='ddlView']").val();
+                    if (selectedView == '5' || selectedView == '1') {
+                        $(".tdBudgetManagementActualPicker").css("display", "none");
+                    }
+                    else {
+                        $(".tdBudgetManagementActualPicker").css("display", "");
+                    }
+                }
+
             </script>
             <script src="Scripts/ProjectDetail.js" type="text/javascript"></script>
             <asp:HiddenField ID="hdnProjectNumber" runat="server" />
