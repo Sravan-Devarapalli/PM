@@ -301,7 +301,7 @@ BEGIN
 																					CASE WHEN f.SLHR >= f.PayRate + f.MLFOverheadRate THEN f.SLHR 
 																					ELSE f.PayRate + f.MLFOverheadRate END
 																				) * ISNULL(f.PersonHoursPerDay, 0)) 
-				  WHEN f.IsHourlyAmount = 1 AND (f.Date > @Today AND f.BillableHOursPerDay IS NULL AND f.NonBillableHoursPerDay IS NULL) THEN f.PersonMilestoneDailyAmount - f.PersonDiscountDailyAmount -
+				  WHEN f.IsHourlyAmount = 1 AND (f.Date > @ProjRemainingDate AND f.BillableHOursPerDay IS NULL AND f.NonBillableHoursPerDay IS NULL) THEN f.PersonMilestoneDailyAmount - f.PersonDiscountDailyAmount -
 						(CASE WHEN f.SLHR  >= f.PayRate + f.MLFOverheadRate 
 							  THEN f.SLHR ELSE f.PayRate + f.MLFOverheadRate END) 
 					    *ISNULL(f.PersonHoursPerDay, 0)
