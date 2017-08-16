@@ -65,7 +65,8 @@ BEGIN
 			   NULL as GrossMargin,
 			   M.TierOneStatus,
 			   M.TierTwoStatus,
-			   50 as MarginGoal,
+			   CONVERT(DECIMAL(5,2), CASE WHEN P.ExceptionMargin IS NOT NULL THEN P.ExceptionMargin 
+						ELSE 50 END )AS MarginGoal,
 			   NULL AS MarginThreshold,
 			   NULL as ExceptionRevenue
 		FROM PROJECT p
@@ -99,9 +100,9 @@ BEGIN
 				   F.GrossMargin,
 				   0 as TierOneStatus,
 				   0 as TierTwoStatus,
-				   CASE WHEN P.ExceptionMargin IS NOT NULL THEN P.ExceptionMargin 
+				   CONVERT(DECIMAL(5,2), CASE WHEN P.ExceptionMargin IS NOT NULL THEN P.ExceptionMargin 
 						WHEN C.MarginGoal IS NOT NULL THEN C.MarginGoal
-						ELSE 50 END AS MarginGoal,
+						ELSE 50 END )AS MarginGoal,
 				   ME.MarginGoal AS MarginThreshold,
 				   ME.Revenue as ExceptionRevenue
 			FROM Project P
@@ -119,8 +120,8 @@ BEGIN
 				   NULL as GrossMargin,
 				   M.TierOneStatus,
 				   M.TierTwoStatus,
-				   CASE WHEN P.ExceptionMargin IS NOT NULL THEN P.ExceptionMargin 
-						ELSE 50 END AS MarginGoal,
+				   CONVERT(DECIMAL(5,2), CASE WHEN P.ExceptionMargin IS NOT NULL THEN P.ExceptionMargin 
+						ELSE 50 END )AS MarginGoal,
 				   NULL AS MarginThreshold,
 				   NULL as ExceptionRevenue
 			FROM PROJECT p
