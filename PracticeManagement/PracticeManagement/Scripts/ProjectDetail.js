@@ -45,6 +45,7 @@ $(document).ready(function () {
         widgets: ['zebra', 'staticRow']
     });
     $('#tblBudgetManagementResource th:first').click()
+    SetBudgetManagementActualDropDown();
 
 });
 
@@ -73,6 +74,7 @@ function pageLoad() {
         $('#divBudgetManagement').attr('style', 'width: 50%');
     }
     EnableOrDisablePreProject();
+    SetBudgetManagementActualDropDown();
     document.onkeypress = enterPressed;
     $("#" + fuAttachmentsUploadId).fileUpload({
         'uploader': 'Scripts/uploaderRemovedFolder1.swf',
