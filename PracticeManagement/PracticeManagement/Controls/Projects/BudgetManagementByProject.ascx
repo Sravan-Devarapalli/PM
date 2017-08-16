@@ -13,7 +13,7 @@
             </th>
             <td class="Padding5 Width10Px"></td>
 
-            <th>Actuals
+            <th class="tdBudgetManagementActualPicker">Actuals
             </th>
             <td class="Padding5 Width10Px"></td>
             <td rowspan="2" class="Width10Px">
@@ -26,7 +26,7 @@
         </tr>
         <tr>
             <td>
-                <asp:DropDownList ID="ddlView" runat="server" AutoPostBack="false" CssClass="height20PImp">
+                <asp:DropDownList ID="ddlView" runat="server" AutoPostBack="false" CssClass="height20PImp" Onchange="SetBudgetManagementActualDropDown();">
                     <asp:ListItem Text="-- Select View --" Value="0"></asp:ListItem>
                     <asp:ListItem Text="Budget only" Value="1" Selected="True"></asp:ListItem>
                     <asp:ListItem Text="Budget to ETC" Value="2"></asp:ListItem>
@@ -44,7 +44,7 @@
                 </ext:ScrollableDropdownExtender>
             </td>
             <td></td>
-            <td>
+            <td class="tdBudgetManagementActualPicker">
                 <asp:DropDownList ID="ddlActualPeriod" runat="server" AutoPostBack="false" Style="width: 190px;">
                     <asp:ListItem Value="0">All</asp:ListItem>
                     <asp:ListItem Value="15">Last Pay Period</asp:ListItem>
