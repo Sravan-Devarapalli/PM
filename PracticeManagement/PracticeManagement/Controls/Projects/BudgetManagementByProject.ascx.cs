@@ -73,17 +73,24 @@ namespace PraticeManagement.Controls.Projects
             {
                 var now = Utils.Generic.GetNowWithTimeZone();
 
-                if (ActualPeriod == 30)
+                if (View != 5)
                 {
-                    return Utils.Calendar.MonthEndDate(now.AddMonths(-1));
-                }
-                else if (ActualPeriod == 15)
-                {
-                    return Utils.Calendar.PayrollPerviousEndDate(now);
-                }
-                else if (ActualPeriod == 0)
-                {
-                    return null;
+                    if (ActualPeriod == 30)
+                    {
+                        return Utils.Calendar.MonthEndDate(now.AddMonths(-1));
+                    }
+                    else if (ActualPeriod == 15)
+                    {
+                        return Utils.Calendar.PayrollPerviousEndDate(now);
+                    }
+                    else if (ActualPeriod == 0)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        return now;
+                    }
                 }
                 else
                 {
@@ -362,12 +369,8 @@ namespace PraticeManagement.Controls.Projects
             var a = DataPoints;
             if (BudgetManagement.BudgetResources != null && BudgetManagement.BudgetResources.Count > 0 && View != 0)
             {
-                try
-                {
-                    repResources.DataSource = BudgetManagement.BudgetResources;
-                    repResources.DataBind();
-                }
-                catch (Exception e) { }
+                repResources.DataSource = BudgetManagement.BudgetResources;
+                repResources.DataBind();
             }
         }
 
@@ -550,24 +553,24 @@ namespace PraticeManagement.Controls.Projects
                 {
                     case 1: break;
                     case 2:
-                        _revenue = resource.Budget.Revenue - resource.EAC.Revenue;
-                        _margin = resource.Budget.Margin - resource.EAC.Margin;
-                        _hoursDiff = resource.Budget.Hours - resource.EAC.Hours;
+                        _revenue = resource.EAC.Revenue - resource.Budget.Revenue;
+                        _margin = resource.EAC.Margin - resource.Budget.Margin;
+                        _hoursDiff = resource.EAC.Hours - resource.Budget.Hours;
                         break;
                     case 3:
-                        _revenue = resource.Budget.Revenue - resource.EAC.Revenue;
-                        _margin = resource.Budget.Margin - resource.EAC.Margin;
-                        _hoursDiff = resource.Budget.Hours - resource.EAC.Hours;
+                        _revenue = resource.EAC.Revenue - resource.Budget.Revenue;
+                        _margin = resource.EAC.Margin - resource.Budget.Margin;
+                        _hoursDiff = resource.EAC.Hours - resource.Budget.Hours;
                         break;
                     case 4:
-                        _revenue = resource.Budget.Revenue - resource.Actuals.Revenue;
-                        _margin = resource.Budget.Margin - resource.Actuals.Margin;
-                        _hoursDiff = resource.Budget.Hours - resource.Actuals.Hours;
+                        _revenue = resource.Actuals.Revenue - resource.Budget.Revenue;
+                        _margin = resource.Actuals.Margin - resource.Budget.Margin;
+                        _hoursDiff = resource.Actuals.Hours - resource.Budget.Hours;
                         break;
                     case 5:
-                        _revenue = resource.Budget.Revenue - resource.ProjectedRemaining.Revenue;
-                        _margin = resource.Budget.Margin - resource.ProjectedRemaining.Margin;
-                        _hoursDiff = resource.Budget.Hours - resource.ProjectedRemaining.Hours;
+                        _revenue = resource.ProjectedRemaining.Revenue - resource.Budget.Revenue;
+                        _margin = resource.ProjectedRemaining.Margin - resource.Budget.Margin;
+                        _hoursDiff = resource.ProjectedRemaining.Hours - resource.Budget.Hours;
                         break;
                 }
                 _revenue.DoNotShowDecimals = _margin.DoNotShowDecimals = true;
@@ -825,37 +828,36 @@ namespace PraticeManagement.Controls.Projects
                     {
                         case 1: break;
                         case 2:
-                            _hrsDiff = BudgetManagement.BudgetSummary.Hours - BudgetManagement.EACSummary.Hours;
-
-                            lblRevenueDifferenceSummary.Text = (BudgetManagement.BudgetSummary.Revenue - BudgetManagement.EACSummary.Revenue).ToString();
-                            lblMarginDifferenceSummary.Text = (BudgetManagement.BudgetSummary.Margin - BudgetManagement.EACSummary.Margin).ToString();
-                            lblMarginExpense.Text = lblExpenseDiff.Text = (BudgetManagement.BudgetSummary.Expenses - BudgetManagement.EACSummary.Expenses).ToString("$###,###,###,###,##0");
-                            lblDiffTotal.Text = string.Format(PracticeManagementCurrency.RevenueFormat, (BudgetManagement.BudgetSummary.TotalRevenue - BudgetManagement.EACSummary.TotalRevenue).Value.ToString(CurrencyDisplayFormat));
-                            lblDiffMargin.Text = string.Format(PracticeManagementCurrency.RevenueFormat, (BudgetManagement.BudgetSummary.TotalMargin - BudgetManagement.EACSummary.TotalMargin).Value.ToString(CurrencyDisplayFormat));
+                            _hrsDiff = BudgetManagement.EACSummary.Hours - BudgetManagement.BudgetSummary.Hours;
+                            lblRevenueDifferenceSummary.Text = (BudgetManagement.EACSummary.Revenue - BudgetManagement.BudgetSummary.Revenue).ToString();
+                            lblMarginDifferenceSummary.Text = (BudgetManagement.EACSummary.Margin - BudgetManagement.BudgetSummary.Margin).ToString();
+                            lblMarginExpense.Text = lblExpenseDiff.Text = (BudgetManagement.EACSummary.Expenses - BudgetManagement.BudgetSummary.Expenses).ToString("$###,###,###,###,##0");
+                            lblDiffTotal.Text = string.Format(PracticeManagementCurrency.RevenueFormat, (BudgetManagement.EACSummary.TotalRevenue - BudgetManagement.BudgetSummary.TotalRevenue).Value.ToString(CurrencyDisplayFormat));
+                            lblDiffMargin.Text = string.Format(PracticeManagementCurrency.RevenueFormat, (BudgetManagement.EACSummary.TotalMargin - BudgetManagement.BudgetSummary.TotalMargin).Value.ToString(CurrencyDisplayFormat));
                             break;
                         case 3:
-                            _hrsDiff = BudgetManagement.BudgetSummary.Hours - BudgetManagement.EACSummary.Hours;
-                            lblRevenueDifferenceSummary.Text = (BudgetManagement.BudgetSummary.Revenue - BudgetManagement.EACSummary.Revenue).ToString();
-                            lblMarginDifferenceSummary.Text = (BudgetManagement.BudgetSummary.Margin - BudgetManagement.EACSummary.Margin).ToString();
-                            lblMarginExpense.Text = lblExpenseDiff.Text = (BudgetManagement.BudgetSummary.Expenses - BudgetManagement.EACSummary.Expenses).ToString("$###,###,###,###,##0");
-                            lblDiffTotal.Text = (BudgetManagement.BudgetSummary.TotalRevenue - BudgetManagement.EACSummary.TotalRevenue).ToString();
-                            lblDiffMargin.Text = (BudgetManagement.BudgetSummary.TotalMargin - BudgetManagement.EACSummary.TotalMargin).ToString();
+                            _hrsDiff = BudgetManagement.EACSummary.Hours - BudgetManagement.BudgetSummary.Hours;
+                            lblRevenueDifferenceSummary.Text = (BudgetManagement.EACSummary.Revenue - BudgetManagement.BudgetSummary.Revenue).ToString();
+                            lblMarginDifferenceSummary.Text = (BudgetManagement.EACSummary.Margin - BudgetManagement.BudgetSummary.Margin).ToString();
+                            lblMarginExpense.Text = lblExpenseDiff.Text = (BudgetManagement.EACSummary.Expenses - BudgetManagement.BudgetSummary.Expenses).ToString("$###,###,###,###,##0");
+                            lblDiffTotal.Text = (BudgetManagement.EACSummary.TotalRevenue - BudgetManagement.BudgetSummary.TotalRevenue).ToString();
+                            lblDiffMargin.Text = (BudgetManagement.EACSummary.TotalMargin - BudgetManagement.BudgetSummary.TotalMargin).ToString();
                             break;
                         case 4:
-                            _hrsDiff = BudgetManagement.BudgetSummary.Hours - BudgetManagement.ActualsSummary.Hours;
-                            lblRevenueDifferenceSummary.Text = (BudgetManagement.BudgetSummary.Revenue - BudgetManagement.ActualsSummary.Revenue).ToString();
-                            lblMarginDifferenceSummary.Text = (BudgetManagement.BudgetSummary.Margin - BudgetManagement.ActualsSummary.Margin).ToString();
-                            lblMarginExpense.Text = lblExpenseDiff.Text = (BudgetManagement.BudgetSummary.Expenses - BudgetManagement.ActualsSummary.Expenses).ToString("$###,###,###,###,##0");
-                            lblDiffTotal.Text = (BudgetManagement.BudgetSummary.TotalRevenue - BudgetManagement.ActualsSummary.TotalRevenue).ToString();
-                            lblDiffMargin.Text = (BudgetManagement.BudgetSummary.TotalMargin - BudgetManagement.ActualsSummary.TotalMargin).ToString();
+                            _hrsDiff = BudgetManagement.ActualsSummary.Hours - BudgetManagement.BudgetSummary.Hours;
+                            lblRevenueDifferenceSummary.Text = (BudgetManagement.ActualsSummary.Revenue - BudgetManagement.BudgetSummary.Revenue).ToString();
+                            lblMarginDifferenceSummary.Text = (BudgetManagement.ActualsSummary.Margin - BudgetManagement.BudgetSummary.Margin).ToString();
+                            lblMarginExpense.Text = lblExpenseDiff.Text = (BudgetManagement.ActualsSummary.Expenses - BudgetManagement.BudgetSummary.Expenses).ToString("$###,###,###,###,##0");
+                            lblDiffTotal.Text = (BudgetManagement.ActualsSummary.TotalRevenue - BudgetManagement.BudgetSummary.TotalRevenue).ToString();
+                            lblDiffMargin.Text = (BudgetManagement.ActualsSummary.TotalMargin - BudgetManagement.BudgetSummary.TotalMargin).ToString();
                             break;
                         case 5:
-                            _hrsDiff = BudgetManagement.BudgetSummary.Hours - BudgetManagement.ProjectedSummary.Hours;
-                            lblRevenueDifferenceSummary.Text = (BudgetManagement.BudgetSummary.Revenue - BudgetManagement.ProjectedSummary.Revenue).ToString();
-                            lblMarginDifferenceSummary.Text = (BudgetManagement.BudgetSummary.Margin - BudgetManagement.ProjectedSummary.Margin).ToString();
-                            lblMarginExpense.Text = lblExpenseDiff.Text = (BudgetManagement.BudgetSummary.Expenses - BudgetManagement.ProjectedSummary.Expenses).ToString("$###,###,###,###,##0");
-                            lblDiffTotal.Text = (BudgetManagement.BudgetSummary.TotalRevenue + BudgetManagement.ProjectedSummary.TotalRevenue).ToString();
-                            lblDiffMargin.Text = (BudgetManagement.BudgetSummary.TotalMargin - BudgetManagement.ProjectedSummary.TotalMargin).ToString();
+                            _hrsDiff = BudgetManagement.ProjectedSummary.Hours - BudgetManagement.BudgetSummary.Hours;
+                            lblRevenueDifferenceSummary.Text = (BudgetManagement.ProjectedSummary.Revenue - BudgetManagement.BudgetSummary.Revenue).ToString();
+                            lblMarginDifferenceSummary.Text = (BudgetManagement.ProjectedSummary.Margin - BudgetManagement.BudgetSummary.Margin).ToString();
+                            lblMarginExpense.Text = lblExpenseDiff.Text = (BudgetManagement.ProjectedSummary.Expenses - BudgetManagement.BudgetSummary.Expenses).ToString("$###,###,###,###,##0");
+                            lblDiffTotal.Text = (BudgetManagement.ProjectedSummary.TotalRevenue - BudgetManagement.BudgetSummary.TotalRevenue).ToString();
+                            lblDiffMargin.Text = (BudgetManagement.ProjectedSummary.TotalMargin - BudgetManagement.BudgetSummary.TotalMargin).ToString();
                             break;
                     }
                     lblHoursDifferenceSummary.Text = _hrsDiff < 0 ? string.Format("<span class=\"Bench\">({0})</span>", Math.Abs(_hrsDiff)) : _hrsDiff.ToString();
