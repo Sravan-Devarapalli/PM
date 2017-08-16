@@ -115,7 +115,7 @@ BEGIN
 			WHERE P.ProjectNumber = @ProjectNumberLocal 
 				AND (@PersonId is NULL OR p.ClientId in (SELECT * FROM @ClientsList) OR  p.ClientId IN (SELECT opc.ClientId FROM @OwnerProjectClientList AS opc))
 				AND (@PersonId is NULL OR p.GroupId in (SELECT * FROM @ProjectGroupsList) OR  P.GroupId IN (SELECT opG.GroupId FROM @OwnerProjectGroupList AS opG))
-				AND (@PersonId is NULL OR p.PracticeId in (SELECT * FROM @PracticesList))	
+				
 				AND (@PersonId is NULL OR projManagers.ProjectAccessId = @PersonId  OR p.SalesPersonId = @PersonId OR projManagers.ProjectAccessId in (SELECT * FROM @ProjectOwnerList)
 										OR p.ProjectManagerId = @PersonId OR p.ProjectManagerId in (select * from @ProjectOwnerList))
 				AND ( @UserHasHighRoleThanProjectLead IS NULL 
