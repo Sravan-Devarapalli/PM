@@ -1275,8 +1275,8 @@ namespace PraticeManagement.Controls.Projects
                     row.Cells[totalCellNumber + 2].InnerHtml = GetMonthReportTableAsHtml(varianceRevenue, varianceMargin, greaterSeniorityExists);
                     row.Cells[totalCellNumber + 2].Attributes["class"] = "CompPerfTotalSummary";
 
-                    decimal revPer = totalRevenue.Value != 0M ? varianceRevenue.Value * 100 / totalRevenue.Value : 0M;
-                    decimal marper = totalMargin.Value != 0M ? varianceMargin.Value * 100 / totalMargin.Value : 0M;
+                    decimal revPer = project.ComputedFinancials.BudgetRevenue != 0M ? varianceRevenue.Value * 100 / project.ComputedFinancials.BudgetRevenue.Value : 0M;
+                    decimal marper = project.ComputedFinancials.BudgetGrossMargin != 0M ? varianceMargin.Value * 100 / project.ComputedFinancials.BudgetGrossMargin.Value : 0M;
                     row.Cells[totalCellNumber + 3].InnerHtml = GetVariancePercentageTableAsHtml(revPer, marper);
                 }
             }
@@ -2198,8 +2198,8 @@ namespace PraticeManagement.Controls.Projects
                 var budgetMargin = summary.ComputedFinancials.BudgetGrossMargin;
                 totalRevenue = summary.ComputedFinancials.EACRevenue;
                 totalMargin = summary.ComputedFinancials.EACGrossMargin;
-                decimal revenuePerc = summary.ComputedFinancials.Revenue.Value != 0M ? totalRevenue.Value * 100 / summary.ComputedFinancials.Revenue.Value : 0M;
-                decimal marginPerc = summary.ComputedFinancials.GrossMargin.Value != 0M ? totalMargin.Value * 100 / summary.ComputedFinancials.GrossMargin.Value : 0M;
+                decimal revenuePerc = budgetRevenue != 0M ? totalRevenue.Value * 100 / budgetRevenue.Value : 0M;
+                decimal marginPerc = budgetMargin != 0M ? totalMargin.Value * 100 / budgetMargin.Value : 0M;
                 row.Cells[row.Cells.Count - 1].InnerHtml = GetVariancePercentageTableAsHtml(revenuePerc, marginPerc);
             }
 
@@ -2277,6 +2277,7 @@ namespace PraticeManagement.Controls.Projects
             string outterHtml = string.Empty;
 
             var stringWriter = new System.IO.StringWriter();
+            revenue.DoNotShowDecimals = margin.DoNotShowDecimals = true;
 
             var table = GetMonthReportTable(revenue, margin, greaterSeniorityExists);
 
@@ -2391,10 +2392,8 @@ namespace PraticeManagement.Controls.Projects
 
 
             projectsData = projectsData.OrderBy(s => (s.Status == ProjectStatusType.Projected.ToString()) ? s.StartDate : s.EndDate).ThenBy(s => s.ProjectNumber).ThenByDescending(s => s.Type).ToList();
-            //Raj
             renderMonthColumns = HostingPageIsBudgetManagementReport != null ? false : true;
             var dataProjected = PrepareDataTable(ExportProjectList, (object[])projectsData.ToArray());
-            //var dataActual = PrepareDataTable(ExportProjectList, (object[])projectsData.ToArray());
 
             string dateRangeTitle = string.Format(ExportDateRangeFormat, diRange.FromDate.Value.ToShortDateString(), diRange.ToDate.Value.ToShortDateString());
             DataTable header = new DataTable();
@@ -2413,12 +2412,6 @@ namespace PraticeManagement.Controls.Projects
             dataset.Tables.Add(header);
             dataset.Tables.Add(dataProjected);
             dataSetList.Add(dataset);
-
-            //var datasetActual = new DataSet();
-            //datasetActual.Tables.Add(header.Clone());
-            //datasetActual.Tables.Add(dataActual);
-            //datasetActual.DataSetName = "Summary - Actuals";
-            //dataSetList.Add(datasetActual);
 
             var fileName = HostingPageIsProjectSummary != null ? "Projects.xls" : "ProjectBudgetSummaryReport.xls";
             NPOIExcel.Export(fileName, dataSetList, sheetStylesList);
@@ -2625,7 +2618,7 @@ namespace PraticeManagement.Controls.Projects
                                 columnValue = isMargin ? totalMargin : totalRevenue;
                                 budgetValue = isMargin ? project.ComputedFinancials.BudgetGrossMargin : project.ComputedFinancials.BudgetRevenue;
                                 budgetToSelVar = columnValue - budgetValue;
-                                budgetToSelVarPer = columnValue != 0M ? budgetToSelVar / (columnValue) : 0M;
+                                budgetToSelVarPer = budgetValue != 0M ? budgetToSelVar / (budgetValue) : 0M;
                             }
 
                             if (HostingPageIsBudgetManagementReport != null)
@@ -2649,7 +2642,7 @@ namespace PraticeManagement.Controls.Projects
                                     projRemainingValue = isMargin ? (project.ComputedFinancials.EACGrossMargin - project.ComputedFinancials.ActualGrossMargin) : (project.ComputedFinancials.EACRevenue - project.ComputedFinancials.ActualRevenue);
                                     ETCValue = isMargin ? project.ComputedFinancials.EACGrossMargin : project.ComputedFinancials.EACRevenue;
                                     budgetToETCVar = isMargin ? (project.ComputedFinancials.EACGrossMargin - project.ComputedFinancials.BudgetGrossMargin) : (project.ComputedFinancials.EACRevenue - project.ComputedFinancials.BudgetRevenue);
-                                    budgetToETCPer = isMargin ? (project.ComputedFinancials.EACGrossMargin != 0M ? budgetToETCVar / (project.ComputedFinancials.EACGrossMargin.Value) : 0M) : (project.ComputedFinancials.EACRevenue != 0M ? budgetToETCVar / (project.ComputedFinancials.EACRevenue.Value) : 0M);
+                                    budgetToETCPer = isMargin ? (project.ComputedFinancials.BudgetGrossMargin != 0M ? budgetToETCVar / (project.ComputedFinancials.BudgetGrossMargin.Value) : 0M) : (project.ComputedFinancials.BudgetRevenue != 0M ? budgetToETCVar / (project.ComputedFinancials.BudgetRevenue.Value) : 0M);
                                 }
                                 objects[column] = string.Format(NPOIExcel.CustomColorKey, columnValue < 0 ? "red" : isMargin ? "purple" : "green", greaterSeniorityExists && isMargin ? (object)"(Hidden)" : columnValue);
                                 column++;
@@ -2732,7 +2725,7 @@ namespace PraticeManagement.Controls.Projects
                     {
                         var columnValue = summary.ComputedFinancials.Revenue.Value;
                         totalRow[columnCount + 1] = string.Format(NPOIExcel.CustomColorKey, columnValue < 0 ? "red" : "green", columnValue);
-                        var budgetToSelVar = budgetValue - columnValue;
+                        var budgetToSelVar = columnValue - budgetValue;
                         var budgetToSelVarPer = budgetValue != 0M ? budgetToSelVar / (budgetValue) : 0M;
                         totalRow[columnCount + 2] = string.Format(NPOIExcel.CustomColorKey, budgetToSelVar < 0 ? "red" : "green", budgetToSelVar);
                         totalRow[columnCount + 3] = string.Format(NPOIExcel.CustomColorKey, budgetToSelVarPer < 0 ? "red" : "black", budgetToSelVarPer.ToString());
@@ -2822,7 +2815,7 @@ namespace PraticeManagement.Controls.Projects
                     var ETCValue = summary.ComputedFinancials.EACGrossMargin.Value;
                     var actualValue = summary.ComputedFinancials.ActualGrossMargin.Value;
                     var projRemainingValue = ETCValue - actualValue;
-                    var budgetToETCVar = budgetValue - ETCValue;
+                    var budgetToETCVar = ETCValue - budgetValue;
                     var budgetToETCPer = budgetValue != 0 ? budgetToETCVar / budgetValue : 0M;
 
                     totalRow[columnCount] = string.Format(NPOIExcel.CustomColorKey, columnValue < 0 ? "red" : "purple", columnValue);
@@ -2931,8 +2924,8 @@ namespace PraticeManagement.Controls.Projects
             if (CalculationsType != 3)
             {
                 data.Columns.Add(HostingPageIsBudgetManagementReport != null ? GetTotalColumnHeader() : "Budget");
-                data.Columns.Add(HostingPageIsBudgetManagementReport != null ? "$ Variance" : "Budget to Selection Variance");
-                data.Columns.Add(HostingPageIsBudgetManagementReport != null ? "% Variance" : "Budget to Selection % Variance");
+                data.Columns.Add(HostingPageIsBudgetManagementReport != null ? "$ Variance" : "Budget to Variance");
+                data.Columns.Add(HostingPageIsBudgetManagementReport != null ? "% Variance" : "Budget to % Variance");
             }
 
             foreach (var propertyBag in propertyBags)
@@ -3045,7 +3038,7 @@ namespace PraticeManagement.Controls.Projects
                                 columnValue = isMargin ? totalMargin : totalRevenue;
                                 budgetValue = isMargin ? project.ComputedFinancials.BudgetGrossMargin : project.ComputedFinancials.BudgetRevenue;
                                 budgetToSelVar = columnValue - budgetValue;
-                                budgetToSelPer = columnValue != 0M ? budgetToSelVar / columnValue : 0M;
+                                budgetToSelPer = budgetValue != 0M ? budgetToSelVar / budgetValue : 0M;
                             }
                             string totalColomncolor = columnValue < 0 ? "red" : isMargin ? "purple" : "green";
                             objects[column] = HostingPageIsBudgetManagementReport != null ? string.Format(NPOIExcel.CustomColorKey, budgetValue < 0 ? "red" : isMargin ? "purple" : "green", greaterSeniorityExists && isMargin ? (object)"(Hidden)" : budgetValue) : string.Format(NPOIExcel.CustomColorKey, totalColomncolor, greaterSeniorityExists && isMargin ? (object)"(Hidden)" : columnValue);
@@ -3407,8 +3400,8 @@ namespace PraticeManagement.Controls.Projects
                         row.Cells[row.Cells.Count - 1].Attributes["class"] = ".no-wrap alignCenter BorderRightC5C5C5";
                     }
                     row.Cells[row.Cells.Count - 3].InnerHtml = PrepareHeader(HostingPageIsBudgetManagementReport != null ? GetTotalColumnHeader() : "Budget");
-                    row.Cells[row.Cells.Count - 2].InnerHtml = PrepareHeader(HostingPageIsBudgetManagementReport != null ? "$ Variance" : "Budget Selection Variance");
-                    row.Cells[row.Cells.Count - 1].InnerHtml = PrepareHeader(HostingPageIsBudgetManagementReport != null ? "% Variance" : "Budget Selection % Variance");
+                    row.Cells[row.Cells.Count - 2].InnerHtml = PrepareHeader(HostingPageIsBudgetManagementReport != null ? "$ Variance" : "Budget Variance");
+                    row.Cells[row.Cells.Count - 1].InnerHtml = PrepareHeader(HostingPageIsBudgetManagementReport != null ? "% Variance" : "Budget % Variance");
                 }
 
                 // fill summary
