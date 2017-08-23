@@ -2,7 +2,6 @@
 using DataTransferObjects.Filters;
 using DataTransferObjects.Reports;
 using iTextSharp.text;
-using iTextSharp.text.html.simpleparser;
 using iTextSharp.text.pdf;
 using PraticeManagement.Controls;
 using PraticeManagement.Objects;
@@ -18,7 +17,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.DataVisualization.Charting;
 using System.Web.UI.WebControls;
@@ -715,6 +713,8 @@ namespace PraticeManagement.Reports
                 SelectedProject = ServiceCallers.Custom.Project(p => p.GetProjectShortByProjectNumberForPerson(ProjectNumber, HttpContext.Current.User.Identity.Name));
                 if (SelectedProject != null)
                 {
+                    var noOfDays = (SelectedProject.EndDate.Value - SelectedProject.StartDate.Value).TotalDays;
+                    selectedProjectLength.Value = noOfDays.ToString();
                     return true;
                 }
                 else
@@ -741,7 +741,6 @@ namespace PraticeManagement.Reports
             ReportData.Financials = Financials;
             decimal actualAmount = 0M;
             decimal margin = 0M;
-            decimal revenueNet = 0M;
             decimal EACRevenue = 0M;
             decimal EACHours = 0M;
             decimal actualHours = 0M;
@@ -783,7 +782,6 @@ namespace PraticeManagement.Reports
 
                     actualAmount = isActualsExists ? act.Value.ActualRevenue : 0;
                     margin = isActualsExists ? act.Value.ActualGrossMargin : 0;
-                    //revenueNet = isActualsExists ? act.Value.ActualRevenue : 0;
                     EACRevenue = summary.Value.EACRevenue;
                     EACHours = summary.Value.EACHours;
                     actualHours = summary.Value.ActualHours;
@@ -841,6 +839,7 @@ namespace PraticeManagement.Reports
             var beginPeriodLocal = startDate;
             var endPeriodLocal = endDate;
             var noOfDays = (endPeriodLocal - beginPeriodLocal).TotalDays;
+
             if (Step == 7 && noOfDays < 30)
             {
                 if ((int)startDate.DayOfWeek > 0)
@@ -885,13 +884,13 @@ namespace PraticeManagement.Reports
 
             if (Step == 1 && noOfDays < 30)
             {
-                horizAxis.IntervalType = DateTimeIntervalType.Weeks;
+                horizAxis.IntervalType = DateTimeIntervalType.Days;
                 horizAxis.Interval = 1;
 
                 horizAxis.IntervalOffset = GetOffset(startDate);
                 horizAxis.IntervalOffsetType = DateTimeIntervalType.Days;
             }
-            else if (Step == 7 && noOfDays < 30)
+            else if (Step == 7 && (noOfDays < 92 || SelectedPeriod == "-3" || SelectedPeriod == "3"))
             {
                 horizAxis.Minimum = beginPeriodLocal.ToOADate();
                 horizAxis.Maximum = endPeriodLocal.AddDays(1).ToOADate();
@@ -902,7 +901,7 @@ namespace PraticeManagement.Reports
                 horizAxis.IntervalOffset = 0;
                 horizAxis.IntervalOffsetType = DateTimeIntervalType.Days;
             }
-            else if (Step == 30 || ((Step == 7 || Step == 1) && noOfDays > 30))
+            else if (Step == 30 || ((Step == 7 || Step == 1) && noOfDays > 92))
             {
                 var beginPeriod = startDate;
                 var endPeriod = endDate;
@@ -920,21 +919,6 @@ namespace PraticeManagement.Reports
 
                 horizAxis.IntervalType = DateTimeIntervalType.Months;
                 horizAxis.Interval = 1;
-            }
-            // Add month names
-            var diff = endDate.Subtract(startDate);
-            if (diff.Days > 31)
-            {
-                for (var i = 0; i <= diff.Days / 31; i++)
-                {
-                    var currMonth = startDate.AddMonths(i);
-                    horizAxis.CustomLabels.Add(
-                        currMonth.ToOADate(),
-                        startDate.AddMonths(i + 1).ToOADate(),
-                        currMonth.ToString("MMMM, yyyy"),
-                        1,
-                        LabelMarkStyle.None);
-                }
             }
         }
 
@@ -1957,12 +1941,6 @@ namespace PraticeManagement.Reports
                         chartPdf.Series[BudgetAmountSeriesIndex].Points.AddXY(financial.Key, ReportData.BudgetAmount);// update with budget variable
                     }
                 }
-
-                //System.Web.UI.DataVisualization.Charting.Title title_top = new System.Web.UI.DataVisualization.Charting.Title(string.Format(
-                //   TITLE_FORMAT_PDF, lblProjectName.Text + " (" + lblDateRange.Text + ")", ddlPeriod.SelectedValue != "0" ? ddlPeriod.SelectedItem.Text : StartDate.Value.ToString("mm/DD/YY") + " - " + EndDate.Value.ToString("mm/DD/YY"), ddlDetalization.SelectedItem.Text));
-                //title_top.Font = new System.Drawing.Font("Candara", 9f);
-
-                //chartPdf.Titles.Add(title_top);
             }
         }
 
@@ -2110,8 +2088,6 @@ namespace PraticeManagement.Reports
                 document.NewPage();
                 string reportDataInPdfString = string.Empty;
 
-                //reportDataInPdfString += string.Format("{2}{0}{3}{0}{4}{0}{5}{0}{6}{1}", ColoumSpliter, RowSpliter, "Expense", "Budget", "Actual", "Variance", "Variance %");
-
                 reportDataInPdfString += "Expense" + ColoumSpliter;
                 if (showBudget)
                 {
@@ -2138,9 +2114,6 @@ namespace PraticeManagement.Reports
                 foreach (var expense in expenses)
                 {
                     reportDataInPdfString += PreareExpensePDF(expense);
-
-                    //reportDataInPdfString += string.Format("{2}{0}{3}{0}{4}{0}{5}{0}{6}{1}", ColoumSpliter, RowSpliter, expense.Name, expense.ExpectedAmount.ToString(CurrencyLargeDisplayFormat), expense.Amount.Value.ToString(CurrencyLargeDisplayFormat),
-                    //    expense.Difference.ToString(CurrencyLargeDisplayFormat), expense.DifferencePer.ToString("P"));
                 }
                 totalExpense.Name = "Grand Total";
                 totalExpense.ExpectedAmount = expenses.Sum(_ => _.ExpectedAmount);
@@ -2148,10 +2121,6 @@ namespace PraticeManagement.Reports
                 totalExpense.BudgetAmount = expenses.Sum(_ => _.BudgetAmount);
                 totalExpense.ProjectedRemainingAmount = expenses.Sum(_ => _.ProjectedRemainingAmount);
                 reportDataInPdfString += PreareExpensePDF(totalExpense);
-
-                //reportDataInPdfString += string.Format("{2}{0}{3}{0}{4}{0}{5}{0}{6}{1}", ColoumSpliter, RowSpliter, "Grand Total", totalExpense.ExpectedAmount.ToString(CurrencyLargeDisplayFormat), totalExpense.Amount.Value.ToString(CurrencyLargeDisplayFormat),
-                //        totalExpense.Difference.ToString(CurrencyLargeDisplayFormat), totalExpense.DifferencePer.ToString("P"));
-
                 var table = builder.GetPdftable(reportDataInPdfString, PdfProjectListTableStyle, RowSpliter, ColoumSpliter);
                 document.Add((IElement)table);
             }
@@ -2387,6 +2356,15 @@ namespace PraticeManagement.Reports
         protected void btnLimitedExport_Click(object sender, EventArgs e)
         {
             mpeExcel.Show();
+        }
+
+        protected void txtProjectNumber_TextChanged(object sender, EventArgs e)
+        {
+            if (ValidateProject() && ddlPeriod.SelectedValue == "1")
+            {
+                var noOfDays = (SelectedProject.EndDate.Value - SelectedProject.StartDate.Value).TotalDays;
+                selectedProjectLength.Value = noOfDays.ToString();
+            }
         }
     }
 }
