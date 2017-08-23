@@ -478,21 +478,16 @@ namespace PraticeManagement
         {
 
             var result = new List<string>();
-            try
+
+            var tasks = DataHelper.GetOpenTasks(Membership.GetUser().Email);
+            if (tasks == null || tasks.Count == 0)
             {
-                var tasks = DataHelper.GetOpenTasks(Membership.GetUser().Email);
-                if (tasks == null || tasks.Count == 0)
-                {
-                    return null;
-                }
-                foreach (var task in tasks.Where(_ => _.Task != string.Empty))
-                {
-                    result.Add(task.Project.Id + "|" + task.Project.ProjectNumber + "-" + task.Task);
-                };
+                return null;
             }
-            catch (Exception e)
+            foreach (var task in tasks.Where(_ => _.Task != string.Empty))
             {
-            }
+                result.Add(task.Project.Id + "|" + task.Project.ProjectNumber + "-" + task.Task);
+            };
 
             return result;
         }
