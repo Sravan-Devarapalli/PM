@@ -9,7 +9,6 @@
     <title>Burn Report | Practice Management</title>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="head" runat="server">
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.5/bluebird.min.js"></script>
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="header" runat="server">
 </asp:Content>
@@ -18,7 +17,7 @@
     <script src="../Scripts/jquery.tablesorter.min.js" type="text/javascript"></script>
     <script src="../Scripts/jquery.tablesorter.staticrow.min.js" type="text/javascript"></script>
     <script src="../Scripts/html2canvas.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="http://cdn.rawgit.com/niklasvh/html2canvas/master/dist/html2canvas.min.js"></script>
+    <script src="../Scripts/AjaxBluebird.js" type="text/javascript"></script>
     <script type="text/javascript">
 
         function CheckAndShowCustomDatesPoup(ddlPeriod) {
@@ -39,18 +38,71 @@
                 }
             }
             else {
-                imgCalender.attributes["class"].value = "displayNone";
-                lblCustomDateRange.attributes["class"].value = "displayNone";
-                if (imgCalender.fireEvent) {
-                    imgCalender.style.display = "none";
-                    lblCustomDateRange.style.display = "none";
+                PopulateDetalization();
+            }
+        }
+
+        function PopulateDetalization() {
+            var imgCalender = document.getElementById('<%= imgCalender.ClientID %>');
+            var lblCustomDateRange = document.getElementById('<%= lblCustomDateRange.ClientID %>');
+            var ddlPeriod = document.getElementById('<%= ddlPeriod.ClientID %>');
+            imgCalender.attributes["class"].value = "displayNone";
+            lblCustomDateRange.attributes["class"].value = "displayNone";
+            if (imgCalender.fireEvent) {
+                imgCalender.style.display = "none";
+                lblCustomDateRange.style.display = "none";
+            }
+            var ddlDetalization = document.getElementById('<%= ddlDetalization.ClientID %>');
+
+            if (ddlPeriod.value == '1') {
+                var projectlength = $('[id$=selectedProjectLength]').val();
+                if (!isNaN(projectlength) && projectlength.length != 0) {
+                    var length = parseFloat(projectlength);
+
+                    if (length < 7) {
+                        ddlDetalization.options.length = 0;
+                        var option = document.createElement("option");
+                        option.text = '1 Day';
+                        option.value = '1';
+                        ddlDetalization.options.add(option);
+                    }
+
+                    else if (length < 30) {
+                        ddlDetalization.options.length = 0;
+                        var option1 = document.createElement("option");
+                        option1.text = '1 Day';
+                        option1.value = '1';
+                        ddlDetalization.options.add(option1);
+                        var option2 = document.createElement("option");
+                        option2.text = '1 Week';
+                        option2.value = '7';
+                        option2.selected = 'selected';
+                        ddlDetalization.options.add(option2);
+                    }
+                    else if (length >= 30 && length < 92) {
+                        ddlDetalization.options.length = 0;
+                        var option2 = document.createElement("option");
+                        option2.text = '1 Week';
+                        option2.value = '7';
+                        option2.selected = 'selected';
+                        ddlDetalization.options.add(option2);
+                        var option3 = document.createElement("option");
+                        option3.text = '1 Month';
+                        option3.value = '30';
+                        ddlDetalization.options.add(option3);
+                    }
+                    else {
+                        ddlDetalization.options.length = 0;
+                        var option3 = document.createElement("option");
+                        option3.text = '1 Month';
+                        option3.value = '30';
+                        ddlDetalization.options.add(option3);
+                    }
                 }
-                var ddlDetalization = document.getElementById('<%= ddlDetalization.ClientID %>');
+            }
+
+            if (ddlPeriod.value == '-3' || ddlPeriod.value == '3') {
                 ddlDetalization.options.length = 0;
-                var option1 = document.createElement("option");
-                option1.text = '1 Day';
-                option1.value = '1';
-                ddlDetalization.options.add(option1);
                 var option2 = document.createElement("option");
                 option2.text = '1 Week';
                 option2.value = '7';
@@ -61,7 +113,16 @@
                 option3.value = '30';
                 ddlDetalization.options.add(option3);
             }
+            else if (ddlPeriod.value == '-6' || ddlPeriod.value == '6') {
+                ddlDetalization.options.length = 0;
+                var option3 = document.createElement("option");
+                option3.text = '1 Month';
+                option3.value = '30';
+                ddlDetalization.options.add(option3);
+            }
+
         }
+
         function ReAssignStartDateEndDates() {
             hdnStartDate = document.getElementById('<%= hdnStartDate.ClientID %>');
             hdnEndDate = document.getElementById('<%= hdnEndDate.ClientID %>');
@@ -126,17 +187,20 @@
                     option2.selected = 'selected';
                     ddlDetalization.options.add(option2);
                 }
-                else {
+                else if (diffDays >= 30 && diffDays < 92) {
                     ddlDetalization.options.length = 0;
-                    var option1 = document.createElement("option");
-                    option1.text = '1 Day';
-                    option1.value = '1';
-                    ddlDetalization.options.add(option1);
                     var option2 = document.createElement("option");
                     option2.text = '1 Week';
                     option2.value = '7';
                     option2.selected = 'selected';
                     ddlDetalization.options.add(option2);
+                    var option3 = document.createElement("option");
+                    option3.text = '1 Month';
+                    option3.value = '30';
+                    ddlDetalization.options.add(option3);
+                }
+                else {
+                    ddlDetalization.options.length = 0;
                     var option3 = document.createElement("option");
                     option3.text = '1 Month';
                     option3.value = '30';
@@ -195,11 +259,18 @@
 
             $('#tblResources th:first').click();
             $('#tblExpenses th:first').click();
+            var ddlPeriod = document.getElementById('<%= ddlPeriod.ClientID %>');
+            if (ddlPeriod.value == '0') {
+                CheckIfDatesValid();
+            }
+            else {
+                PopulateDetalization();
+            }
         });
 
         function myPrePostbackFunction() {
             SetColumnWidth();
-            html2canvas($("#testPDF")[0]).then(function (canvas) {
+            html2canvas($("#graphPDF")[0]).then(function (canvas) {
                 var base64 = canvas.toDataURL();
                 $("[id$='hdnPdfData']").val(base64);
             });
@@ -540,7 +611,18 @@
             var width = $('#ctl00_body_divReport').width() / 2;
             $('#ctl00_body_activityChart').attr('style', 'width: ' + width + 'px; height:300px; border-width:0px;');
             myPrePostbackFunction();
+
+            var selectedValue = $('[id$=ddlDetalization]').val();
+            var ddlPeriod = document.getElementById('<%=  ddlPeriod.ClientID %>');
+            if (ddlPeriod.value == '0') {
+                CheckIfDatesValid();
+            }
+            else {
+                PopulateDetalization();
+            }
+            $('[id$=ddlDetalization]').val(selectedValue);
         }
+
 
     </script>
 
@@ -556,10 +638,10 @@
                                     <tr>
                                         <td>Project Number: &nbsp;</td>
                                         <td class="textLeft">
-                                            <asp:TextBox ID="txtProjectNumber" runat="server"></asp:TextBox>
+                                            <asp:TextBox ID="txtProjectNumber" runat="server" AutoPostBack="false"></asp:TextBox>
                                             <AjaxControlToolkit:TextBoxWatermarkExtender ID="waterMarkTxtProjectNumber" runat="server"
                                                 TargetControlID="txtProjectNumber" BehaviorID="waterMarkTxtProjectNumber" WatermarkCssClass="watermarkedtext"
-                                                WatermarkText="Ex: P1234767">
+                                                WatermarkText="Ex: P123456">
                                             </AjaxControlToolkit:TextBoxWatermarkExtender>
                                         </td>
                                         <td>
@@ -577,6 +659,7 @@
                                    <asp:ListItem Text="Next Half" Value="6"></asp:ListItem>
                                    <asp:ListItem Text="Custom Dates" Value="0"></asp:ListItem>
                                </asp:DropDownList>
+                                <asp:HiddenField ID="selectedProjectLength" runat="server" />
                                 <ajaxToolkit:ModalPopupExtender ID="mpeCustomDates" runat="server" TargetControlID="imgCalender"
                                     CancelControlID="btnCustDatesCancel" OkControlID="btnCustDatesClose" BackgroundCssClass="modalBackground"
                                     PopupControlID="pnlCustomDates" BehaviorID="bhCustomDates" DropShadow="false"
@@ -598,8 +681,8 @@
                             <td>By:
                                <asp:DropDownList ID="ddlDetalization" runat="server" CssClass="Width75PxImp" AutoPostBack="false">
                                    <asp:ListItem Value="1">1 Day</asp:ListItem>
-                                   <asp:ListItem Selected="True" Value="7">1 Week</asp:ListItem>
-                                   <asp:ListItem Value="30">1 Month</asp:ListItem>
+                                   <asp:ListItem Value="7">1 Week</asp:ListItem>
+                                   <asp:ListItem Value="30" Selected="True">1 Month</asp:ListItem>
                                </asp:DropDownList>
                             </td>
                             <td>Actuals
@@ -870,7 +953,7 @@
 
                                         </div>
                                         <br />
-                                        <div id="testPDF" class="PadLeft5Per" style="display: grid; width: 90%">
+                                        <div id="graphPDF" class="PadLeft5Per" style="display: grid; width: 90%">
                                             <div style="width: 100%; overflow-x: auto;">
 
                                                 <div style="display: inline-table; border-collapse: separate; border-spacing: 5px;">
