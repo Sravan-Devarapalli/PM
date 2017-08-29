@@ -744,6 +744,7 @@ namespace PraticeManagement.Reports
             decimal EACRevenue = 0M;
             decimal EACHours = 0M;
             decimal actualHours = 0M;
+            decimal budgetAmount = 0M;
             if (ReportData.Financials != null && ReportData.Financials.Count > 0)
             {
                 ReportData.Financials.OrderBy(r => r.Key);
@@ -785,8 +786,9 @@ namespace PraticeManagement.Reports
                     EACRevenue = summary.Value.EACRevenue;
                     EACHours = summary.Value.EACHours;
                     actualHours = summary.Value.ActualHours;
+                    budgetAmount = summary.Value.BudgetRevenue;
 
-                    lblBudgteAmount.Text = ReportData.BudgetAmount != null ? ReportData.BudgetAmount.Value.ToString(CurrencyLargeDisplayFormat) : "";
+                    lblBudgteAmount.Text = budgetAmount.ToString(CurrencyLargeDisplayFormat);
                     lblActualRevenue.Text = lblEACActualRevenue.Text = actualAmount.ToString(CurrencyLargeDisplayFormat);
                     lblEACRevenue.Text = EACRevenue.ToString(CurrencyLargeDisplayFormat);
                     lblEACHrs.Text = EACHours.ToString("###,###,##0.##") + " Hours";
