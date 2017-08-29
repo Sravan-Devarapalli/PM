@@ -594,7 +594,7 @@ namespace PraticeManagement.Controls
                 result.TitleName = ddlTitle.SelectedItem.Text;
                 result.SLTApproval = SLTApproval;
                 result.SLTPTOApproval = SLTPTOApproval;
-                if (Timescale == TimescaleType._1099Ctc || Timescale == TimescaleType.PercRevenue)
+                if ((Timescale == TimescaleType._1099Ctc || Timescale == TimescaleType.PercRevenue) && !string.IsNullOrEmpty(ddlVendor.SelectedValue))
                 {
                     result.vendor = new Vendor { Id = Int32.Parse(ddlVendor.SelectedValue) };
                 }
