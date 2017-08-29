@@ -2,7 +2,7 @@
 (
 	@ProjectId	INT,
 	@UserAlias  NVARCHAR(100),
-	@TargetMargin DECIMAL(5,2),
+	@TargetMargin DECIMAL(10,2),
 	@TierTwoStatus INT,
 	@TargetRevenue DECIMAL(18,2),
 	@Comments   NVARCHAR(MAX),
@@ -33,6 +33,11 @@ BEGIN
 		VALUES(@ProjectIdLocal,@UserId,@Approver,@TargetMargin,@CurrentPMTime,1, @TierTwoStatus, @TargetRevenue, @IsRevenueException)
 
 		select @Recipient=Alias from person where PersonId=@Approver
+
+		select @Recipient=@Recipient+','+ p.Alias
+		FROM Person P
+		JOIN Title T on P.TitleId =T.TitleId
+		WHERE @TierTwoStatus = 1 AND T.Title = 'Chief Financial Officer' AND P.PersonStatusId = 1 --Active
 
 		EXEC dbo.SessionLogUnprepare
 
