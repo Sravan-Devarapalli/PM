@@ -251,11 +251,30 @@ FinancialsRetro AS
 		  SELECT	f.ProjectId,
 					f.PersonId,
 					f.Date,
-					SUM(f.PersonMilestoneDailyAmount) AS ProjectedRevenueperDay,
-						SUM(f.PersonMilestoneDailyAmount - f.PersonDiscountDailyAmount - (
+					SUM(CASE WHEN f.IsHourlyAmount = 1 THEN (CASE WHEN @ActualsEndDateLocal IS NULL THEN f.PersonMilestoneDailyAmount
+																  WHEN f.Date<=	@ActualsEndDateLocal THEN f.PersonMilestoneDailyAmount ELSE 0 END)
+						     WHEN f.IsHourlyAmount = 0 THEN (CASE WHEN @ActualsEndDateLocal IS NULL THEN f.PersonMilestoneDailyAmount
+							             						  WHEN f.Date<=	EOMONTH(@ActualsEndDateLocal) THEN f.PersonMilestoneDailyAmount ELSE 0 END )
+							 ELSE 0 END) AS ProjectedRevenueperDay,
+
+					SUM(CASE WHEN f.IsHourlyAmount = 1 THEN (CASE WHEN @ActualsEndDateLocal IS NULL THEN (f.PersonMilestoneDailyAmount - f.PersonDiscountDailyAmount - (
 																					CASE WHEN f.SLHR >= f.PayRate + f.MLFOverheadRate THEN f.SLHR 
 																					ELSE f.PayRate + f.MLFOverheadRate END
-																				) * ISNULL(f.PersonHoursPerDay, 0)) AS  ProjectedGrossMargin,
+																				) * ISNULL(f.PersonHoursPerDay, 0)) 
+																  WHEN f.Date<=	@ActualsEndDateLocal THEN (f.PersonMilestoneDailyAmount - f.PersonDiscountDailyAmount - (
+																					CASE WHEN f.SLHR >= f.PayRate + f.MLFOverheadRate THEN f.SLHR 
+																					ELSE f.PayRate + f.MLFOverheadRate END
+																				) * ISNULL(f.PersonHoursPerDay, 0))  ELSE 0 END)
+						     WHEN f.IsHourlyAmount = 0 THEN (CASE WHEN @ActualsEndDateLocal IS NULL THEN (f.PersonMilestoneDailyAmount - f.PersonDiscountDailyAmount - (
+																					CASE WHEN f.SLHR >= f.PayRate + f.MLFOverheadRate THEN f.SLHR 
+																					ELSE f.PayRate + f.MLFOverheadRate END
+																				) * ISNULL(f.PersonHoursPerDay, 0)) 
+							             						  WHEN f.Date<=	EOMONTH(@ActualsEndDateLocal) THEN (f.PersonMilestoneDailyAmount - f.PersonDiscountDailyAmount - (
+																					CASE WHEN f.SLHR >= f.PayRate + f.MLFOverheadRate THEN f.SLHR 
+																					ELSE f.PayRate + f.MLFOverheadRate END
+																				) * ISNULL(f.PersonHoursPerDay, 0))  ELSE 0 END )
+							 ELSE 0 END) AS ProjectedGrossMargin,
+
 					SUM(CASE WHEN f.IsHourlyAmount = 0 THEN f.PersonMilestoneDailyAmount ELSE 0 END ) AS FixedActualRevenuePerDay,
 					(ISNULL(SUM(CASE WHEN f.IsHourlyAmount = 1 THEN f.BillRate* f.ActualHoursPerDay ELSE 0 END),0) / ISNULL(NULLIF(SUM(CASE WHEN f.IsHourlyAmount = 1 THEN f.ActualHoursPerDay ELSE 0 END),0),1)) * MAX(CASE WHEN f.IsHourlyAmount = 1 THEN  f.BillableHOursPerDay ELSE 0 END) HourlyActualRevenuePerDay,
 					--SUM(CASE WHEN (f.IsHourlyAmount = 0 and (@ActualsEndDateLocal IS NULL OR f.Date<=@ActualsEndDateLocal)) THEN 	f.PersonMilestoneDailyAmount ELSE 0 END)- (
@@ -275,7 +294,8 @@ FinancialsRetro AS
 										END ,0)
 							) AS HourlyActualCostPerDay,
 					SUM(ISNULL(f.BillableHOursPerDay, 0)+ ISNULL(f.NonBillableHoursPerDay,0)) AS ActualHours,
-		  			SUM(ISNULL(f.PersonHoursPerDay,0)) as ProjectedHours,
+		  			SUM(CASE WHEN @ActualsEndDateLocal IS NULL THEN ISNULL(f.PersonHoursPerDay,0) 
+							 WHEN f.Date<= @ActualsEndDateLocal THEN ISNULL(f.PersonHoursPerDay,0) ELSE 0 END) as ProjectedHours,
 					SUM(ISNULL(CASE WHEN (f.Date > @Today AND f.BillableHOursPerDay IS NULL AND f.NonBillableHoursPerDay IS NULL) THEN f.PersonHoursPerDay ELSE 0 END, 0)) as RemainingProjectedHours,
 					SUM(CASE WHEN f.IsHourlyAmount = 0 AND f.Date > EOMONTH(@ProjRemainingDate) THEN f.PersonMilestoneDailyAmount 
 							 WHEN f.IsHourlyAmount = 1 AND (f.Date > @ProjRemainingDate AND f.BillableHOursPerDay IS NULL AND f.NonBillableHoursPerDay IS NULL) THEN f.PersonMilestoneDailyAmount
@@ -351,12 +371,31 @@ FinancialsRetro AS
 
 		   SELECT  f.ProjectId,
 				   f.PersonId,
-				   ISNULL(SUM(f.PersonMilestoneDailyAmount),0) AS Revenue,
-				   ISNULL(SUM(f.PersonMilestoneDailyAmount - f.PersonDiscountDailyAmount -
-								(CASE WHEN f.SLHR >= f.PayRate + f.MLFOverheadRate 
-									  THEN f.SLHR  ELSE f.PayRate+f.MLFOverheadRate END) 
-								*ISNULL(f.PersonHoursPerDay, 0)),0) BudgetMargin,
-				   ISNULL(SUM(f.PersonHoursPerDay), 0) AS BudgetHours
+				   ISNULL(SUM(CASE WHEN f.IsHourlyAmount = 1 THEN (CASE WHEN @ActualsEndDateLocal IS NULL THEN f.PersonMilestoneDailyAmount
+																  WHEN f.Date<=	@ActualsEndDateLocal THEN f.PersonMilestoneDailyAmount ELSE 0 END)
+						     WHEN f.IsHourlyAmount = 0 THEN (CASE WHEN @ActualsEndDateLocal IS NULL  THEN f.PersonMilestoneDailyAmount
+							             						  WHEN f.Date<=	EOMONTH(@ActualsEndDateLocal) THEN f.PersonMilestoneDailyAmount ELSE 0 END )
+							 ELSE 0 END),0) AS Revenue,
+
+				   ISNULL(SUM(CASE WHEN f.IsHourlyAmount = 1 THEN (CASE WHEN @ActualsEndDateLocal IS NULL THEN (f.PersonMilestoneDailyAmount - f.PersonDiscountDailyAmount -
+																												(CASE WHEN f.SLHR >= f.PayRate + f.MLFOverheadRate 
+																													  THEN f.SLHR  ELSE f.PayRate+f.MLFOverheadRate END) 
+																												*ISNULL(f.PersonHoursPerDay, 0))
+																		WHEN f.Date<=	@ActualsEndDateLocal THEN (f.PersonMilestoneDailyAmount - f.PersonDiscountDailyAmount -
+																													(CASE WHEN f.SLHR >= f.PayRate + f.MLFOverheadRate 
+																															THEN f.SLHR  ELSE f.PayRate+f.MLFOverheadRate END) 
+																													*ISNULL(f.PersonHoursPerDay, 0)) ELSE 0 END)
+								   WHEN f.IsHourlyAmount = 0 THEN (CASE WHEN @ActualsEndDateLocal IS NULL  THEN (f.PersonMilestoneDailyAmount - f.PersonDiscountDailyAmount -
+																																		(CASE WHEN f.SLHR >= f.PayRate + f.MLFOverheadRate 
+																																			  THEN f.SLHR  ELSE f.PayRate+f.MLFOverheadRate END) 
+																																		*ISNULL(f.PersonHoursPerDay, 0))
+							             						  WHEN f.Date<=	EOMONTH(@ActualsEndDateLocal) THEN (f.PersonMilestoneDailyAmount - f.PersonDiscountDailyAmount -
+																																		(CASE WHEN f.SLHR >= f.PayRate + f.MLFOverheadRate 
+																																			  THEN f.SLHR  ELSE f.PayRate+f.MLFOverheadRate END) 
+																																		*ISNULL(f.PersonHoursPerDay, 0)) ELSE 0 END )  ELSE 0 END)
+								 ,0) BudgetMargin,
+				   ISNULL(SUM(CASE WHEN @ActualsEndDateLocal IS NULL THEN f.PersonHoursPerDay
+								   WHEN f.Date<=@ActualsEndDateLocal THEN f.PersonHoursPerDay ELSE 0 END), 0) AS BudgetHours
 			INTO #Budget
 			FROM #BudgetRestrospective AS f
 			WHERE f.ProjectId=@ProjectIdLocal AND f.PersonId IS NOT NULL  AND f.Date >= @startDateLocal AND f.Date <= @endDateLocal
@@ -398,7 +437,7 @@ FinancialsRetro AS
 	  SELECT PDE.ProjectId,
 			 PDE.ExpenseId,
 			 PDE.Name,
-		     SUM(PDE.EstimatedAmount) as ProjectedAmount,
+		     SUM(CASE WHEN (@ActualsEndDateLocal IS NULL OR PDE.date <= @ActualsEndDateLocal )THEN PDE.EstimatedAmount ELSE 0 END) as ProjectedAmount,
 		     SUM(CASE WHEN (@ActualsEndDateLocal IS NOT NULL AND PDE.date > @ActualsEndDateLocal )THEN PDE.EstimatedAmount ELSE 0 END) as EstimatedAmount,
 		     SUM(CASE WHEN (@ActualsEndDateLocal IS NULL OR PDE.date <= @ActualsEndDateLocal )THEN PDE.ActualExpense ELSE 0 END ) as ActualAmount
 	  INTO #ProjectExpenses
@@ -409,7 +448,7 @@ FinancialsRetro AS
 	  SELECT VB.ProjectId,
 			 VB.ExpenseId,
 			 VB.Name,
-			 SUM(ISNULL(VB.Amount,0)) as Amount
+			 SUM(CASE WHEN (@ActualsEndDateLocal IS NULL OR VB.date <= @ActualsEndDateLocal )THEN ISNULL(VB.Amount,0) ELSE 0 END) as Amount
 	  INTO #ProjectBudgetExpenses
 	  FROM v_ProjectBudgetDailyExpenses VB
 	  WHERE VB.ProjectId = @ProjectIdLocal AND VB.date>=@startDateLocal and VB.date<=@endDateLocal
