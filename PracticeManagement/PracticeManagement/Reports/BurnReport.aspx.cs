@@ -795,9 +795,9 @@ namespace PraticeManagement.Reports
                     lblActualHrs.Text = actualHours.ToString("###,###,##0.##") + " hours used";
                     //margin tile
                     var marginPer = actualAmount != 0 ? (margin * 100 / actualAmount) : 0;
-                    lblMarginPer.Text = GreaterSeniorityExists ? "(Hidden)" : string.Format(Constants.Formatting.PercentageFormat, marginPer);
-                    lblMarginAmount.Text = GreaterSeniorityExists ? "(Hidden)" : margin.ToString(CurrencyLargeDisplayFormat);
-                    lblMarginGoal.Text = "Goal: " + string.Format(Constants.Formatting.PercentageFormat, ReportData.MarginGoal);
+                    lblMarginPer.Text = GreaterSeniorityExists ? HideText : string.Format(Constants.Formatting.PercentageFormat, marginPer);
+                    lblMarginAmount.Text = GreaterSeniorityExists ? HideText : margin.ToString(CurrencyLargeDisplayFormat);
+                    lblMarginGoal.Text = "Goal: " + (GreaterSeniorityExists ? HideText : string.Format(Constants.Formatting.PercentageFormat, ReportData.MarginGoal));
 
                     var actualBudgetPer = (ReportData.BudgetAmount != null && ReportData.BudgetAmount != 0M) ? (decimal)(actualAmount / ReportData.BudgetAmount) : 0;
                     pgrBudget.Attributes.CssStyle.Add("width", actualBudgetPer > 100 ? 100.ToString("#0.##%") : actualBudgetPer.ToString("#0.##%"));
@@ -958,6 +958,8 @@ namespace PraticeManagement.Reports
 
             if (exportDate != null && exportDate.Count() > 0)
             {
+                PersonListAnalyzer = new SeniorityAnalyzer(DataHelper.CurrentPerson);
+                PersonListAnalyzer.OneWithGreaterSeniorityExists(SelectedProject.ProjectPersons);
                 string Title = "Burn Report: -" + SelectedProject.ProjectNumber + SelectedProject.Name;
                 string filters = "For:" + (ddlPeriod.SelectedValue != "0" ? ddlPeriod.SelectedItem.Text : StartDate.Value.ToString("MM/dd/yy") + " - " + EndDate.Value.ToString("MM/dd/yy")) + ",\n BY:" + ddlDetalization.SelectedItem.Text + ",\n Actuals:" + ddlActualPeriod.SelectedItem.Text;
                 DataTable header = new DataTable();
@@ -1144,39 +1146,39 @@ namespace PraticeManagement.Reports
                     {
                         if (showBudget)
                         {
-                            row.Add(financials.BudgetGrossMargin.Value);
+                            row.Add(GreaterSeniorityExists ? HideText : (object)financials.BudgetGrossMargin.Value);
                         }
                         if (showActual)
                         {
-                            row.Add(financials.ActualGrossMargin.Value);
+                            row.Add(GreaterSeniorityExists ? HideText : (object)financials.ActualGrossMargin.Value);
                         }
                         if (showProjected)
                         {
-                            row.Add(financials.GrossMargin.Value);
+                            row.Add(GreaterSeniorityExists ? HideText : (object)financials.GrossMargin.Value);
                         }
                         if (showEAC)
                         {
-                            row.Add(financials.EACGrossMargin.Value);
+                            row.Add(GreaterSeniorityExists ? HideText : (object)financials.EACGrossMargin.Value);
                         }
                         switch (VarianceType)
                         {
                             case 1:
-                                row.Add(financials.BudgetGrossMargin.Value - financials.GrossMargin.Value);
+                                row.Add(GreaterSeniorityExists ? HideText : (object)(financials.BudgetGrossMargin.Value - financials.GrossMargin.Value));
                                 break;
                             case 2:
-                                row.Add(financials.BudgetGrossMargin.Value - financials.EACGrossMargin.Value);
+                                row.Add(GreaterSeniorityExists ? HideText : (object)(financials.BudgetGrossMargin.Value - financials.EACGrossMargin.Value));
                                 break;
                             case 3:
-                                row.Add(financials.BudgetGrossMargin.Value - financials.ActualGrossMargin.Value);
+                                row.Add(GreaterSeniorityExists ? HideText : (object)(financials.BudgetGrossMargin.Value - financials.ActualGrossMargin.Value));
                                 break;
                             case 4:
-                                row.Add(financials.GrossMargin.Value - financials.EACGrossMargin.Value);
+                                row.Add(GreaterSeniorityExists ? HideText : (object)(financials.GrossMargin.Value - financials.EACGrossMargin.Value));
                                 break;
                             case 5:
-                                row.Add(financials.GrossMargin.Value - financials.ActualGrossMargin.Value);
+                                row.Add(GreaterSeniorityExists ? HideText : (object)(financials.GrossMargin.Value - financials.ActualGrossMargin.Value));
                                 break;
                             case 6:
-                                row.Add(financials.EACGrossMargin.Value - financials.ActualGrossMargin.Value);
+                                row.Add(GreaterSeniorityExists ? HideText : (object)(financials.EACGrossMargin.Value - financials.ActualGrossMargin.Value));
                                 break;
                             default:
                                 row.Add("Variance ");
@@ -1561,16 +1563,16 @@ namespace PraticeManagement.Reports
 
                 lblBudgetHrs.Text = totalBudgetHrs.ToString("###,###,##0.##");
                 lblBudgetRev.Text = totalBudgetRevenue.ToString();
-                lblBudgetMargin.Text = GreaterSeniorityExists ? "(Hidden)" : totalBudgetMargin.ToString();
+                lblBudgetMargin.Text = GreaterSeniorityExists ? HideText : totalBudgetMargin.ToString();
                 lblActualHrs.Text = totalActualHrs.ToString("###,###,##0.##");
                 lblActualRev.Text = totalActualRevenue.ToString();
-                lblActualMargin.Text = GreaterSeniorityExists ? "(Hidden)" : totalActualMargin.ToString();
+                lblActualMargin.Text = GreaterSeniorityExists ? HideText : totalActualMargin.ToString();
                 lblProjHrs.Text = totalProjHrs.ToString("###,###,##0.##");
                 lblProjRev.Text = totalProjRevenue.ToString();
-                lblProjMargin.Text = GreaterSeniorityExists ? "(Hidden)" : totalProjMargin.ToString();
+                lblProjMargin.Text = GreaterSeniorityExists ? HideText : totalProjMargin.ToString();
                 lblEACHrs.Text = totalEACHrs.ToString("###,###,##0.##");
                 lblEACRev.Text = totalEACRevenue.ToString();
-                lblEACMargin.Text = GreaterSeniorityExists ? "(Hidden)" : totalEACMargin.ToString();
+                lblEACMargin.Text = GreaterSeniorityExists ? HideText : totalEACMargin.ToString();
 
             }
         }
@@ -1683,6 +1685,8 @@ namespace PraticeManagement.Reports
         private byte[] RenderPdf(HtmlToPdfBuilder builder)
         {
             ChartForPdf();
+            PersonListAnalyzer = new SeniorityAnalyzer(DataHelper.CurrentPerson);
+            PersonListAnalyzer.OneWithGreaterSeniorityExists(SelectedProject.ProjectPersons);
             int pageCount = GetPageCount(builder);
             MemoryStream file = new MemoryStream();
             Document document = new Document(builder.PageSize);
@@ -2157,20 +2161,11 @@ namespace PraticeManagement.Reports
                 }
                 if (showEAC)
                 {
-                    try
-                    {
-                        reportDataInPdfString += resource.EAC.Hours.ToString("###,###,##0.##") + ColoumSpliter;
-                    }
-                    catch (Exception e)
-                    {
-                        var a = e.InnerException;
-                    }
+                    reportDataInPdfString += resource.EAC.Hours.ToString("###,###,##0.##") + ColoumSpliter;
                 }
                 if (showActual)
                 {
-
                     reportDataInPdfString += resource.Actuals.Hours.ToString("###,###,##0.##") + ColoumSpliter;
-
                 }
 
                 switch (VarianceType)
@@ -2252,7 +2247,7 @@ namespace PraticeManagement.Reports
 
                 }
                 reportDataInPdfString += (GreaterSeniorityExists ? HideText : varAmount.Value.ToString(CurrencyLargeDisplayFormat)) + ColoumSpliter;
-                reportDataInPdfString += varPer.ToString("P");
+                reportDataInPdfString += GreaterSeniorityExists ? HideText : varPer.ToString("P");
             }
             else if (showRevenue)
             {
