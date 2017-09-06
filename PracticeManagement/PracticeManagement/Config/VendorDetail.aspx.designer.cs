@@ -112,13 +112,13 @@ namespace PraticeManagement.Config {
         protected global::System.Web.UI.WebControls.TextBox txtEmailAddress;
         
         /// <summary>
-        /// ddlDomain control.
+        /// txtDomain control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlDomain;
+        protected global::System.Web.UI.WebControls.TextBox txtDomain;
         
         /// <summary>
         /// rfvEmailAddress control.
@@ -128,6 +128,15 @@ namespace PraticeManagement.Config {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvEmailAddress;
+        
+        /// <summary>
+        /// rfvEmailDomain control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvEmailDomain;
         
         /// <summary>
         /// regEmailAddress control.
@@ -146,6 +155,15 @@ namespace PraticeManagement.Config {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CustomValidator custEmailAddress;
+        
+        /// <summary>
+        /// custEmailDomain control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator custEmailDomain;
         
         /// <summary>
         /// txtTelephoneNumber control.
