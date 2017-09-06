@@ -95,7 +95,7 @@ namespace PraticeManagement
                     try
                     {
                         mins = Convert.ToInt32(lockedOutMinitues);
-                        output = lockedOutMinitues + " minitue(s)";
+                        output = lockedOutMinitues + " minutes";
                         if (mins > 59)
                         {
                             output = (mins / 60).ToString() + " hour(s)";
@@ -107,7 +107,7 @@ namespace PraticeManagement
                     }
                     catch
                     {
-                        output = "30 minitue(s)";
+                        output = "30 minutes";
                     }
                     return string.Format(MessageLoginErrorLockedOutWithNotiFicationEmail, output);
                 case 4: return MessageLoginErrorNotActive;
@@ -233,7 +233,7 @@ namespace PraticeManagement
                     try
                     {
                         mins = Convert.ToInt32(lockedOutMinitues);
-                        output = lockedOutMinitues + " minitue(s)";
+                        output = lockedOutMinitues + " minutes";
                         if (mins > 59)
                         {
                             output = (mins / 60).ToString() + " hour(s)";
@@ -245,7 +245,7 @@ namespace PraticeManagement
                     }
                     catch
                     {
-                        output = "30 minitue(s)";
+                        output = "30 minutes";
                     }
                     loginErrorDetails.Text = string.Format(MessageLoginErrorLockedOutWithNotiFicationEmail, output);
                 }
