@@ -240,8 +240,7 @@
             </script>
             <table class="VendorDetail">
                 <tr>
-                    <td>
-                        Vendor Name
+                    <td>Vendor Name
                     </td>
                     <td>
                         <asp:TextBox ID="txtVendorName" runat="server" CssClass="Width250Px" onchange="setDirty();"></asp:TextBox>
@@ -261,8 +260,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        Contact Name
+                    <td>Contact Name
                     </td>
                     <td>
                         <asp:TextBox ID="txtContactName" runat="server" CssClass="Width250Px" onchange="setDirty();"></asp:TextBox>
@@ -282,17 +280,21 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        Email&nbsp;Address
+                    <td>Email&nbsp;Address
                     </td>
                     <td>
-                        <asp:TextBox ID="txtEmailAddress" runat="server" CssClass="Width120Px" onchange="setDirty();"></asp:TextBox>&nbsp;@&nbsp;
-                        <asp:DropDownList ID="ddlDomain" runat="server" onchange="setDirty();" CssClass="Width109PxImp">
-                        </asp:DropDownList>
+                        <asp:TextBox ID="txtEmailAddress" runat="server" CssClass="Width120Px" onchange="setDirty();" MaxLength="35"></asp:TextBox>&nbsp;@&nbsp;
+                     <%--   <asp:DropDownList ID="ddlDomain" runat="server" onchange="setDirty();" CssClass="Width109PxImp">
+                        </asp:DropDownList>--%>
+                        <asp:TextBox ID="txtDomain" runat="server" CssClass="Width100PxImp" onchange="setDirty();" MaxLength="15"></asp:TextBox>
                     </td>
                     <td>
                         <asp:RequiredFieldValidator ID="rfvEmailAddress" runat="server" ControlToValidate="txtEmailAddress"
                             ErrorMessage="The Email Address is required." ToolTip="The Email Address is required."
+                            ValidationGroup="Vendor" Text="*" EnableClientScript="false" SetFocusOnError="true"
+                            Display="Dynamic" ValidateEmptyText="true"></asp:RequiredFieldValidator>
+                        <asp:RequiredFieldValidator ID="rfvEmailDomain" runat="server" ControlToValidate="txtDomain"
+                            ErrorMessage="The Email Domain is required." ToolTip="The Email Domain is required."
                             ValidationGroup="Vendor" Text="*" EnableClientScript="false" SetFocusOnError="true"
                             Display="Dynamic" ValidateEmptyText="true"></asp:RequiredFieldValidator>
                         <asp:RegularExpressionValidator ID="regEmailAddress" runat="server" ControlToValidate="txtEmailAddress"
@@ -304,12 +306,16 @@
                             ToolTip="A Vendor with the same email address already exists in the system. Please enter another email address."
                             ValidationGroup="Vendor" Text="*" EnableClientScript="false" SetFocusOnError="true"
                             Display="Dynamic" OnServerValidate="custEmailAddress_ServerValidate"></asp:CustomValidator>
+                         <asp:CustomValidator ID="custEmailDomain" runat="server" ControlToValidate="txtDomain"
+                            ErrorMessage="There is another vendor with the Email Domain."
+                            ToolTip="There is another vendor with the Email Domain."
+                            ValidationGroup="Vendor" Text="*" EnableClientScript="false" SetFocusOnError="true"
+                            Display="Dynamic" OnServerValidate="custEmailDomain_ServerValidate"></asp:CustomValidator>
                     </td>
                 </tr>
                 <tr>
                     <tr>
-                        <td>
-                            Telephone number
+                        <td>Telephone number
                         </td>
                         <td>
                             <asp:TextBox ID="txtTelephoneNumber" runat="server" onchange="setDirty();" CssClass="Width250Px"></asp:TextBox>
@@ -326,8 +332,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            Status
+                        <td>Status
                         </td>
                         <td>
                             <asp:DropDownList ID="ddlStatus" runat="server" onchange="setDirty();">
@@ -343,8 +348,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            Vendor Type
+                        <td>Vendor Type
                         </td>
                         <td>
                             <asp:DropDownList ID="ddlVendorType" runat="server" onchange="setDirty();" CssClass="Width250Px">
@@ -384,31 +388,38 @@
                                                             </th>
                                                             <th class="CursorPointer color0898E6 fontUnderline Width20PerImp">
                                                                 <div class='ie-bg'>
-                                                                    Business Unit</div>
+                                                                    Business Unit
+                                                                </div>
                                                             </th>
                                                             <th class="CursorPointer color0898E6 fontUnderline">
                                                                 <div class='ie-bg'>
-                                                                    Start Date</div>
+                                                                    Start Date
+                                                                </div>
                                                             </th>
                                                             <th class="CursorPointer color0898E6 fontUnderline">
                                                                 <div class='ie-bg'>
-                                                                    End Date</div>
+                                                                    End Date
+                                                                </div>
                                                             </th>
                                                             <th class="CursorPointer color0898E6 fontUnderline">
                                                                 <div class='ie-bg'>
-                                                                    Division</div>
+                                                                    Division
+                                                                </div>
                                                             </th>
                                                             <th class="CursorPointer color0898E6 fontUnderline">
                                                                 <div class='ie-bg'>
-                                                                    Practice Area</div>
+                                                                    Practice Area
+                                                                </div>
                                                             </th>
                                                             <th class="CursorPointer color0898E6 fontUnderline">
                                                                 <div class='ie-bg'>
-                                                                    Status</div>
+                                                                    Status
+                                                                </div>
                                                             </th>
                                                             <th class="CursorPointer color0898E6 fontUnderline">
                                                                 <div class='ie-bg'>
-                                                                    Billable</div>
+                                                                    Billable
+                                                                </div>
                                                             </th>
                                                         </tr>
                                                     </thead>
@@ -509,31 +520,38 @@
                                                             </th>
                                                             <th class="CursorPointer color0898E6 fontUnderline">
                                                                 <div class='ie-bg'>
-                                                                    Status</div>
+                                                                    Status
+                                                                </div>
                                                             </th>
                                                             <th class="CursorPointer color0898E6 fontUnderline">
                                                                 <div class='ie-bg'>
-                                                                    Start Date</div>
+                                                                    Start Date
+                                                                </div>
                                                             </th>
                                                             <th class="CursorPointer color0898E6 fontUnderline">
                                                                 <div class='ie-bg'>
-                                                                    End Date</div>
+                                                                    End Date
+                                                                </div>
                                                             </th>
                                                             <th class="CursorPointer color0898E6 fontUnderline">
                                                                 <div class='ie-bg'>
-                                                                    Division</div>
+                                                                    Division
+                                                                </div>
                                                             </th>
                                                             <th class="CursorPointer color0898E6 fontUnderline">
                                                                 <div class='ie-bg'>
-                                                                    Practice Area</div>
+                                                                    Practice Area
+                                                                </div>
                                                             </th>
                                                             <th class="CursorPointer color0898E6 fontUnderline">
                                                                 <div class='ie-bg'>
-                                                                    Pay Type</div>
+                                                                    Pay Type
+                                                                </div>
                                                             </th>
                                                             <th class="CursorPointer color0898E6 fontUnderline">
                                                                 <div class='ie-bg'>
-                                                                    Title</div>
+                                                                    Title
+                                                                </div>
                                                             </th>
                                                         </tr>
                                                     </thead>
@@ -677,12 +695,12 @@
                                         <tr>
                                             <td class="textLeft padLeft20">
                                                 <% if (Vendor != null && Vendor.Id.HasValue)
-                                                   { %>
+                                                    { %>
                                                 <asp:HyperLink ID="hlnkVendorAttachment" CssClass="ProjectAttachmentNameWrap" runat="server"
                                                     Text='<%# GetWrappedText( (string)Eval("AttachmentFileName")) %>' NavigateUrl='<%# GetNavigateUrl((string)Eval("AttachmentFileName"), (int)Eval("AttachmentId")) %>'></asp:HyperLink>
                                                 <% }
-                                                   else
-                                                   { %>
+                                                    else
+                                                    { %>
                                                 <asp:LinkButton ID="lnkVendorAttachment" runat="server" CssClass="ProjectAttachmentNameWrap"
                                                     attachmentid='<%# Eval("AttachmentId") %>' Text='<%# GetWrappedText((string)Eval("AttachmentFileName")) %>'
                                                     OnClientClick="DownloadUnsavedFile(this); return false;" OnClick="lnkVendorAttachment_OnClick" />
@@ -760,16 +778,13 @@
             <asp:Panel ID="pnlAttach" runat="server" Style="display: none" CssClass="PanelPerson Width465Px">
                 <table class="WholeWidth Padding5">
                     <tr class="BackGroundColorGray Height27Px">
-                        <td align="center" class="font14Px LineHeight25Px WS-Normal" colspan="2">
-                            Add Attachment
+                        <td align="center" class="font14Px LineHeight25Px WS-Normal" colspan="2">Add Attachment
                             <asp:Button ID="btnAttachmentPopupClose" runat="server" CssClass="mini-report-close floatright"
-                                ToolTip="Close" Text="X" OnClientClick="ClearVariables();" OnClick="btnCancel_OnClick">
-                            </asp:Button>
+                                ToolTip="Close" Text="X" OnClientClick="ClearVariables();" OnClick="btnCancel_OnClick"></asp:Button>
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2">
-                            &nbsp;
+                        <td colspan="2">&nbsp;
                         </td>
                     </tr>
                     <tr>
@@ -784,15 +799,13 @@
                     </tr>
                     <tr>
                         <td align="center" class="FileUploadAttachment PaddingTop10Px no-wrap">
-                            <asp:Button ID="btnUpload" runat="server" Text="Upload" ToolTip="Upload" Enabled="false">
-                            </asp:Button>
+                            <asp:Button ID="btnUpload" runat="server" Text="Upload" ToolTip="Upload" Enabled="false"></asp:Button>
                             <asp:Button ID="btnCancel" runat="server" ToolTip="Cancel" Text="Cancel" OnClientClick="ClearVariables();"
                                 OnClick="btnCancel_OnClick"></asp:Button>
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2">
-                            &nbsp;
+                        <td colspan="2">&nbsp;
                         </td>
                     </tr>
                     <tr>
