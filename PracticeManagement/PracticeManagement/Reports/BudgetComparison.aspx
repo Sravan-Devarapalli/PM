@@ -96,21 +96,32 @@
             $('.revenueSum').each(function () {
                 var tdPosition = $(this).index() + 1;
                 var sum = 0;
+                var isHidden = false;
                 $(this).closest('table').find('td:nth-child(' + tdPosition + ')').each(function () {
                     val = $(this).text().replace('($', '-');
                     val = val.replace(/,/g, '');
                     val = val.replace('$', '');
                     val = val.replace(')', '');
+                    if (isNaN(val)) {
+                        isHidden = true;
+                    }
                     if (!isNaN(val) && val.length != 0) {
                         sum += parseFloat(val);
                     }
+
                 });
-                sum = sum.toFixed(0);
-                var _reqText = '$' + sum.toString().replace(/(\d)(?=(\d{3})+\.)/g, "$1,").replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
-                if (_reqText.indexOf('-') >= 0) {
-                    _reqText = '<span class="Bench">' + '(' + _reqText.replace('-', '') + ')' + '</span>';
+                if (!isHidden) {
+                    sum = sum.toFixed(0);
+                    var _reqText = '$' + sum.toString().replace(/(\d)(?=(\d{3})+\.)/g, "$1,").replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
+                    if (_reqText.indexOf('-') >= 0) {
+                        _reqText = '<span class="Bench">' + '(' + _reqText.replace('-', '') + ')' + '</span>';
+                    }
+                    $(this).closest('table').find('tr[id$="Footer"] td:nth-child(' + tdPosition + ')').html(_reqText);
                 }
-                $(this).closest('table').find('tr[id$="Footer"] td:nth-child(' + tdPosition + ')').html(_reqText);
+                else {
+                    $(this).closest('table').find('tr[id$="Footer"] td:nth-child(' + tdPosition + ')').html('(Hidden)');
+
+                }
             });
 
             $('#tblBudgetExpense tr').each(function () {
@@ -131,11 +142,13 @@
             $('.expenseSum').each(function () {
                 var tdPosition = $(this).index() + 1;
                 var sum = 0;
+                var isHidden = false;
                 $(this).closest('table').find('tr[id$="lvExpenseItem"] td:nth-child(' + tdPosition + ')').each(function () {
                     val = $(this).text().replace('($', '-');
                     val = val.replace(/,/g, '');
                     val = val.replace('$', '');
                     val = val.replace(')', '');
+
                     if (!isNaN(val) && val.length != 0) {
                         sum += parseFloat(val);
                     }
@@ -145,17 +158,25 @@
                     val = val.replace(/,/g, '');
                     val = val.replace('$', '');
                     val = val.replace(')', '');
+                    if (isNaN(val)) {
+                        isHidden = true;
+                    }
                     if (!isNaN(val) && val.length != 0) {
                         sum += parseFloat(val);
                     }
                 });
+                if (!isHidden) {
+                    var _reqText = '$' + sum.toString().replace(/(\d)(?=(\d{3})+\.)/g, "$1,").replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
+                    if (_reqText.indexOf('-') >= 0) {
+                        _reqText = '<span class="Bench">' + '(' + _reqText.replace('-', '') + ')' + '</span>';
+                    }
 
-                var _reqText = '$' + sum.toString().replace(/(\d)(?=(\d{3})+\.)/g, "$1,").replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
-                if (_reqText.indexOf('-') >= 0) {
-                    _reqText = '<span class="Bench">' + '(' + _reqText.replace('-', '') + ')' + '</span>';
+                    $(this).closest('table').find('tr[id$="lvExpenseFooter"] td:nth-child(' + tdPosition + ')').html(_reqText);
                 }
+                else {
+                    $(this).closest('table').find('tr[id$="lvExpenseFooter"] td:nth-child(' + tdPosition + ')').html('(Hidden)');
 
-                $(this).closest('table').find('tr[id$="lvExpenseFooter"] td:nth-child(' + tdPosition + ')').html(_reqText);
+                }
             });
 
             $("[id$=lvExpenseFooter]").each(function () {
@@ -171,6 +192,9 @@
                 if (!isNaN(margin) && margin.length != 0 && !isNaN(revenue) && revenue.length != 0) {
                     var MarPer = (parseFloat(revenue) !== 0 ? parseFloat(margin) * 100 / parseFloat(revenue) : 0).toFixed(2);
                     $(this).find('td:nth-child(' + (lastIndex) + ')').html(MarPer.toString());
+                }
+                else if (isNaN(margin)) {
+                    $(this).find('td:nth-child(' + (lastIndex) + ')').html('(Hidden)');
                 }
                 else {
                     $(this).find('td:nth-child(' + (lastIndex) + ')').html('-');
