@@ -1941,7 +1941,7 @@ namespace PraticeManagement
                     (Milestone.ComputedFinancials.Revenue - Milestone.ComputedFinancials.RevenueNet).ToString();
 
                 lblClientDiscount.Text = Milestone.Project.Discount.ToString("##0.00");
-                lblTotalExpenses.Text = (Milestone.ComputedFinancials.Cogs + Milestone.ComputedFinancials.Expenses).ToString(PersonListSeniorityAnalyzer.GreaterSeniorityExists);
+                lblTotalExpenses.Text = PersonListSeniorityAnalyzer.GreaterSeniorityExists ? "(Hidden)" : (Milestone.ComputedFinancials.Cogs + Milestone.ComputedFinancials.Expenses).ToString();
             }
 
             if (Milestone.BudgetFinancials != null)
@@ -1957,7 +1957,7 @@ namespace PraticeManagement
 
                 lblClientDiscount.Text = Milestone.Project.Discount.ToString("##0.00");
 
-                lblBudgetTotalExpenes.Text = (Milestone.BudgetFinancials.Cogs + Milestone.BudgetFinancials.Expenses).ToString(PersonListSeniorityAnalyzer.GreaterSeniorityExists);
+                lblBudgetTotalExpenes.Text = PersonListSeniorityAnalyzer.GreaterSeniorityExists ? "(Hidden)" : (Milestone.BudgetFinancials.Cogs + Milestone.BudgetFinancials.Expenses).ToString();
 
             }
 
@@ -1973,7 +1973,7 @@ namespace PraticeManagement
                     String.Format(nfi, "{0:c}", discountAmt) : ((PracticeManagementCurrency)discountAmt).ToString();
 
                 lblClientDiscount.Text = Milestone.Project.Discount.ToString("##0.00");
-                lblVarcTotalExpenses.Text = (variance.Cogs + variance.Expenses).ToString(PersonListSeniorityAnalyzer.GreaterSeniorityExists);
+                lblVarcTotalExpenses.Text = PersonListSeniorityAnalyzer.GreaterSeniorityExists ? "(Hidden)" : (variance.Cogs + variance.Expenses).ToString();
             }
 
 
