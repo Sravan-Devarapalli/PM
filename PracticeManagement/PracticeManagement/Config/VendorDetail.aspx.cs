@@ -26,6 +26,8 @@ namespace PraticeManagement.Config
         private const string DuplicateEmail = "There is another vendor with the Email.";
         private const string AttachmentHandlerUrl = "../Controls/Projects/AttachmentHandler.ashx?VendorId={0}&FileName={1}&AttachmentId={2}";
         private const string AttachMessage = "File should be in PDF, Word format, Excel, PowerPoint, MS Project, Visio, Exchange, OneNote, ZIP or RAR and should be no larger than {0} KB.";
+        private const string DuplicateDomain = "There is another vendor with the Email Domain.";
+        private const string Person_Domain_List_Key = "Person_Domain_List_Key";
 
         #endregion
 
@@ -64,7 +66,7 @@ namespace PraticeManagement.Config
             get
             {
                 string email = string.Empty;
-                email = !string.IsNullOrEmpty(txtEmailAddress.Text) ? txtEmailAddress.Text + '@' + ddlDomain.SelectedValue : string.Empty;
+                email = !string.IsNullOrEmpty(txtEmailAddress.Text) ? txtEmailAddress.Text + '@' + (txtDomain.Text.TrimStart(' ')).TrimEnd(' ') : string.Empty;
                 return email;
             }
         }
@@ -200,7 +202,7 @@ namespace PraticeManagement.Config
         protected override void Display()
         {
             DataHelper.FillVendorTypeList(ddlVendorType, false);
-            DataHelper.FillDomainsList(ddlDomain);
+            //DataHelper.FillDomainsList(ddlDomain);
             if (VendorId.HasValue)
             {
                 Vendor = GetVendor(VendorId);
@@ -278,7 +280,8 @@ namespace PraticeManagement.Config
                 txtContactName.Text = vendor.ContactName;
                 txtTelephoneNumber.Text = vendor.TelephoneNumber;
                 txtEmailAddress.Text = vendor.EmailWithoutDomain;
-                ddlDomain.SelectedValue = vendor.Domain;
+                //ddlDomain.SelectedValue = vendor.Domain;
+                txtDomain.Text = vendor.Domain;
                 ddlStatus.SelectedValue = vendor.Status ? "1" : "0";
                 ddlVendorType.SelectedValue = vendor.VendorType.Id.ToString();
                 PopulateAttachments();
@@ -496,7 +499,13 @@ namespace PraticeManagement.Config
                                  args);
         }
 
-
+        protected void custEmailDomain_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            if (!String.IsNullOrEmpty(ExMessage))
+            {
+                args.IsValid = !(ExMessage == DuplicateDomain);
+            }
+        }
     }
 }
 
