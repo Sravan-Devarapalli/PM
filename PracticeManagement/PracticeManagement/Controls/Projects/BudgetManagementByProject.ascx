@@ -152,7 +152,7 @@
                     <%# Eval("Budget.BillRate") %>
                 </td>
                 <td id="tdBudgetMarginRate" runat="server" class="textRightImp padRight15">
-                    <%# Eval("Budget.MarginRate") %>
+                    <%# GreaterSeniorityExists?"(Hidden)": Eval("Budget.MarginRate") %>
                 </td>
                 <td id="tdBudgetHours" runat="server" class="textRightImp padRight15">
                     <%# Eval("Budget.Hours") %>
@@ -161,7 +161,7 @@
                     <span class="Revenue"><%# Eval("Budget.Revenue") %></span>
                 </td>
                 <td id="tdBudgetMargin" runat="server" class="textRightImp padRight15" sorttable_customkey='<%# Eval("Budget.Margin.Value")%>'>
-                    <%# Eval("Budget.Margin") %>
+                    <%# GreaterSeniorityExists?"(Hidden)":Eval("Budget.Margin") %>
                 </td>
                 <td id="tdBudgetMarginPer" runat="server" class="textRightImp padRight15">
                     <asp:Label ID="lblBudgetMarginPer" runat="server"></asp:Label>
@@ -171,7 +171,7 @@
                     <%# Eval("Actuals.BillRate") %>
                 </td>
                 <td id="tdActMarginRate" runat="server" class="textRightImp padRight15">
-                    <%# Eval("Actuals.MarginRate") %>
+                    <%#GreaterSeniorityExists?"(Hidden)": Eval("Actuals.MarginRate") %>
                 </td>
                 <td id="tdActHours" runat="server" class="textRightImp padRight15">
                     <%# Eval("Actuals.Hours") %>
@@ -180,7 +180,7 @@
                     <span class="Revenue"><%# Eval("Actuals.Revenue") %></span>
                 </td>
                 <td id="tdActMargin" runat="server" class="textRightImp padRight15" sorttable_customkey='<%# Eval("Actuals.Margin.Value")%>'>
-                    <%# Eval("Actuals.Margin") %>
+                    <%# GreaterSeniorityExists?"(Hidden)":Eval("Actuals.Margin") %>
                 </td>
                 <td id="tdActMarginPer" runat="server" class="textRightImp padRight15">
                     <asp:Label ID="lblActMarginPer" runat="server"></asp:Label>
@@ -191,7 +191,7 @@
                     <%# Eval("ProjectedRemaining.BillRate") %>
                 </td>
                 <td id="tdProjMarginRate" runat="server" class="textRightImp padRight15">
-                    <%# Eval("ProjectedRemaining.MarginRate") %>
+                    <%# GreaterSeniorityExists?"(Hidden)":Eval("ProjectedRemaining.MarginRate") %>
                 </td>
                 <td id="tdProjHours" runat="server" class="textRightImp padRight15">
                     <%# Eval("ProjectedRemaining.Hours") %>
@@ -200,7 +200,7 @@
                     <span class="Revenue"><%# Eval("ProjectedRemaining.Revenue") %></span>
                 </td>
                 <td id="tdProjMargin" runat="server" class="textRightImp padRight15" sorttable_customkey='<%# Eval("ProjectedRemaining.Margin.Value")%>'>
-                    <%# Eval("ProjectedRemaining.Margin") %>
+                    <%#GreaterSeniorityExists?"(Hidden)": Eval("ProjectedRemaining.Margin") %>
                 </td>
                 <td id="tdProjMarginPer" runat="server" class="textRightImp padRight15">
                     <asp:Label ID="lblProjMarginPer" runat="server"></asp:Label>
@@ -210,7 +210,7 @@
                     <%# Eval("EAC.BillRate") %>
                 </td>
                 <td id="tdEACMarginRate" runat="server" class="textRightImp padRight15">
-                    <%# Eval("EAC.MarginRate") %>
+                    <%# GreaterSeniorityExists?"(Hidden)":Eval("EAC.MarginRate") %>
                 </td>
                 <td id="tdEACHours" runat="server" class="textRightImp padRight15">
                     <%# Eval("EAC.Hours") %>
@@ -219,7 +219,7 @@
                     <span class="Revenue"><%# Eval("EAC.Revenue") %></span>
                 </td>
                 <td id="tdEACMargin" runat="server" class="textRightImp padRight15" sorttable_customkey='<%# Eval("EAC.Margin.Value")%>'>
-                    <%# Eval("EAC.Margin") %>
+                    <%#GreaterSeniorityExists?"(Hidden)": Eval("EAC.Margin") %>
                 </td>
                 <td id="tdEACMarginPer" runat="server" class="textRightImp padRight15">
                     <asp:Label ID="lblEACMarginPer" runat="server"></asp:Label>
