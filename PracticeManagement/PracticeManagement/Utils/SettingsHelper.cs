@@ -341,11 +341,7 @@ namespace PraticeManagement.Utils
 
         public static string[] GetDomainsList()
         {
-            if (HttpContext.Current.Cache[Person_Domain_List_Key] == null)
-            {
-                HttpContext.Current.Cache[Person_Domain_List_Key] = ServiceCallers.Invoke<ConfigurationServiceClient, string[]>(c => c.GetAllDomains()).ToArray();
-            }
-            return HttpContext.Current.Cache[Person_Domain_List_Key] as string[];
+            return ServiceCallers.Invoke<ConfigurationServiceClient, string[]>(c => c.GetAllDomains()).ToArray();
         }
 
         public static TitleType[] GetTitleTypes()
