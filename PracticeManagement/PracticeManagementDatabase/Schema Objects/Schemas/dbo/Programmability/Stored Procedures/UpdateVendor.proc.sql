@@ -19,13 +19,25 @@ BEGIN
 	EXEC dbo.SessionLogPrepare @UserLogin = @UserLogin
 
 	UPDATE dbo.Vendor
-		SET Name=@Name,
-			ContactName=@ContactName,
-			Status=@Status,
-			Email=@Email,
-			TelephoneNumber=@TelephoneNumber,
-			VendorTypeId=@VendorTypeId
-		WHERE Id=@Id
+	SET Name=@Name,
+		ContactName=@ContactName,
+		Status=@Status,
+		Email=@Email,
+		TelephoneNumber=@TelephoneNumber,
+		VendorTypeId=@VendorTypeId
+	WHERE Id=@Id
+
+	DECLARE @Domain NVARCHAR(100)
+	SELECT @Domain= SUBSTRING(@Email, CHARINDEX('@',@Email)+1,LEN(@Email))
+
+	IF NOT EXISTS(SELECT 1 FROM Domain Where Name = @Domain)
+	BEGIN
+		DECLARE @sortOrderLocal INT 
+		SELECT @sortOrderLocal= MAX(SortOrder)+1 FROM Domain 
+
+		INSERT INTO Domain(Name,SortOrder)
+		VALUES(@Domain, @sortOrderLocal)
+	END
 
 	EXEC dbo.SessionLogUnprepare
 
