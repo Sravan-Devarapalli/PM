@@ -1277,7 +1277,7 @@ namespace PraticeManagement.Controls.Projects
 
                     decimal revPer = project.ComputedFinancials.BudgetRevenue != 0M ? varianceRevenue.Value * 100 / project.ComputedFinancials.BudgetRevenue.Value : 0M;
                     decimal marper = project.ComputedFinancials.BudgetGrossMargin != 0M ? varianceMargin.Value * 100 / project.ComputedFinancials.BudgetGrossMargin.Value : 0M;
-                    row.Cells[totalCellNumber + 3].InnerHtml = GetVariancePercentageTableAsHtml(revPer, marper);
+                    row.Cells[totalCellNumber + 3].InnerHtml = GetVariancePercentageTableAsHtml(revPer, marper, greaterSeniorityExists);
                 }
             }
         }
@@ -2200,12 +2200,12 @@ namespace PraticeManagement.Controls.Projects
                 totalMargin = summary.ComputedFinancials.EACGrossMargin;
                 decimal revenuePerc = budgetRevenue != 0M ? totalRevenue.Value * 100 / budgetRevenue.Value : 0M;
                 decimal marginPerc = budgetMargin != 0M ? totalMargin.Value * 100 / budgetMargin.Value : 0M;
-                row.Cells[row.Cells.Count - 1].InnerHtml = GetVariancePercentageTableAsHtml(revenuePerc, marginPerc);
+                row.Cells[row.Cells.Count - 1].InnerHtml = GetVariancePercentageTableAsHtml(revenuePerc, marginPerc, OneGreaterSeniorityExists);
             }
 
         }
 
-        private string GetVariancePercentageTableAsHtml(decimal revenuePer, decimal marginPer)
+        private string GetVariancePercentageTableAsHtml(decimal revenuePer, decimal marginPer, bool GreaterSeniorityExists)
         {
             string outterHtml = string.Empty;
 
@@ -2227,7 +2227,7 @@ namespace PraticeManagement.Controls.Projects
                 tr.Cells.Add(new TableCell()
                 {
                     HorizontalAlign = HorizontalAlign.Right,
-                    Text = marginPer < 0 ? string.Format("<span class=\"Bench\">({0}%)</span>", Math.Abs(marginPer).ToString("#0.00")) : string.Format("{0}%", marginPer.ToString("##0.00"))
+                    Text = GreaterSeniorityExists ? "(Hidden)" : marginPer < 0 ? string.Format("<span class=\"Bench\">({0}%)</span>", Math.Abs(marginPer).ToString("#0.00")) : string.Format("{0}%", marginPer.ToString("##0.00"))
                 });
                 reportTable.Rows.Add(tr);
             }
