@@ -3,6 +3,7 @@ using DataTransferObjects.Filters;
 using DataTransferObjects.Reports;
 using NPOI.SS.UserModel;
 using PraticeManagement.Controls;
+using PraticeManagement.Security;
 using PraticeManagement.Utils;
 using PraticeManagement.Utils.Excel;
 using System;
@@ -335,6 +336,19 @@ namespace PraticeManagement.Reports
             }
         }
 
+        private SeniorityAnalyzer PersonListAnalyzer
+        {
+            get;
+            set;
+        }
+
+        private bool GreaterSeniorityExists
+        {
+            get
+            {
+                return PersonListAnalyzer != null && PersonListAnalyzer.GreaterSeniorityExists;
+            }
+        }
         #endregion
 
         #region PageEvents
@@ -572,6 +586,9 @@ namespace PraticeManagement.Reports
 
                             if (ReportData != null && ReportData.Count() > 0)
                             {
+                                PersonListAnalyzer = new SeniorityAnalyzer(DataHelper.CurrentPerson);
+                                PersonListAnalyzer.OneWithGreaterSeniorityExists(Project.ProjectPersons);
+
                                 divWholePage.Visible = true;
                                 NumberOfFixedColumns = 1;
                                 repBudgetResource.DataSource = ReportData;
@@ -786,16 +803,16 @@ namespace PraticeManagement.Reports
                 i++;
                 lbl = new Label();
                 rowData.Financials.Cogs = rowData.Financials.BudgetRevenue - rowData.Financials.BudgetGrossMargin;
-                lbl.Text = rowData.Financials.Cogs.ToString();
+                lbl.Text = rowData.Financials.Cogs.ToString(GreaterSeniorityExists);
                 row.Cells[i].Controls.Add(lbl);
                 i++;
                 lbl = new Label();
-                lbl.Text = rowData.Financials.BudgetGrossMargin.ToString();
+                lbl.Text = rowData.Financials.BudgetGrossMargin.ToString(GreaterSeniorityExists);
                 row.Cells[i].Controls.Add(lbl);
                 i++;
 
                 lbl = new Label();
-                lbl.Text = rowData.Financials.BudgetRevenue != 0 ? (rowData.Financials.BudgetGrossMargin.Value * 100 / rowData.Financials.BudgetRevenue.Value).ToString("##0.0") : "-";
+                lbl.Text = GreaterSeniorityExists ? "(Hidden)" : rowData.Financials.BudgetRevenue != 0 ? (rowData.Financials.BudgetGrossMargin.Value * 100 / rowData.Financials.BudgetRevenue.Value).ToString("##0.0") : "-";
                 row.Cells[i].Controls.Add(lbl);
             }
             else if (row.Attributes["isbudget"] == "false")
@@ -812,15 +829,15 @@ namespace PraticeManagement.Reports
                     i++;
                     lbl = new Label();
                     rowData.Financials.Cogs = rowData.Financials.Revenue - rowData.Financials.GrossMargin;
-                    lbl.Text = rowData.Financials.Cogs.ToString();
+                    lbl.Text = rowData.Financials.Cogs.ToString(GreaterSeniorityExists);
                     row.Cells[i].Controls.Add(lbl);
                     i++;
                     lbl = new Label();
-                    lbl.Text = rowData.Financials.GrossMargin.ToString();
+                    lbl.Text = rowData.Financials.GrossMargin.ToString(GreaterSeniorityExists);
                     row.Cells[i].Controls.Add(lbl);
                     i++;
                     lbl = new Label();
-                    lbl.Text = rowData.Financials.Revenue != 0 ? (rowData.Financials.GrossMargin.Value * 100 / rowData.Financials.Revenue.Value).ToString("##0.0") : "-";
+                    lbl.Text = GreaterSeniorityExists ? "(Hidden)" : rowData.Financials.Revenue != 0 ? (rowData.Financials.GrossMargin.Value * 100 / rowData.Financials.Revenue.Value).ToString("##0.0") : "-";
                     row.Cells[i].Controls.Add(lbl);
                     i++;
                 }
@@ -836,15 +853,15 @@ namespace PraticeManagement.Reports
                     i++;
                     lbl = new Label();
                     rowData.Financials.Cogs = rowData.Financials.ActualRevenue - rowData.Financials.ActualGrossMargin;
-                    lbl.Text = rowData.Financials.Cogs.ToString();
+                    lbl.Text = rowData.Financials.Cogs.ToString(GreaterSeniorityExists);
                     row.Cells[i].Controls.Add(lbl);
                     i++;
                     lbl = new Label();
-                    lbl.Text = rowData.Financials.ActualGrossMargin.ToString();
+                    lbl.Text = rowData.Financials.ActualGrossMargin.ToString(GreaterSeniorityExists);
                     row.Cells[i].Controls.Add(lbl);
                     i++;
                     lbl = new Label();
-                    lbl.Text = rowData.Financials.ActualRevenue != 0 ? (rowData.Financials.ActualGrossMargin.Value * 100 / rowData.Financials.ActualRevenue.Value).ToString("##0.0") : "-";
+                    lbl.Text = GreaterSeniorityExists ? "(Hidden)" : rowData.Financials.ActualRevenue != 0 ? (rowData.Financials.ActualGrossMargin.Value * 100 / rowData.Financials.ActualRevenue.Value).ToString("##0.0") : "-";
                     row.Cells[i].Controls.Add(lbl);
                     i++;
                 }
@@ -860,15 +877,15 @@ namespace PraticeManagement.Reports
                     i++;
                     lbl = new Label();
                     rowData.Financials.Cogs = rowData.Financials.EACRevenue - rowData.Financials.EACGrossMargin;
-                    lbl.Text = rowData.Financials.Cogs.ToString();
+                    lbl.Text = rowData.Financials.Cogs.ToString(GreaterSeniorityExists);
                     row.Cells[i].Controls.Add(lbl);
                     i++;
                     lbl = new Label();
-                    lbl.Text = rowData.Financials.EACGrossMargin.ToString();
+                    lbl.Text = rowData.Financials.EACGrossMargin.ToString(GreaterSeniorityExists);
                     row.Cells[i].Controls.Add(lbl);
                     i++;
                     lbl = new Label();
-                    lbl.Text = rowData.Financials.EACRevenue != 0 ? (rowData.Financials.EACGrossMargin.Value * 100 / rowData.Financials.EACRevenue.Value).ToString("##0.0") : "-";
+                    lbl.Text = GreaterSeniorityExists ? "(Hidden)" : rowData.Financials.EACRevenue != 0 ? (rowData.Financials.EACGrossMargin.Value * 100 / rowData.Financials.EACRevenue.Value).ToString("##0.0") : "-";
                     row.Cells[i].Controls.Add(lbl);
                     i++;
                 }
@@ -918,15 +935,15 @@ namespace PraticeManagement.Reports
                 row.Cells[i].Controls.Add(lbl);
                 i++;
                 lbl = new Label();
-                lbl.Text = costDiff.ToString();
+                lbl.Text = costDiff.ToString(GreaterSeniorityExists);
                 row.Cells[i].Controls.Add(lbl);
                 i++;
                 lbl = new Label();
-                lbl.Text = marginDiff.ToString();
+                lbl.Text = marginDiff.ToString(GreaterSeniorityExists);
                 row.Cells[i].Controls.Add(lbl);
                 i++;
                 lbl = new Label();
-                lbl.Text = revenueDiff.Value != 0 && marginDiff.Value >= 0.5M ? (marginDiff.Value * 100 / revenueDiff.Value).ToString("##0.0") : "-";
+                lbl.Text = GreaterSeniorityExists ? "(Hidden)" : revenueDiff.Value != 0 && marginDiff.Value >= 0.5M ? (marginDiff.Value * 100 / revenueDiff.Value).ToString("##0.0") : "-";
                 row.Cells[i].Controls.Add(lbl);
             }
         }
@@ -1042,7 +1059,7 @@ namespace PraticeManagement.Reports
                             row.Cells[i].Controls.Add(hrs);
                             i++;
                             hrs = new Label();
-                            hrs.Text = interestValue.Value.PersonCost.ToString();
+                            hrs.Text = GreaterSeniorityExists ? "(Hidden)" : interestValue.Value.PersonCost.ToString(GreaterSeniorityExists);
                             row.Cells[i].Controls.Add(hrs);
                             i++;
                         }
@@ -1188,7 +1205,10 @@ namespace PraticeManagement.Reports
             var dataSetList = new List<DataSet>();
 
             ReportData = ServiceCallers.Custom.Report(r => r.GetBudgetComparisonReportForProject(ProjectNumber, StartDate, EndDate, ActualsEndDate)).ToList();
-            Project = ServiceCallers.Custom.Project(p => p.GetProjectShortByProjectNumber(ProjectNumber, null, null, null));
+            Project = ServiceCallers.Custom.Project(p => p.GetProjectShortByProjectNumberForPerson(ProjectNumber, HttpContext.Current.User.Identity.Name));
+            PersonListAnalyzer = new SeniorityAnalyzer(DataHelper.CurrentPerson);
+            PersonListAnalyzer.OneWithGreaterSeniorityExists(Project.ProjectPersons);
+
             StartDateLocal = StartDate.HasValue ? StartDate.Value : Project.StartDate.Value;
             EndDateLocal = EndDate.HasValue ? EndDate.Value : Project.EndDate.Value;
             Expenses = ServiceCallers.Custom.Report(p => p.ReadProjectExpensesByTypeandByMonth(Project.Id.Value, null, StartDateLocal, EndDateLocal)).ToList();
@@ -1461,7 +1481,7 @@ namespace PraticeManagement.Reports
                     {
                         row.Add(billRates.Key.ToString("MM/dd/yyy"));
                         row.Add(billRates.Value.BillRate.Value);
-                        row.Add(billRates.Value.PersonCost.Value);
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)billRates.Value.PersonCost.Value);
 
                         dataCellStylearray.Add(dataDateCellStyle);
                         dataCellStylearray.Add(dataCurrencyStyle);
@@ -1558,9 +1578,9 @@ namespace PraticeManagement.Reports
                         totalMargin += personData.Financials.BudgetGrossMargin.Value;
                         row.Add(personData.TotalBudgetHours);
                         row.Add(personData.Financials.BudgetRevenue.Value);
-                        row.Add(personData.Financials.BudgetRevenue.Value - personData.Financials.BudgetGrossMargin.Value);
-                        row.Add(personData.Financials.BudgetGrossMargin.Value);
-                        row.Add(personData.Financials.BudgetRevenue != 0 ? personData.Financials.BudgetGrossMargin.Value / personData.Financials.BudgetRevenue.Value : 0);
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(personData.Financials.BudgetRevenue.Value - personData.Financials.BudgetGrossMargin.Value));
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)personData.Financials.BudgetGrossMargin.Value);
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(personData.Financials.BudgetRevenue != 0 ? personData.Financials.BudgetGrossMargin.Value / personData.Financials.BudgetRevenue.Value : 0));
                         break;
                     case 1:
                         totalServiceHours += personData.TotalProjectedHours;
@@ -1569,9 +1589,9 @@ namespace PraticeManagement.Reports
                         totalMargin += personData.Financials.GrossMargin.Value;
                         row.Add(personData.TotalProjectedHours);
                         row.Add(personData.Financials.Revenue.Value);
-                        row.Add(personData.Financials.Revenue.Value - personData.Financials.GrossMargin.Value);
-                        row.Add(personData.Financials.GrossMargin.Value);
-                        row.Add(personData.Financials.Revenue != 0 ? personData.Financials.GrossMargin.Value / personData.Financials.Revenue.Value : 0);
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(personData.Financials.Revenue.Value - personData.Financials.GrossMargin.Value));
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)personData.Financials.GrossMargin.Value);
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(personData.Financials.Revenue != 0 ? personData.Financials.GrossMargin.Value / personData.Financials.Revenue.Value : 0));
                         break;
                     case 2:
                         totalServiceHours += personData.TotalActualHours;
@@ -1580,9 +1600,9 @@ namespace PraticeManagement.Reports
                         totalMargin += personData.Financials.ActualGrossMargin.Value;
                         row.Add(personData.TotalActualHours);
                         row.Add(personData.Financials.ActualRevenue.Value);
-                        row.Add(personData.Financials.ActualRevenue.Value - personData.Financials.ActualGrossMargin.Value);
-                        row.Add(personData.Financials.ActualGrossMargin.Value);
-                        row.Add(personData.Financials.ActualRevenue != 0 ? personData.Financials.ActualGrossMargin.Value / personData.Financials.ActualRevenue.Value : 0);
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(personData.Financials.ActualRevenue.Value - personData.Financials.ActualGrossMargin.Value));
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)personData.Financials.ActualGrossMargin.Value);
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(personData.Financials.ActualRevenue != 0 ? personData.Financials.ActualGrossMargin.Value / personData.Financials.ActualRevenue.Value : 0));
                         break;
                     case 3:
                         totalServiceHours += personData.TotalEACHours;
@@ -1591,9 +1611,9 @@ namespace PraticeManagement.Reports
                         totalMargin += personData.Financials.EACGrossMargin.Value;
                         row.Add(personData.TotalEACHours);
                         row.Add(personData.Financials.EACRevenue.Value);
-                        row.Add(personData.Financials.EACRevenue.Value - personData.Financials.EACGrossMargin.Value);
-                        row.Add(personData.Financials.EACGrossMargin.Value);
-                        row.Add(personData.Financials.EACRevenue != 0 ? personData.Financials.EACGrossMargin.Value / personData.Financials.EACRevenue.Value : 0);
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(personData.Financials.EACRevenue.Value - personData.Financials.EACGrossMargin.Value));
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)personData.Financials.EACGrossMargin.Value);
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(personData.Financials.EACRevenue != 0 ? personData.Financials.EACGrossMargin.Value / personData.Financials.EACRevenue.Value : 0));
                         break;
                     case 4:
                         decimal revenue, cost, margin;
@@ -1610,9 +1630,9 @@ namespace PraticeManagement.Reports
                                 totalPersonCost += cost;
                                 totalMargin += margin;
                                 row.Add(revenue);
-                                row.Add(cost);
-                                row.Add(margin);
-                                row.Add(revenue != 0 ? margin / revenue : 0);
+                                row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)cost);
+                                row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)margin);
+                                row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(revenue != 0 ? margin / revenue : 0));
                                 break;
                             case "1":
                                 row.Add(personData.TotalActualHours - personData.TotalBudgetHours);
@@ -1625,9 +1645,9 @@ namespace PraticeManagement.Reports
                                 totalPersonCost += cost;
                                 totalMargin += margin;
                                 row.Add(revenue);
-                                row.Add(cost);
-                                row.Add(margin);
-                                row.Add(revenue != 0 ? margin / revenue : 0);
+                                row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)cost);
+                                row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)margin);
+                                row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(revenue != 0 ? margin / revenue : 0));
                                 break;
                             case "2":
                                 row.Add(personData.TotalEACHours - personData.TotalBudgetHours);
@@ -1640,9 +1660,9 @@ namespace PraticeManagement.Reports
                                 totalPersonCost += cost;
                                 totalMargin += margin;
                                 row.Add(revenue);
-                                row.Add(cost);
-                                row.Add(margin);
-                                row.Add(revenue != 0 ? margin / revenue : 0);
+                                row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)cost);
+                                row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)margin);
+                                row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(revenue != 0 ? margin / revenue : 0));
                                 break;
                         }
                         break;
@@ -1717,12 +1737,12 @@ namespace PraticeManagement.Reports
 
             row.Add(totalServiceHours);
             row.Add(totalRevenue);
-            row.Add(totalPersonCost);
-            row.Add(totalMargin);
+            row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)totalPersonCost);
+            row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)totalMargin);
             dataTotalHoursCellStyle = new CellStyles();
             dataTotalHoursCellStyle.WrapText = true;
             dataTotalHoursCellStyle.CellFormula = string.Format("SUM({0}{1}: {2}{3})", monthStartColumnAlpha, 4 + rowCount, monthEndColumnAlpha, 4 + rowCount);
-            row.Add(totalRevenue != 0M ? totalMargin / totalRevenue : 0);
+            row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(totalRevenue != 0M ? totalMargin / totalRevenue : 0));
             dataTotalStylearray.Add(dataTotalHoursCellStyle);
             dataTotalStylearray.Add(dataCurrencyStyle);
             dataTotalStylearray.Add(dataCurrencyStyle);
