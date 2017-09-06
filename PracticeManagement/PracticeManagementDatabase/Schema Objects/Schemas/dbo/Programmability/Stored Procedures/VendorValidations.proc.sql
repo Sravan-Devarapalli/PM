@@ -8,7 +8,7 @@
 AS
 BEGIN	
 	BEGIN TRY
-		DECLARE @ErrorMessage NVARCHAR(2048)
+		DECLARE @ErrorMessage NVARCHAR(2048), @emailDomain NVARCHAR(100)
 			
 			IF @Name IS NOT NULL AND EXISTS(SELECT 1
 											FROM dbo.[Vendor] AS v
@@ -34,6 +34,25 @@ BEGIN
 				SELECT @ErrorMessage = [dbo].[GetErrorMessage](70024)
 				RAISERROR (@ErrorMessage, 16, 1)
 			END	
+			
+			IF @Email IS NOT NULL 
+			BEGIN
+				SET @emailDomain = SUBSTRING(@Email, CHARINDEX('@',@Email)+1,LEN(@Email))
+
+				DECLARE @ExistingDomains TABLE(domain NVARCHAR(100))
+
+				INSERT INTO @ExistingDomains(domain)
+				SELECT SUBSTRING(v.Email, CHARINDEX('@',v.Email)+1,LEN(v.Email))
+				FROM Vendor v
+				WHERE @Id IS NULL OR v.Id <> @Id
+
+				IF EXISTS(SELECT 1 FROM @ExistingDomains WHERE domain = @emailDomain)
+				BEGIN
+					SELECT @ErrorMessage = [dbo].[GetErrorMessage](70025)
+					RAISERROR (@ErrorMessage, 16, 1)
+				END
+			END
+			
 	END TRY
 	BEGIN CATCH 
 		SELECT @ErrorMessage = ERROR_MESSAGE()
