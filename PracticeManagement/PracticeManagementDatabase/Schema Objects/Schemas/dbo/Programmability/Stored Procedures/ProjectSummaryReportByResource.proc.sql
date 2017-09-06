@@ -319,7 +319,7 @@ AS
 						(	
 							SELECT   PR.PersonId,
 									 PC.Date,
-									 SUM(CASE WHEN P.IsStrawman = 0 THEN dbo.PersonProjectedHoursPerDay(PC.DayOff,PC.CompanyDayOff,PC.TimeOffHours,PR.HoursPerDay) ELSE 0 END)  AS ForecastedBudgetHours
+									 SUM(dbo.PersonProjectedHoursPerDay(PC.DayOff,PC.CompanyDayOff,PC.TimeOffHours,PR.HoursPerDay))  AS ForecastedBudgetHours
 							FROM	dbo.Project Pro
 								LEFT JOIN ProjectResources PR ON PR.ProjectId=Pro.ProjectId
 								LEFT JOIN dbo.person AS P ON P.PersonId = PR.PersonId 
@@ -442,7 +442,9 @@ AS
 							SUM(T.BillableHours) as BillableHours,
 							SUM(T.BillableHoursUntilToday) as BillableHoursUntilToday,
 							SUM(T.NonBillableHours) as NonBillableHours,
-							AVG(T.BillRate) as  BillRate,
+							CASE WHEN T.BillingType!='Hourly' AND SUM(T.BillableHours+T.NonBillableHours) != 0 THEN SUM(T.EstimatedBillings)/(SUM(T.BillableHours+T.NonBillableHours))
+								 WHEN T.BillingType='Hourly' THEN T.BillRate
+								 ELSE 0 END as  BillRate,
 							CONVERT(DECIMAL(18,5), SUM(T.EstimatedBillings)) as EstimatedBillings,
 							T.EmployeeNumber,
 							SUM(T.BudgetHours) as BudgetHours,
@@ -455,7 +457,8 @@ AS
 							T.IsOffshore ,
 							T.ProjectRoleName ,
 							T.BillingType ,
-							T.EmployeeNumber
+							T.EmployeeNumber,
+							T.BillRate
 
 					DROP TABLE #MileStoneEntries1
 					DROP TABLE #CTE
