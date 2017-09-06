@@ -52,15 +52,6 @@ namespace DataTransferObjects
         public ProjectRevenue EACSummary {
             get;
             set;
-            //get {
-            //    return new ProjectRevenue
-            //    {
-            //        Hours = ActualsSummary.Hours + ProjectedSummary.Hours,
-            //        Revenue = ActualsSummary.Revenue + ProjectedSummary.Revenue,
-            //        Expenses = ActualsSummary.Expenses + ProjectedSummary.Expenses,
-            //        Margin = ActualsSummary.Margin + ProjectedSummary.Margin
-            //    };
-            //}
         }
     }
 }
