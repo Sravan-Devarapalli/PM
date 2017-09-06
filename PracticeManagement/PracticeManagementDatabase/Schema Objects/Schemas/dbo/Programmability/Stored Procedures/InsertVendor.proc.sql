@@ -25,6 +25,18 @@ BEGIN
 
 	SET @Id =SCOPE_IDENTITY()
 
+	DECLARE @Domain NVARCHAR(100)
+	SELECT @Domain= SUBSTRING(@Email, CHARINDEX('@',@Email)+1,LEN(@Email))
+
+	IF NOT EXISTS(SELECT 1 FROM Domain Where Name = @Domain)
+	BEGIN
+		DECLARE @sortOrderLocal INT 
+		SELECT @sortOrderLocal= MAX(SortOrder)+1 FROM Domain 
+
+		INSERT INTO Domain(Name,SortOrder)
+		VALUES(@Domain, @sortOrderLocal)
+	END
+
 	COMMIT TRAN T1;
 	END TRY
 	BEGIN CATCH
