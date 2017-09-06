@@ -1,9 +1,11 @@
 ﻿using DataTransferObjects;
+using PraticeManagement.Security;
 using PraticeManagement.Utils;
 using PraticeManagement.Utils.Excel;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Web;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 
@@ -346,6 +348,20 @@ namespace PraticeManagement.Controls.Projects
             }
         }
 
+        private SeniorityAnalyzer PersonListAnalyzer
+        {
+            get;
+            set;
+        }
+
+        protected bool GreaterSeniorityExists
+        {
+            get
+            {
+                return PersonListAnalyzer != null && PersonListAnalyzer.GreaterSeniorityExists;
+            }
+        }
+
         #endregion Properties
 
         protected void Page_Load(object sender, EventArgs e)
@@ -542,10 +558,10 @@ namespace PraticeManagement.Controls.Projects
                 var lblEACMarginPer = e.Item.FindControl("lblEACMarginPer") as Label;
 
 
-                lblBudgetMarginPer.Text = string.Format(Constants.Formatting.PercentageFormat, resource.Budget.Revenue != 0 ? resource.Budget.Margin.Value * 100M / resource.Budget.Revenue.Value : 0M);
-                lblActMarginPer.Text = string.Format(Constants.Formatting.PercentageFormat, resource.Actuals.Revenue != 0 ? resource.Actuals.Margin.Value * 100M / resource.Actuals.Revenue.Value : 0M);
-                lblProjMarginPer.Text = string.Format(Constants.Formatting.PercentageFormat, resource.ProjectedRemaining.Revenue != 0 ? resource.ProjectedRemaining.Margin.Value * 100M / resource.ProjectedRemaining.Revenue.Value : 0M);
-                lblEACMarginPer.Text = string.Format(Constants.Formatting.PercentageFormat, resource.EAC.Revenue != 0 ? resource.EAC.Margin.Value * 100M / resource.EAC.Revenue.Value : 0M);
+                lblBudgetMarginPer.Text = GreaterSeniorityExists ? "(Hidden)" : string.Format(Constants.Formatting.PercentageFormat, resource.Budget.Revenue != 0 ? resource.Budget.Margin.Value * 100M / resource.Budget.Revenue.Value : 0M);
+                lblActMarginPer.Text = GreaterSeniorityExists ? "(Hidden)" : string.Format(Constants.Formatting.PercentageFormat, resource.Actuals.Revenue != 0 ? resource.Actuals.Margin.Value * 100M / resource.Actuals.Revenue.Value : 0M);
+                lblProjMarginPer.Text = GreaterSeniorityExists ? "(Hidden)" : string.Format(Constants.Formatting.PercentageFormat, resource.ProjectedRemaining.Revenue != 0 ? resource.ProjectedRemaining.Margin.Value * 100M / resource.ProjectedRemaining.Revenue.Value : 0M);
+                lblEACMarginPer.Text = GreaterSeniorityExists ? "(Hidden)" : string.Format(Constants.Formatting.PercentageFormat, resource.EAC.Revenue != 0 ? resource.EAC.Margin.Value * 100M / resource.EAC.Revenue.Value : 0M);
 
                 decimal _hoursDiff = 0;
 
@@ -575,7 +591,7 @@ namespace PraticeManagement.Controls.Projects
                 }
                 _revenue.DoNotShowDecimals = _margin.DoNotShowDecimals = true;
                 lblRevenueDifference.Text = _revenue.ToString();
-                lblMarginDiff.Text = _margin.ToString();
+                lblMarginDiff.Text = GreaterSeniorityExists ? "(Hidden)" : _margin.ToString();
                 lblHoursDifference.Text = _hoursDiff < 0 ? string.Format("<span class=\"Bench\">({0})</span>", Math.Abs(_hoursDiff)) : _hoursDiff.ToString();
             }
             else if (e.Item.ItemType == ListItemType.Footer)
@@ -745,12 +761,12 @@ namespace PraticeManagement.Controls.Projects
                     var lblTotalBudgetMarginPer = e.Item.FindControl("lblTotalBudgetMarginPer") as Label;
 
                     var lblBudgetMarginExpense = e.Item.FindControl("lblBudgetMarginExpense") as Label;
-                    lblBudgetMarginExpense.Text = BudgetManagement.BudgetSummary.Expenses.ToString("$###,###,###,###,##0");
-                    lblBudgetMargin.Text = BudgetManagement.BudgetSummary.TotalMargin.ToString();
-                    lblBudgetMarginPer.Text = string.Format(Constants.Formatting.PercentageFormat,
+                    lblBudgetMarginExpense.Text = GreaterSeniorityExists ? "(Hidden)" : BudgetManagement.BudgetSummary.Expenses.ToString("$###,###,###,###,##0");
+                    lblBudgetMargin.Text = GreaterSeniorityExists ? "(Hidden)" : BudgetManagement.BudgetSummary.TotalMargin.ToString();
+                    lblBudgetMarginPer.Text = GreaterSeniorityExists ? "(Hidden)" : string.Format(Constants.Formatting.PercentageFormat,
                                                            BudgetManagement.BudgetSummary.TotalRevenue != 0 ? BudgetManagement.BudgetSummary.TotalMargin.Value * 100M / BudgetManagement.BudgetSummary.TotalRevenue.Value : 0M);
-                    lblTotalBudgetMargin.Text = BudgetManagement.BudgetSummary.Margin.ToString();
-                    lblTotalBudgetMarginPer.Text = string.Format(Constants.Formatting.PercentageFormat,
+                    lblTotalBudgetMargin.Text = GreaterSeniorityExists ? "(Hidden)" : BudgetManagement.BudgetSummary.Margin.ToString();
+                    lblTotalBudgetMarginPer.Text = GreaterSeniorityExists ? "(Hidden)" : string.Format(Constants.Formatting.PercentageFormat,
                                                            BudgetManagement.BudgetSummary.Revenue != 0 ? BudgetManagement.BudgetSummary.Margin.Value * 100M / BudgetManagement.BudgetSummary.Revenue.Value : 0M);
                     if (ShowActuals)
                     {
@@ -761,13 +777,13 @@ namespace PraticeManagement.Controls.Projects
                         var lblTotalActMargin = e.Item.FindControl("lblTotalActMargin") as Label;
                         var lblTotalActMarginPer = e.Item.FindControl("lblTotalActMarginPer") as Label;
                         var lblActMarginExpense = e.Item.FindControl("lblActMarginExpense") as Label;
-                        lblActMarginExpense.Text = BudgetManagement.ActualsSummary.Expenses.ToString("$###,###,###,###,##0");
+                        lblActMarginExpense.Text = GreaterSeniorityExists ? "(Hidden)" : BudgetManagement.ActualsSummary.Expenses.ToString("$###,###,###,###,##0");
 
-                        lblActMargin.Text = BudgetManagement.ActualsSummary.TotalMargin.ToString();
-                        lblActMarginPer.Text = string.Format(Constants.Formatting.PercentageFormat,
+                        lblActMargin.Text = GreaterSeniorityExists ? "(Hidden)" : BudgetManagement.ActualsSummary.TotalMargin.ToString();
+                        lblActMarginPer.Text = GreaterSeniorityExists ? "(Hidden)" : string.Format(Constants.Formatting.PercentageFormat,
                                                            BudgetManagement.ActualsSummary.TotalRevenue != 0 ? BudgetManagement.ActualsSummary.TotalMargin.Value * 100M / BudgetManagement.ActualsSummary.TotalRevenue.Value : 0M);
-                        lblTotalActMargin.Text = BudgetManagement.ActualsSummary.Margin.ToString();
-                        lblTotalActMarginPer.Text = string.Format(Constants.Formatting.PercentageFormat,
+                        lblTotalActMargin.Text = GreaterSeniorityExists ? "(Hidden)" : BudgetManagement.ActualsSummary.Margin.ToString();
+                        lblTotalActMarginPer.Text = GreaterSeniorityExists ? "(Hidden)" : string.Format(Constants.Formatting.PercentageFormat,
                                                                BudgetManagement.ActualsSummary.Revenue != 0 ? BudgetManagement.ActualsSummary.Margin.Value * 100M / BudgetManagement.ActualsSummary.Revenue.Value : 0M);
                     }
 
@@ -781,13 +797,13 @@ namespace PraticeManagement.Controls.Projects
                         var lblTotalProjMarginPer = e.Item.FindControl("lblTotalProjMarginPer") as Label;
 
                         var lblProjMarginExpense = e.Item.FindControl("lblProjMarginExpense") as Label;
-                        lblProjMarginExpense.Text = BudgetManagement.ProjectedSummary.Expenses.ToString("$###,###,###,###,##0");
+                        lblProjMarginExpense.Text = GreaterSeniorityExists ? "(Hidden)" : BudgetManagement.ProjectedSummary.Expenses.ToString("$###,###,###,###,##0");
 
-                        lblTotalProjMargin.Text = BudgetManagement.ProjectedSummary.Margin.ToString();
-                        lblTotalProjMarginPer.Text = string.Format(Constants.Formatting.PercentageFormat,
+                        lblTotalProjMargin.Text = GreaterSeniorityExists ? "(Hidden)" : BudgetManagement.ProjectedSummary.Margin.ToString();
+                        lblTotalProjMarginPer.Text = GreaterSeniorityExists ? "(Hidden)" : string.Format(Constants.Formatting.PercentageFormat,
                                                                BudgetManagement.ProjectedSummary.Revenue != 0 ? BudgetManagement.ProjectedSummary.Margin.Value * 100M / BudgetManagement.ProjectedSummary.Revenue.Value : 0M);
-                        lblProjMargin.Text = BudgetManagement.ProjectedSummary.TotalMargin.ToString();
-                        lblProjMarginPer.Text = string.Format(Constants.Formatting.PercentageFormat,
+                        lblProjMargin.Text = GreaterSeniorityExists ? "(Hidden)" : BudgetManagement.ProjectedSummary.TotalMargin.ToString();
+                        lblProjMarginPer.Text = GreaterSeniorityExists ? "(Hidden)" : string.Format(Constants.Formatting.PercentageFormat,
                                                           BudgetManagement.ProjectedSummary.TotalRevenue != 0 ? BudgetManagement.ProjectedSummary.TotalMargin.Value * 100M / BudgetManagement.ProjectedSummary.TotalRevenue.Value : 0M);
                     }
                     if (ShowEAC)
@@ -798,15 +814,15 @@ namespace PraticeManagement.Controls.Projects
                         var lblEACMarginPer = e.Item.FindControl("lblEACMarginPer") as Label;
 
                         var lblEACMarginExpense = e.Item.FindControl("lblEACMarginExpense") as Label;
-                        lblEACMarginExpense.Text = BudgetManagement.EACSummary.Expenses.ToString("$###,###,###,###,##0");
+                        lblEACMarginExpense.Text = GreaterSeniorityExists ? "(Hidden)" : BudgetManagement.EACSummary.Expenses.ToString("$###,###,###,###,##0");
 
-                        lblEACMargin.Text = BudgetManagement.EACSummary.TotalMargin.ToString();
-                        lblEACMarginPer.Text = string.Format(Constants.Formatting.PercentageFormat,
+                        lblEACMargin.Text = GreaterSeniorityExists ? "(Hidden)" : BudgetManagement.EACSummary.TotalMargin.ToString();
+                        lblEACMarginPer.Text = GreaterSeniorityExists ? "(Hidden)" : string.Format(Constants.Formatting.PercentageFormat,
                                                            BudgetManagement.EACSummary.TotalRevenue != 0 ? BudgetManagement.EACSummary.TotalMargin.Value * 100M / BudgetManagement.EACSummary.TotalRevenue.Value : 0M);
                         var lblEACTotalMargin = e.Item.FindControl("lblEACTotalMargin") as Label;
                         var lblEACTotalMarginPer = e.Item.FindControl("lblEACTotalMarginPer") as Label;
-                        lblEACTotalMargin.Text = BudgetManagement.EACSummary.Margin.ToString();
-                        lblEACTotalMarginPer.Text = string.Format(Constants.Formatting.PercentageFormat,
+                        lblEACTotalMargin.Text = GreaterSeniorityExists ? "(Hidden)" : BudgetManagement.EACSummary.Margin.ToString();
+                        lblEACTotalMarginPer.Text = GreaterSeniorityExists ? "(Hidden)" : string.Format(Constants.Formatting.PercentageFormat,
                                                                BudgetManagement.EACSummary.Revenue != 0 ? BudgetManagement.EACSummary.Margin.Value * 100M / BudgetManagement.EACSummary.Revenue.Value : 0M);
                     }
                 }
@@ -830,36 +846,37 @@ namespace PraticeManagement.Controls.Projects
                         case 2:
                             _hrsDiff = BudgetManagement.EACSummary.Hours - BudgetManagement.BudgetSummary.Hours;
                             lblRevenueDifferenceSummary.Text = (BudgetManagement.EACSummary.Revenue - BudgetManagement.BudgetSummary.Revenue).ToString();
-                            lblMarginDifferenceSummary.Text = (BudgetManagement.EACSummary.Margin - BudgetManagement.BudgetSummary.Margin).ToString();
+                            lblMarginDifferenceSummary.Text = GreaterSeniorityExists ? "(Hidden)" : (BudgetManagement.EACSummary.Margin - BudgetManagement.BudgetSummary.Margin).ToString();
                             lblMarginExpense.Text = lblExpenseDiff.Text = (BudgetManagement.EACSummary.Expenses - BudgetManagement.BudgetSummary.Expenses).ToString("$###,###,###,###,##0");
                             lblDiffTotal.Text = string.Format(PracticeManagementCurrency.RevenueFormat, (BudgetManagement.EACSummary.TotalRevenue - BudgetManagement.BudgetSummary.TotalRevenue).Value.ToString(CurrencyDisplayFormat));
-                            lblDiffMargin.Text = string.Format(PracticeManagementCurrency.RevenueFormat, (BudgetManagement.EACSummary.TotalMargin - BudgetManagement.BudgetSummary.TotalMargin).Value.ToString(CurrencyDisplayFormat));
+                            lblDiffMargin.Text = GreaterSeniorityExists ? "(Hidden)" : string.Format(PracticeManagementCurrency.RevenueFormat, (BudgetManagement.EACSummary.TotalMargin - BudgetManagement.BudgetSummary.TotalMargin).Value.ToString(CurrencyDisplayFormat));
                             break;
                         case 3:
                             _hrsDiff = BudgetManagement.EACSummary.Hours - BudgetManagement.BudgetSummary.Hours;
                             lblRevenueDifferenceSummary.Text = (BudgetManagement.EACSummary.Revenue - BudgetManagement.BudgetSummary.Revenue).ToString();
-                            lblMarginDifferenceSummary.Text = (BudgetManagement.EACSummary.Margin - BudgetManagement.BudgetSummary.Margin).ToString();
+                            lblMarginDifferenceSummary.Text = GreaterSeniorityExists ? "(Hidden)" : (BudgetManagement.EACSummary.Margin - BudgetManagement.BudgetSummary.Margin).ToString();
                             lblMarginExpense.Text = lblExpenseDiff.Text = (BudgetManagement.EACSummary.Expenses - BudgetManagement.BudgetSummary.Expenses).ToString("$###,###,###,###,##0");
                             lblDiffTotal.Text = (BudgetManagement.EACSummary.TotalRevenue - BudgetManagement.BudgetSummary.TotalRevenue).ToString();
-                            lblDiffMargin.Text = (BudgetManagement.EACSummary.TotalMargin - BudgetManagement.BudgetSummary.TotalMargin).ToString();
+                            lblDiffMargin.Text = GreaterSeniorityExists ? "(Hidden)" : (BudgetManagement.EACSummary.TotalMargin - BudgetManagement.BudgetSummary.TotalMargin).ToString();
                             break;
                         case 4:
                             _hrsDiff = BudgetManagement.ActualsSummary.Hours - BudgetManagement.BudgetSummary.Hours;
                             lblRevenueDifferenceSummary.Text = (BudgetManagement.ActualsSummary.Revenue - BudgetManagement.BudgetSummary.Revenue).ToString();
-                            lblMarginDifferenceSummary.Text = (BudgetManagement.ActualsSummary.Margin - BudgetManagement.BudgetSummary.Margin).ToString();
+                            lblMarginDifferenceSummary.Text = GreaterSeniorityExists ? "(Hidden)" : (BudgetManagement.ActualsSummary.Margin - BudgetManagement.BudgetSummary.Margin).ToString();
                             lblMarginExpense.Text = lblExpenseDiff.Text = (BudgetManagement.ActualsSummary.Expenses - BudgetManagement.BudgetSummary.Expenses).ToString("$###,###,###,###,##0");
                             lblDiffTotal.Text = (BudgetManagement.ActualsSummary.TotalRevenue - BudgetManagement.BudgetSummary.TotalRevenue).ToString();
-                            lblDiffMargin.Text = (BudgetManagement.ActualsSummary.TotalMargin - BudgetManagement.BudgetSummary.TotalMargin).ToString();
+                            lblDiffMargin.Text = GreaterSeniorityExists ? "(Hidden)" : (BudgetManagement.ActualsSummary.TotalMargin - BudgetManagement.BudgetSummary.TotalMargin).ToString();
                             break;
                         case 5:
                             _hrsDiff = BudgetManagement.ProjectedSummary.Hours - BudgetManagement.BudgetSummary.Hours;
                             lblRevenueDifferenceSummary.Text = (BudgetManagement.ProjectedSummary.Revenue - BudgetManagement.BudgetSummary.Revenue).ToString();
-                            lblMarginDifferenceSummary.Text = (BudgetManagement.ProjectedSummary.Margin - BudgetManagement.BudgetSummary.Margin).ToString();
+                            lblMarginDifferenceSummary.Text = GreaterSeniorityExists ? "(Hidden)" : (BudgetManagement.ProjectedSummary.Margin - BudgetManagement.BudgetSummary.Margin).ToString();
                             lblMarginExpense.Text = lblExpenseDiff.Text = (BudgetManagement.ProjectedSummary.Expenses - BudgetManagement.BudgetSummary.Expenses).ToString("$###,###,###,###,##0");
                             lblDiffTotal.Text = (BudgetManagement.ProjectedSummary.TotalRevenue - BudgetManagement.BudgetSummary.TotalRevenue).ToString();
-                            lblDiffMargin.Text = (BudgetManagement.ProjectedSummary.TotalMargin - BudgetManagement.BudgetSummary.TotalMargin).ToString();
+                            lblDiffMargin.Text = GreaterSeniorityExists ? "(Hidden)" : (BudgetManagement.ProjectedSummary.TotalMargin - BudgetManagement.BudgetSummary.TotalMargin).ToString();
                             break;
                     }
+                    lblMarginExpense.Text = GreaterSeniorityExists ? "(Hidden)" : lblExpenseDiff.Text;
                     lblHoursDifferenceSummary.Text = _hrsDiff < 0 ? string.Format("<span class=\"Bench\">({0})</span>", Math.Abs(_hrsDiff)) : _hrsDiff.ToString();
                 }
             }
@@ -869,6 +886,9 @@ namespace PraticeManagement.Controls.Projects
         protected void btnUpdate_Click(object sender, EventArgs e)
         {
             ViewState["Project_Budget_Management"] = null;
+            PersonListAnalyzer = new SeniorityAnalyzer(DataHelper.CurrentPerson);
+            var CurrentProject = ServiceCallers.Custom.Project(p => p.GetProjectShortByProjectNumberForPerson(HostingPage.Project.ProjectNumber, HttpContext.Current.User.Identity.Name));
+            PersonListAnalyzer.OneWithGreaterSeniorityExists(CurrentProject.ProjectPersons);
             PopulateData();
         }
 
@@ -880,6 +900,9 @@ namespace PraticeManagement.Controls.Projects
 
             if (BudgetManagement.BudgetResources != null && BudgetManagement.BudgetResources.Count > 0 && View != 0)
             {
+                PersonListAnalyzer = new SeniorityAnalyzer(DataHelper.CurrentPerson);
+                var CurrentProject = ServiceCallers.Custom.Project(p => p.GetProjectShortByProjectNumberForPerson(HostingPage.Project.ProjectNumber, HttpContext.Current.User.Identity.Name));
+                PersonListAnalyzer.OneWithGreaterSeniorityExists(CurrentProject.ProjectPersons);
                 string Title = "Budget Management By Project -" + HostingPage.Project.Name;
                 string filters = "View:" + ddlView.SelectedItem.Text + ",\n Data Points:" + (ddldataPoints.SelectedItems != null ? ddldataPoints.SelectedItemsText : "All Data points");
                 DataTable header = new DataTable();
@@ -1173,7 +1196,7 @@ namespace PraticeManagement.Controls.Projects
                         }
                         if (showMargin)
                         {
-                            row.Add(resource.Budget.Margin.Value - resource.EAC.Margin.Value);
+                            row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(resource.Budget.Margin.Value - resource.EAC.Margin.Value));
                         }
                         break;
                     case 3:
@@ -1184,7 +1207,7 @@ namespace PraticeManagement.Controls.Projects
                         }
                         if (showMargin)
                         {
-                            row.Add(resource.Budget.Margin.Value - resource.EAC.Margin.Value);
+                            row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(resource.Budget.Margin.Value - resource.EAC.Margin.Value));
                         }
 
                         break;
@@ -1196,7 +1219,7 @@ namespace PraticeManagement.Controls.Projects
                         }
                         if (showMargin)
                         {
-                            row.Add(resource.Budget.Margin.Value - resource.Actuals.Margin.Value);
+                            row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(resource.Budget.Margin.Value - resource.Actuals.Margin.Value));
                         }
 
                         break;
@@ -1208,7 +1231,7 @@ namespace PraticeManagement.Controls.Projects
                         }
                         if (showMargin)
                         {
-                            row.Add(resource.Budget.Margin.Value - resource.ProjectedRemaining.Margin.Value);
+                            row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(resource.Budget.Margin.Value - resource.ProjectedRemaining.Margin.Value));
                         }
                         break;
                 }
@@ -1246,7 +1269,7 @@ namespace PraticeManagement.Controls.Projects
                     }
                     if (showMargin)
                     {
-                        row.Add((BudgetManagement.BudgetSummary.Margin.Value - BudgetManagement.EACSummary.Margin.Value));
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.BudgetSummary.Margin.Value - BudgetManagement.EACSummary.Margin.Value));
                     }
                     break;
                 case 3:
@@ -1257,7 +1280,7 @@ namespace PraticeManagement.Controls.Projects
                     }
                     if (showMargin)
                     {
-                        row.Add((BudgetManagement.BudgetSummary.Margin.Value - BudgetManagement.EACSummary.Margin.Value));
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.BudgetSummary.Margin.Value - BudgetManagement.EACSummary.Margin.Value));
                     }
 
                     break;
@@ -1269,7 +1292,7 @@ namespace PraticeManagement.Controls.Projects
                     }
                     if (showMargin)
                     {
-                        row.Add((BudgetManagement.BudgetSummary.Margin.Value - BudgetManagement.ActualsSummary.Margin.Value));
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.BudgetSummary.Margin.Value - BudgetManagement.ActualsSummary.Margin.Value));
                     }
 
                     break;
@@ -1281,7 +1304,7 @@ namespace PraticeManagement.Controls.Projects
                     }
                     if (showMargin)
                     {
-                        row.Add((BudgetManagement.BudgetSummary.Margin.Value - BudgetManagement.ProjectedSummary.Margin.Value));
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.BudgetSummary.Margin.Value - BudgetManagement.ProjectedSummary.Margin.Value));
                     }
                     break;
             }
@@ -1313,7 +1336,7 @@ namespace PraticeManagement.Controls.Projects
             }
             if (showMargin)
             {
-                row.Add(BudgetManagement.BudgetSummary.Expenses);
+                row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.BudgetSummary.Expenses));
                 row.Add("");
             }
             if (showActual)
@@ -1333,7 +1356,7 @@ namespace PraticeManagement.Controls.Projects
                 }
                 if (showMargin)
                 {
-                    row.Add(BudgetManagement.ActualsSummary.Expenses);
+                    row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.ActualsSummary.Expenses));
                     row.Add("");
                 }
             }
@@ -1354,7 +1377,7 @@ namespace PraticeManagement.Controls.Projects
                 }
                 if (showMargin)
                 {
-                    row.Add(BudgetManagement.ProjectedSummary.Expenses);
+                    row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.ProjectedSummary.Expenses));
                     row.Add("");
                 }
             }
@@ -1375,7 +1398,7 @@ namespace PraticeManagement.Controls.Projects
                 }
                 if (showMargin)
                 {
-                    row.Add(BudgetManagement.EACSummary.Expenses);
+                    row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.EACSummary.Expenses));
                     row.Add("");
                 }
             }
@@ -1392,7 +1415,7 @@ namespace PraticeManagement.Controls.Projects
                     }
                     if (showMargin)
                     {
-                        row.Add(BudgetManagement.BudgetSummary.Expenses - BudgetManagement.EACSummary.Expenses);
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.BudgetSummary.Expenses - BudgetManagement.EACSummary.Expenses));
                     }
                     break;
                 case 3:
@@ -1403,7 +1426,7 @@ namespace PraticeManagement.Controls.Projects
                     }
                     if (showMargin)
                     {
-                        row.Add(BudgetManagement.BudgetSummary.Expenses - BudgetManagement.EACSummary.Expenses);
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.BudgetSummary.Expenses - BudgetManagement.EACSummary.Expenses));
                     }
 
                     break;
@@ -1415,7 +1438,7 @@ namespace PraticeManagement.Controls.Projects
                     }
                     if (showMargin)
                     {
-                        row.Add(BudgetManagement.BudgetSummary.Expenses - BudgetManagement.ActualsSummary.Expenses);
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.BudgetSummary.Expenses - BudgetManagement.ActualsSummary.Expenses));
                     }
 
                     break;
@@ -1427,7 +1450,7 @@ namespace PraticeManagement.Controls.Projects
                     }
                     if (showMargin)
                     {
-                        row.Add(BudgetManagement.BudgetSummary.Expenses - BudgetManagement.ProjectedSummary.Expenses);
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.BudgetSummary.Expenses - BudgetManagement.ProjectedSummary.Expenses));
                     }
                     break;
             }
@@ -1452,8 +1475,8 @@ namespace PraticeManagement.Controls.Projects
             }
             if (showMargin)
             {
-                row.Add(BudgetManagement.BudgetSummary.TotalMargin.Value);
-                row.Add((BudgetManagement.BudgetSummary.TotalRevenue != 0 ? BudgetManagement.BudgetSummary.TotalMargin.Value * 100M / BudgetManagement.BudgetSummary.TotalRevenue.Value : 0M));
+                row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.BudgetSummary.TotalMargin.Value));
+                row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.BudgetSummary.TotalRevenue != 0 ? BudgetManagement.BudgetSummary.TotalMargin.Value * 100M / BudgetManagement.BudgetSummary.TotalRevenue.Value : 0M));
             }
             if (showActual)
             {
@@ -1472,8 +1495,8 @@ namespace PraticeManagement.Controls.Projects
                 }
                 if (showMargin)
                 {
-                    row.Add(BudgetManagement.ActualsSummary.TotalMargin.Value);
-                    row.Add((BudgetManagement.ActualsSummary.TotalRevenue != 0 ? BudgetManagement.ActualsSummary.TotalMargin.Value * 100M / BudgetManagement.ActualsSummary.TotalRevenue.Value : 0M));
+                    row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.ActualsSummary.TotalMargin.Value));
+                    row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.ActualsSummary.TotalRevenue != 0 ? BudgetManagement.ActualsSummary.TotalMargin.Value * 100M / BudgetManagement.ActualsSummary.TotalRevenue.Value : 0M));
                 }
             }
             if (showProjected)
@@ -1493,8 +1516,8 @@ namespace PraticeManagement.Controls.Projects
                 }
                 if (showMargin)
                 {
-                    row.Add(BudgetManagement.ProjectedSummary.TotalMargin.Value);
-                    row.Add((BudgetManagement.ProjectedSummary.TotalRevenue != 0 ? BudgetManagement.ProjectedSummary.TotalMargin.Value * 100M / BudgetManagement.ProjectedSummary.TotalRevenue.Value : 0M));
+                    row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.ProjectedSummary.TotalMargin.Value));
+                    row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.ProjectedSummary.TotalRevenue != 0 ? BudgetManagement.ProjectedSummary.TotalMargin.Value * 100M / BudgetManagement.ProjectedSummary.TotalRevenue.Value : 0M));
                 }
             }
             if (showEAC)
@@ -1514,8 +1537,8 @@ namespace PraticeManagement.Controls.Projects
                 }
                 if (showMargin)
                 {
-                    row.Add(BudgetManagement.EACSummary.TotalMargin.Value);
-                    row.Add((BudgetManagement.EACSummary.TotalRevenue != 0 ? BudgetManagement.EACSummary.TotalMargin.Value * 100M / BudgetManagement.EACSummary.TotalRevenue.Value : 0M));
+                    row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.EACSummary.TotalMargin.Value));
+                    row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.EACSummary.TotalRevenue != 0 ? BudgetManagement.EACSummary.TotalMargin.Value * 100M / BudgetManagement.EACSummary.TotalRevenue.Value : 0M));
                 }
             }
 
@@ -1531,7 +1554,7 @@ namespace PraticeManagement.Controls.Projects
                     }
                     if (showMargin)
                     {
-                        row.Add((BudgetManagement.BudgetSummary.TotalMargin - BudgetManagement.EACSummary.TotalMargin).Value);
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.BudgetSummary.TotalMargin - BudgetManagement.EACSummary.TotalMargin).Value);
                     }
                     break;
                 case 3:
@@ -1542,7 +1565,7 @@ namespace PraticeManagement.Controls.Projects
                     }
                     if (showMargin)
                     {
-                        row.Add((BudgetManagement.BudgetSummary.TotalMargin - BudgetManagement.EACSummary.TotalMargin).Value);
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.BudgetSummary.TotalMargin - BudgetManagement.EACSummary.TotalMargin).Value);
                     }
 
                     break;
@@ -1554,7 +1577,7 @@ namespace PraticeManagement.Controls.Projects
                     }
                     if (showMargin)
                     {
-                        row.Add((BudgetManagement.BudgetSummary.TotalMargin - BudgetManagement.ActualsSummary.TotalMargin).Value);
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.BudgetSummary.TotalMargin - BudgetManagement.ActualsSummary.TotalMargin).Value);
                     }
 
                     break;
@@ -1566,7 +1589,7 @@ namespace PraticeManagement.Controls.Projects
                     }
                     if (showMargin)
                     {
-                        row.Add((BudgetManagement.BudgetSummary.TotalMargin - BudgetManagement.ProjectedSummary.TotalMargin).Value);
+                        row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(BudgetManagement.BudgetSummary.TotalMargin - BudgetManagement.ProjectedSummary.TotalMargin).Value);
                     }
                     break;
             }
@@ -1576,15 +1599,14 @@ namespace PraticeManagement.Controls.Projects
 
         private void PrepareExcelGrid(List<object> row, ProjectRevenue financial, bool showRevenue, bool showMargin, bool isSummary = false)
         {
-            //if (!isBold)
-            //{
+
             if (showRevenue)
             {
                 row.Add(isSummary ? "" : financial.BillRate.Value.ToString());
             }
             if (showMargin)
             {
-                row.Add(isSummary ? "" : financial.MarginRate.Value.ToString());
+                row.Add(isSummary ? "" : GreaterSeniorityExists ? "(Hidden)" : (object)financial.MarginRate.Value.ToString());
             }
             row.Add(financial.Hours);
             if (showRevenue)
@@ -1593,32 +1615,10 @@ namespace PraticeManagement.Controls.Projects
             }
             if (showMargin)
             {
-                row.Add(financial.Margin.Value);
-                row.Add(isSummary ? (financial.Revenue != 0 ? financial.Margin.Value * 100M / financial.Revenue.Value : 0M) : (financial.Revenue != 0 ? financial.Margin.Value * 100M / financial.Revenue.Value : 0M));
+                row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)financial.Margin.Value);
+                row.Add(GreaterSeniorityExists ? "(Hidden)" : (object)(isSummary ? (financial.Revenue != 0 ? financial.Margin.Value * 100M / financial.Revenue.Value : 0M) : (financial.Revenue != 0 ? financial.Margin.Value * 100M / financial.Revenue.Value : 0M)));
             }
-            //}
-            //else
-            //{
-            //    if (showRevenue)
-            //    {
-            //        row.Add(string.Format(NPOIExcel.CustomColorWithBoldKey, "black", isSummary ? "" : financial.BillRate.Value.ToString("$###,##0.00")));
-            //    }
-            //    if (showMargin)
-            //    {
-            //        row.Add(string.Format(NPOIExcel.CustomColorWithBoldKey, "black", isSummary ? "" : financial.MarginRate.Value.ToString("$###,##0.00")));
-            //    }
-            //    row.Add(string.Format(NPOIExcel.CustomColorWithBoldKey, "black", financial.Hours));
-            //    if (showRevenue)
-            //    {
-            //        row.Add(string.Format(NPOIExcel.CustomColorWithBoldKey, "black", (isSummary ? financial.Revenue.Value : financial.Revenue.Value).ToString(CurrencyDisplayFormat)));
-            //    }
-            //    if (showMargin)
-            //    {
-            //        row.Add(string.Format(NPOIExcel.CustomColorWithBoldKey, "black", financial.Margin.Value.ToString(CurrencyDisplayFormat)));
-            //        row.Add(string.Format(NPOIExcel.CustomColorWithBoldKey, "black", (isSummary ? (financial.Revenue != 0 ? financial.Margin.Value * 100M / financial.Revenue.Value : 0M) : (financial.Revenue != 0 ? financial.Margin.Value * 100M / financial.Revenue.Value : 0M)).ToString("P")));
-            //    }
 
-            //}
         }
     }
 }
