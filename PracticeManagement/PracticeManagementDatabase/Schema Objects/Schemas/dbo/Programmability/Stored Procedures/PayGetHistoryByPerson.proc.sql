@@ -33,7 +33,8 @@ AS
 		   p.DivisionId,
 		   d.DivisionName,
 		   p.VendorId,
-		   p.VendorName
+		   p.VendorName,
+		   p.IsRightToPresent
 	  FROM dbo.v_Pay AS p
 	  LEFT JOIN dbo.Title Tt ON Tt.TitleId = P.TitleId
 	  LEFT JOIN dbo.Practice pr on pr.PracticeId = p.PracticeId
