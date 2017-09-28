@@ -15,6 +15,10 @@ BEGIN
 	 SELECT @TempDate = CASE WHEN @PersonStatusId IN (1,3) THEN HireDate WHEN @PersonStatusId IN (2,5) THEN TerminationDate+1 END FROM dbo.Person WHERE PersonId = @PersonId
 	 SELECT @IsStrawman = IsStrawman FROM dbo.Person WHERE PersonId = @PersonId
 	 SELECT @PreviousStatusId = PersonStatusId FROM dbo.PersonStatusHistory WHERE PersonId = @PersonId AND EndDate IS NULL
+	 SELECT @TempDate = CASE WHEN @PersonStatusId = 2 AND HireDate IS NULL AND TerminationDate IS NULL THEN RighttoPresentEndDate ELSE @TempDate END FROM dbo.Person WHERE PersonId = @PersonId
+
+	 SELECT @TempDate = CASE WHEN @PersonStatusId = 6 AND HireDate IS NULL AND TerminationDate IS NULL THEN RighttoPresentStartDate ELSE @TempDate END FROM dbo.Person WHERE PersonId = @PersonId
+
 	 IF @IsStrawman = 0
 	 BEGIN
 		 IF @PersonStatusId = 5
@@ -102,6 +106,7 @@ BEGIN
 								AND PersonId = @PersonId
 								AND PersonStatusId <> @PersonStatusId)
 					BEGIN
+						
 						UPDATE dbo.PersonStatusHistory
 						SET EndDate = @TempDate-1
 						WHERE EndDate IS NULL 
