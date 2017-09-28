@@ -2,8 +2,10 @@
 (
 	[Id]			   INT IDENTITY(1,1) NOT NULL,
 	[PersonId]         INT            NOT NULL,
-	[HireDate]         DATETIME       NOT NULL,
+	[HireDate]         DATETIME       NULL,
     [TerminationDate]  DATETIME       NULL,
+	[RighttoPresentStartDate]         DATETIME       NULL,
+    [RighttoPresentEndDate]  DATETIME       NULL,
     [Alias]            NVARCHAR (100) NULL,
     [DefaultPractice]  INT            NULL,
     [FirstName]        NVARCHAR (40)  NOT NULL,
@@ -30,7 +32,8 @@
 	EmployeeReferralId	INT			  NULL,
 	CohortAssignmentId	INT			  NULL,
 	CreatedDate			DATETIME	  NOT NULL,
-	CreatedBy			INT			  NULL,
+	CreatedBy			INT			  NULL
+	
 	CONSTRAINT PK_PersonHistory PRIMARY KEY (Id)
 )
 GO
