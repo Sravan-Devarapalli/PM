@@ -16,6 +16,8 @@ namespace PraticeManagement.FilterObjects
 
         public bool ProjectedPersons { get; set; }
 
+        public bool RighttoPresentPersons { get; set; }
+
         public string PracticesSelected { get; set; }
 
         public string DivisionsSelected { get; set; }
