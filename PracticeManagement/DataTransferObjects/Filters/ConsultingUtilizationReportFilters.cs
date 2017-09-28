@@ -44,6 +44,12 @@ namespace DataTransferObjects.Filters
             set;
         }
 
+        public bool IncludeRighttoPresentPeople
+        {
+            get;
+            set;
+        }
+
         public bool IncludeActiveProjects
         {
             get;
