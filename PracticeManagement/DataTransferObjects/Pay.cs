@@ -275,6 +275,13 @@ namespace DataTransferObjects
             set;
         }
 
+        [DataMember]
+        public bool IsRighttoPresent
+        {
+            get;
+            set;
+        }
+
         public string HtmlEncodedTitleName
         {
             get
@@ -286,29 +293,29 @@ namespace DataTransferObjects
         public object Clone()
         {
             return new Pay
-                {
-                    PersonId = PersonId,
-                    StartDate = StartDate,
-                    EndDate = EndDate,
-                    OldStartDate = OldStartDate,
-                    OldEndDate = OldEndDate,
-                    Amount = Amount,
-                    Timescale = Timescale,
-                    TimescaleName = TimescaleName,
-                    AmountHourly = AmountHourly,
-                    VacationDays = VacationDays,
-                    BonusAmount = BonusAmount,
-                    BonusHoursToCollect = BonusHoursToCollect,
-                    IsYearBonus = IsYearBonus,
-                    TitleId = TitleId,
-                    TitleName = TitleName,
-                    DivisionId = DivisionId,
-                    PracticeId = PracticeId,
-                    PracticeName = PracticeName,
-                    SLTApproval = SLTApproval,
-                    SLTPTOApproval = SLTPTOApproval,
-                    vendor = vendor
-                };
+            {
+                PersonId = PersonId,
+                StartDate = StartDate,
+                EndDate = EndDate,
+                OldStartDate = OldStartDate,
+                OldEndDate = OldEndDate,
+                Amount = Amount,
+                Timescale = Timescale,
+                TimescaleName = TimescaleName,
+                AmountHourly = AmountHourly,
+                VacationDays = VacationDays,
+                BonusAmount = BonusAmount,
+                BonusHoursToCollect = BonusHoursToCollect,
+                IsYearBonus = IsYearBonus,
+                TitleId = TitleId,
+                TitleName = TitleName,
+                DivisionId = DivisionId,
+                PracticeId = PracticeId,
+                PracticeName = PracticeName,
+                SLTApproval = SLTApproval,
+                SLTPTOApproval = SLTPTOApproval,
+                vendor = vendor
+            };
         }
 
         #endregion Properties
