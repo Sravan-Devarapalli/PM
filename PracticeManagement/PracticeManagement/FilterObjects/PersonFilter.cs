@@ -29,6 +29,12 @@ namespace PraticeManagement.FilterObjects
             set;
             get;
         }
+
+        public bool ShowRighttoPresent
+        {
+            set;
+            get;
+        }
         public string SelectedPracticeIds
         {
             get;
