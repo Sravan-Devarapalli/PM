@@ -473,7 +473,7 @@ namespace PraticeManagement
                     {
                         if (person.PaymentHistory.Count == 0 || (PreviousPage != null && PersonDetailData != null))
                         {
-                            personnelCompensation.StartDate = person.HireDate;
+                            personnelCompensation.StartDate = person.HireDate == DateTime.MinValue ? person.RighttoPresentStartDate : person.HireDate;
                             if (person.Title != null)
                             {
                                 personnelCompensation.TitleId = person.Title.TitleId;
@@ -545,7 +545,7 @@ namespace PraticeManagement
             personnelCompensation.TitleId = pay.TitleId;
             personnelCompensation.SLTApproval = pay.SLTApproval;
             personnelCompensation.SLTPTOApproval = pay.SLTPTOApproval;
-            personnelCompensation.VendorId = pay.vendor!=null?pay.vendor.Id:null;
+            personnelCompensation.VendorId = pay.vendor != null ? pay.vendor.Id : null;
         }
 
         private bool SaveData()
@@ -575,7 +575,8 @@ namespace PraticeManagement
                     {
                         personnelCompensation.IsDivisionOrPracticeOwner = serviceClient.CheckIfPersonIsOwnerForDivisionAndOrPractice(SelectedId.Value) == null;
                     }
-                    else {
+                    else
+                    {
                         personnelCompensation.IsDivisionOrPracticeOwner = true;
                     }
 
@@ -609,7 +610,10 @@ namespace PraticeManagement
                             int? personId = serviceClient.SavePersonDetail(person, User.Identity.Name, LoginPageUrl, true, Page.User.Identity.Name);
 
                             PersonDetail.SaveRoles(person, currentRoles);
-                            serviceClient.SendAdministratorAddedEmail(person, oldPerson);
+                            if (person.Status.Id == (int)PersonStatusType.Active|| person.Status.Id == (int)PersonStatusType.Contingent) 
+                            {
+                                serviceClient.SendAdministratorAddedEmail(person, oldPerson);
+                            }
                             if (personId.Value < 0)
                             {
                                 // Creating User error
@@ -637,7 +641,7 @@ namespace PraticeManagement
                     }
                     //if (oldPersonPay.Status.ToStatusType() != PersonStatusType.Terminated)
                     //{
-                        
+
                     //    serviceClient.SendCompensationChangeEmail(oldPersonPay, oldPersonPay.CurrentPay, pay, isRehire);
                     //}
                     return true;
