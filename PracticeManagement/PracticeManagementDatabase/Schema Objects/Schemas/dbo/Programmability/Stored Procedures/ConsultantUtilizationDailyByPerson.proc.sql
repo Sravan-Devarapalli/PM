@@ -31,7 +31,7 @@ AS
                 p.EmployeeNumber,
                 p.FirstName,
                 p.LastName,
-                p.HireDate,
+                ISNULL(p.HireDate,p.RighttoPresentStartDate) as HireDate,
                 paytp.TimescaleId,
                 paytp.[Name] AS Timescale,
 				st.PersonStatusId,
