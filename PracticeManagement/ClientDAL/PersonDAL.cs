@@ -22,6 +22,7 @@ namespace DataAccess
 
         #region Parameters
 
+        private const string RighttoPresentParam = "@RighttoPresent";
         private const string PersonIdParam = "@PersonId";
         private const string FirstNameParam = "@FirstName";
         private const string LastNameParam = "@LastName";
@@ -241,6 +242,7 @@ namespace DataAccess
                     command.Parameters.AddWithValue(Constants.ParameterNames.ActivePersons, context.ActivePersons);
                     command.Parameters.AddWithValue(Constants.ParameterNames.ActiveProjects, context.ActiveProjects);
                     command.Parameters.AddWithValue(Constants.ParameterNames.ProjectedPersons, context.ProjectedPersons);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.RighttoPresentPersons, context.RighttoPresentPersons);
                     command.Parameters.AddWithValue(Constants.ParameterNames.ProjectedProjects, context.ProjectedProjects);
                     command.Parameters.AddWithValue(Constants.ParameterNames.ExperimentalProjects, context.ExperimentalProjects);
                     command.Parameters.AddWithValue(Constants.ParameterNames.InternalProjects, context.InternalProjects);
@@ -292,6 +294,7 @@ namespace DataAccess
                 command.Parameters.AddWithValue(Constants.ParameterNames.ActivePersons, context.ActivePersons);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ActiveProjects, context.ActiveProjects);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ProjectedPersons, context.ProjectedPersons);
+                command.Parameters.AddWithValue(Constants.ParameterNames.RighttoPresentPersons, context.RighttoPresentPersons);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ProjectedProjects, context.ProjectedProjects);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ExperimentalProjects, context.ExperimentalProjects);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ProposedProjects, context.ProposedProjects);
@@ -652,14 +655,14 @@ namespace DataAccess
                     while (reader.Read())
                     {
                         var employment = new Employment
-                            {
-                                PersonId = reader.GetInt32(personIdIndex),
-                                HireDate = reader.GetDateTime(hireDateIndex),
-                                TerminationDate =
+                        {
+                            PersonId = reader.GetInt32(personIdIndex),
+                            HireDate = reader.GetDateTime(hireDateIndex),
+                            TerminationDate =
                                     reader.IsDBNull(terminationDateIndex)
                                         ? null
                                         : (DateTime?)reader.GetDateTime(terminationDateIndex)
-                            };
+                        };
 
                         Person person = null;
                         if (result.Any(p => p.Person.Id == employment.PersonId))
@@ -924,7 +927,7 @@ namespace DataAccess
         /// <param name="userName"></param>
         public static void PersonInsert(Person person, string userName, SqlConnection connection = null, SqlTransaction activeTransaction = null)
         {
-            if (person.HireDate == DateTime.MinValue)
+            if (person.HireDate == DateTime.MinValue && person.Status != null && person.Status.Id != (int)PersonStatusType.RightToPresent)
             {
                 person.HireDate = DateTime.Now;
             }
@@ -941,7 +944,7 @@ namespace DataAccess
                 command.Parameters.AddWithValue(FirstNameParam, !string.IsNullOrEmpty(person.FirstName) ? (object)person.FirstName : DBNull.Value);
                 command.Parameters.AddWithValue(LastNameParam, !string.IsNullOrEmpty(person.LastName) ? (object)person.LastName : DBNull.Value);
                 command.Parameters.AddWithValue(Constants.ParameterNames.PreferredFirstName, !string.IsNullOrEmpty(person.PrefferedFirstName) ? (object)person.PrefferedFirstName : DBNull.Value);
-                command.Parameters.AddWithValue(HireDateParam, person.HireDate);
+                command.Parameters.AddWithValue(HireDateParam, person.HireDate == DateTime.MinValue ? DBNull.Value : (object)person.HireDate);
                 command.Parameters.AddWithValue(AliasParam, !string.IsNullOrEmpty(person.Alias) ? (object)person.Alias : DBNull.Value);
                 command.Parameters.AddWithValue(DefaultPracticeParam, person.DefaultPractice != null ? (object)person.DefaultPractice.Id : DBNull.Value);
                 command.Parameters.AddWithValue(PersonStatusIdParam, person.Status != null ? (object)person.Status.Id : DBNull.Value);
@@ -965,6 +968,8 @@ namespace DataAccess
                 command.Parameters.AddWithValue(Constants.ParameterNames.PracticeLeadershipId, person.PracticeLeadership != null ? (object)person.PracticeLeadership.Id.Value : DBNull.Value);
                 command.Parameters.AddWithValue(Constants.ParameterNames.IsInvestmentResource, person.IsInvestmentResource);
                 command.Parameters.AddWithValue(Constants.ParameterNames.TargetUtilization, person.TargetUtilization != null ? (object)person.TargetUtilization : DBNull.Value);
+                command.Parameters.AddWithValue(Constants.ParameterNames.RtPStartDate, person.RighttoPresentStartDate != null ? (object)person.RighttoPresentStartDate.Value : DBNull.Value);
+                command.Parameters.AddWithValue(Constants.ParameterNames.RtPEndDate, person.RighttoPresentEndDate != null ? (object)person.RighttoPresentEndDate.Value : DBNull.Value);
                 if (person.Manager != null)
                     command.Parameters.AddWithValue(Constants.ParameterNames.ManagerId, person.Manager.Id.Value);
 
@@ -1089,7 +1094,7 @@ namespace DataAccess
                 command.Parameters.AddWithValue(FirstNameParam, !string.IsNullOrEmpty(person.FirstName) ? (object)person.FirstName : DBNull.Value);
                 command.Parameters.AddWithValue(LastNameParam, !string.IsNullOrEmpty(person.LastName) ? (object)person.LastName : DBNull.Value);
                 command.Parameters.AddWithValue(Constants.ParameterNames.PreferredFirstName, !string.IsNullOrEmpty(person.PrefferedFirstName) ? (object)person.PrefferedFirstName : DBNull.Value);
-                command.Parameters.AddWithValue(HireDateParam, person.HireDate);
+                command.Parameters.AddWithValue(HireDateParam, person.HireDate == DateTime.MinValue ? DBNull.Value : (object)person.HireDate);
                 command.Parameters.AddWithValue(TerminationDateParam, person.TerminationDate.HasValue ? (object)person.TerminationDate.Value : DBNull.Value);
                 command.Parameters.AddWithValue(AliasParam, !string.IsNullOrEmpty(person.Alias) ? (object)person.Alias : DBNull.Value);
                 command.Parameters.AddWithValue(DefaultPracticeParam, person.DefaultPractice != null ? (object)person.DefaultPractice.Id : DBNull.Value);
@@ -1117,6 +1122,9 @@ namespace DataAccess
                 command.Parameters.AddWithValue(Constants.ParameterNames.IsInvestmentResource, person.IsInvestmentResource);
                 command.Parameters.AddWithValue(Constants.ParameterNames.PracticeLeadershipId, person.PracticeLeadership != null ? (object)person.PracticeLeadership.Id.Value : DBNull.Value);
                 command.Parameters.AddWithValue(Constants.ParameterNames.TargetUtilization, person.TargetUtilization != null ? (object)person.TargetUtilization : DBNull.Value);
+                command.Parameters.AddWithValue(Constants.ParameterNames.RtPStartDate, person.RighttoPresentStartDate != null ? (object)person.RighttoPresentStartDate.Value : DBNull.Value);
+                command.Parameters.AddWithValue(Constants.ParameterNames.RtPEndDate, person.RighttoPresentEndDate != null ? (object)person.RighttoPresentEndDate.Value : DBNull.Value);
+
                 try
                 {
                     if (connection.State != ConnectionState.Open)
@@ -1303,6 +1311,7 @@ namespace DataAccess
            bool projected,
            bool terminated,
            bool terminatedPending,
+           bool righttoPresent,
            char? alphabet)
         {
             var personList = new List<Person>();
@@ -1331,6 +1340,7 @@ namespace DataAccess
                     command.Parameters.AddWithValue(ProjectedParam, projected);
                     command.Parameters.AddWithValue(TerminatedParam, terminated);
                     command.Parameters.AddWithValue(TerminationPendingParam, terminatedPending);
+                    command.Parameters.AddWithValue(RighttoPresentParam, righttoPresent);
                     command.Parameters.AddWithValue(AlphabetParam, alphabet.HasValue ? (object)alphabet.Value : DBNull.Value);
 
                     connection.Open();
@@ -2021,6 +2031,19 @@ namespace DataAccess
                 int isMbo = -1;
                 int isInvestmentResourceIndex = -1;
                 int targetUtilizationIndex = -1;
+                int hireDateIndex = reader.GetOrdinal(HireDateColumn);
+                int rtpStartDateIndex = -1;
+                int rtpEndDateIndex = -1;
+                try
+                {
+                    rtpStartDateIndex = reader.GetOrdinal(Constants.ColumnNames.RighttoPresentStartDate);
+                }
+                catch { }
+                try
+                {
+                    rtpEndDateIndex = reader.GetOrdinal(Constants.ColumnNames.RighttoPresentEndDate);
+                }
+                catch { }
                 try
                 {
                     isInvestmentResourceIndex = reader.GetOrdinal(Constants.ColumnNames.IsInvestmentResource);
@@ -2204,7 +2227,7 @@ namespace DataAccess
                             !reader.IsDBNull(aliasIndex)
                                 ? reader.GetString(aliasIndex)
                                 : string.Empty,
-                        HireDate = (DateTime)reader[HireDateColumn],
+                        HireDate = !reader.IsDBNull(hireDateIndex) ? reader.GetDateTime(hireDateIndex) : DateTime.MinValue,
                         TelephoneNumber = !reader.IsDBNull(telephoneNumberIndex) ? reader.GetString(telephoneNumberIndex) : string.Empty
                     };
 
@@ -2392,6 +2415,14 @@ namespace DataAccess
                     {
                         person.IsMBO = reader.GetBoolean(isMbo);
                     }
+                    if (rtpStartDateIndex > -1)
+                    {
+                        person.RighttoPresentStartDate = !reader.IsDBNull(rtpStartDateIndex) ? (DateTime?)reader.GetDateTime(rtpStartDateIndex) : null;
+                    }
+                    if (rtpEndDateIndex > -1)
+                    {
+                        person.RighttoPresentEndDate = !reader.IsDBNull(rtpEndDateIndex) ? (DateTime?)reader.GetDateTime(rtpEndDateIndex) : null;
+                    }
                     personList.Add(person);
                 }
             }
@@ -2429,9 +2460,30 @@ namespace DataAccess
                 int payPersonIdIndex = reader.GetOrdinal(PayPersonIdColumn);
                 int divisionIdIndex = reader.GetOrdinal(Constants.ColumnNames.DivisionId);
                 int divisionNameIndex = reader.GetOrdinal(Constants.ColumnNames.DivisionName);
+                int hireDateIndex = reader.GetOrdinal(Constants.ColumnNames.HireDateColumn);
                 //  PracticesOwned column is not defined for each set that
                 //  uses given method, so we need to know if that column exists
                 int practicesOwnedIndex;
+                int rtpStartDateIndex;
+                int rtpEndDateIndex;
+
+                try
+                {
+                    rtpStartDateIndex = reader.GetOrdinal(Constants.ColumnNames.RighttoPresentStartDate);
+                }
+                catch
+                {
+                    rtpStartDateIndex = -1;
+                }
+
+                try
+                {
+                    rtpEndDateIndex = reader.GetOrdinal(Constants.ColumnNames.RighttoPresentEndDate);
+                }
+                catch
+                {
+                    rtpEndDateIndex = -1;
+                }
 
                 try
                 {
@@ -2450,7 +2502,7 @@ namespace DataAccess
                         FirstName = (string)reader[FirstNameColumn],
                         LastName = (string)reader[LastNameColumn],
                         Alias = !reader.IsDBNull(aliasIndex) ? reader.GetString(aliasIndex) : string.Empty,
-                        HireDate = (DateTime)reader[HireDateColumn],
+                        HireDate = !reader.IsDBNull(hireDateIndex) ? (DateTime)reader[HireDateColumn] : DateTime.MinValue,
                         IsStrawMan = !reader.IsDBNull(isStrawManIndex) && (bool)reader.GetBoolean(isStrawManIndex),
                         TelephoneNumber = !reader.IsDBNull(telephoneNumberIndex) ? reader.GetString(telephoneNumberIndex) : string.Empty,
                         TerminationDate = !reader.IsDBNull(terminationDateIndex) ? (DateTime?)reader[terminationDateIndex] : null,
@@ -2534,6 +2586,16 @@ namespace DataAccess
                             IsYearBonus = reader.GetBoolean(isYearBonusIndex)
                         };
                         person.CurrentPay = pay;
+                    }
+
+                    if (rtpStartDateIndex > -1)
+                    {
+                        person.RighttoPresentStartDate = reader.IsDBNull(rtpStartDateIndex) ? null : (DateTime?)reader.GetDateTime(rtpStartDateIndex);
+                    }
+
+                    if (rtpEndDateIndex > -1)
+                    {
+                        person.RighttoPresentEndDate = reader.IsDBNull(rtpEndDateIndex) ? null : (DateTime?)reader.GetDateTime(rtpEndDateIndex);
                     }
 
                     personList.Add(person);
@@ -2909,7 +2971,7 @@ namespace DataAccess
             return result;
         }
 
-        public static int PersonGetCount(string practiceIds, string divisionIdsSelected, bool showAll, string looked, string recruiterIds, string timeScaleIds, bool projected, bool terminated, bool terminatedPending, char? alphabet)
+        public static int PersonGetCount(string practiceIds, string divisionIdsSelected, bool showAll, string looked, string recruiterIds, string timeScaleIds, bool projected, bool terminated, bool terminatedPending, bool righttoPresent, char? alphabet)
         {
             using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
             using (var command = new SqlCommand(Constants.ProcedureNames.Person.PersonGetCountByCommaSeparatedIdsListProcedure, connection))
@@ -2930,6 +2992,7 @@ namespace DataAccess
                 command.Parameters.AddWithValue(ProjectedParam, projected);
                 command.Parameters.AddWithValue(TerminatedParam, terminated);
                 command.Parameters.AddWithValue(TerminationPendingParam, terminatedPending);
+                command.Parameters.AddWithValue(RighttoPresentParam, righttoPresent);
                 command.Parameters.AddWithValue(AlphabetParam, alphabet.HasValue ? (object)alphabet.Value : DBNull.Value);
                 command.Parameters.AddWithValue(DivisionIdsListParam, divisionIdsSelected != null ? (object)divisionIdsSelected : DBNull.Value);
 
@@ -3564,7 +3627,7 @@ namespace DataAccess
                 person.FirstName = reader.GetString(firstNameIndex);
                 person.LastName = reader.GetString(lastNameIndex);
                 person.Alias = reader.GetString(aliasIndex);
-                person.HireDate = reader.GetDateTime(hireDateIndex);
+                person.HireDate = reader.IsDBNull(hireDateIndex) ? DateTime.MinValue : reader.GetDateTime(hireDateIndex);
                 person.IsStrawMan = !reader.IsDBNull(isStrawManIndex) && reader.GetBoolean(isStrawManIndex);
                 person.EmployeeNumber = reader.GetString(employeeNumberIndex);
                 person.CurrentPay = new Pay
@@ -3736,6 +3799,7 @@ namespace DataAccess
                         int is1099RuleIndex = reader.GetOrdinal(Constants.ColumnNames.Is1099Rule);
                         int isContingentRuleIndex = reader.GetOrdinal(Constants.ColumnNames.IsContingentRule);
                         int isVisibleIndex = reader.GetOrdinal(Constants.ColumnNames.IsVisible);
+                        int isRighttoPresentRuleIndex = reader.GetOrdinal(Constants.ColumnNames.IsRighttoPresentRule);
 
                         while (reader.Read())
                         {
@@ -3747,7 +3811,8 @@ namespace DataAccess
                                 IsW2HourlyRule = reader.GetBoolean(isW2HourlyRuleIndex),
                                 Is1099Rule = reader.GetBoolean(is1099RuleIndex),
                                 IsContigent = reader.GetBoolean(isContingentRuleIndex),
-                                IsVisible = reader.GetBoolean(isVisibleIndex)
+                                IsVisible = reader.GetBoolean(isVisibleIndex),
+                                IsRighttoPresentRule = reader.GetBoolean(isRighttoPresentRuleIndex)
                             };
 
                             result.Add(terminationReason);
