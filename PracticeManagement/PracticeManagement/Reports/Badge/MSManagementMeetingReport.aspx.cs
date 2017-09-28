@@ -174,7 +174,7 @@ namespace PraticeManagement.Reports.Badge
                 try
                 {
                     var statuses = serviceClient.GetPersonStatuses();
-                    statuses = statuses.Where(p => p.Id != 2 && p.Id != 5).ToArray();
+                    statuses = statuses.Where(p => p.Id != 2 && p.Id != 5 && p.Id != 6).ToArray();
                     DataHelper.FillListDefault(cblPersonStatus, Resources.Controls.AllTypes, statuses, false);
                 }
                 catch (CommunicationException)
@@ -1394,9 +1394,9 @@ namespace PraticeManagement.Reports.Badge
                 foreach (var range in data.Range)
                 {
                     decimal temp = data.Target;
-                    
+
                     range.RequiredResourcesCount = (temp >= range.AvaliableResourcesWithOutMS) ? range.AvaliableResourcesWithOutMS - temp : 0;
-                    range.RequiredResources = (temp >= range.AvaliableResourcesWithOutMS) ? (range.AvaliableResourcesWithOutMS == temp ? "0" : "(" + Math.Round((temp - range.AvaliableResourcesWithOutMS),MidpointRounding.AwayFromZero) + ")") : "-";
+                    range.RequiredResources = (temp >= range.AvaliableResourcesWithOutMS) ? (range.AvaliableResourcesWithOutMS == temp ? "0" : "(" + Math.Round((temp - range.AvaliableResourcesWithOutMS), MidpointRounding.AwayFromZero) + ")") : "-";
                 }
                 if (!isExcel)
                 {
@@ -1441,9 +1441,9 @@ namespace PraticeManagement.Reports.Badge
             if (filters != null)
             {
                 cblPayTypes.UnSelectAll();
-                cblPayTypes.SelectedItems=filters.PayTypeIds;
+                cblPayTypes.SelectedItems = filters.PayTypeIds;
                 cblPersonStatus.UnSelectAll();
-                cblPersonStatus.SelectedItems=filters.PersonStatusIds;
+                cblPersonStatus.SelectedItems = filters.PersonStatusIds;
             }
             PopulateData();
         }
