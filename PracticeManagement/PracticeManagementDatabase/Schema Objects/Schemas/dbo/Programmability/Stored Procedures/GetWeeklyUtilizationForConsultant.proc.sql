@@ -3,6 +3,7 @@
     @Step INT = 7,
     @DaysForward INT = 184,
     @ActivePersons BIT = 1,
+	@RighttoPresentPersons BIT =0,
     @ActiveProjects BIT = 1,
     @ProjectedPersons BIT = 1,
     @ProjectedProjects BIT = 1,
@@ -35,6 +36,7 @@ AS
     @StepLocal INT = @Step,
     @DaysForwardLocal INT = @DaysForward,
     @ActivePersonsLocal BIT = @ActivePersons,
+	@RighttoPresentPersonsLocal BIT =@RighttoPresentPersons,
     @ActiveProjectsLocal BIT = @ActiveProjects,
     @ProjectedPersonsLocal BIT = @ProjectedPersons,
     @ProjectedProjectsLocal BIT = @ProjectedProjects,
@@ -88,13 +90,13 @@ AS
 		IF(@UtilizationTypeLocal = 0)
 		BEGIN
 			SELECT WUT.PersonId,WUT.WeeklyUtlization,WUT.AvailableHours,WUT.ProjectedHours,WUT.Timescale,WUT.VacationDays
-			FROM dbo.GetWeeklyUtilizationTable(@StartDateLocal,@EndRange, @StepLocal, @ActivePersonsLocal, @ActiveProjectsLocal, @ProjectedPersonsLocal, @ProjectedProjectsLocal,@ExperimentalProjectsLocal,@ProposedProjectsLocal,@InternalProjectsLocal,@CompletedProjectsLocal,@AtRiskProjectsLocal,@TimescaleIdsLocal,@PracticeIdsLocal,@ExcludeInternalPracticesLocal) AS WUT 
+			FROM dbo.GetWeeklyUtilizationTable(@StartDateLocal,@EndRange, @StepLocal, @ActivePersonsLocal, @ActiveProjectsLocal, @ProjectedPersonsLocal, @ProjectedProjectsLocal,@ExperimentalProjectsLocal,@ProposedProjectsLocal,@InternalProjectsLocal,@CompletedProjectsLocal,@AtRiskProjectsLocal,@TimescaleIdsLocal,@PracticeIdsLocal,@ExcludeInternalPracticesLocal,@RighttoPresentPersonsLocal) AS WUT 
 			ORDER BY WUT.PersonId,WUT.StartDate
 		END
 		IF(@UtilizationType = 1)
 		BEGIN
 			SELECT WUT.PersonId,WUT.StartDate,WUT.EndDate,WUT.ProjectId,WUT.ProjectName,WUT.ProjectNumber,WUT.WeeklyUtlization,WUT.AvailableHours,WUT.ProjectedHours,WUT.Timescale,WUT.VacationDays
-			FROM dbo.GetWeeklyUtilizationByProjectTable(@StartDateLocal,@EndRange, @StepLocal, @ActivePersonsLocal, @ActiveProjectsLocal, @ProjectedPersonsLocal, @ProjectedProjectsLocal,@ExperimentalProjectsLocal,@ProposedProjectsLocal,@InternalProjectsLocal,@CompletedProjectsLocal,@AtRiskProjectsLocal,@TimescaleIdsLocal,@PracticeIdsLocal,@ExcludeInternalPracticesLocal) AS WUT 
+			FROM dbo.GetWeeklyUtilizationByProjectTable(@StartDateLocal,@EndRange, @StepLocal, @ActivePersonsLocal, @ActiveProjectsLocal, @ProjectedPersonsLocal, @ProjectedProjectsLocal,@ExperimentalProjectsLocal,@ProposedProjectsLocal,@InternalProjectsLocal,@CompletedProjectsLocal,@AtRiskProjectsLocal,@TimescaleIdsLocal,@PracticeIdsLocal,@ExcludeInternalPracticesLocal,@RighttoPresentPersonsLocal) AS WUT 
 			ORDER BY WUT.PersonId,WUT.StartDate
 		END
 
