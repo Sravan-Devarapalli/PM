@@ -7,6 +7,8 @@
 			PersonId,
 			HireDate,
 			TerminationDate,
+			RighttoPresentStartDate,
+			RighttoPresentEndDate,
 			TerminationReasonId,
 			PersonStatusId,
 			PH.Id,
@@ -22,6 +24,8 @@
 			PH1.HireDate,
 			PH1.PersonStatusId,
 			PH1.TerminationDate AS TerminationDate,
+			PH1.RighttoPresentStartDate,
+			PH1.RighttoPresentEndDate,
 			PH1.TerminationReasonId ,
 			PH1.id,
 			PH1.DivisionId,
@@ -30,5 +34,5 @@
 			PH1.TitleId
 	FROM PersonHistoryWithRowNo  PH1
 	LEFT JOIN PersonHistoryWithRowNo PH2 ON PH1.PersonId = PH2.PersonId AND PH1.RowNumber + 1 = PH2.RowNumber
-	WHERE PH2.PersonId IS NULL OR (PH1.PersonStatusId = 2 AND  PH1.TerminationDate < PH2.HireDate)
+	WHERE PH2.PersonId IS NULL OR (PH1.PersonStatusId = 2 AND  ISNULL(PH1.TerminationDate, ph1.RighttoPresentEndDate) < ISNULL(PH2.HireDate,ph2.RighttoPresentStartDate)) 
 
