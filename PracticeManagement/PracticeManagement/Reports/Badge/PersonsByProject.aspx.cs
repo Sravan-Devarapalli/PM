@@ -50,7 +50,7 @@ namespace PraticeManagement.Reports.Badge
                     TrStyles headerRowStyle = new TrStyles(headerStyleArray);
                     TrStyles contentRowStyle = new TrStyles(contentStyleArray);
 
-                    TrStyles[] rowStyleArray = { }; 
+                    TrStyles[] rowStyleArray = { };
                     float[] widths = { 0.125f, 0.1f, 0.075f, 0.1f, 0.1f, 0.1f, 0.1f, 0.075f, 0.075f, 0.075f, 0.075f };
                     _PdfProjectPersonsSummaryTableStyle = new TableStyles(widths, rowStyleArray, 100);
                     _PdfProjectPersonsSummaryTableStyle.IsColoumBorders = false;
@@ -220,7 +220,7 @@ namespace PraticeManagement.Reports.Badge
             btnExpandOrCollapseAll.Attributes["onclick"] = "return CollapseOrExpandAll(" + btnExpandOrCollapseAll.ClientID +
                                                           ", " + hdnCollapsed.ClientID +
                                                           ", " + hdncpeExtendersIds.ClientID +
-                
+
                                                           ");";
             btnExpandOrCollapseAll.Text = btnExpandOrCollapseAll.ToolTip = (hdnCollapsed.Value.ToLower() == "true") ? "Expand All" : "Collapse All";
 
@@ -231,7 +231,7 @@ namespace PraticeManagement.Reports.Badge
                 FillPersonStatusList();
                 cblPersonStatus.SelectItems(new List<int>() { 1, 5 });
                 DataHelper.FillProjectStatusList(cblProjectTypes, Resources.Controls.AllTypes);
-                cblProjectTypes.SelectItems(new List<int>() { 1, 2, 3, 4, 8});
+                cblProjectTypes.SelectItems(new List<int>() { 1, 2, 3, 4, 8 });
                 DataHelper.FillPracticeList(cblPractices, Resources.Controls.AllPracticesText);
                 cblPractices.SelectAll();
                 var allClients = ServiceCallers.Custom.Client(c => c.ClientListAllWithoutPermissions());
@@ -249,7 +249,7 @@ namespace PraticeManagement.Reports.Badge
                 try
                 {
                     var statuses = serviceClient.GetPersonStatuses();
-                    statuses = statuses.ToArray();
+                    statuses = statuses.Where(p => p.Id != 6).ToArray();
                     DataHelper.FillListDefault(cblPersonStatus, Resources.Controls.AllTypes, statuses, false);
                 }
                 catch (CommunicationException)
