@@ -9,6 +9,9 @@
         /// </summary>
         public class ColumnNames
         {
+            public const string IsRightToPresent = "IsRightToPresent";
+            public const string RighttoPresentEndDate = "RighttoPresentEndDate";
+            public const string RighttoPresentStartDate = "RighttoPresentStartDate";
             public const string BudgetToDate = "BudgetToDate";
             public const string IsCOMilestoneExists = "IsCOMilestoneExists";
             public const string IsDiscountAtMilestone = "IsDiscountAtMilestone";
@@ -630,6 +633,7 @@
             public const string Is1099Rule = "Is1099Rule";
             public const string IsContingentRule = "IsContingentRule";
             public const string IsVisible = "IsVisible";
+            public const string IsRighttoPresentRule = "IsRighttoPresentRule";
             public const string SeniorityValue = "SeniorityValue";
             public const string Terminations1099HourlyCountInTheRange = "Terminations1099HourlyCountInTheRange";
             public const string Terminations1099PORCountInTheRange = "Terminations1099PORCountInTheRange";
@@ -726,6 +730,9 @@
         /// </summary>
         public class ParameterNames
         {
+            public const string RighttoPresentPersons = "@RighttoPresentPersons";
+            public const string RtPStartDate = "@RighttoPresentStartDate";
+            public const string RtPEndDate = "@RighttoPresentEndDate";
             public const string IsBudget = "@IsBudget";
             public const string IsActual = "@IsActual";
             public const string IsEAC = "@IsEAC";
