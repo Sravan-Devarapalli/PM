@@ -35,7 +35,9 @@ CREATE PROCEDURE [dbo].[PersonInsert]
 	@IsMBO				BIT,
 	@PracticeLeadershipId	INT,
 	@IsInvestmentResource   BIT,
-	@TargetUtilization INT=NULL
+	@TargetUtilization INT=NULL,
+	@RighttoPresentStartDate  DATETIME =NULL,
+	@RighttoPresentEndDate DATETIME =NULL
 )
 AS
 	SET NOCOUNT ON
@@ -53,7 +55,11 @@ AS
 		DECLARE @EmployeeNumber NVARCHAR(12)
 		DECLARE @StringCounter NVARCHAR(7)
 		DECLARE @Counter INT
-		DECLARE @PracticeManagerId INT
+		DECLARE @PracticeManagerId INT,
+				@TempHireDate DATETIME
+
+		SELECT @TempHireDate = CASE WHEN @HireDate IS NOT NULL THEN @HireDate ELSE @RighttoPresentStartDate END
+		
 
 		SET @Counter = 0
 
@@ -64,8 +70,10 @@ AS
 			IF LEN ( @StringCounter ) = 1
 				SET @StringCounter =  '0' + @StringCounter
 
-			SET @EmployeeNumber = 'C'+ SUBSTRING ( CONVERT(NVARCHAR(255), @HireDate, 10) ,0 , 3 ) +
-				SUBSTRING ( CONVERT(NVARCHAR(255), @HireDate, 10) ,7 , 3 ) + @StringCounter
+			
+
+			SET @EmployeeNumber = 'C'+ SUBSTRING ( CONVERT(NVARCHAR(255), @TempHireDate, 10) ,0 , 3 ) +
+				SUBSTRING ( CONVERT(NVARCHAR(255), @TempHireDate, 10) ,7 , 3 ) + @StringCounter
 		
 			IF (NOT EXISTS (SELECT 1 FROM [dbo].[Person] as p WHERE p.[EmployeeNumber] = @EmployeeNumber) )
 				BREAK
@@ -87,10 +95,10 @@ AS
 		-- Inserting Person
 		INSERT dbo.Person
 			(FirstName, LastName,PreferredFirstName, HireDate,  Alias, DefaultPractice, 
-		     PersonStatusId, EmployeeNumber, TerminationDate, SeniorityId, ManagerId, PracticeOwnedId, TelephoneNumber,IsStrawman,IsOffshore,PaychexID, DivisionId, TerminationReasonId,TitleId,RecruiterId,JobSeekerStatusId,SourceId,TargetedCompanyId,EmployeeReferralId,CohortAssignmentId,LocationId,IsMBO,PracticeLeadershipId,IsInvestmentResource,TargetUtilization)
+		     PersonStatusId, EmployeeNumber, TerminationDate, SeniorityId, ManagerId, PracticeOwnedId, TelephoneNumber,IsStrawman,IsOffshore,PaychexID, DivisionId, TerminationReasonId,TitleId,RecruiterId,JobSeekerStatusId,SourceId,TargetedCompanyId,EmployeeReferralId,CohortAssignmentId,LocationId,IsMBO,PracticeLeadershipId,IsInvestmentResource,TargetUtilization, RighttoPresentStartDate, RighttoPresentEndDate)
 		VALUES
 			(@FirstName, @LastName,@PreferredFirstName, @HireDate, @Alias, @DefaultPractice, 
-		     @PersonStatusId, @EmployeeNumber, @TerminationDate, @SeniorityId, @ManagerId, @PracticeOwnedId, @TelephoneNumber,0,@IsOffshore,@PaychexID, @PersonDivisionId, @TerminationReasonId,@TitleId,@RecruiterId,@JobSeekerStatusId,@SourceRecruitingMetricsId,@TargetRecruitingMetricsId,@EmployeeReferralId,@CohortAssignmentId,@LocationId,@IsMBO,@PracticeLeadershipId,@IsInvestmentResource,@TargetUtilization)
+		     @PersonStatusId, @EmployeeNumber, @TerminationDate, @SeniorityId, @ManagerId, @PracticeOwnedId, @TelephoneNumber,0,@IsOffshore,@PaychexID, @PersonDivisionId, @TerminationReasonId,@TitleId,@RecruiterId,@JobSeekerStatusId,@SourceRecruitingMetricsId,@TargetRecruitingMetricsId,@EmployeeReferralId,@CohortAssignmentId,@LocationId,@IsMBO,@PracticeLeadershipId,@IsInvestmentResource,@TargetUtilization, @RighttoPresentStartDate, @RighttoPresentEndDate)
 
 		-- End logging session
 		EXEC dbo.SessionLogUnprepare
@@ -104,10 +112,10 @@ AS
 
 		SET @Date = @Today
 
-		IF(@HireDate < @Today)
+		IF(@TempHireDate < @Today)
 		BEGIN
 
-		SET @Date = CONVERT(DATE,@HireDate)
+		SET @Date = CONVERT(DATE,@TempHireDate)
 
 		END
 
