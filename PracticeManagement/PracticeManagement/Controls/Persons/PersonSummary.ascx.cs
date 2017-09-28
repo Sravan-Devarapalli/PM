@@ -277,9 +277,9 @@ namespace PraticeManagement.Controls.Persons
                 if (HostingPageIsPersons != null)
                 {
                     dataCellStylearray = new CellStyles[] { dataCellStyle,
-                                                    dataCellStyle, 
-                                                    dataCellStyle, 
-                                                    dataCellStyle, 
+                                                    dataCellStyle,
+                                                    dataCellStyle,
+                                                    dataCellStyle,
                                                     dataCellStyle,
                                                     dataDateCellStyle,
                                                     dataDateCellStyle,
@@ -300,8 +300,8 @@ namespace PraticeManagement.Controls.Persons
                 else
                 {
                     dataCellStylearray = new CellStyles[] { dataCellStyle,
-                                                    dataCellStyle, 
-                                                    dataCellStyle, 
+                                                    dataCellStyle,
+                                                    dataCellStyle,
                                                     dataDateCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
@@ -424,6 +424,7 @@ namespace PraticeManagement.Controls.Persons
                     personsFilter.TerminationPending = cookie.ShowTerminationPending;
                     personsFilter.Projected = cookie.ShowProjected;
                     personsFilter.Terminated = cookie.ShowTerminated;
+                    personsFilter.RighttoPresent = cookie.ShowRighttoPresent;
                     personsFilter.PracticeIds = cookie.SelectedPracticeIds;
                     personsFilter.PayTypeIds = cookie.SelectedPayTypeIds;
                     cblRecruiters.SelectedItems = cookie.SelectedRecruiterIds;
@@ -529,6 +530,7 @@ namespace PraticeManagement.Controls.Persons
             hdnProjected.Value = istrue.ToString();
             hdnTerminated.Value = istrue.ToString();
             hdnTerminatedPending.Value = istrue.ToString();
+            hdnRighttoPresent.Value = istrue.ToString();
             PracticeIdsSelectedKey = null;
             RecruiterIdsSelectedKey = null;
             PayTypeIdsSelectedKey = null;
@@ -631,6 +633,7 @@ namespace PraticeManagement.Controls.Persons
                 ShowTerminationPending = personsFilter.TerminationPending,
                 ShowProjected = personsFilter.Projected,
                 ShowTerminated = personsFilter.Terminated,
+                ShowRighttoPresent = personsFilter.RighttoPresent,
                 Alphabet = Alphabet,
                 CurrentIndex = CurrentIndex,
                 SortOrder = GridViewSortDirection == "Ascending" ? SortDirection.Ascending : SortDirection.Descending,
@@ -751,7 +754,7 @@ namespace PraticeManagement.Controls.Persons
             {
                 var row = e.Row;
                 LinkButton lnk = row.FindControl("lnkHireDate") as LinkButton;
-                lnk.Text =HostingPageIsPersonReport != null?"Hire Date":"Start Date";
+                lnk.Text = HostingPageIsPersonReport != null ? "Hire Date" : "Start Date";
                 for (int i = 0; i < row.Cells.Count; i++)
                 {
                     TableCell cell = row.Cells[i];
@@ -775,7 +778,7 @@ namespace PraticeManagement.Controls.Persons
                     }
                 }
 
-                
+
             }
         }
 
@@ -788,7 +791,7 @@ namespace PraticeManagement.Controls.Persons
                 gvPersons.Columns[7].Visible = false;
                 gvPersons.Columns[10].Visible = false;
 
-             
+
 
             }
             if (HostingPageIsPersons != null)
@@ -860,7 +863,7 @@ namespace PraticeManagement.Controls.Persons
         /// <param name="recruiterId">The recruiter filter.</param>
         /// <returns>The total number of records to be paged.</returns>
         public static int GetPersonCount(string practiceIdsSelected, string divisionIdsSelected, bool active, int pageSize, int pageNo, string looked,
-                                         string recruitersSelected, string payTypeIdsSelected, bool projected, bool terminated, bool terminatedPending, char? alphabet)
+                                         string recruitersSelected, string payTypeIdsSelected, bool projected, bool terminated, bool terminatedPending, bool righttoPresent, char? alphabet)
         {
             using (var serviceClient = new PersonServiceClient())
             {
@@ -878,6 +881,7 @@ namespace PraticeManagement.Controls.Persons
                             projected,
                             terminated,
                             terminatedPending,
+                            righttoPresent,
                             alphabet);
                 }
                 catch (FaultException<ExceptionDetail>)
@@ -904,7 +908,7 @@ namespace PraticeManagement.Controls.Persons
         [DataObjectMethod(DataObjectMethodType.Select)]
         public static Person[] GetPersons(string practiceIdsSelected, string divisionIdsSelected, bool active, int pageSize, int pageNo, string looked,
                                           int startRow, int maxRows, string recruitersSelected, string sortBy, string payTypeIdsSelected,
-                                            bool projected, bool terminated, bool terminatedPending, char? alphabet)
+                                            bool projected, bool terminated, bool terminatedPending, bool righttoPresent, char? alphabet)
         {
             using (var serviceClient = new PersonServiceClient())
             {
@@ -925,6 +929,7 @@ namespace PraticeManagement.Controls.Persons
                             projected,
                             terminated,
                             terminatedPending,
+                            righttoPresent,
                             alphabet);
 
                     //Array.Sort(result, (x, y) => SortFunction(sortBy, x, y));
@@ -940,99 +945,99 @@ namespace PraticeManagement.Controls.Persons
             }
         }
 
-        private static int SortFunction(string sortBy, Person x, Person y)
-        {
-            IComparable cx, cy;
+        //private static int SortFunction(string sortBy, Person x, Person y)
+        //{
+        //    IComparable cx, cy;
 
-            bool desc = sortBy.Contains(DESCENDING);
-            if (desc)
-                sortBy = sortBy.Replace(DESCENDING, string.Empty).TrimEnd();
+        //    bool desc = sortBy.Contains(DESCENDING);
+        //    if (desc)
+        //        sortBy = sortBy.Replace(DESCENDING, string.Empty).TrimEnd();
 
-            switch (sortBy)
-            {
-                case "HireDate":
-                    cx = x.HireDate;
-                    cy = y.HireDate;
-                    break;
+        //    switch (sortBy)
+        //    {
+        //        case "HireDate":
+        //            cx = x.HireDate == DateTime.MinValue && x.RighttoPresentStartDate != null ? x.RighttoPresentStartDate.Value : x.HireDate;
+        //            cy = y.HireDate == DateTime.MinValue && y.RighttoPresentStartDate != null ? y.RighttoPresentStartDate.Value : y.HireDate;
+        //            break;
 
-                case "TerminationDate":
-                    DateTime? xtd = x.TerminationDate;
-                    DateTime? ytd = y.TerminationDate;
+        //        case "TerminationDate":
+        //            DateTime? xtd = x.TerminationDate;
+        //            DateTime? ytd = y.TerminationDate;
 
-                    if (xtd.HasValue && ytd.HasValue)
-                    {
-                        cx = xtd.Value;
-                        cy = ytd.Value;
-                    }
-                    else
-                    {
-                        cx = DateTime.MinValue;
-                        cy = DateTime.MinValue;
-                    }
-                    break;
+        //            if (xtd.HasValue && ytd.HasValue)
+        //            {
+        //                cx = xtd.Value;
+        //                cy = ytd.Value;
+        //            }
+        //            else
+        //            {
+        //                cx = DateTime.MinValue;
+        //                cy = DateTime.MinValue;
+        //            }
+        //            break;
 
-                case "Practice":
-                    cx = x.DefaultPractice == null ? string.Empty : x.DefaultPractice.Name;
-                    cy = y.DefaultPractice == null ? string.Empty : y.DefaultPractice.Name;
-                    break;
+        //        case "Practice":
+        //            cx = x.DefaultPractice == null ? string.Empty : x.DefaultPractice.Name;
+        //            cy = y.DefaultPractice == null ? string.Empty : y.DefaultPractice.Name;
+        //            break;
 
-                case "TimescaleName":
-                    cx = x.CurrentPay == null ? string.Empty : x.CurrentPay.TimescaleName;
-                    cy = y.CurrentPay == null ? string.Empty : y.CurrentPay.TimescaleName;
-                    break;
+        //        case "TimescaleName":
+        //            cx = x.CurrentPay == null ? string.Empty : x.CurrentPay.TimescaleName;
+        //            cy = y.CurrentPay == null ? string.Empty : y.CurrentPay.TimescaleName;
+        //            break;
 
-                case "Status":
-                    cx = x.Status.Name;
-                    cy = y.Status.Name;
-                    break;
+        //        case "Status":
+        //            cx = x.Status.Name;
+        //            cy = y.Status.Name;
+        //            break;
 
-                case "RawHourlyRate":
-                    desc = !desc;
-                    bool payExists = x.CurrentPay != null && y.CurrentPay != null;
+        //        case "RawHourlyRate":
+        //            desc = !desc;
+        //            bool payExists = x.CurrentPay != null && y.CurrentPay != null;
 
-                    if (payExists)
-                    {
-                        bool xIsPor = x.CurrentPay.Timescale == TimescaleType.PercRevenue;
-                        bool yIsPor = y.CurrentPay.Timescale == TimescaleType.PercRevenue;
-                        if ((xIsPor && !yIsPor) || (!xIsPor && yIsPor))
-                        {
-                            cx = x.CurrentPay.Timescale;
-                            cy = y.CurrentPay.Timescale;
+        //            if (payExists)
+        //            {
+        //                bool xIsPor = x.CurrentPay.Timescale == TimescaleType.PercRevenue;
+        //                bool yIsPor = y.CurrentPay.Timescale == TimescaleType.PercRevenue;
+        //                if ((xIsPor && !yIsPor) || (!xIsPor && yIsPor))
+        //                {
+        //                    cx = x.CurrentPay.Timescale;
+        //                    cy = y.CurrentPay.Timescale;
 
-                            return CompResult(cx, cy, desc);
-                        }
-                    }
+        //                    return CompResult(cx, cy, desc);
+        //                }
+        //            }
 
-                    cx = x.RawHourlyRate.Value;
-                    cy = y.RawHourlyRate.Value;
-                    break;
+        //            cx = x.RawHourlyRate.Value;
+        //            cy = y.RawHourlyRate.Value;
+        //            break;
 
-                case "Seniority":
-                    //  Assign lowest seniority to the ones who have no one
-                    cx = x.Seniority == null ? 105 : Seniority.GetSeniorityValueById(x.Seniority.Id);
-                    cy = y.Seniority == null ? 105 : Seniority.GetSeniorityValueById(y.Seniority.Id);
-                    break;
+        //        case "Seniority":
+        //            //  Assign lowest seniority to the ones who have no one
+        //            cx = x.Seniority == null ? 105 : Seniority.GetSeniorityValueById(x.Seniority.Id);
+        //            cy = y.Seniority == null ? 105 : Seniority.GetSeniorityValueById(y.Seniority.Id);
+        //            break;
 
-                case "Manager":
-                    //  Assign lowest seniority to the ones who have no one
-                    cx = x.Manager.PersonLastFirstName;
-                    cy = y.Manager.PersonLastFirstName;
-                    break;
+        //        case "Manager":
+        //            //  Assign lowest seniority to the ones who have no one
+        //            cx = x.Manager.PersonLastFirstName;
+        //            cy = y.Manager.PersonLastFirstName;
+        //            break;
 
-                default:
-                    cx = x.LastName;
-                    cy = y.LastName;
-                    break;
-            }
+        //        default:
+        //            cx = x.LastName;
+        //            cy = y.LastName;
+        //            break;
+        //    }
 
-            return CompResult(cx, cy, desc);
-        }
+        //    return CompResult(cx, cy, desc);
+        //}
 
-        private static int CompResult(IComparable cx, IComparable cy, bool desc)
-        {
-            int result = cx.CompareTo(cy);
-            return desc ? -result : result;
-        }
+        //private static int CompResult(IComparable cx, IComparable cy, bool desc)
+        //{
+        //    int result = cx.CompareTo(cy);
+        //    return desc ? -result : result;
+        //}
 
         private static string GetPersonDetailsUrl(object args)
         {
@@ -1128,6 +1133,7 @@ namespace PraticeManagement.Controls.Persons
             hdnProjected.Value = personsFilter.Projected.ToString();
             hdnTerminated.Value = personsFilter.Terminated.ToString();
             hdnTerminatedPending.Value = personsFilter.TerminationPending.ToString();
+            hdnRighttoPresent.Value = personsFilter.RighttoPresent.ToString();
             hdnLooked.Value = txtSearch.Text;
         }
 
@@ -1145,12 +1151,13 @@ namespace PraticeManagement.Controls.Persons
             CheckBox projected = (CheckBox)personsFilter.FindControl("chbProjected");
             CheckBox terminated = (CheckBox)personsFilter.FindControl("chbTerminated");
             CheckBox terminatedPending = (CheckBox)personsFilter.FindControl("chbTerminationPending");
+            CheckBox rightToPresent = (CheckBox)personsFilter.FindControl("chbRighttoPresent");
 
             personsFilter.ResetFilterControlsToDefault();
             SelectAllItems(this.cblRecruiters);
 
             activeOnly.Checked = terminatedPending.Checked = true;
-            projected.Checked = terminated.Checked = false;
+            projected.Checked = terminated.Checked = rightToPresent.Checked = false;
             txtSearch.Text = string.Empty;
             ddlView.SelectedValue = "-1";
         }
@@ -1201,6 +1208,7 @@ namespace PraticeManagement.Controls.Persons
                                             Convert.ToBoolean(hdnProjected.Value),
                                             Convert.ToBoolean(hdnTerminated.Value),
                                             Convert.ToBoolean(hdnTerminatedPending.Value),
+                                            Convert.ToBoolean(hdnRighttoPresent.Value),
                                             Alphabet);
             }
 
@@ -1209,7 +1217,7 @@ namespace PraticeManagement.Controls.Persons
 
         public string FormatDate(DateTime? date)
         {
-            if (date.HasValue)
+            if (date.HasValue && date != DateTime.MinValue)
             {
                 return date.Value.ToString("MM/dd/yyyy");
             }
@@ -1227,7 +1235,7 @@ namespace PraticeManagement.Controls.Persons
             }
             else
             {
-                return FormatDate(person.HireDate);
+                return FormatDate(person.HireDate == DateTime.MinValue && person.RighttoPresentStartDate.HasValue ? person.RighttoPresentStartDate.Value : person.HireDate);
             }
         }
 
@@ -1245,6 +1253,7 @@ namespace PraticeManagement.Controls.Persons
             e.InputParameters["terminated"] = hdnTerminated.Value;
             e.InputParameters["terminatedPending"] = hdnTerminatedPending.Value;
             e.InputParameters["alphabet"] = hdnAlphabet.Value;
+            e.InputParameters["righttoPresent"] = hdnRighttoPresent.Value;
 
         }
         #endregion
@@ -1262,6 +1271,7 @@ namespace PraticeManagement.Controls.Persons
             filter.PayTypeIds = personsFilter.PayTypeIds;
             filter.PracticeAreaIds = personsFilter.PracticeIds;
             filter.DivisionIds = personsFilter.DivisionIds;
+            filter.IsRighttoPresent = personsFilter.RighttoPresent;
             ReportName reportName = HostingPageIsPersonReport != null ? ReportName.PersonSummaryReport : ReportName.PersonsReport;
             ReportsFilterHelper.SaveFilterValues(reportName, filter);
         }
@@ -1281,6 +1291,7 @@ namespace PraticeManagement.Controls.Persons
                 personsFilter.Projected = filters.IsContingent;
                 hdnProjected.Value = filters.IsContingent.ToString();
                 personsFilter.Terminated = filters.IsTerminated;
+                personsFilter.RighttoPresent = filters.IsRighttoPresent;
                 hdnTerminated.Value = filters.IsTerminated.ToString();
                 personsFilter.TerminationPending = filters.IsTeminationPending;
                 hdnTerminatedPending.Value = filters.IsTeminationPending.ToString();
