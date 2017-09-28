@@ -9,6 +9,7 @@
 	@Projected		BIT,
 	@Terminated		BIT,
 	@TerminationPending BIT,
+	@RighttoPresent BIT,
 	@Alphabet		NVARCHAR(5)
 )
 AS
@@ -33,6 +34,7 @@ AS
 				OR (p.PersonStatusId = 2 AND @Terminated = 1)
 				OR (p.PersonStatusId = 3 AND @Projected = 1)
 				OR (p.PersonStatusId = 5 AND @TerminationPending  = 1) 
+				OR (p.PersonStatusId = 6 AND @RighttoPresent  = 1)
 			) 
 		AND (@PracticeIdsList IS NULL OR p.DefaultPractice  IN (SELECT ResultId FROM [dbo].[ConvertStringListIntoTable] (@PracticeIdsList)))
 		AND (p.FirstName LIKE @Looked OR p.LastName LIKE @Looked OR p.EmployeeNumber LIKE @Looked )
