@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Person] (
     [PersonId]			INT     IDENTITY (1, 1) NOT NULL,
-    [HireDate]			DATETIME				NOT NULL,
+    [HireDate]			DATETIME				NULL,
     [TerminationDate]	DATETIME				NULL,
     [Alias]				NVARCHAR (100) 			NULL,
     [DefaultPractice]	INT						NULL,
@@ -36,7 +36,9 @@
 	IsMBO				BIT						NOT NULL CONSTRAINT DF_Person_IsMBO DEFAULT(0),
 	PracticeLeadershipId	INT					NULL,
 	IsInvestmentResource BIT NOT NULL CONSTRAINT DF_Person_IsInvestmentResource DEFAULT(0),
-	TargetUtilization	INT						NULL
+	TargetUtilization	INT						NULL, 
+    [RighttoPresentStartDate] DATETIME NULL, 
+    [RighttoPresentEndDate] DATETIME NULL
 );
 
 GO
