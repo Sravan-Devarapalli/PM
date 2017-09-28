@@ -10,6 +10,7 @@ BEGIN
 			, TR.Is1099Rule
 			, TR.IsContingentRule
 			, TR.IsVisible
+			, TR.IsRighttoPresentRule
 	FROM dbo.TerminationReasons TR
 	ORDER BY TR.TerminationReason
 
