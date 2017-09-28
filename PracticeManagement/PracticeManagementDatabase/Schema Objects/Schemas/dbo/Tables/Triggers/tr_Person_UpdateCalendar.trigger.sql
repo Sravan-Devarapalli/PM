@@ -16,7 +16,7 @@ BEGIN
 	IF EXISTS (SELECT 1
 				FROM inserted i
 				LEFT JOIN deleted d ON d.PersonId = i.PersonId
-				WHERE ISNULL(i.HireDate, '18000101') <> ISNULL(d.HireDate, '18000101') OR ISNULL(i.TerminationDate, '18000101') <> ISNULL(d.TerminationDate, '18000101'))
+				WHERE ISNULL(i.HireDate, '18000101') <> ISNULL(d.HireDate, '18000101') OR ISNULL(i.TerminationDate, '18000101') <> ISNULL(d.TerminationDate, '18000101') OR ISNULL(i.RighttoPresentStartDate, '18000101') <> ISNULL(d.RighttoPresentStartDate, '18000101') OR ISNULL(i.RighttoPresentEndDate, '18000101') <> ISNULL(d.RighttoPresentEndDate, '18000101'))
 	BEGIN
 
 	DECLARE @CurrentYearStartDate DATETIME,
