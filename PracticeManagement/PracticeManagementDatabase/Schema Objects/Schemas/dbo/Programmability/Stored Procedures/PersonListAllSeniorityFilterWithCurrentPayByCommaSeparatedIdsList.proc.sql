@@ -15,6 +15,7 @@
 	@Projected		BIT,
 	@TerminationPending BIT,
 	@Terminated		BIT,
+	@RighttoPresent BIT,
 	@Alphabet		NVARCHAR(5)
 ) 
 AS
@@ -49,10 +50,27 @@ BEGIN
 				@OrderBy NVARCHAR(1000)
 		IF ISNULL(@SortBy,'') = ''
 		BEGIN
-		 SET @OrderBy = 'ORDER BY  LastName, FirstName'
-		 END
-		 ELSE
-		  SET @OrderBy = 'ORDER BY ' + @SortBy
+			SET @OrderBy = 'ORDER BY  LastName, FirstName'
+		END
+		ELSE IF(@SortBy ='HireDate')
+		BEGIN 
+			SET @OrderBy = 'ORDER BY ISNULL(HireDate,RighttoPresentStartDate)'
+		END
+		ELSE IF(@SortBy ='HireDate DESC')
+		BEGIN
+			SET @OrderBy = 'ORDER BY ISNULL(HireDate,RighttoPresentStartDate) DESC'
+		END
+		ELSE IF(@SortBy ='TerminationDate')
+		BEGIN 
+			SET @OrderBy = 'ORDER BY CASE WHEN HireDate IS NULL THEN RighttoPresentEndDate ELSE TerminationDate END'
+		END
+		ELSE IF(@SortBy ='TerminationDate DESC')
+		BEGIN
+			SET @OrderBy = 'ORDER BY CASE WHEN HireDate IS NULL THEN RighttoPresentEndDate ELSE TerminationDate END DESC'
+		END
+		ELSE
+			SET @OrderBy = 'ORDER BY ' + @SortBy
+
 		
 		
 		SELECT @SqlQuery = 'SELECT *
@@ -63,6 +81,8 @@ BEGIN
 					   p.LastName,
 					   p.HireDate,
 					   p.TerminationDate,
+					   p.RighttoPresentStartDate,
+					   p.RighttoPresentEndDate,
 					   p.Alias,
 					   dbo.GettingPMTime(M.LastLoginDate) LastLoginDate,
 					   p.DefaultPractice,
@@ -120,6 +140,7 @@ BEGIN
 							OR (p.PersonStatusId = 2 AND @Terminated = 1)
 							OR (p.PersonStatusId = 3 AND @Projected = 1)
 							OR (p.PersonStatusId = 5 AND @TerminationPending = 1) 
+							OR (p.PersonStatusId = 6 AND @RighttoPresent = 1)
 						) 
 		            AND (@PracticeIdsList IS NULL OR p.DefaultPractice IN (SELECT ResultId FROM [dbo].[ConvertStringListIntoTable] (@PracticeIdsList)))
 					AND (@DivisionIdsList IS NULL OR p.DivisionId IN (SELECT ResultId FROM [dbo].[ConvertStringListIntoTable] (@DivisionIdsList)))
@@ -138,10 +159,10 @@ BEGIN
 				@SqlQuery,		
 				N'@FirstRecord	INT, @LastRecord	INT, @Looked	NVARCHAR(40), @Now	DATETIME, 
 				@MaxSeniorityLevel	INT,   @ShowAll	BIT, 
-				@Projected BIT, @Terminated BIT, @TerminationPending BIT, @Alphabet NVARCHAR(5),@TimescaleIdsList NVARCHAR(MAX),@PracticeIdsList NVARCHAR(MAX),@RecruiterIdsList NVARCHAR(MAX),@DivisionIdsList NVARCHAR(MAX)',				
+				@Projected BIT, @Terminated BIT, @TerminationPending BIT, @RighttoPresent BIT, @Alphabet NVARCHAR(5),@TimescaleIdsList NVARCHAR(MAX),@PracticeIdsList NVARCHAR(MAX),@RecruiterIdsList NVARCHAR(MAX),@DivisionIdsList NVARCHAR(MAX)',				
 				@FirstRecord = @FirstRecord, @LastRecord = @LastRecord,
 				@Looked = @Looked,@MaxSeniorityLevel = @MaxSeniorityLevel, @ShowAll = @ShowAll, @Now = @Now, 
-				@Projected = @Projected, @Terminated = @Terminated, @TerminationPending = @TerminationPending, @Alphabet = @Alphabet,
+				@Projected = @Projected, @Terminated = @Terminated, @TerminationPending = @TerminationPending, @RighttoPresent=@RighttoPresent, @Alphabet = @Alphabet,
 				@TimescaleIdsList = @TimescaleIdsList,@PracticeIdsList =@PracticeIdsList,@RecruiterIdsList =@RecruiterIdsList,@DivisionIdsList=@DivisionIdsList
 				
 	END
