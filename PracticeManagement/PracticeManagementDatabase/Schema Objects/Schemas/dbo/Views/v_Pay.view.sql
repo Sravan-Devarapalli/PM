@@ -33,7 +33,8 @@ AS
 		   p.SLTPTOApproval,
 		   p.DivisionId,
 		   v.Id as 'VendorId',
-		   v.Name as 'VendorName'
+		   v.Name as 'VendorName',
+		   p.IsRightToPresent
 	  FROM dbo.Pay AS p
 		   INNER JOIN dbo.GetFutureDateTable() FT ON 1 = 1
 		   INNER JOIN dbo.[BonusHoursPerYearTable]() HPY ON 1 = 1
