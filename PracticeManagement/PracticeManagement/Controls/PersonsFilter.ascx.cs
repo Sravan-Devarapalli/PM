@@ -74,6 +74,21 @@ namespace PraticeManagement.Controls
             }
         }
 
+        /// <summary>
+        /// Gets if the Right to Present filter was checked.
+        /// </summary>
+        public bool RighttoPresent
+        {
+            get
+            {
+                return chbRighttoPresent.Checked;
+            }
+            set
+            {
+                chbRighttoPresent.Checked = value;
+            }
+        }
+
 
         /// <summary>
         /// Gets the name (?) of the selected practice.
@@ -165,7 +180,7 @@ namespace PraticeManagement.Controls
 
         private void FillDivisionList()
         {
-            DataHelper.FillPersonDivisionList(this.cblDivision,true);
+            DataHelper.FillPersonDivisionList(this.cblDivision, true);
             SelectAllItems(this.cblDivision);
         }
 
