@@ -2594,6 +2594,10 @@ Width99PercentImp {
     width: 250px;
 }
 
+.Width252Px {
+    width: 252px;
+}
+
 .Width256Px {
     width: 256px;
 }
@@ -8459,5 +8463,10 @@ img.chevronImage {
 
 .border-Top {
     border-top: 1px solid #c5c5c5;
+}
+
+.rtp-Compensation {
+    width: 16px;
+    height: 16px;
 }
 
