@@ -59,7 +59,9 @@ BEGIN
 		   p.PracticeLeadershipId,
 		   p.IsMBO,
 		   p.IsInvestmentResource,
-		   p.TargetUtilization
+		   p.TargetUtilization,
+		   p.RighttoPresentStartDate,
+		   p.RighttoPresentEndDate
 	  FROM dbo.v_Person AS p
 	 WHERE p.PersonId = @PersonId
 END
