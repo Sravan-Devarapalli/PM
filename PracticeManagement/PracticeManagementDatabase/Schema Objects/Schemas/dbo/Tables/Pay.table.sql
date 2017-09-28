@@ -17,7 +17,8 @@
 	[SLTApproval]		  BIT			  NOT NULL CONSTRAINT DF_Pay_SLTApproval DEFAULT(0),
 	[SLTPTOApproval]	  BIT			  NOT NULL CONSTRAINT DF_Pay_SLTPTOApproval DEFAULT(0),
 	[DivisionId]		  INT			  NULL,
-	[VendorId]			  INT			  NULL
+	[VendorId]			  INT			  NULL, 
+    [IsRightToPresent]	  BIT             NOT NULL DEFAULT (0)
 );
 GO
 
