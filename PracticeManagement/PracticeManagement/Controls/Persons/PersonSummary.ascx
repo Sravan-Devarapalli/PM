@@ -77,8 +77,7 @@
                                     <asp:Button ID="btnClearResults" Enabled="false" runat="server" Text="Clear Results"
                                         OnClick="ResetFilter_Clicked" />
                                 </td>
-                                <td class="TdSpace">
-                                </td>
+                                <td class="TdSpace"></td>
                                 <td class="Width26Per PaddingRight10Px" align="right">
                                     <table>
                                         <tr>
@@ -134,8 +133,7 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td class="PaddingTop10Px">
-                                            </td>
+                                            <td class="PaddingTop10Px"></td>
                                         </tr>
                                         <tr>
                                             <td rowspan="2" class="floatRight SddRecruiter">
@@ -171,6 +169,7 @@
                         <asp:HiddenField ID="hdnProjected" runat="server" Value="false" />
                         <asp:HiddenField ID="hdnTerminatedPending" runat="server" Value="false" />
                         <asp:HiddenField ID="hdnTerminated" runat="server" Value="false" />
+                        <asp:HiddenField ID="hdnRighttoPresent" runat="server" Value="false" />
                         <asp:HiddenField ID="hdnLooked" runat="server" />
                         <asp:HiddenField ID="hdnAlphabet" runat="server" />
                         <asp:HiddenField ID="hdnCleartoDefaultView" runat="server" Value="false" />
@@ -234,7 +233,7 @@
                         <HeaderStyle CssClass="TextAlignCenterImp no-wrap" />
                         <ItemStyle CssClass="Width6Percent TextAlignCenterImp" />
                         <ItemTemplate>
-                            <asp:Label ID="lblEndDate" runat="server" Text='<%# FormatDate((DateTime?)Eval("TerminationDate")) %>' />
+                            <asp:Label ID="lblEndDate" runat="server" Text='<%# FormatDate((DateTime)Eval("HireDate")==DateTime.MinValue &&  Eval("TerminationDate")==null &&Eval("RighttoPresentEndDate")!=null?(DateTime?)Eval("RighttoPresentEndDate"):(DateTime?) Eval("TerminationDate")) %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField>
@@ -343,6 +342,7 @@
                 <asp:Parameter Name="projected" />
                 <asp:Parameter Name="terminated" />
                 <asp:Parameter Name="terminatedPending" />
+                <asp:Parameter Name="righttoPresent" />
                 <asp:Parameter Name="alphabet" />
             </SelectParameters>
         </asp:ObjectDataSource>
@@ -372,15 +372,11 @@
                     <td colspan="3">
                         <table class="WholeWidth">
                             <tr>
-                                <td class="Width15Per">
-                                </td>
+                                <td class="Width15Per"></td>
                                 <td class="Width70Per TextAlignCenter">
                                     <asp:Label ID="lblRecords" runat="server" CssClass="fontBold ColorBlack"></asp:Label>
                                 </td>
-                                <td class="Width15Per PaddingRight10Px WhiteSpaceNoWrap TextAlignRight">
-                                    <%-- <asp:Button ID="btnExportToExcel" CssClass="Width100Per" runat="server" OnClick="btnExportToExcel_Click"
-                                            Text="Export" />--%>
-                                </td>
+                                <td class="Width15Per PaddingRight10Px WhiteSpaceNoWrap TextAlignRight"></td>
                             </tr>
                         </table>
                     </td>
