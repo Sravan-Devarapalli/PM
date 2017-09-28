@@ -90,6 +90,8 @@ BEGIN
 			SELECT i.PersonId,
 				CONVERT(NVARCHAR(10), i.HireDate, 101) AS HireDate,
 				CONVERT(NVARCHAR(10), i.TerminationDate, 101) AS TerminationDate,
+				CONVERT(NVARCHAR(10), i.RighttoPresentStartDate, 101) AS RighttoPresentStartDate,
+				CONVERT(NVARCHAR(10), i.RighttoPresentEndDate, 101) AS RighttoPresentEndDate,
 				i.Alias ,
 				p.Name AS DefaultPractice,
 				i.FirstName,
@@ -145,6 +147,8 @@ BEGIN
 			SELECT d.PersonId,
 				CONVERT(NVARCHAR(10), d.HireDate, 101) AS HireDate,
 				CONVERT(NVARCHAR(10), d.TerminationDate, 101) AS TerminationDate,
+				CONVERT(NVARCHAR(10), d.RighttoPresentStartDate, 101) AS RighttoPresentStartDate,
+				CONVERT(NVARCHAR(10), d.RighttoPresentEndDate, 101) AS RighttoPresentEndDate,
 				d.Alias ,
 				p.Name AS DefaultPractice,
 				d.FirstName,
@@ -230,11 +234,15 @@ BEGIN
 			LogData = (SELECT NEW_VALUES.PersonId,
 								NEW_VALUES.HireDate,
 								NEW_VALUES.TerminationDate,
+								NEW_VALUES.RighttoPresentStartDate,
+								NEW_VALUES.RighttoPresentEndDate,
 								NEW_VALUES.EmployeeNumber,
 								NEW_VALUES.IsDefaultManager,
 								NEW_VALUES.TelephoneNumber,
 								OLD_VALUES.PersonId,
 								OLD_VALUES.HireDate,
+								OLD_VALUES.RighttoPresentStartDate,
+								OLD_VALUES.RighttoPresentEndDate,
 								OLD_VALUES.TerminationDate,
 								OLD_VALUES.EmployeeNumber,
 								OLD_VALUES.IsDefaultManager,
@@ -251,6 +259,8 @@ BEGIN
 			AND (
 				ISNULL(i.HireDate,'') <> ISNULL(d.HireDate,'')
 				OR ISNULL(i.TerminationDate,'') <> ISNULL(d.TerminationDate,'')
+				OR ISNULL(i.RighttoPresentStartDate,'') <> ISNULL(d.RighttoPresentStartDate,'')
+				OR ISNULL(i.RighttoPresentEndDate,'') <> ISNULL(d.RighttoPresentEndDate,'')
 				OR ISNULL(i.Alias,'') <> ISNULL(d.Alias,'')
 				OR ISNULL(i.DefaultPractice,'') <> ISNULL(d.DefaultPractice,'')
 				OR ISNULL(i.FirstName,'') <> ISNULL(d.FirstName,'')
@@ -379,6 +389,8 @@ BEGIN
 		INSERT INTO PersonHistory([PersonId]
 								  ,[HireDate]
 								  ,[TerminationDate]
+								  ,[RighttoPresentStartDate]
+								  ,[RighttoPresentEndDate]
 								  ,[Alias]
 								  ,[DefaultPractice]
 								  ,[FirstName]
@@ -409,6 +421,8 @@ BEGIN
 		SELECT i.[PersonId]
 			  ,i.[HireDate]
 			  ,i.[TerminationDate]
+			  ,i.[RighttoPresentStartDate]
+			  ,i.[RighttoPresentEndDate]
 			  ,i.[Alias]
 			  ,i.[DefaultPractice]
 			  ,i.[FirstName]
@@ -441,6 +455,8 @@ BEGIN
 		LEFT JOIN deleted d ON d.PersonId = i.PersonId
 		WHERE ISNULL(i.HireDate,'') <> ISNULL(d.HireDate,'')
 					OR ISNULL(i.TerminationDate,'') <> ISNULL(d.TerminationDate,'')
+					OR ISNULL(i.RighttoPresentStartDate,'') <> ISNULL(d.RighttoPresentStartDate,'')
+					OR ISNULL(i.RighttoPresentEndDate,'') <> ISNULL(d.RighttoPresentEndDate,'')
 					OR ISNULL(i.Alias,'') <> ISNULL(d.Alias,'')
 					OR ISNULL(i.DefaultPractice,'') <> ISNULL(d.DefaultPractice,'')
 					OR ISNULL(i.FirstName,'') <> ISNULL(d.FirstName,'')
