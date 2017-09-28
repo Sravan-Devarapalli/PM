@@ -252,6 +252,7 @@ namespace PraticeManagement.Controls
             int duration,
             bool activePersons,
             bool projectedPersons,
+            bool righttoPresentPersons,
             bool activeProjects,
             bool projectedProjects,
             bool experimentalProjects,
@@ -268,7 +269,7 @@ namespace PraticeManagement.Controls
         {
             var consultants =
                 ReportsHelper.GetConsultantsTimelineReport(
-                    startDate, duration, step, activePersons, projectedPersons,
+                    startDate, duration, step, activePersons, projectedPersons, righttoPresentPersons,
                     activeProjects, projectedProjects, experimentalProjects, internalProjects, proposedProjects, completedProjects, atRiskProjects,
                     timescaleIds, practiceIdList, sortId, sortDirection, excludeInternalPractices, utilizationType, includeBadgeStatus, isSampleReport, divisionIds);
 
@@ -933,9 +934,12 @@ namespace PraticeManagement.Controls
             {
                 try
                 {
-                    Person[] persons = serviceClient.GetRecruiterList();
+                    var persons = serviceClient.GetRecruiterList().ToList();
 
-                    FillPersonList(control, firstItemText, persons, String.Empty, false, fillPreferredFirstName);
+                    var thirdParty = new Person() { Id = 0, FirstName = "Third Party" };
+                    persons.Add(thirdParty);
+
+                    FillPersonList(control, firstItemText, persons.ToArray(), String.Empty, false, fillPreferredFirstName);
                 }
                 catch (CommunicationException)
                 {
@@ -1254,7 +1258,7 @@ namespace PraticeManagement.Controls
                         }
                         else
                         {
-                            personitem.Text = person.PersonLastFirstName;
+                            personitem.Text = string.IsNullOrEmpty(person.LastName) ? person.FirstName : person.PersonLastFirstName;
                         }
                     }
 
