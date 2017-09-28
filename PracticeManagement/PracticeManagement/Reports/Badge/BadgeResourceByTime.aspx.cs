@@ -62,7 +62,7 @@ namespace PraticeManagement.Reports.Badge
                 RowStyles[] rowStylearray = { headerrowStyle, datarowStyle };
 
                 SheetStyles sheetStyle = new SheetStyles(rowStylearray);
-                sheetStyle.MergeRegion.Add(new int[] { 0, 0, 0, coloumnsCount > 10? coloumnsCount:11 - 1 });
+                sheetStyle.MergeRegion.Add(new int[] { 0, 0, 0, coloumnsCount > 10 ? coloumnsCount : 11 - 1 });
                 sheetStyle.IsAutoResize = false;
 
                 return sheetStyle;
@@ -77,7 +77,7 @@ namespace PraticeManagement.Reports.Badge
                 headerWrapCellStyle.IsBold = true;
                 headerWrapCellStyle.HorizontalAlignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
                 headerWrapCellStyle.WrapText = true;
-                
+
 
                 CellStyles headerCellStyle = new CellStyles();
                 headerCellStyle.IsBold = true;
@@ -103,7 +103,7 @@ namespace PraticeManagement.Reports.Badge
                 //coloumnWidth.Add(30);
                 //for (int i = 0; i < BadgedResources.Count; i++)
                 //    coloumnWidth.Add(0);
-                
+
                 RowStyles datarowStyle = new RowStyles(dataCellStylearray.ToArray());
                 RowStyles[] rowStylearray = { headerrowStyle, datarowStyle };
                 SheetStyles sheetStyle = new SheetStyles(rowStylearray);
@@ -178,7 +178,7 @@ namespace PraticeManagement.Reports.Badge
                 try
                 {
                     var statuses = serviceClient.GetPersonStatuses();
-                    statuses = statuses.Where(p => p.Id != 2 && p.Id != 5).ToArray();
+                    statuses = statuses.Where(p => p.Id != 2 && p.Id != 5 && p.Id != 6).ToArray();
                     DataHelper.FillListDefault(cblPersonStatus, Resources.Controls.AllTypes, statuses, false);
                 }
                 catch (CommunicationException)
@@ -235,19 +235,26 @@ namespace PraticeManagement.Reports.Badge
             var url = "";
             switch (type)
             {
-                case 1: url = Constants.ApplicationPages.BadgedNotOnProjectReport;
+                case 1:
+                    url = Constants.ApplicationPages.BadgedNotOnProjectReport;
                     break;
-                case 2: url = Constants.ApplicationPages.BadgedOnProjectReport;
+                case 2:
+                    url = Constants.ApplicationPages.BadgedOnProjectReport;
                     break;
-                case 3: url = Constants.ApplicationPages.ClockNotStartedReport;
+                case 3:
+                    url = Constants.ApplicationPages.ClockNotStartedReport;
                     break;
-                case 4: url = Constants.ApplicationPages.BadgeBlockedReport;
+                case 4:
+                    url = Constants.ApplicationPages.BadgeBlockedReport;
                     break;
-                case 5: url = Constants.ApplicationPages.BadgeBreakReport;
+                case 5:
+                    url = Constants.ApplicationPages.BadgeBreakReport;
                     break;
-                case 6: url = Constants.ApplicationPages.BadgedOnProjectException;
+                case 6:
+                    url = Constants.ApplicationPages.BadgedOnProjectException;
                     break;
-                case 7: url = Constants.ApplicationPages.BadgedNotOnProjectException;
+                case 7:
+                    url = Constants.ApplicationPages.BadgedNotOnProjectException;
                     break;
             }
             return Utils.Generic.GetTargetUrlWithReturn(String.Format(url, startDate.ToShortDateString(), endDate.ToShortDateString(), cblPayTypes.areAllSelected ? "null" : cblPayTypes.SelectedItems, PersonStatus),
@@ -672,9 +679,9 @@ namespace PraticeManagement.Reports.Badge
             if (filters != null)
             {
                 cblPayTypes.UnSelectAll();
-                cblPayTypes.SelectedItems=filters.PayTypeIds;
+                cblPayTypes.SelectedItems = filters.PayTypeIds;
                 cblPersonStatus.UnSelectAll();
-                cblPersonStatus.SelectedItems=filters.PersonStatusIds;
+                cblPersonStatus.SelectedItems = filters.PersonStatusIds;
                 ddlView.SelectedValue = (filters.SelectedView).ToString();
                 dtpStart.DateValue = (DateTime)filters.ReportStartDate;
                 dtpEnd.DateValue = (DateTime)filters.ReportEndDate;
