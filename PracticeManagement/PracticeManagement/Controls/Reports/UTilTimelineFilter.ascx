@@ -380,7 +380,7 @@
                     </asp:DropDownList>
                 </td>
                 <td>
-                 <table>
+                    <table>
                         <tr>
                             <td class="padRight0">
                                 <asp:CheckBox ID="chbShowMSBadge" runat="server" />
@@ -468,37 +468,33 @@
                 <ContentTemplate>
                     <table class="">
                         <tr align="center">
-                            <td class="Width125Px BorderBottom1px vTop">
-                                Person Status
+                            <td class="Width125Px BorderBottom1px vTop" colspan="2">Person Status
                             </td>
-                            <td class="Width30Px">
+                            <td class="Width30Px"></td>
+                            <td class="Width150px BorderBottom1px vTop">Pay Type
                             </td>
-                            <td class="Width150px BorderBottom1px vTop">
-                                Pay Type
+                            <td class="Width30Px"></td>
+                            <td class="BorderBottom1px vTop" colspan="4">Project Type
                             </td>
-                            <td class="Width30Px">
+                            <td class="Width30Px"></td>
+                            <td class="Width150px BorderBottom1px vTop">Person Division
                             </td>
-                            <td class="BorderBottom1px vTop" colspan="4">
-                                Project Type
-                            </td>
-                            <td class="Width30Px">
-                            </td>
-                            <td class="Width150px BorderBottom1px vTop">
-                                Person Division
-                            </td>
-                            <td class="Width30Px">
-                            </td>
-                            <td class="Width250Px BorderBottom1px">
-                                Practice Area
+                            <td class="Width30Px"></td>
+                            <td class="Width250Px BorderBottom1px">Practice Area
                             </td>
                         </tr>
                         <tr>
                             <td>
+
                                 <asp:CheckBox ID="chbActivePersons" runat="server" Text="Active" ToolTip="Include active persons into report"
                                     AutoPostBack="false" Checked="True" onclick="EnableResetButton();" />
+
+
                             </td>
                             <td>
-                            </td>
+                                <asp:CheckBox ID="chbRighttoPresent" runat="server" Text="Right to Present" ToolTip="Include Right to Present persons into report"
+                                    AutoPostBack="false" onclick="EnableResetButton();" /></td>
+                            <td></td>
                             <td rowspan="2" class="floatRight">
                                 <cc2:ScrollingDropDown ID="cblTimeScales" runat="server" AllSelectedReturnType="AllItems"
                                     onclick="scrollingDropdown_onclick('cblTimeScales','Pay Type')" CellPadding="3"
@@ -507,8 +503,7 @@
                                     UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="210px">
                                 </ext:ScrollableDropdownExtender>
                             </td>
-                            <td>
-                            </td>
+                            <td></td>
                             <td class="Width100Px">
                                 <asp:CheckBox ID="chbActiveProjects" runat="server" AutoPostBack="false" Checked="True"
                                     onclick="EnableResetButton();" Text="Active" ToolTip="Include active projects into report" />
@@ -525,8 +520,7 @@
                                 <asp:CheckBox ID="chbAtRiskProjects" runat="server" AutoPostBack="false" Checked="True" onclick="EnableResetButton();"
                                     Text="At Risk" ToolTip="Include At Risk projects into report" />
                             </td>
-                            <td>
-                            </td>
+                            <td></td>
                             <td rowspan="2" class="floatRight">
                                 <cc2:ScrollingDropDown ID="cblDivisions" runat="server" AllSelectedReturnType="AllItems"
                                     onclick="scrollingDropdown_onclick('cblDivisions','Division')" CellPadding="3"
@@ -535,8 +529,7 @@
                                     UseAdvanceFeature="true" Width="250px" EditImageUrl="~/Images/Dropdown_Arrow.png">
                                 </ext:ScrollableDropdownExtender>
                             </td>
-                            <td>
-                            </td>
+                            <td></td>
                             <td class="floatRight PaddingTop5 padLeft3">
                                 <cc2:ScrollingDropDown ID="cblPractices" runat="server" AllSelectedReturnType="AllItems"
                                     onclick="scrollingDropdown_onclick('cblPractices','Practice Area')" CellPadding="3"
@@ -551,10 +544,9 @@
                                 <asp:CheckBox ID="chbProjectedPersons" runat="server" Text="Contingent" ToolTip="Include contingent persons into report"
                                     AutoPostBack="false" Checked="false" onclick="EnableResetButton();" />
                             </td>
-                            <td>
-                            </td>
-                            <td>
-                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                             <td>
                                 <asp:CheckBox ID="chbProjectedProjects" runat="server" AutoPostBack="false" Checked="True"
                                     Text="Projected" ToolTip="Include projected projects into report" onclick="EnableResetButton();" />
@@ -567,18 +559,14 @@
                                 <asp:CheckBox ID="chbCompletedProjects" runat="server" AutoPostBack="false" Text="Completed"
                                     Checked="True" ToolTip="Include completed projects into report" onclick="EnableResetButton();" />
                             </td>
-                            <td>
-                            </td>
-                            <td>
-                            </td>
-                            <td>
-                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                             <td>
                                 <asp:CheckBox ID="chkExcludeInternalPractices" runat="server" Text="Exclude Internal Practice Areas"
                                     Checked="true" onclick="EnableResetButton();" />
                             </td>
-                            <td>
-                            </td>
+                            <td></td>
                         </tr>
                     </table>
                 </ContentTemplate>
@@ -590,8 +578,7 @@
                 <ContentTemplate>
                     <table class="opportunity-description" cellpadding="0" cellspacing="0">
                         <tr>
-                            <td>
-                                Sort by &nbsp;&nbsp;
+                            <td>Sort by &nbsp;&nbsp;
                             </td>
                             <td>
                                 <asp:DropDownList ID="ddlSortBy" runat="server" CssClass="Width300Px" onchange="EnableResetButton(); EnableDisableRadioButtons();">
@@ -601,14 +588,12 @@
                                     <asp:ListItem Value="3">Practice Area</asp:ListItem>
                                 </asp:DropDownList>
                             </td>
-                            <td class="Width40Px">
-                            </td>
+                            <td class="Width40Px"></td>
                             <td>
                                 <asp:RadioButton ID="rbSortbyAsc" runat="server" Text="Ascending" onclick="EnableResetButton();ChangeSortByRadioButtons(this);"
                                     GroupName="Sortby" AutoPostBack="false" />
                             </td>
-                            <td>
-                                &nbsp;&nbsp;&nbsp;&nbsp;
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;
                                 <asp:RadioButton ID="rbSortbyDesc" runat="server" Text="Descending" onclick="EnableResetButton();ChangeSortByRadioButtons(this);"
                                     GroupName="Sortby" AutoPostBack="false" Checked="true" />
                             </td>
