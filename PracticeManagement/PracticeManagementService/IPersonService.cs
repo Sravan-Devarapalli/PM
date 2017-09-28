@@ -99,6 +99,7 @@ namespace PracticeManagementService
             bool projected,
             bool terminated,
             bool terminatedPending,
+            bool righttoPresent,
             char? alphabet);
 
         /// <summary>
@@ -152,7 +153,7 @@ namespace PracticeManagementService
         /// <param name="alphabet">person starts with the letter</param>
         /// <returns></returns>
         [OperationContract]
-        int GetPersonCountByCommaSeperatedIdsList(string practiceIds, string divisionIdsSelected, bool active, string looked, string recruiterIds, string userName, string timeScaleIds, bool projected, bool terminated, bool terminationpending, char? alphabet);
+        int GetPersonCountByCommaSeperatedIdsList(string practiceIds, string divisionIdsSelected, bool active, string looked, string recruiterIds, string userName, string timeScaleIds, bool projected, bool terminated, bool terminationpending, bool righttoPresent, char? alphabet);
 
         /// <summary>
         /// Calculates a number of <see cref="Person"/>s working days in period.
