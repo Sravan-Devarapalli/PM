@@ -27,7 +27,7 @@ BEGIN
 	(
 		SELECT CPH.*
 		FROM v_PersonHistory CPH
-		WHERE CPH.TerminationDate BETWEEN @Startdate AND @Enddate
+		WHERE ISNULL(CPH.TerminationDate,CPH.RighttoPresentEndDate) BETWEEN @Startdate AND @Enddate
 		AND ISNULL(CPH.TerminationReasonId,0) != @FormalyInactive
 	)
 
@@ -40,8 +40,8 @@ BEGIN
 			TS.TimescaleId AS Timescale,
 			TS.Name AS TimescaleName,
 			FPH.RecruiterId,
-			ISNULL(RCP.PreferredFirstName,RCP.FirstName) AS RecruiterFirstName ,
-			RCP.LastName RecruiterLastName,
+			CASE WHEN FPH.RecruiterId=0 THEN 'Third Party' ELSE ISNULL(RCP.PreferredFirstName,RCP.FirstName) END AS RecruiterFirstName ,
+			CASE WHEN FPH.RecruiterId=0 THEN '' ELSE RCP.LastName END as RecruiterLastName,
 			T.TitleId,
 			T.Title,
 			TT.TitleTypeId,
@@ -50,14 +50,16 @@ BEGIN
 			FPH.HireDate,
 			FPH.TerminationDate,
 			FPH.TerminationReasonId,
-			TR.TerminationReason
+			TR.TerminationReason,
+			FPH.RighttoPresentStartDate,
+			FPH.RighttoPresentEndDate
 	FROM FilteredPersonHistory FPH
-	INNER JOIN dbo.Calendar C ON C.Date = FPH.HireDate
-	INNER JOIN dbo.Calendar C1 ON C1.Date = FPH.TerminationDate
+	INNER JOIN dbo.Calendar C ON C.Date = ISNULL(FPH.HireDate, FPH.RighttoPresentStartDate)
+	INNER JOIN dbo.Calendar C1 ON C1.Date = ISNULL(FPH.TerminationDate,FPH.RighttoPresentEndDate )
 	INNER JOIN dbo.Person P ON FPH.PersonId = P.PersonId
 	INNER JOIN dbo.PersonStatus PS ON PS.PersonStatusId = FPH.PersonStatusId
 	LEFT JOIN dbo.TerminationReasons TR ON TR.TerminationReasonId = FPH.TerminationReasonId
-	OUTER APPLY (SELECT TOP 1 pa.* FROM dbo.Pay pa WHERE pa.Person = FPH.PersonId AND ISNULL(pa.EndDate,@FutureDate)-1 >= FPH.HireDate AND pa.StartDate <= FPH.TerminationDate ORDER BY pa.StartDate DESC ) pay
+	OUTER APPLY (SELECT TOP 1 pa.* FROM dbo.Pay pa WHERE pa.Person = FPH.PersonId AND ISNULL(pa.EndDate,@FutureDate)-1 >= ISNULL(FPH.HireDate, FPH.RighttoPresentStartDate) AND pa.StartDate <= ISNULL(FPH.TerminationDate,FPH.RighttoPresentEndDate ) ORDER BY pa.StartDate DESC ) pay
 	LEFT JOIN dbo.Timescale TS ON TS.TimescaleId = Pay.Timescale
 	LEFT JOIN dbo.Practice Pra ON Pra.PracticeId = Pay.PracticeId
 	LEFT JOIN dbo.Person RCP ON FPH.RecruiterId = RCP.PersonId
