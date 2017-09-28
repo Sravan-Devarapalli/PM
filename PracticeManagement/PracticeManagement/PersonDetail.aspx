@@ -28,28 +28,28 @@
     <script src="Scripts/jquery.tablesorter_2.min.js" type="text/javascript"></script>
     <script src="Scripts/date.yui.js" type="text/javascript"></script>
     <script type="text/javascript" language="javascript">
-     var currentSort = [[1, 0]];
-                $(document).ready(function () {
-                showTarget();
-                    $("#tblPersonProjects").tablesorter({
-                        headers: {
-                            0: {
-                                sorter: false
-                            }
-                        },
-                        sortList: currentSort,
-                        sortForce: [[1, 0]]
-                    }).bind("sortEnd", function (sorter) {
-                        currentSort = sorter.target.config.sortList;
-                        var spanName = $("#tblPersonProjects #name");
-                        if (currentSort != '1,0' && currentSort != '1,1') {
-                            spanName[0].setAttribute('class', 'backGroundNone');
-                        }
-                        else {
-                            spanName[0].setAttribute('class', '');
-                        }
-                    });
-                });
+        var currentSort = [[1, 0]];
+        $(document).ready(function () {
+            showTarget();
+            $("#tblPersonProjects").tablesorter({
+                headers: {
+                    0: {
+                        sorter: false
+                    }
+                },
+                sortList: currentSort,
+                sortForce: [[1, 0]]
+            }).bind("sortEnd", function (sorter) {
+                currentSort = sorter.target.config.sortList;
+                var spanName = $("#tblPersonProjects #name");
+                if (currentSort != '1,0' && currentSort != '1,1') {
+                    spanName[0].setAttribute('class', 'backGroundNone');
+                }
+                else {
+                    spanName[0].setAttribute('class', '');
+                }
+            });
+        });
 
         /*
         This script is needed to initialize select all/none behavior for checkbox lists
@@ -69,7 +69,7 @@
         }
 
         function SetTooltipText(descriptionText, hlinkObj) {
-            var hlinkObjct = $('#' + hlinkObj.id);
+      <%--      var hlinkObjct = $('#' + hlinkObj.id);
             var displayPanel = $('#<%= personOpportunities.ClientID %>_oppNameToolTipHolder');
             iptop = hlinkObjct.offset().top - hlinkObjct[0].offsetHeight;
             ipleft = hlinkObjct.offset().left + hlinkObjct[0].offsetWidth + 10;
@@ -81,224 +81,216 @@
             displayPanel.show();
 
             var lbloppNameTooltipContent = document.getElementById('<%= personOpportunities.ClientID %>_lbloppNameTooltipContent');
-            lbloppNameTooltipContent.innerHTML = descriptionText.toString();
+            lbloppNameTooltipContent.innerHTML = descriptionText.toString();--%>
         }
 
-        function txtEmployeeNumber_ClientClick(source)
-        {
-        if ( !source.readOnly && (source.getAttribute('accept') == 0) && !confirm('This value should not normally be changed once set. Please be cautious about changing this value. Press OK to continue or Cancel to return without changing it.')) source.blur();
-        else { if(source.getAttribute('accept') == 0) source.setAttribute('accept',1);}
+        function txtEmployeeNumber_ClientClick(source) {
+            if (!source.readOnly && (source.getAttribute('accept') == 0) && !confirm('This value should not normally be changed once set. Please be cautious about changing this value. Press OK to continue or Cancel to return without changing it.')) source.blur();
+            else { if (source.getAttribute('accept') == 0) source.setAttribute('accept', 1); }
         }
 
-        function txtEmployeeNumber_OnBlur(source)
-        {
-        source.setAttribute('accept',0);
+        function txtEmployeeNumber_OnBlur(source) {
+            source.setAttribute('accept', 0);
         }
 
         function HidePanel() {
 
-            var displayPanel = $('#<%= personOpportunities.ClientID %>_oppNameToolTipHolder');
-            displayPanel.hide();
+          <%--  var displayPanel = $('#<%= personOpportunities.ClientID %>_oppNameToolTipHolder');
+            displayPanel.hide();--%>
         }
 
         function printform(popup) {
-        var printContent;
-            if(popup == 1)
-            {
+            var printContent;
+            if (popup == 1) {
                 printContent = document.getElementById('<%= dvTerminationDateErrors.ClientID %>');
             }
-            else if(popup == 2)
-            {
+            else if (popup == 2) {
                 printContent = document.getElementById('<%= dvCancelTerminationDateErrors.ClientID %>');
             }
-            else
-            {
+            else {
                 printContent = document.getElementById('<%= dvExtendingHireDate.ClientID %>');
             }
-            var windowUrl = 'about:blank';
-            var uniqueName = new Date();
-            var windowName = 'Print' + uniqueName.getTime();
-            var printWindow = window.open(windowUrl, windowName);
+        var windowUrl = 'about:blank';
+        var uniqueName = new Date();
+        var windowName = 'Print' + uniqueName.getTime();
+        var printWindow = window.open(windowUrl, windowName);
 
-            printWindow.document.write(printContent.innerHTML);
-            printWindow.document.close();
-            printWindow.focus();
-            printWindow.print();
-            printWindow.close();
-            return false;
-        }
+        printWindow.document.write(printContent.innerHTML);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+        return false;
+    }
 
-        function saveReport(popup) {
+    function saveReport(popup) {
         var printContent;
-        var hdnSaveReportText ;
+        var hdnSaveReportText;
 
-        if(popup == 1)
-        {
+        if (popup == 1) {
             printContent = document.getElementById('<%= dvTerminationDateErrors.ClientID %>');
             hdnSaveReportText = document.getElementById('<%= hdnSaveReportText.ClientID %>');
         }
-         else if(popup == 2)
-            {
-                printContent = document.getElementById('<%= dvCancelTerminationDateErrors.ClientID %>');
-                hdnSaveReportText = document.getElementById('<%= hdnSaveReportTextCancelTermination.ClientID %>');
-            }
-            else
-            {
-                printContent = document.getElementById('<%= dvExtendingHireDate.ClientID %>');
-                hdnSaveReportText = document.getElementById('<%= hdnSaveReportHireDateExtend.ClientID %>');
-            }
-        hdnSaveReportText.value = printContent.innerHTML;
+        else if (popup == 2) {
+            printContent = document.getElementById('<%= dvCancelTerminationDateErrors.ClientID %>');
+            hdnSaveReportText = document.getElementById('<%= hdnSaveReportTextCancelTermination.ClientID %>');
         }
-
-        function SetTooltipsForallDropDowns() {
-            var optionList = document.getElementsByTagName('option');
-
-            for (var i = 0; i < optionList.length; ++i) {
-
-                optionList[i].title = optionList[i].innerHTML;
-            }
-
+        else {
+            printContent = document.getElementById('<%= dvExtendingHireDate.ClientID %>');
+            hdnSaveReportText = document.getElementById('<%= hdnSaveReportHireDateExtend.ClientID %>');
         }
-        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(endRequestHandle);
-        function endRequestHandle(sender, Args) {
-            ModifyInnerTextToWrapText();
-            var activityLog = document.getElementById('<%= activityLog.ClientID%>');
-            if (activityLog != null) {
-                imgCalender = document.getElementById('<%= activityLog.ClientID %>_imgCalender');
-                lblCustomDateRange = document.getElementById('<%= activityLog.ClientID %>_lblCustomDateRange');
-                ddlPeriod = document.getElementById('<%=  activityLog.ClientID %>_ddlPeriod');
-                if (imgCalender.fireEvent && ddlPeriod.value != '0') {
-                    imgCalender.style.display = "none";
-                    lblCustomDateRange.style.display = "none";
-                }
-            }
-            SetTooltipsForallDropDowns();
-            $("#tblPersonProjects").tablesorter({
-                        headers: {
-                            0: {
-                                sorter: false
-                            }
-                        },
-                        sortList: currentSort,
-                        sortForce: [[1, 0]]
-                    }).bind("sortEnd", function (sorter) {
-                        currentSort = sorter.target.config.sortList;
-                        var spanName = $("#tblPersonProjects #name")[0];
-                        if (currentSort != '1,0' && currentSort != '1,1') {
-                            spanName[0].setAttribute('class', 'backGroundNone');
-                        }
-                        else {
-                            spanName[0].setAttribute('class', '');
-                        }
-                    });
+    hdnSaveReportText.value = printContent.innerHTML;
+}
+
+function SetTooltipsForallDropDowns() {
+    var optionList = document.getElementsByTagName('option');
+
+    for (var i = 0; i < optionList.length; ++i) {
+
+        optionList[i].title = optionList[i].innerHTML;
+    }
+
+}
+Sys.WebForms.PageRequestManager.getInstance().add_endRequest(endRequestHandle);
+function endRequestHandle(sender, Args) {
+    ModifyInnerTextToWrapText();
+    var activityLog = document.getElementById('<%= activityLog.ClientID%>');
+    if (activityLog != null) {
+        imgCalender = document.getElementById('<%= activityLog.ClientID %>_imgCalender');
+        lblCustomDateRange = document.getElementById('<%= activityLog.ClientID %>_lblCustomDateRange');
+        ddlPeriod = document.getElementById('<%=  activityLog.ClientID %>_ddlPeriod');
+        if (imgCalender.fireEvent && ddlPeriod.value != '0') {
+            imgCalender.style.display = "none";
+            lblCustomDateRange.style.display = "none";
         }
-
-        function CheckIfDatesValid() {
-
-            txtStartDate = document.getElementById('<%= activityLog.ClientID %>_diRange_tbFrom');
-            txtEndDate = document.getElementById('<%= activityLog.ClientID %>_diRange_tbTo');
-            var startDate = new Date(txtStartDate.value);
-            var endDate = new Date(txtEndDate.value);
-            if (txtStartDate.value != '' && txtEndDate.value != ''
-            && startDate <= endDate) {
-                var btnCustDatesClose = document.getElementById('<%= activityLog.ClientID %>_btnCustDatesClose');
-                hdnStartDate = document.getElementById('<%= activityLog.ClientID %>_hdnStartDate');
-                hdnEndDate = document.getElementById('<%= activityLog.ClientID %>_hdnEndDate');
-                lblCustomDateRange = document.getElementById('<%= activityLog.ClientID %>_lblCustomDateRange');
-                var startDate = new Date(txtStartDate.value);
-                var endDate = new Date(txtEndDate.value);
-                var startDateStr = startDate.format("MM/dd/yyyy");
-                var endDateStr = endDate.format("MM/dd/yyyy");
-                hdnStartDate.value = startDateStr;
-                hdnEndDate.value = endDateStr;
-                lblCustomDateRange.innerHTML = '(' + startDateStr + '&nbsp;-&nbsp;' + endDateStr + ')';
-                btnCustDatesClose.click();
-
+    }
+    SetTooltipsForallDropDowns();
+    $("#tblPersonProjects").tablesorter({
+        headers: {
+            0: {
+                sorter: false
             }
-            return false;
+        },
+        sortList: currentSort,
+        sortForce: [[1, 0]]
+    }).bind("sortEnd", function (sorter) {
+        currentSort = sorter.target.config.sortList;
+        var spanName = $("#tblPersonProjects #name")[0];
+        if (currentSort != '1,0' && currentSort != '1,1') {
+            spanName[0].setAttribute('class', 'backGroundNone');
         }
-
-        function CheckAndShowCustomDatesPoup(ddlPeriod) {
-            imgCalender = document.getElementById('<%= activityLog.ClientID %>_imgCalender');
-            lblCustomDateRange = document.getElementById('<%= activityLog.ClientID %>_lblCustomDateRange');
-            if (ddlPeriod.value == '0') {
-                imgCalender.attributes["class"].value = "";
-                lblCustomDateRange.attributes["class"].value = "fontBold";
-                if (imgCalender.fireEvent) {
-                    imgCalender.style.display = "";
-                    lblCustomDateRange.style.display = "";
-                    imgCalender.click();
-                }
-                if (document.createEvent) {
-                    var event = document.createEvent('HTMLEvents');
-                    event.initEvent('click', true, true);
-                    imgCalender.dispatchEvent(event);
-                }
-            }
-            else {
-                imgCalender.attributes["class"].value = "displayNone";
-                lblCustomDateRange.attributes["class"].value = "displayNone";
-                if (imgCalender.fireEvent) {
-                    imgCalender.style.display = "none";
-                    lblCustomDateRange.style.display = "none";
-                }
-            }
+        else {
+            spanName[0].setAttribute('class', '');
         }
-        function ReAssignStartDateEndDates() {
-            hdnStartDate = document.getElementById('<%= activityLog.ClientID %>_hdnStartDate');
-            hdnEndDate = document.getElementById('<%= activityLog.ClientID %>_hdnEndDate');
-            txtStartDate = document.getElementById('<%= activityLog.ClientID %>_diRange_tbFrom');
-            txtEndDate = document.getElementById('<%= activityLog.ClientID %>_diRange_tbTo');
-            hdnStartDateCalExtenderBehaviourId = document.getElementById('<%= activityLog.ClientID %>_hdnStartDateCalExtenderBehaviourId');
-            hdnEndDateCalExtenderBehaviourId = document.getElementById('<%= activityLog.ClientID %>_hdnEndDateCalExtenderBehaviourId');
+    });
+}
 
-            var endDateCalExtender = $find(hdnEndDateCalExtenderBehaviourId.value);
-            var startDateCalExtender = $find(hdnStartDateCalExtenderBehaviourId.value);
-            if (startDateCalExtender != null) {
-                startDateCalExtender.set_selectedDate(hdnStartDate.value);
-            }
-            if (endDateCalExtender != null) {
-                endDateCalExtender.set_selectedDate(hdnEndDate.value);
-            }
-            CheckIfDatesValid();
+function CheckIfDatesValid() {
+
+    txtStartDate = document.getElementById('<%= activityLog.ClientID %>_diRange_tbFrom');
+    txtEndDate = document.getElementById('<%= activityLog.ClientID %>_diRange_tbTo');
+    var startDate = new Date(txtStartDate.value);
+    var endDate = new Date(txtEndDate.value);
+    if (txtStartDate.value != '' && txtEndDate.value != ''
+    && startDate <= endDate) {
+        var btnCustDatesClose = document.getElementById('<%= activityLog.ClientID %>_btnCustDatesClose');
+        hdnStartDate = document.getElementById('<%= activityLog.ClientID %>_hdnStartDate');
+        hdnEndDate = document.getElementById('<%= activityLog.ClientID %>_hdnEndDate');
+        lblCustomDateRange = document.getElementById('<%= activityLog.ClientID %>_lblCustomDateRange');
+        var startDate = new Date(txtStartDate.value);
+        var endDate = new Date(txtEndDate.value);
+        var startDateStr = startDate.format("MM/dd/yyyy");
+        var endDateStr = endDate.format("MM/dd/yyyy");
+        hdnStartDate.value = startDateStr;
+        hdnEndDate.value = endDateStr;
+        lblCustomDateRange.innerHTML = '(' + startDateStr + '&nbsp;-&nbsp;' + endDateStr + ')';
+        btnCustDatesClose.click();
+
+    }
+    return false;
+}
+
+function CheckAndShowCustomDatesPoup(ddlPeriod) {
+    imgCalender = document.getElementById('<%= activityLog.ClientID %>_imgCalender');
+    lblCustomDateRange = document.getElementById('<%= activityLog.ClientID %>_lblCustomDateRange');
+    if (ddlPeriod.value == '0') {
+        imgCalender.attributes["class"].value = "";
+        lblCustomDateRange.attributes["class"].value = "fontBold";
+        if (imgCalender.fireEvent) {
+            imgCalender.style.display = "";
+            lblCustomDateRange.style.display = "";
+            imgCalender.click();
         }
-
-        function SetWrapText(str) {
-            for (var i = 30; i < str.length; i = i + 10) {
-                str = str.slice(0, i) + "<wbr />" + str.slice(i, str.length);
-            }
-            return str;
+        if (document.createEvent) {
+            var event = document.createEvent('HTMLEvents');
+            event.initEvent('click', true, true);
+            imgCalender.dispatchEvent(event);
         }
-
-        function GetWrappedText(childObj) {
-            if (childObj != null) {
-
-                for (var i = 0; i < childObj.children.length; i++) {
-                    if (childObj.children[i] != null) {
-                        if (childObj.children[i].children.length == 0) {
-                            if (childObj.children[i].innerHTML != null && childObj.children[i].innerHTML != "undefined" && childObj.children[i].innerHTML.length > 70) {
-                                childObj.children[i].innerHTML = SetWrapText(childObj.children[i].innerHTML);
-                            }
-                        }
-                    }
-
-                }
-            }
+    }
+    else {
+        imgCalender.attributes["class"].value = "displayNone";
+        lblCustomDateRange.attributes["class"].value = "displayNone";
+        if (imgCalender.fireEvent) {
+            imgCalender.style.display = "none";
+            lblCustomDateRange.style.display = "none";
         }
+    }
+}
+function ReAssignStartDateEndDates() {
+    hdnStartDate = document.getElementById('<%= activityLog.ClientID %>_hdnStartDate');
+    hdnEndDate = document.getElementById('<%= activityLog.ClientID %>_hdnEndDate');
+    txtStartDate = document.getElementById('<%= activityLog.ClientID %>_diRange_tbFrom');
+    txtEndDate = document.getElementById('<%= activityLog.ClientID %>_diRange_tbTo');
+    hdnStartDateCalExtenderBehaviourId = document.getElementById('<%= activityLog.ClientID %>_hdnStartDateCalExtenderBehaviourId');
+    hdnEndDateCalExtenderBehaviourId = document.getElementById('<%= activityLog.ClientID %>_hdnEndDateCalExtenderBehaviourId');
 
-        function ModifyInnerTextToWrapText() {
-            if (navigator.userAgent.indexOf(" Firefox/") > -1) {
-                var tbl = $("table[id*='gvActivities']");
-                if (tbl != null && tbl.length > 0) {
-                    var gvActivitiesclientId = tbl[0].id;
-                    var lastTds = $('#' + gvActivitiesclientId + ' tr td:nth-child(3)');
+    var endDateCalExtender = $find(hdnEndDateCalExtenderBehaviourId.value);
+    var startDateCalExtender = $find(hdnStartDateCalExtenderBehaviourId.value);
+    if (startDateCalExtender != null) {
+        startDateCalExtender.set_selectedDate(hdnStartDate.value);
+    }
+    if (endDateCalExtender != null) {
+        endDateCalExtender.set_selectedDate(hdnEndDate.value);
+    }
+    CheckIfDatesValid();
+}
 
-                    for (var i = 0; i < lastTds.length; i++) {
-                        GetWrappedText(lastTds[i]);
+function SetWrapText(str) {
+    for (var i = 30; i < str.length; i = i + 10) {
+        str = str.slice(0, i) + "<wbr />" + str.slice(i, str.length);
+    }
+    return str;
+}
+
+function GetWrappedText(childObj) {
+    if (childObj != null) {
+
+        for (var i = 0; i < childObj.children.length; i++) {
+            if (childObj.children[i] != null) {
+                if (childObj.children[i].children.length == 0) {
+                    if (childObj.children[i].innerHTML != null && childObj.children[i].innerHTML != "undefined" && childObj.children[i].innerHTML.length > 70) {
+                        childObj.children[i].innerHTML = SetWrapText(childObj.children[i].innerHTML);
                     }
                 }
             }
+
         }
+    }
+}
+
+function ModifyInnerTextToWrapText() {
+    if (navigator.userAgent.indexOf(" Firefox/") > -1) {
+        var tbl = $("table[id*='gvActivities']");
+        if (tbl != null && tbl.length > 0) {
+            var gvActivitiesclientId = tbl[0].id;
+            var lastTds = $('#' + gvActivitiesclientId + ' tr td:nth-child(3)');
+
+            for (var i = 0; i < lastTds.length; i++) {
+                GetWrappedText(lastTds[i]);
+            }
+        }
+    }
+}
     <%--
         The following script is needed to implement dirty checks on Projects tab
         Use Page.ClientScript.GetPostBackClientHyperlink(...) method to generate
@@ -330,23 +322,21 @@
         }
 
         function ValidateCompensationAndTerminationDate(btnTerminatePersonOk, popupTerminationDate, ddlPopupTerminationReason) {
-            var terminationDateExt =  $find(popupTerminationDate);
+            var terminationDateExt = $find(popupTerminationDate);
             var ddlterminationReason = document.getElementById(ddlPopupTerminationReason);
             var terminationDate = terminationDateExt.get_selectedDate();
             var terminationDateTextValue = terminationDateExt._textbox.get_Value();
             var compensationEndDate = new Date(btnTerminatePersonOk.getAttribute('CompensationEndDate'));
             var hasNotClosedCompensation = btnTerminatePersonOk.getAttribute('HasNotClosedCompensation');
 
-            if(terminationDate != '' && terminationDate != undefined && terminationDate != null && compensationEndDate != null && (compensationEndDate > terminationDate || (hasNotClosedCompensation == 'true')) && ddlterminationReason.value != '')
-            {
+            if (terminationDate != '' && terminationDate != undefined && terminationDate != null && compensationEndDate != null && (compensationEndDate > terminationDate || (hasNotClosedCompensation == 'true')) && ddlterminationReason.value != '') {
                 var message = '';
-                if(hasNotClosedCompensation)
-                    message =  message + 'This person has Termination Date, but still has an open-ended compensation record. Click OK to close their compensation as of their termination date, or click Cancel to not to save changes.';
+                if (hasNotClosedCompensation)
+                    message = message + 'This person has Termination Date, but still has an open-ended compensation record. Click OK to close their compensation as of their termination date, or click Cancel to not to save changes.';
                 else
-                    message =  message + 'This person has Termination Date, but still has an active compensation record. Click OK to close their compensation as of their termination date, or click Cancel to not to save changes.';
+                    message = message + 'This person has Termination Date, but still has an active compensation record. Click OK to close their compensation as of their termination date, or click Cancel to not to save changes.';
 
-                if(!confirm(message))
-                {
+                if (!confirm(message)) {
                     Page_ClientValidate('PersonTerminate');
                     return false;
                 }
@@ -354,145 +344,172 @@
             return true;
         }
 
-        function EnableTerminateEmployeeOkButton(btnPersonTerminateOkId, terminationDateTextBoxId, ddlTerminationReasonId)
-        {
+        function EnableTerminateEmployeeOkButton(btnPersonTerminateOkId, terminationDateTextBoxId, ddlTerminationReasonId) {
             var btnPersonTerminateOk = document.getElementById(btnPersonTerminateOkId);
             var terminationDate = document.getElementById(terminationDateTextBoxId);
             var ddlTerminationReason = document.getElementById(ddlTerminationReasonId);
 
-            if(btnPersonTerminateOk != null && ddlTerminationReason != null && terminationDate != null)
-            {
+            if (btnPersonTerminateOk != null && ddlTerminationReason != null && terminationDate != null) {
                 Disable(btnPersonTerminateOk, (ddlTerminationReason.value == '' || terminationDate.value == ''));
             }
         }
 
-        function Disable(control, disable)
-        {
-            if(disable)
-            {
+        function Disable(control, disable) {
+            if (disable) {
                 control.disabled = 'disabled';
             }
-            else
-            {
+            else {
                 control.disabled = '';
             }
         }
 
-        function showDivContingent()
-        {
-            var rbn = document.getElementById('<%= rbnContingent.ClientID %>');
-            var div = document.getElementById('<%= divContingent.ClientID %>');
+        function showDivRighttoPresent() {
+            var rbn = document.getElementById('<%= rbnRighttoPresent.ClientID %>');
+            var div = document.getElementById('<%= divRighttoPresent.ClientID %>');
+            var divCont = document.getElementById('<%= divContingent.ClientID %>');
             var divActv = document.getElementById('<%= divActive.ClientID %>');
             var divTerm = document.getElementById('<%= divTerminate.ClientID %>');
             var valSumTerm = document.getElementById('<%= valSummaryChangePersonStatusToTerminate.ClientID %>');
             var valSumActv = document.getElementById('<%= valSummaryChangePersonStatusToActive.ClientID %>');
             var valSumCont = document.getElementById('<%= valSummaryChangePersonStatusToContingent.ClientID %>');
+            var valSumRtP = document.getElementById('<%= valSummaryChangeStatusToRightToPresent.ClientID %>');
             var displayNoneClass = "displayNone";
 
-            if( rbn.checked)
-            {
+            if (rbn.checked) {
                 div.className = "padLeft25 PaddingTop6";
                 divActv.className = displayNoneClass;
-                divTerm.className=displayNoneClass;
-                if(valSumActv != null)
-                {
+                divTerm.className = displayNoneClass;
+                divCont.className = displayNoneClass;
+                if (valSumActv != null) {
                     valSumActv.className = displayNoneClass;
                 }
-                if(valSumCont != null)
-                {
-                    valSumCont.className = "";
+                if (valSumCont != null) {
+                    valSumCont.className = displayNoneClass;
                 }
-                if(valSumTerm!=null)
-                {
-                valSumTerm.className=displayNoneClass;
+                if (valSumTerm != null) {
+                    valSumTerm.className = displayNoneClass;
+                }
+                if (valSumRtP != null) {
+                    valSumRtP.className = "";
                 }
             }
         }
 
-        function showDivActive()
-        {
+
+        function showDivContingent() {
+            var rbn = document.getElementById('<%= rbnContingent.ClientID %>');
+            var div = document.getElementById('<%= divContingent.ClientID %>');
+            var divActv = document.getElementById('<%= divActive.ClientID %>');
+            var divTerm = document.getElementById('<%= divTerminate.ClientID %>');
+            var divRtP = document.getElementById('<%= divRighttoPresent.ClientID %>');
+            var valSumTerm = document.getElementById('<%= valSummaryChangePersonStatusToTerminate.ClientID %>');
+            var valSumActv = document.getElementById('<%= valSummaryChangePersonStatusToActive.ClientID %>');
+            var valSumCont = document.getElementById('<%= valSummaryChangePersonStatusToContingent.ClientID %>');
+            var valSumRtP = document.getElementById('<%= valSummaryChangeStatusToRightToPresent.ClientID %>');
+            var displayNoneClass = "displayNone";
+
+            if (rbn.checked) {
+                div.className = "padLeft25 PaddingTop6";
+                divActv.className = displayNoneClass;
+                divTerm.className = displayNoneClass;
+                divRtP.className = displayNoneClass;
+                if (valSumActv != null) {
+                    valSumActv.className = displayNoneClass;
+                }
+                if (valSumCont != null) {
+                    valSumCont.className = "";
+                }
+                if (valSumTerm != null) {
+                    valSumTerm.className = displayNoneClass;
+                }
+                if (valSumRtP != null) {
+                    valSumRtP.className = displayNoneClass;
+                }
+            }
+        }
+
+        function showDivActive() {
             var rbnContgn = document.getElementById('<%= rbnContingent.ClientID %>');
             var rbnTermin = document.getElementById('<%= rbnTerminate.ClientID %>');
             var rbn = document.getElementById('<%= rbnActive.ClientID %>');
             var div = document.getElementById('<%= divActive.ClientID %>');
             var divContgn = document.getElementById('<%= divContingent.ClientID %>');
             var divTerm = document.getElementById('<%= divTerminate.ClientID %>');
+            var divRtP = document.getElementById('<%= divRighttoPresent.ClientID %>');
             var valSumActv = document.getElementById('<%= valSummaryChangePersonStatusToActive.ClientID %>');
             var valSumCont = document.getElementById('<%= valSummaryChangePersonStatusToContingent.ClientID %>');
             var valSumTerm = document.getElementById('<%= valSummaryChangePersonStatusToTerminate.ClientID %>');
+            var valSumRtP = document.getElementById('<%= valSummaryChangeStatusToRightToPresent.ClientID %>');
+
             var displayNoneClass = "displayNone";
 
-            if( rbn.checked)
-            {
+            if (rbn.checked) {
                 div.className = "padLeft25 PaddingTop6";
-                if(divContgn != null)
-                {
+                divRtP.className = displayNoneClass;
+                if (divContgn != null) {
                     divContgn.className = displayNoneClass;
                 }
-                if(divTerm != null)
-                {
+                if (divTerm != null) {
                     divTerm.className = displayNoneClass;
                 }
-                if(valSumActv != null)
-                {
-                 valSumActv.className = "";
+                if (valSumActv != null) {
+                    valSumActv.className = "";
                 }
-                if(valSumCont != null)
-                {
-                 valSumCont.className = displayNoneClass;
+                if (valSumCont != null) {
+                    valSumCont.className = displayNoneClass;
                 }
-                if(valSumTerm != null)
-                {
-                 valSumTerm.className = displayNoneClass;
+                if (valSumTerm != null) {
+                    valSumTerm.className = displayNoneClass;
+                }
+                if (valSumRtP != null) {
+                    valSumRtP.className = displayNoneClass;
                 }
             }
         }
 
-        function showDivTerminate()
-        {
+        function showDivTerminate() {
             var rbn = document.getElementById('<%= rbnTerminate.ClientID %>');
             var div = document.getElementById('<%= divTerminate.ClientID %>');
             var rbnActve = document.getElementById('<%= rbnActive.ClientID %>');
             var rbnContgn = document.getElementById('<%= rbnContingent.ClientID %>');
             var divActv = document.getElementById('<%= divActive.ClientID %>');
             var divContgn = document.getElementById('<%= divContingent.ClientID %>');
+            var divRtP = document.getElementById('<%= divRighttoPresent.ClientID %>');
             var valSumActv = document.getElementById('<%= valSummaryChangePersonStatusToActive.ClientID %>');
             var valSumTerm = document.getElementById('<%= valSummaryChangePersonStatusToTerminate.ClientID %>');
             var valSumCont = document.getElementById('<%= valSummaryChangePersonStatusToContingent.ClientID %>');
+            var valSumRtP = document.getElementById('<%= valSummaryChangeStatusToRightToPresent.ClientID %>');
             var displayNoneClass = "displayNone";
 
-            if( rbn.checked)
-            {
+            if (rbn.checked) {
                 div.className = "padLeft25 PaddingTop6";
 
-                if(valSumTerm != null)
-                {
+                if (valSumTerm != null) {
                     valSumTerm.className = "";
                 }
-                if(divActv != null)
-                {
+                if (divActv != null) {
                     divActv.className = displayNoneClass;
                 }
-                if(valSumActv != null)
-                {
+                if (valSumActv != null) {
                     valSumActv.className = displayNoneClass;
                 }
-                if(divContgn != null)
-                {
+                if (divContgn != null) {
                     divContgn.className = displayNoneClass;
                 }
-                 if(valSumCont != null)
-                {
-                 valSumCont.className = displayNoneClass;
+                if (valSumCont != null) {
+                    valSumCont.className = displayNoneClass;
+                }
+                if (valSumRtP != null) {
+                    valSumRtP.className = displayNoneClass;
                 }
             }
         }
 
         function enterPressed(evn) {
             if (window.event && window.event.keyCode == 13) {
-                    return false;
+                return false;
             } else if (evn && evn.keyCode == 13) {
-                    return false;
+                return false;
             }
         }
 
@@ -510,16 +527,15 @@
         }
 
 
-        function showTarget(){
-        var chbInvestmentResouce = document.getElementById('<%= chbInvestmentResouce.ClientID %>');
-        var tblTargetUtil= document.getElementById('<%= tblTargetUtil.ClientID %>');
-            if(!chbInvestmentResouce.checked)
-                {
-                 tblTargetUtil.style.display = 'none';
-                }
-            else{
+        function showTarget() {
+            var chbInvestmentResouce = document.getElementById('<%= chbInvestmentResouce.ClientID %>');
+            var tblTargetUtil = document.getElementById('<%= tblTargetUtil.ClientID %>');
+            if (!chbInvestmentResouce.checked) {
+                tblTargetUtil.style.display = 'none';
+            }
+            else {
                 tblTargetUtil.style.display = 'inline';
-                }
+            }
         }
     </script>
     <uc:LoadingProgress ID="LoadingProgress1" runat="server" />
@@ -530,11 +546,10 @@
                     <td>
                         <table class="PersonInfo">
                             <tr>
-                                <td>
-                                    Legal First Name
+                                <td>Legal First Name
                                 </td>
                                 <td>
-                                    <asp:TextBox ID="txtFirstName" runat="server" CssClass="Width250Px" onchange="setDirty();"></asp:TextBox>
+                                    <asp:TextBox ID="txtFirstName" runat="server" CssClass="Width252Px" onchange="setDirty();"></asp:TextBox>
                                 </td>
                                 <td>
                                     <asp:RequiredFieldValidator ID="reqFirstName" runat="server" ValidationGroup="Person"
@@ -555,11 +570,10 @@
                                         ValidationGroup="Person" Text="*" EnableClientScript="false" SetFocusOnError="true"
                                         Display="Dynamic" OnServerValidate="cvFNAllowSpace_ServerValidate"></asp:CustomValidator>
                                 </td>
-                                <td>
-                                    Status
+                                <td>Status
                                 </td>
                                 <td>
-                                    <asp:DropDownList ID="ddlPersonStatus" runat="server" CssClass="Width250Px" onchange="setDirty();"
+                                    <asp:DropDownList ID="ddlPersonStatus" runat="server" CssClass="Width256Px" onchange="setDirty();" OnSelectedIndexChanged="ddlPersonStatus_SelectedIndexChanged"
                                         AutoPostBack="true" Visible="false">
                                     </asp:DropDownList>
                                     <asp:Label ID="lblPersonStatus" runat="server"></asp:Label>
@@ -568,24 +582,23 @@
                                         Enabled="false"></asp:CustomValidator>
                                 </td>
                                 <td>
-                                    <asp:Button ID="btnChangeEmployeeStatus" runat="server" Text="Change Employee Status"
-                                        UseSubmitBehavior="false" OnClick="btnChangeEmployeeStatus_Click" />&nbsp;
                                     <asp:RequiredFieldValidator ID="reqPersonStatus" runat="server" ControlToValidate="ddlPersonStatus"
                                         ErrorMessage="The Status is required." ToolTip="The Status is required." ValidationGroup="Person"
                                         Text="*" EnableClientScript="false" SetFocusOnError="true" Display="Dynamic"></asp:RequiredFieldValidator>
-                                    <%--   <asp:CustomValidator ID="custPersonStatus" runat="server" ControlToValidate="ddlPersonStatus"
-                                        ErrorMessage="Only individuals with a security role of 'Administrator' or 'HR' or 'Recruiter' may change a person's employment status." ToolTip="Only individuals with a security role of 'Administrator' or 'HR' or 'Recruiter' may change a person's employment status."
-                                        ValidationGroup="Person" Text="*" ValidateEmptyText="false" EnableClientScript="false"
-                                        SetFocusOnError="true" Display="Dynamic" OnServerValidate="custPersonStatus_ServerValidate"></asp:CustomValidator>
-                                    &nbsp;--%>
                                 </td>
+
+                                <td>
+                                    <asp:Button ID="btnChangeEmployeeStatus" runat="server" Text="Change Employee Status"
+                                        UseSubmitBehavior="false" OnClick="btnChangeEmployeeStatus_Click" />&nbsp;
+                                    
+                                </td>
+
                             </tr>
                             <tr>
-                                <td>
-                                    Preferred First Name
+                                <td>Preferred First Name
                                 </td>
                                 <td>
-                                    <asp:TextBox ID="txtPrefferedFirstName" runat="server" CssClass="Width250Px" onchange="setDirty();"></asp:TextBox>
+                                    <asp:TextBox ID="txtPrefferedFirstName" runat="server" CssClass="Width252Px" onchange="setDirty();"></asp:TextBox>
                                 </td>
                                 <td>
                                     <asp:RegularExpressionValidator ControlToValidate="txtPrefferedFirstName" ID="valRegPrefferedFirstName"
@@ -599,19 +612,20 @@
                                         ValidationGroup="Person" Text="*" EnableClientScript="false" SetFocusOnError="true"
                                         Display="Dynamic" OnServerValidate="cvPFNAllowSpace_ServerValidate"></asp:CustomValidator>
                                 </td>
-                                <td>
-                                    Career Manager
+                                <td>Career Manager
                                 </td>
                                 <td class="padRight2">
                                     <asp:UpdatePanel ID="pnlLineManager" runat="server">
                                         <ContentTemplate>
                                             <uc:DefaultManager ID="defaultManager" runat="server" InsertFirtItem="false" PersonsRole="Practice Area Manager"
-                                                CssClass="Width256Px" />
+                                                CssClass="Width260Px" />
                                         </ContentTemplate>
                                         <Triggers>
                                             <asp:AsyncPostBackTrigger ControlID="lbSetPracticeOwner" EventName="Click" />
                                         </Triggers>
                                     </asp:UpdatePanel>
+                                </td>
+                                <td>&nbsp;
                                 </td>
                                 <td>
                                     <asp:Label Text="Cohort Assignment" ID="lblCohort" runat="server" Style="display: none;"></asp:Label>
@@ -621,13 +635,13 @@
                                         Visible="false">Set Career Manager to Practice Area Owner</asp:LinkButton>
                                     <asp:HiddenField ID="hdnIsSetPracticeOwnerClicked" Value="false" runat="server" />
                                 </td>
+
                             </tr>
                             <tr>
-                                <td>
-                                    Last Name
+                                <td>Last Name
                                 </td>
                                 <td>
-                                    <asp:TextBox ID="txtLastName" runat="server" CssClass="Width250Px" onchange="setDirty();"></asp:TextBox>
+                                    <asp:TextBox ID="txtLastName" runat="server" CssClass="Width252Px" onchange="setDirty();"></asp:TextBox>
                                 </td>
                                 <td>
                                     <asp:RequiredFieldValidator ID="reqLastName" runat="server" ValidationGroup="Person"
@@ -644,8 +658,7 @@
                                         ValidationGroup="Person" Text="*" EnableClientScript="false" SetFocusOnError="true"
                                         Display="Dynamic" OnServerValidate="cvLNAllowSpace_ServerValidate"></asp:CustomValidator>
                                 </td>
-                                <td>
-                                    Hire&nbsp;Date
+                                <td>Hire&nbsp;Date
                                 </td>
                                 <td class="DatePickerOuterTd">
                                     <uc2:DatePicker ID="dtpHireDate" runat="server" OnSelectionChanged="dtpHireDate_SelectionChanged"
@@ -663,11 +676,36 @@
                                         ErrorMessage="Hire Date should be greater than previous Termination date." ToolTip="Hire Date should be greater than previous Termination date."
                                         ValidationGroup="Person" Text="*" Display="Dynamic" OnServerValidate="custWithPreviousTermDate_ServerValidate"
                                         ValidateEmptyText="false" SetFocusOnError="true" EnableClientScript="false"></asp:CustomValidator>
+                                    <asp:CustomValidator ID="cvWithRtpStartDate" runat="server" ControlToValidate="dtpHireDate"
+                                        ErrorMessage="Hire Date should be greater than Right to Present Start Date." ToolTip="Hire Date should be greater than Right to Present Start Date."
+                                        ValidationGroup="Person" Text="*" Display="Dynamic" OnServerValidate="cvWithRtpStartDate_ServerValidate"
+                                        ValidateEmptyText="false" SetFocusOnError="true" EnableClientScript="false"></asp:CustomValidator>
                                 </td>
+                                <td>
+                                    <table id="tblRtpStartDate" runat="server" visible="false">
+                                        <tr>
+                                            <td>Right to Present Start Date
+                                            </td>
+                                            <td>
+                                                <uc2:DatePicker ID="dtpRtpStartDate" runat="server" OnSelectionChanged="dtpRtpStartDate_SelectionChanged"
+                                                    AutoPostBack="true" />
+                                            </td>
+                                            <td>
+                                                <asp:RequiredFieldValidator ID="reqRtpStartDate" runat="server" ControlToValidate="dtpRtpStartDate" Enabled="false"
+                                                    Display="Dynamic" EnableClientScript="False" ErrorMessage="The Right to Present Start Date is required."
+                                                    SetFocusOnError="True" ValidationGroup="Person" ToolTip="The Right to Present Start Date is required.">*</asp:RequiredFieldValidator>
+                                                <asp:CompareValidator ID="compRtpStartDate" runat="server" ControlToValidate="dtpRtpStartDate" Enabled="false"
+                                                    EnableClientScript="False" ErrorMessage="The Right to Present Start Date must be in the format 'MM/dd/yyyy'"
+                                                    Operator="DataTypeCheck" SetFocusOnError="True" ValidationGroup="Person" ToolTip="The Right to Present Start Date must be in the format 'MM/dd/yyyy'"
+                                                    Type="Date">*</asp:CompareValidator>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+
                             </tr>
                             <tr>
-                                <td>
-                                    Title
+                                <td>Title
                                 </td>
                                 <td>
                                     <pmc:CustomDropDown ID="ddlPersonTitle" runat="server" onchange="setDirty();" CssClass="Width256Px"
@@ -688,8 +726,7 @@
                                     <asp:HiddenField ID="hdcvSLTApproval" runat="server" Value="false" />
                                     <asp:HiddenField ID="hdcvSLTPTOApproval" runat="server" Value="false" />
                                 </td>
-                                <td nowrap="nowrap">
-                                    Termination Date&nbsp;
+                                <td nowrap="nowrap">Termination Date&nbsp;
                                 </td>
                                 <td class="DatePickerOuterTd padRight10Imp">
                                     <uc2:DatePicker ID="dtpTerminationDate" runat="server" AutoPostBack="true" OnSelectionChanged="dtpTerminationDate_OnSelectionChanged"
@@ -714,47 +751,60 @@
                                     <asp:CustomValidator ID="custIsDefautManager" runat="server" ErrorMessage="Unable to set the Termination Date for this person because this person is set as the Default Career Manager for the company. Please select another Default Career Manager (Configuration > Company Resources > Default Career Manager) before terminating the individual."
                                         Display="Dynamic" ValidationGroup="Person" Text="*" EnableClientScript="false"
                                         OnServerValidate="custIsDefautManager_ServerValidate"></asp:CustomValidator>
-                                    <asp:DropDownList ID="ddlTerminationReason" runat="server" Visible="false" CssClass="Width250Px">
-                                    </asp:DropDownList>
-                                    <asp:TextBox ID="txtTerminationReason" runat="server" Visible="true" Enabled="false"></asp:TextBox>
+
                                     <AjaxControlToolkit:TextBoxWatermarkExtender ID="waterMarkTxtTerminationReason" runat="server"
                                         TargetControlID="txtTerminationReason" BehaviorID="waterMarkTxtTerminationReason"
-                                        WatermarkCssClass="watermarkedtext Width160px" WatermarkText="No Reason Selected">
+                                        WatermarkCssClass="watermarkedtext Width252Px" WatermarkText="No Reason Selected">
                                     </AjaxControlToolkit:TextBoxWatermarkExtender>
                                     <asp:CustomValidator ID="custTerminationReason" runat="server" ErrorMessage="To terminate the person the Termination Reason should be specified."
                                         ToolTip="To terminate the person the Termination Reason should be specified."
                                         ValidationGroup="Person" Text="*" Display="Static" EnableClientScript="false"
                                         OnServerValidate="custTerminationReason_ServerValidate"></asp:CustomValidator>&nbsp;
                                 </td>
+                                <td>
+                                    <table id="tblRtpEndDate" runat="server" visible="false">
+                                        <tr>
+                                            <td>Right to Present End Date&nbsp;
+                                            </td>
+                                            <td>
+                                                <uc2:DatePicker ID="dtpRtpEndDate" runat="server" ReadOnly="true" EnabledTextBox="false"
+                                                    AutoPostBack="false" />
+                                            </td>
+                                            <td>&nbsp;
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+
                             </tr>
                             <tr>
-                                <td>
-                                    Location
+                                <td>Location
                                 </td>
                                 <td>
-                                    <asp:DropDownList ID="ddlLocation" runat="server" CssClass="Width140px">
+                                    <asp:DropDownList ID="ddlLocation" runat="server" CssClass="Width256Px">
                                     </asp:DropDownList>
                                     &nbsp;
-                                    <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="The Location is required."
+                                    <asp:RequiredFieldValidator ID="rfvLocation" runat="server" ErrorMessage="The Location is required."
                                         ControlToValidate="ddlLocation" ToolTip="The Location is required." ValidationGroup="Person"
                                         Text="*" EnableClientScript="false" SetFocusOnError="true" Display="Dynamic"></asp:RequiredFieldValidator>&nbsp;&nbsp;
                                 </td>
-                                <td>
+                                <td></td>
+                                <td>&nbsp; 
                                 </td>
                                 <td>
-                                    <asp:Label ID="lbPayChexID" runat="server" Text="ADP ID" Visible="false"></asp:Label>
+                                    <asp:DropDownList ID="ddlTerminationReason" runat="server" Visible="false" CssClass="Width256Px">
+                                    </asp:DropDownList>
+                                    <asp:TextBox ID="txtTerminationReason" runat="server" Visible="true" Enabled="false" CssClass="Width252Px"></asp:TextBox>
+
                                 </td>
-                                <td>
-                                    <asp:TextBox ID="txtPayCheckId" runat="server" CssClass="Width250Px" onchange="setDirty();"
-                                        Visible="false"></asp:TextBox>
+                                <td>&nbsp;
                                 </td>
-                                <td>
-                                    &nbsp;
+                                <td>&nbsp;
                                 </td>
+
                             </tr>
                             <tr>
-                                <td>
-                                    Email&nbsp;Address
+                                <td>Email&nbsp;Address
                                 </td>
                                 <td>
                                     <asp:TextBox ID="txtEmailAddress" runat="server" CssClass="Width120Px" onchange="setDirty();"></asp:TextBox>&nbsp;@&nbsp;
@@ -782,22 +832,21 @@
                                         ValidationGroup="Person" OnServerValidate="custUserName_ServerValidate"></asp:CustomValidator>&nbsp;
                                 </td>
                                 <td>
-                                    Division
+                                    <asp:Label ID="lbPayChexID" runat="server" Text="ADP ID" Visible="false"></asp:Label>
+
                                 </td>
                                 <td>
-                                    <asp:DropDownList ID="ddlDivision" runat="server" CssClass="Width256Px" AutoPostBack="true"
-                                        OnSelectedIndexChanged="ddlDivision_SelectIndexChanged">
-                                    </asp:DropDownList>
+                                    <asp:TextBox ID="txtPayCheckId" runat="server" CssClass="Width252Px" onchange="setDirty();"
+                                        Visible="false"></asp:TextBox>
+
                                 </td>
-                                <td>
-                                    <asp:RequiredFieldValidator ID="rfvDivision" runat="server" ErrorMessage="The Division is required."
-                                        ControlToValidate="ddlDivision" ToolTip="The Division is required." ValidationGroup="Person"
-                                        Text="*" EnableClientScript="false" SetFocusOnError="true" Display="Dynamic"></asp:RequiredFieldValidator>&nbsp;
+                                <td></td>
+                                <td>&nbsp;
                                 </td>
+
                             </tr>
                             <tr>
-                                <td nowrap="nowrap">
-                                    Offshore Resource
+                                <td nowrap="nowrap">Offshore Resource
                                 </td>
                                 <td>
                                     <asp:DropDownList ID="ddlPersonType" runat="server" CssClass="Width256Px" onchange="setDirty();">
@@ -805,29 +854,31 @@
                                         <asp:ListItem Text="YES" Value="1"></asp:ListItem>
                                     </asp:DropDownList>
                                 </td>
-                                <td>
-                                    &nbsp;
+                                <td>&nbsp;
                                 </td>
-                                <td nowrap="nowrap" class="padRight10Imp">
-                                    Practice Area
+                                <td nowrap="nowrap" class="padRight10Imp">Division 
                                 </td>
                                 <td>
-                                    <asp:DropDownList ID="ddlDefaultPractice" runat="server" CssClass="Width256Px" onchange="setDirty();"
-                                        OnSelectedIndexChanged="ddlDefaultPractice_OnSelectedIndexChanged" AutoPostBack="true">
+                                    <asp:DropDownList ID="ddlDivision" runat="server" CssClass="Width256Px" AutoPostBack="true"
+                                        OnSelectedIndexChanged="ddlDivision_SelectIndexChanged">
                                     </asp:DropDownList>
+
                                 </td>
                                 <td>
-                                    <asp:RequiredFieldValidator ID="rfvPracticeArea" runat="server" ErrorMessage="The Practice Area is required."
-                                        ToolTip="The Practice Area is required." ValidationGroup="Person" Text="*" EnableClientScript="false"
-                                        SetFocusOnError="true" Display="Dynamic" ControlToValidate="ddlDefaultPractice"></asp:RequiredFieldValidator>&nbsp;
+                                    <asp:RequiredFieldValidator ID="rfvDivision" runat="server" ErrorMessage="The Division is required."
+                                        ControlToValidate="ddlDivision" ToolTip="The Division is required." ValidationGroup="Person"
+                                        Text="*" EnableClientScript="false" SetFocusOnError="true" Display="Dynamic"></asp:RequiredFieldValidator>&nbsp;
+                                   
                                 </td>
+                                <td>&nbsp;
+                                </td>
+
                             </tr>
                             <tr>
-                                <td>
-                                    Telephone number
+                                <td>Telephone number
                                 </td>
                                 <td>
-                                    <asp:TextBox ID="txtTelephoneNumber" runat="server" onchange="setDirty();" CssClass="Width250Px"></asp:TextBox>
+                                    <asp:TextBox ID="txtTelephoneNumber" runat="server" onchange="setDirty();" CssClass="Width252Px"></asp:TextBox>
                                 </td>
                                 <td>
                                     <asp:RegularExpressionValidator ID="reqTelphoneNumber" runat="server" ControlToValidate="txtTelephoneNumber"
@@ -839,20 +890,23 @@
                                         ValidationGroup="Person" Text="*" EnableClientScript="false" SetFocusOnError="true"
                                         Display="Dynamic"></asp:RequiredFieldValidator>&nbsp;
                                 </td>
-                                <td>
-                                    Practice Leadership
+                                <td>Practice Area  
                                 </td>
                                 <td>
-                                    <asp:DropDownList ID="ddlPracticeLeadership" runat="server" CssClass="Width220Px">
+                                    <asp:DropDownList ID="ddlDefaultPractice" runat="server" CssClass="Width256Px" onchange="setDirty();"
+                                        OnSelectedIndexChanged="ddlDefaultPractice_OnSelectedIndexChanged" AutoPostBack="true">
                                     </asp:DropDownList>
+
                                 </td>
                                 <td>
-                                    <%--<asp:RequiredFieldValidator ID="reqPracticeLeadership" runat="server" ErrorMessage="The Practice Leadership is required."
-                                        ControlToValidate="ddlPracticeLeadership" ToolTip="The Practice Leadership is required."
-                                        ValidationGroup="Person" Text="*" EnableClientScript="false" SetFocusOnError="true"
-                                        Display="Dynamic"></asp:RequiredFieldValidator>--%>
-                                    &nbsp;
+                                    <asp:RequiredFieldValidator ID="rfvPracticeArea" runat="server" ErrorMessage="The Practice Area is required."
+                                        ToolTip="The Practice Area is required." ValidationGroup="Person" Text="*" EnableClientScript="false"
+                                        SetFocusOnError="true" Display="Dynamic" ControlToValidate="ddlDefaultPractice"></asp:RequiredFieldValidator>&nbsp;
+                                    
                                 </td>
+                                <td>&nbsp;
+                                </td>
+
                             </tr>
                             <tr>
                                 <td>
@@ -861,7 +915,7 @@
                                 <td>
                                     <asp:TextBox ID="txtEmployeeNumber" runat="server" MaxLength="12" onchange="setDirty();"
                                         accept="0" onclick="txtEmployeeNumber_ClientClick(this)" onkeypress="txtEmployeeNumber_ClientClick(this)"
-                                        onblur="txtEmployeeNumber_OnBlur(this)" CssClass="Width250Px"></asp:TextBox>
+                                        onblur="txtEmployeeNumber_OnBlur(this)" CssClass="Width252Px"></asp:TextBox>
                                     <asp:HiddenField ID="hdnPersonId" runat="server" />
                                     <asp:HiddenField ID="hdnIsDefaultManager" runat="server" />
                                 </td>
@@ -874,8 +928,23 @@
                                         OnServerValidate="custEmployeeNumber_ServerValidate" SetFocusOnError="true" Text="*"
                                         ToolTip="There is another Person with the same Employee Number."></asp:CustomValidator>&nbsp;
                                 </td>
+                                <td>Practice Leadership
+                                </td>
                                 <td>
-                                    &nbsp;
+                                    <asp:DropDownList ID="ddlPracticeLeadership" runat="server" CssClass="Width256Px">
+                                    </asp:DropDownList>
+
+                                </td>
+                                <td>&nbsp;
+                                </td>
+                                <td>&nbsp;
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td colspan="3">&nbsp;
+                                </td>
+                                <td>&nbsp;
                                 </td>
                                 <td>
                                     <table>
@@ -887,8 +956,7 @@
                                                 <label for="ctl00_body_chbMBO">
                                                     MBO</label>
                                             </td>
-                                            <td>
-                                                &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;
+                                            <td>&ensp; &ensp; &ensp; &ensp; &ensp; &ensp;
                                             </td>
                                             <td class="padRight0">
                                                 <asp:CheckBox ID="chbInvestmentResouce" runat="server" Style="padding-right: 0px"
@@ -901,16 +969,16 @@
                                         </tr>
                                     </table>
                                 </td>
-                                <td>
-                                    &nbsp;
+                                <td>&nbsp;
                                 </td>
+                                <td>&nbsp;
+                                </td>
+
                             </tr>
                             <tr>
-                                <td colspan="3">
-                                    &nbsp;
+                                <td colspan="3">&nbsp;
                                 </td>
-                                <td>
-                                    &nbsp;
+                                <td>&nbsp;
                                 </td>
                                 <td>
                                     <table>
@@ -922,14 +990,12 @@
                                                 <label for="ctl00_body_chbLockedOut">
                                                     Locked-Out</label>
                                             </td>
-                                            <td>
-                                                &ensp; &ensp;
+                                            <td>&ensp; &ensp;
                                             </td>
                                             <td>
                                                 <table id="tblTargetUtil" runat="server" enableviewstate="true">
                                                     <tr>
-                                                        <td class="padRight0">
-                                                            Target Utilization&ensp;
+                                                        <td class="padRight0">Target Utilization&ensp;
                                                         </td>
                                                         <td>
                                                             <asp:TextBox ID="txtTargetUtilization" runat="server" CssClass="Width40Px" MaxLength="3"></asp:TextBox>%
@@ -949,9 +1015,11 @@
                                         </tr>
                                     </table>
                                 </td>
-                                <td>
-                                    &nbsp;
+                                <td>&nbsp;
                                 </td>
+                                <td>&nbsp;
+                                </td>
+
                             </tr>
                         </table>
                     </td>
@@ -976,8 +1044,8 @@
                                 </asp:TableCell>
                                 <asp:TableCell ID="cellPermissions" runat="server">
                                     <span class="bg">
-                                        <asp:LinkButton ID="btnPermissions" runat="server" Text="Project/Opportunity Permissions"
-                                            CssClass="Width120Px" CausesValidation="false" OnCommand="btnView_Command" CommandArgument="1"></asp:LinkButton>
+                                        <asp:LinkButton ID="btnPermissions" runat="server" Text="Project Permissions"
+                                            CssClass="Width83Px" CausesValidation="false" OnCommand="btnView_Command" CommandArgument="1"></asp:LinkButton>
                                     </span>
                                 </asp:TableCell>
                                 <asp:TableCell ID="cellCompensation" runat="server">
@@ -1005,22 +1073,22 @@
                                             CausesValidation="false" CssClass="width50Px" OnCommand="btnView_Command" CommandArgument="5"></asp:LinkButton>
                                     </span>
                                 </asp:TableCell>
-                                <asp:TableCell ID="cellOpportunities" runat="server">
+                                <%--<asp:TableCell ID="cellOpportunities" runat="server">
                                     <span class="bg">
                                         <asp:LinkButton ID="btnOppportunities" runat="server" Text="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Opportunities"
                                             CausesValidation="false" CssClass="Width80Px" OnCommand="btnView_Command" CommandArgument="6"></asp:LinkButton>
                                     </span>
-                                </asp:TableCell>
+                                </asp:TableCell>--%>
                                 <asp:TableCell ID="cellActivityLog" runat="server" Visible="false">
                                     <span class="bg">
                                         <asp:LinkButton ID="btnActivityLog" runat="server" Text="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; History"
-                                            CausesValidation="false" CssClass="Width45Px" OnCommand="btnView_Command" CommandArgument="7"></asp:LinkButton>
+                                            CausesValidation="false" CssClass="Width45Px" OnCommand="btnView_Command" CommandArgument="6"></asp:LinkButton>
                                     </span>
                                 </asp:TableCell>
                                 <asp:TableCell ID="cellMSBadge" runat="server">
                                     <span class="bg">
                                         <asp:LinkButton ID="btnMSBadge" runat="server" Text="MS Badge History" CausesValidation="false"
-                                            CssClass="Width80Px" OnCommand="btnView_Command" CommandArgument="8"></asp:LinkButton>
+                                            CssClass="Width80Px" OnCommand="btnView_Command" CommandArgument="7"></asp:LinkButton>
                                     </span>
                                 </asp:TableCell>
                             </asp:TableRow>
@@ -1037,14 +1105,12 @@
                                                     ValidationGroup="Person" ErrorMessage="Person should have at least one role checked."
                                                     OnServerValidate="cvRoles_ServerValidate" SetFocusOnError="true" Text="*" ToolTip="Person should have at least one role checked."></asp:CustomValidator>
                                             </td>
-                                            <td>
-                                                &nbsp;
+                                            <td>&nbsp;
                                             </td>
                                             <td>
                                                 <b>Seniority</b>
                                             </td>
-                                            <td>
-                                                &nbsp;
+                                            <td>&nbsp;
                                             </td>
                                         </tr>
                                         <tr>
@@ -1053,8 +1119,7 @@
                                                     CssClass="Width170Px">
                                                 </asp:CheckBoxList>
                                             </td>
-                                            <td>
-                                                &nbsp;
+                                            <td>&nbsp;
                                             </td>
                                             <td valign="top">
                                                 <asp:DropDownList ID="ddlSeniority" runat="server" onchange="setDirty();" />
@@ -1073,14 +1138,11 @@
                                                     UseSubmitBehavior="false" OnClientClick="if( !confirm('Do you really want to reset user\'s password?')) return false;"
                                                     Text="Reset Password" />
                                             </td>
-                                            <td>
-                                                &nbsp;
+                                            <td>&nbsp;
                                             </td>
-                                            <td>
-                                                &nbsp;
+                                            <td>&nbsp;
                                             </td>
-                                            <td>
-                                                &nbsp;
+                                            <td>&nbsp;
                                             </td>
                                         </tr>
                                         <tr>
@@ -1099,7 +1161,8 @@
                                                             <asp:TemplateField>
                                                                 <HeaderTemplate>
                                                                     <div class="ie-bg no-wrap">
-                                                                        Page</div>
+                                                                        Page
+                                                                    </div>
                                                                 </HeaderTemplate>
                                                                 <ItemTemplate>
                                                                     <%# Eval("Title") %>
@@ -1108,7 +1171,8 @@
                                                             <asp:TemplateField>
                                                                 <HeaderTemplate>
                                                                     <div class="ie-bg no-wrap">
-                                                                        Current</div>
+                                                                        Current
+                                                                    </div>
                                                                 </HeaderTemplate>
                                                                 <ItemTemplate>
                                                                     <%# ((bool)Eval("Old")) ? "Yes" : "No" %>
@@ -1117,7 +1181,8 @@
                                                             <asp:TemplateField>
                                                                 <HeaderTemplate>
                                                                     <div class="ie-bg no-wrap">
-                                                                        New</div>
+                                                                        New
+                                                                    </div>
                                                                 </HeaderTemplate>
                                                                 <ItemTemplate>
                                                                     <%# ((bool)Eval("New")) ? "Yes" : "No" %>
@@ -1126,7 +1191,8 @@
                                                             <asp:TemplateField>
                                                                 <HeaderTemplate>
                                                                     <div class="ie-bg no-wrap">
-                                                                        Diff.</div>
+                                                                        Diff.
+                                                                    </div>
                                                                 </HeaderTemplate>
                                                                 <ItemTemplate>
                                                                     <%# ((bool)Eval("IsDifferent")) ? "Yes" : "No"%>
@@ -1208,7 +1274,8 @@
                                                 <asp:TemplateField>
                                                     <HeaderTemplate>
                                                         <div class="ie-bg">
-                                                            Start</div>
+                                                            Start
+                                                        </div>
                                                     </HeaderTemplate>
                                                     <ItemTemplate>
                                                         <asp:LinkButton ID="btnStartDate" runat="server" Text='<%# ((DateTime)Eval("StartDate")).ToString("MM/dd/yyyy") %>'
@@ -1251,10 +1318,12 @@
                                                 <asp:TemplateField>
                                                     <HeaderTemplate>
                                                         <div class="ie-bg">
-                                                            End</div>
+                                                            End
+                                                        </div>
                                                     </HeaderTemplate>
                                                     <ItemTemplate>
-                                                        <asp:Label ID="lblEndDate" runat="server" Text='<%# ((DateTime?)Eval("EndDate")).HasValue ? ((DateTime?)Eval("EndDate")).Value.AddDays(-1).ToString("MM/dd/yyyy") : string.Empty %>'></asp:Label></ItemTemplate>
+                                                        <asp:Label ID="lblEndDate" runat="server" Text='<%# ((DateTime?)Eval("EndDate")).HasValue ? ((DateTime?)Eval("EndDate")).Value.AddDays(-1).ToString("MM/dd/yyyy") : string.Empty %>'></asp:Label>
+                                                    </ItemTemplate>
                                                     <EditItemTemplate>
                                                         <span class="fl-left Width85Percent">
                                                             <uc2:DatePicker ID="dpEndDate" ValidationGroup="CompensationUpdate" runat="server"
@@ -1298,10 +1367,24 @@
                                                 <asp:TemplateField>
                                                     <HeaderTemplate>
                                                         <div class="ie-bg">
-                                                            Division</div>
+                                                            &nbsp;
+                                                        </div>
+                                                    </HeaderTemplate>
+                                                    <HeaderStyle CssClass="Width3Percent" />
+                                                    <ItemTemplate>
+                                                        <asp:Image ID="imgRtP" CssClass="rtp-Compensation" ToolTip="Right to Present Compensation" runat="server" Visible='<%# (bool)Eval("IsRighttoPresent") %>'
+                                                            ImageUrl="~/Images/RtP_Comp_Icon.png" />
+                                                    </ItemTemplate>
+                                                </asp:TemplateField>
+                                                <asp:TemplateField>
+                                                    <HeaderTemplate>
+                                                        <div class="ie-bg">
+                                                            Division
+                                                        </div>
                                                     </HeaderTemplate>
                                                     <ItemTemplate>
-                                                        <asp:Label ID="lblDivision" runat="server" Text='<%# Eval("HtmlEncodedDivisionName")%>'></asp:Label></ItemTemplate>
+                                                        <asp:Label ID="lblDivision" runat="server" Text='<%# Eval("HtmlEncodedDivisionName")%>'></asp:Label>
+                                                    </ItemTemplate>
                                                     <EditItemTemplate>
                                                         <asp:DropDownList ValidationGroup="CompensationUpdate" ID="ddlCompDivision" runat="server"
                                                             AutoPostBack="true" OnSelectedIndexChanged="ddlCompDivision_SelectIndexChanged"
@@ -1331,10 +1414,12 @@
                                                 <asp:TemplateField>
                                                     <HeaderTemplate>
                                                         <div class="ie-bg">
-                                                            Practice Area</div>
+                                                            Practice Area
+                                                        </div>
                                                     </HeaderTemplate>
                                                     <ItemTemplate>
-                                                        <asp:Label ID="lblpractice" runat="server" Text='<%# Eval("HtmlEncodedPracticeName")%>'></asp:Label></ItemTemplate>
+                                                        <asp:Label ID="lblpractice" runat="server" Text='<%# Eval("HtmlEncodedPracticeName")%>'></asp:Label>
+                                                    </ItemTemplate>
                                                     <EditItemTemplate>
                                                         <asp:DropDownList ValidationGroup="CompensationUpdate" ID="ddlPractice" runat="server"
                                                             CssClass="Width85Percent">
@@ -1362,7 +1447,8 @@
                                                 <asp:TemplateField>
                                                     <HeaderTemplate>
                                                         <div class="ie-bg">
-                                                            Title</div>
+                                                            Title
+                                                        </div>
                                                     </HeaderTemplate>
                                                     <ItemTemplate>
                                                         <asp:Label ID="lblTitle" runat="server" Text=' <%# Eval("HtmlEncodedTitleName") %>'></asp:Label>
@@ -1397,10 +1483,12 @@
                                                 <asp:TemplateField>
                                                     <HeaderTemplate>
                                                         <div class="ie-bg">
-                                                            Basis</div>
+                                                            Basis
+                                                        </div>
                                                     </HeaderTemplate>
                                                     <ItemTemplate>
-                                                        <asp:Label ID="lblBasis" runat="server" Text='<%# Eval("TimescaleName") %>'></asp:Label></ItemTemplate>
+                                                        <asp:Label ID="lblBasis" runat="server" Text='<%# Eval("TimescaleName") %>'></asp:Label>
+                                                    </ItemTemplate>
                                                     <EditItemTemplate>
                                                         <asp:DropDownList ID="ddlBasis" runat="server" CssClass="Width90Percent" OnSelectedIndexChanged="ddlBasis_OnSelectedIndexChanged"
                                                             AutoPostBack="true">
@@ -1438,16 +1526,18 @@
                                                 <asp:TemplateField>
                                                     <HeaderTemplate>
                                                         <div class="ie-bg">
-                                                            Vendor Indicator</div>
+                                                            Vendor Indicator
+                                                        </div>
                                                     </HeaderTemplate>
                                                     <ItemTemplate>
-                                                        <asp:Label ID="lblVendor" runat="server" Text='<%# Eval("Vendor") != null ? Eval("Vendor.Name") : string.Empty %>'></asp:Label></ItemTemplate>
+                                                        <asp:Label ID="lblVendor" runat="server" Text='<%# Eval("Vendor") != null ? Eval("Vendor.Name") : string.Empty %>'></asp:Label>
+                                                    </ItemTemplate>
                                                     <EditItemTemplate>
                                                         <asp:DropDownList ID="ddlVendor" runat="server" CssClass="Width90Percent" AutoPostBack="true" Visible="false"
                                                             ValidationGroup="CompensationUpdate">
                                                         </asp:DropDownList>
                                                         <asp:RequiredFieldValidator ID="reqddlVendor" runat="server" ControlToValidate="ddlVendor"
-                                                            Display="Dynamic" EnableClientScript="false" ErrorMessage="The Vendor Indicator is required."  ValidationGroup="CompensationUpdate"
+                                                            Display="Dynamic" EnableClientScript="false" ErrorMessage="The Vendor Indicator is required." ValidationGroup="CompensationUpdate"
                                                             SetFocusOnError="true" Text="*" ToolTip="The Vendor Indicator is required." Enabled="false"></asp:RequiredFieldValidator>
                                                     </EditItemTemplate>
                                                     <FooterTemplate>
@@ -1463,7 +1553,8 @@
                                                 <asp:TemplateField>
                                                     <HeaderTemplate>
                                                         <div class="ie-bg">
-                                                            Amount</div>
+                                                            Amount
+                                                        </div>
                                                     </HeaderTemplate>
                                                     <ItemTemplate>
                                                         <asp:Label ID="lbAmount" runat="server" Text='<%# Bind("Amount") %>'></asp:Label>
@@ -1533,7 +1624,8 @@
                                                 <asp:TemplateField>
                                                     <HeaderTemplate>
                                                         <div class="ie-bg">
-                                                            PTO Accrual</div>
+                                                            PTO Accrual
+                                                        </div>
                                                     </HeaderTemplate>
                                                     <ItemTemplate>
                                                         <asp:Label ID="lbVacationDays" runat="server" Text='<%# Bind("VacationDays") %>'></asp:Label>
@@ -1627,11 +1719,11 @@
                                 <asp:Panel ID="pnlRecruitingMetrics" runat="server" CssClass="tab-pane">
                                     <table class="Width50Percent">
                                         <tr class="Height30Px">
-                                            <td class="padRight10Imp Width20PerImp">
-                                                Recruiter
+                                            <td class="padRight10Imp Width20PerImp">Recruiter
                                             </td>
                                             <td>
-                                                <asp:DropDownList ID="ddlRecruiter" runat="server" onchange="setDirty();" CssClass="Width256Px">
+                                                <asp:DropDownList ID="ddlRecruiter" runat="server" onchange="setDirty();" CssClass="Width256Px" OnSelectedIndexChanged="ddlRecruiter_SelectedIndexChanged"
+                                                    AutoPostBack="true">
                                                 </asp:DropDownList>
                                             </td>
                                             <td>
@@ -1645,8 +1737,7 @@
                                             </td>
                                         </tr>
                                         <tr class="Height30Px">
-                                            <td>
-                                                Job Seeker Status
+                                            <td>Job Seeker Status
                                             </td>
                                             <td>
                                                 <asp:RadioButton ID="rbActiveCandidate" runat="server" Text="Active Candidate" GroupName="JobSeekerStatus" /><asp:RadioButton
@@ -1654,8 +1745,7 @@
                                             </td>
                                         </tr>
                                         <tr class="Height30Px">
-                                            <td>
-                                                Source
+                                            <td>Source
                                             </td>
                                             <td>
                                                 <asp:DropDownList ID="ddlSource" runat="server">
@@ -1663,8 +1753,7 @@
                                             </td>
                                         </tr>
                                         <tr class="Height30Px">
-                                            <td>
-                                                Targeted Company
+                                            <td>Targeted Company
                                             </td>
                                             <td>
                                                 <asp:DropDownList ID="ddlTarget" runat="server">
@@ -1672,8 +1761,7 @@
                                             </td>
                                         </tr>
                                         <tr class="Height30Px">
-                                            <td>
-                                                Employee Referral
+                                            <td>Employee Referral
                                             </td>
                                             <td>
                                                 <asp:RadioButton ID="rbEmpReferralNo" Text="No" runat="server" GroupName="EmployeeReferral"
@@ -1736,12 +1824,12 @@
                                     <uc:PersonProjects ID="personProjects" runat="server" />
                                 </asp:Panel>
                             </asp:View>
-                            <asp:View ID="vwOpportunities" runat="server">
+                            <%--  <asp:View ID="vwOpportunities" runat="server">
                                 <asp:Panel ID="pnOpportunities" runat="server" CssClass="tab-pane WholeWidth">
                                     <uc:OpportunityList ID="personOpportunities" runat="server" AllowAutoRedirectToDetails="false"
                                         FilterMode="ByTargetPerson" />
                                 </asp:Panel>
-                            </asp:View>
+                            </asp:View>--%>
                             <asp:View ID="vwActivityLog" runat="server">
                                 <asp:Panel ID="pnlLog" runat="server" CssClass="tab-pane WholeWidth">
                                     <uc:Notes ID="nPerson" runat="server" Target="Person" OnNoteAdded="nPerson_OnNoteAdded" />
@@ -1759,8 +1847,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        &nbsp;
+                    <td>&nbsp;
                     </td>
                 </tr>
                 <tr>
@@ -1789,8 +1876,7 @@
                 Style="display: none;">
                 <table class="WholeWidth">
                     <tr class="PopUpHeader">
-                        <th>
-                            Error
+                        <th>Error
                             <asp:Button ID="btnClose" ToolTip="Close" runat="server" CssClass="mini-report-closeNew"
                                 UseSubmitBehavior="false" Text="X"></asp:Button>
                         </th>
@@ -1833,8 +1919,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="Padding6">
-                            Click OK to terminate this person and set an end date for all applicable projects.
+                        <td class="Padding6">Click OK to terminate this person and set an end date for all applicable projects.
                         </td>
                     </tr>
                     <tr>
@@ -1869,8 +1954,7 @@
                 Style="display: none;">
                 <table>
                     <tr>
-                        <th class="TextAlignLeft PaddingBottom10Imp">
-                            Change Employee Status:
+                        <th class="TextAlignLeft PaddingBottom10Imp">Change Employee Status:
                         </th>
                     </tr>
                     <tr>
@@ -1882,8 +1966,7 @@
                             <div id="divActive" runat="server">
                                 <table>
                                     <tr>
-                                        <td>
-                                            Hire Date:&nbsp;
+                                        <td>Hire Date:&nbsp;
                                         </td>
                                         <td>
                                             <uc2:DatePicker ID="dtpActiveHireDate" runat="server" />
@@ -1892,15 +1975,19 @@
                                                 ToolTip="To Active the person the Hire Date should be specified." ValidationGroup="ChangePersonStatusToActive"
                                                 Display="Dynamic" EnableClientScript="false" SetFocusOnError="true"></asp:RequiredFieldValidator>
                                             <asp:CompareValidator ID="cvActiveHireDateFormat" runat="server" ControlToValidate="dtpActiveHireDate"
-                                                Display="Dynamic" EnableTheming="True" ErrorMessage="Please enter hire date in the correct format: MM/DD/YYYY."
+                                                Display="Dynamic" EnableTheming="True" ErrorMessage="Please enter hire date in the correct format: MM/dd/yyyy."
                                                 Operator="DataTypeCheck" SetFocusOnError="True" ValidationGroup="ChangePersonStatusToActive"
-                                                ToolTip="Please enter hire date in the correct format: MM/DD/YYYY." Type="Date"
+                                                ToolTip="Please enter hire date in the correct format: MM/dd/yyyy." Type="Date"
                                                 EnableClientScript="false">*</asp:CompareValidator>
                                             <asp:CustomValidator ID="cvWithTerminationDate" runat="server" ControlToValidate="dtpActiveHireDate"
                                                 ErrorMessage="New Hire Date should be greater than previous Termination date."
                                                 ToolTip="New Hire Date should be greater than previous Termination date." ValidationGroup="ChangePersonStatusToActive"
                                                 Text="*" Display="Dynamic" OnServerValidate="cvWithTerminationDate_ServerValidate"
                                                 ValidateEmptyText="false" SetFocusOnError="true" EnableClientScript="false"></asp:CustomValidator>
+                                            <asp:CompareValidator ID="cvWithRtpEndDate" runat="server" ControlToValidate="dtpActiveHireDate"
+                                                ControlToCompare="dtpRtpStartDate" Operator="GreaterThan" Type="Date" ErrorMessage="Hire Date should be greater than Right to Present Start Date."
+                                                Display="Dynamic" Text="*" ValidationGroup="ChangePersonStatusToActive" ToolTip="Hire Date should be greater than Right to Present Start Date."
+                                                SetFocusOnError="true" EnableClientScript="false" Enabled="false"></asp:CompareValidator>
                                         </td>
                                     </tr>
                                 </table>
@@ -1914,8 +2001,7 @@
                             <div id="divTerminate" runat="server">
                                 <table>
                                     <tr>
-                                        <td>
-                                            Termination Date:&nbsp;
+                                        <td>Termination Date:&nbsp;
                                         </td>
                                         <td>
                                             <uc2:DatePicker ID="dtpPopUpTerminateDate" runat="server" AutoPostBack="true" OnSelectionChanged="dtpPopUpTerminationDate_OnSelectionChanged" />
@@ -1924,19 +2010,22 @@
                                                 ToolTip="To Terminate the person the Termination Date should be specified." ValidationGroup="ChangePersonStatusToTerminate"
                                                 Display="Dynamic" EnableClientScript="false" SetFocusOnError="true"></asp:RequiredFieldValidator>
                                             <asp:CompareValidator ID="cvTerminationDateFormat" runat="server" ControlToValidate="dtpPopUpTerminateDate"
-                                                Display="Dynamic" EnableTheming="True" ErrorMessage="Please enter termination date in the correct format: MM/DD/YYYY."
+                                                Display="Dynamic" EnableTheming="True" ErrorMessage="Please enter termination date in the correct format: MM/dd/yyyy."
                                                 Operator="DataTypeCheck" SetFocusOnError="True" ValidationGroup="ChangePersonStatusToTerminate"
-                                                ToolTip="Please enter termination date in the correct format: MM/DD/YYYY." Type="Date"
+                                                ToolTip="Please enter termination date in the correct format: MM/dd/yyyy." Type="Date"
                                                 EnableClientScript="false">*</asp:CompareValidator>
                                             <asp:CompareValidator ID="cvWithHireDate" runat="server" ControlToValidate="dtpPopUpTerminateDate"
                                                 ControlToCompare="dtpHireDate" Operator="GreaterThanEqual" Type="Date" ErrorMessage="Termination date should be greater than or equal to Hire date."
                                                 Display="Dynamic" Text="*" ValidationGroup="ChangePersonStatusToTerminate" ToolTip="Termination date should be greater than or equal to Hire date."
                                                 SetFocusOnError="true" EnableClientScript="false"></asp:CompareValidator>
+                                            <asp:CompareValidator ID="cvWithRtpHireDate" runat="server" ControlToValidate="dtpPopUpTerminateDate"
+                                                ControlToCompare="dtpRtpStartDate" Operator="GreaterThanEqual" Type="Date" ErrorMessage="Termination date should be greater than or equal to Right to Present start date."
+                                                Display="Dynamic" Text="*" ValidationGroup="ChangePersonStatusToTerminate" ToolTip="Termination date should be greater than or equal to Right to Present start date."
+                                                SetFocusOnError="true" EnableClientScript="false" Enabled="false"></asp:CompareValidator>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="PaddingTop5Imp">
-                                            Termination Reason:&nbsp;
+                                        <td class="PaddingTop5Imp">Termination Reason:&nbsp;
                                         </td>
                                         <td class="PaddingTop5Imp">
                                             <asp:DropDownList ID="ddlPopUpTerminationReason" runat="server">
@@ -1953,12 +2042,10 @@
                             </div>
                             <asp:RadioButton ID="rbnContingent" runat="server" Text="Contingent" onclick="showDivContingent()"
                                 GroupName="rbtnsChangeStatus" />
-                            </div>
                             <div id="divContingent" runat="server">
                                 <table>
                                     <tr>
-                                        <td>
-                                            Hire Date:&nbsp;
+                                        <td>Hire Date:&nbsp;
                                         </td>
                                         <td>
                                             <uc2:DatePicker ID="dtpContingentHireDate" runat="server" />
@@ -1967,12 +2054,41 @@
                                                 ToolTip="To Contingent the person the Hire Date should be specified." ValidationGroup="ChangePersonStatusToContingent"
                                                 Display="Dynamic" EnableClientScript="false" SetFocusOnError="true"></asp:RequiredFieldValidator>
                                             <asp:CompareValidator ID="cvContingentHireDateFormat" runat="server" ControlToValidate="dtpContingentHireDate"
-                                                Display="Dynamic" EnableTheming="True" ErrorMessage="Please enter hire date in the correct format: MM/DD/YYYY."
+                                                Display="Dynamic" EnableTheming="True" ErrorMessage="Please enter hire date in the correct format: MM/dd/yyyy."
                                                 Operator="DataTypeCheck" SetFocusOnError="True" ValidationGroup="ChangePersonStatusToContingent"
                                                 Type="Date" EnableClientScript="false">*</asp:CompareValidator>
                                             <asp:CompareValidator ID="cvWithTermiantionDate" runat="server" ControlToValidate="dtpContingentHireDate"
                                                 ControlToCompare="dtpTerminationDate" Operator="GreaterThan" Type="Date" ErrorMessage="New Hire date should be greater than previous Termination date."
                                                 Display="Dynamic" Text="*" ValidationGroup="ChangePersonStatusToContingent" ToolTip="New Hire date should be greater than previous Termination date."
+                                                SetFocusOnError="true" EnableClientScript="false"></asp:CompareValidator>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <br />
+                            <asp:RadioButton ID="rbnRighttoPresent" runat="server" Text="Right to Present" onclick="showDivRighttoPresent()" GroupName="rbtnsChangeStatus" />
+                            <div id="divRighttoPresent" runat="server">
+                                <table>
+                                    <tr>
+                                        <td>Right to Present Start Date:&nbsp;
+                                        </td>
+                                        <td>
+                                            <uc2:DatePicker ID="dtpRighttoPresentStartDate" runat="server" />
+                                            <asp:RequiredFieldValidator ID="rfvRighttoPresentStartDate" runat="server" ControlToValidate="dtpRighttoPresentStartDate"
+                                                Text="*" ErrorMessage="The person Right to Present start date should be specified."
+                                                ToolTip="The person Right to Present start date should be specified." ValidationGroup="ChangePersonStatusToRtP"
+                                                Display="Dynamic" EnableClientScript="false" SetFocusOnError="true"></asp:RequiredFieldValidator>
+                                            <asp:CompareValidator ID="cvRighttoPresentStartDate" runat="server" ControlToValidate="dtpRighttoPresentStartDate"
+                                                Display="Dynamic" EnableTheming="True" ErrorMessage="Please enter Right to Present start date in the correct format: MM/dd/yyyy."
+                                                Operator="DataTypeCheck" SetFocusOnError="True" ValidationGroup="ChangePersonStatusToRtP"
+                                                Type="Date" EnableClientScript="false">*</asp:CompareValidator>
+                                            <asp:CompareValidator ID="cvRtpToTermination" runat="server" ControlToValidate="dtpRighttoPresentStartDate"
+                                                ControlToCompare="dtpTerminationDate" Operator="GreaterThan" Type="Date" ErrorMessage="New Right to Present start date should be greater than previous Termination date."
+                                                Display="Dynamic" Text="*" ValidationGroup="ChangePersonStatusToRtP" ToolTip="New Right to Present start date should be greater than previous Termination date."
+                                                SetFocusOnError="true" EnableClientScript="false"></asp:CompareValidator>
+                                            <asp:CompareValidator ID="cvRtPStartToRtPEnd" runat="server" ControlToValidate="dtpRighttoPresentStartDate"
+                                                ControlToCompare="dtpRtpEndDate" Operator="GreaterThan" Type="Date" ErrorMessage="New Right to Present start date should be greater than previous Right to Present end date."
+                                                Display="Dynamic" Text="*" ValidationGroup="ChangePersonStatusToRtP" ToolTip="New Right to Present start date should be greater than previous Right to Present end date."
                                                 SetFocusOnError="true" EnableClientScript="false"></asp:CompareValidator>
                                         </td>
                                     </tr>
@@ -1987,6 +2103,8 @@
                             <asp:ValidationSummary ID="valSummaryChangePersonStatusToTerminate" runat="server"
                                 ValidationGroup="ChangePersonStatusToTerminate" EnableClientScript="false" SetFocusOnError="false" />
                             <asp:ValidationSummary ID="valSummaryChangePersonStatusToActive" runat="server" ValidationGroup="ChangePersonStatusToActive"
+                                EnableClientScript="false" SetFocusOnError="false" />
+                            <asp:ValidationSummary ID="valSummaryChangeStatusToRightToPresent" runat="server" ValidationGroup="ChangePersonStatusToRtP"
                                 EnableClientScript="false" SetFocusOnError="false" />
                         </td>
                     </tr>
@@ -2071,8 +2189,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            Click on "OK" to go back.
+                        <td>Click on "OK" to go back.
                         </td>
                     </tr>
                     <tr>
@@ -2354,8 +2471,7 @@
                 Style="display: none;">
                 <table class="WholeWidth">
                     <tr>
-                        <td class="Padding6">
-                            You will lose all information that you have entered for adding this person to Practice
+                        <td class="Padding6">You will lose all information that you have entered for adding this person to Practice
                             Management. Are you sure you wish to continue?
                         </td>
                     </tr>
