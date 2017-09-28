@@ -173,7 +173,7 @@ namespace PraticeManagement.Reports.Badge
                 try
                 {
                     var statuses = serviceClient.GetPersonStatuses();
-                    statuses = statuses.Where(p => p.Id != 2 && p.Id != 5).ToArray();
+                    statuses = statuses.Where(p => p.Id != 2 && p.Id != 5 && p.Id != 6).ToArray();
                     DataHelper.FillListDefault(cblPersonStatus, Resources.Controls.AllTypes, statuses, false);
                 }
                 catch (CommunicationException)
@@ -219,7 +219,7 @@ namespace PraticeManagement.Reports.Badge
                 return;
             }
             divWholePage.Style.Remove("display");
-            
+
             lblRange.Text = dtpStart.DateValue.ToString(Constants.Formatting.EntryDateFormat) + " - " + dtpEnd.DateValue.ToString(Constants.Formatting.EntryDateFormat);
             var paytypes = PayTypes;
             var statuses = PersonStatus;
