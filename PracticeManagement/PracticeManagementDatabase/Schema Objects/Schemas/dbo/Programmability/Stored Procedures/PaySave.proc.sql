@@ -75,6 +75,7 @@ BEGIN
 	, @HolidayTimeTypeId INT 
 	, @IsPersonRehireDueToPay BIT = CONVERT (BIT,0)
 	, @HolidayChargeCodeId INT
+	, @PersonStatusId INT
  
 	
 	SELECT @Today = CONVERT(DATETIME,CONVERT(DATE,[dbo].[GettingPMTime](GETUTCDATE()))),
@@ -89,7 +90,11 @@ BEGIN
 	SELECT @TerminationDate = TerminationDate FROM Person WHERE PersonId = @PersonId
 	SELECT @EndDate = ISNULL(@EndDate, @FutureDate),
 		   @OLD_EndDate = ISNULL(@OLD_EndDate, @FutureDate)
-	SELECT @PersonHireDate = Hiredate FROM dbo.Person WHERE PersonId = @PersonId
+	SELECT @PersonStatusId = PersonStatusId FROM Person where PersonId = @PersonId
+
+
+
+	SELECT @PersonHireDate = CASE WHEN PersonStatusId = 6 THEN RighttoPresentStartDate ELSE  Hiredate END FROM dbo.Person WHERE PersonId = @PersonId
 
 	--1.Basic Validations
 	IF (@PersonHireDate > @StartDate)
@@ -184,12 +189,16 @@ BEGIN
 		UPDATE dbo.Pay
 		   SET EndDate = @StartDate
 		 WHERE Person = @PersonId AND EndDate > @StartDate
-	
+		
+		declare @isRtp BIT =0
+
+		SELECT @isRtp = CASE WHEN PersonStatusId=6 THEN 1 ELSE 0 END FROM Person where personid=@PersonId
+
 		INSERT INTO dbo.Pay
 					(Person, StartDate, EndDate, Amount, Timescale,
-					 VacationDays, BonusAmount, BonusHoursToCollect,PracticeId,TitleId,SLTApproval,SLTPTOApproval,DivisionId,VendorId)
+					 VacationDays, BonusAmount, BonusHoursToCollect,PracticeId,TitleId,SLTApproval,SLTPTOApproval,DivisionId,VendorId, IsRightToPresent)
 			 VALUES (@PersonId, @StartDate, @EndDate, @Amount, @Timescale, 
-					 @VacationDays, @BonusAmount, ISNULL(@BonusHoursToCollect, @HoursPerYear),@PracticeId,@TitleId,@SLTApproval,@SLTPTOApproval,@DivisionId,@VendorId)
+					 @VacationDays, @BonusAmount, ISNULL(@BonusHoursToCollect, @HoursPerYear),@PracticeId,@TitleId,@SLTApproval,@SLTPTOApproval,@DivisionId,@VendorId, @isRtp)
 
 	END
 
