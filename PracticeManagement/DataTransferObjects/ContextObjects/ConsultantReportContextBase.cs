@@ -21,6 +21,9 @@ namespace DataTransferObjects.ContextObjects
         public bool? ProjectedPersons { get; set; }
 
         [DataMember]
+        public bool? RighttoPresentPersons { get; set; }
+
+        [DataMember]
         public bool ActiveProjects { get; set; }
 
         [DataMember]
