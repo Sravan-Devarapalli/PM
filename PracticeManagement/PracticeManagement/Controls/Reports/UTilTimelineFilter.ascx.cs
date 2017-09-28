@@ -25,6 +25,8 @@ namespace PraticeManagement.Controls.Reports
 
         public bool ProjectedPersons { get { return chbProjectedPersons.Checked; } }
 
+        public bool RighttoPresentPersons { get { return chbRighttoPresent.Checked; } }
+
         public string PracticesSelected { get { return cblPractices.SelectedItems; } set { cblPractices.SelectedItems = value; } }
 
         public string DivisionsSelected { get { return cblDivisions.SelectedItems; } set { cblDivisions.SelectedItems = value; } }
@@ -400,6 +402,7 @@ namespace PraticeManagement.Controls.Reports
                 chkExcludeInternalPractices.Checked = Convert.ToBoolean(resoureDictionary[Constants.ResourceKeys.ExcludeInternalPracticesKey]);
                 chbExcludeInvestmentResources.Checked = Convert.ToBoolean(resoureDictionary[Constants.ResourceKeys.ExcludeInvestmentResourceKey]);
                 chbAtRiskProjects.Checked = true;
+                chbRighttoPresent.Checked = false;
 
                 rbSortbyAsc.Checked = resoureDictionary[Constants.ResourceKeys.SortDirectionKey] == "Desc" ? true : false;
 
@@ -431,6 +434,7 @@ namespace PraticeManagement.Controls.Reports
 
             chbActivePersons.Checked = cookie.ActivePersons;
             chbProjectedPersons.Checked = cookie.ProjectedPersons;
+            chbRighttoPresent.Checked = cookie.RighttoPresentPersons;
             chbActiveProjects.Checked = cookie.ActiveProjects;
             chbProjectedProjects.Checked = cookie.ProjectedProjects;
             chbProposedProjects.Checked = cookie.ProposedProjects;
@@ -513,6 +517,7 @@ namespace PraticeManagement.Controls.Reports
             this.chbCompletedProjects.Checked = true;
             this.chbAtRiskProjects.Checked = true;
             this.chkExcludeInternalPractices.Checked = true;
+            this.chbRighttoPresent.Checked = false;
             SelectAllItems(this.cblPractices);
             SelectAllItems(this.cblDivisions);
             SelectDefaultTimeScaleItems(this.cblTimeScales);
@@ -685,6 +690,7 @@ namespace PraticeManagement.Controls.Reports
                 ActivePersons = ActivePersons,
                 ActiveProjects = ActiveProjects,
                 ProposedProjects = ProposedProjects,
+                RighttoPresentPersons = RighttoPresentPersons,
                 AvgUtil = AvgUtil,
                 BegPeriod = BegPeriod,
                 DetalizationSelectedValue = DetalizationSelectedValue,
@@ -717,6 +723,7 @@ namespace PraticeManagement.Controls.Reports
             ddlDetalization.SelectedValue = Filters.Granularity.ToString();
             chbActivePersons.Checked = Filters.IncludeActivePeople;
             chbProjectedPersons.Checked = Filters.IncludeProjectedPeople;
+            chbRighttoPresent.Checked = Filters.IncludeRighttoPresentPeople;
             chbActiveProjects.Checked = Filters.IncludeActiveProjects;
             chbCompletedProjects.Checked = Filters.IncludeCompletedProjects;
             chbExcludeInvestmentResources.Checked = Filters.ExcludeInvestmentResources;
@@ -760,6 +767,7 @@ namespace PraticeManagement.Controls.Reports
             filters.Granularity = Convert.ToInt32(ddlDetalization.SelectedValue);
             filters.IncludeActivePeople = chbActivePersons.Checked;
             filters.IncludeProjectedPeople = chbProjectedPersons.Checked;
+            filters.IncludeRighttoPresentPeople = chbRighttoPresent.Checked;
             filters.IncludeActiveProjects = chbActiveProjects.Checked;
             filters.IncludeCompletedProjects = chbCompletedProjects.Checked;
             filters.ExcludeInvestmentResources = chbExcludeInvestmentResources.Checked;
