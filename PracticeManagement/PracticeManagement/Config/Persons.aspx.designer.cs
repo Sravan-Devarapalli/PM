@@ -19,7 +19,7 @@ namespace PraticeManagement.Config {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UserControl projectSummary;
+        protected global::PraticeManagement.Controls.Persons.PersonSummary projectSummary;
         
         /// <summary>
         /// PreviousPage property.
