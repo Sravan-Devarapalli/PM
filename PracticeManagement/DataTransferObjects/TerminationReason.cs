@@ -30,5 +30,8 @@ namespace DataTransferObjects
 
         [DataMember]
         public bool IsVisible { get; set; }
+
+        [DataMember]
+        public bool IsRighttoPresentRule { get; set; }
     }
 }
