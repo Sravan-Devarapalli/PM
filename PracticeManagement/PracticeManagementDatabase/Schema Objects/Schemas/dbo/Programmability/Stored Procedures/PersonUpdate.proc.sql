@@ -39,7 +39,9 @@ CREATE PROCEDURE [dbo].[PersonUpdate]
 	@IsMBO				BIT,
 	@IsInvestmentResource BIT,
 	@PracticeLeadershipId	INT,
-	@TargetUtilization INT=NULL
+	@TargetUtilization INT=NULL,
+	@RighttoPresentStartDate  DATETIME =NULL,
+	@RighttoPresentEndDate DATETIME =NULL
 )
 AS
 SET NOCOUNT ON
@@ -48,11 +50,15 @@ BEGIN TRY
 	DECLARE @ErrorMessage NVARCHAR(2048),
 			@Today			DATETIME,
 			@CurrentPayEndDate DATETIME,
-			@PreviousPersonStatusId	INT
+			@PreviousPersonStatusId	INT,
+			@TempDate DATETIME,
+			@PrevRtPstartDate DATETIME
 
 	SELECT @Today = CONVERT(DATETIME,CONVERT(DATE,[dbo].[GettingPMTime](GETUTCDATE())))
 	SELECT @PersonStatusId = CASE WHEN @TerminationDate < @Today THEN 2 ELSE @PersonStatusId END
-	SELECT @PreviousPersonStatusId = PersonStatusId FROM dbo.Person WHERE PersonId = @PersonId
+	SELECT @PreviousPersonStatusId = PersonStatusId, @PrevRtPstartDate=RighttoPresentStartDate FROM dbo.Person WHERE PersonId = @PersonId
+
+	
 
 	EXEC [dbo].[PersonValidations] @FirstName = @FirstName, @LastName = @LastName, @Alias = @Alias,@PersonId = @PersonId,@EmployeeNumber = @EmployeeNumber
 
@@ -61,8 +67,16 @@ BEGIN TRY
 		
 	IF @PersonStatusId = 2 OR @PersonStatusId = 5 OR ( @PersonStatusId = 3 AND @TerminationDate IS NOT NULL)
 	BEGIN
-		EXEC [dbo].[PersonTermination] @PersonId = @PersonId , @TerminationDate = @TerminationDate , @PersonStatusId = @PersonStatusId ,@UserLogin = @UserLogin
+		SELECT @TempDate = CASE WHEN @PreviousPersonStatusId =6 THEN @RighttoPresentEndDate ELSE @TerminationDate END
+		EXEC [dbo].[PersonTermination] @PersonId = @PersonId , @TerminationDate = @TempDate , @PersonStatusId = @PersonStatusId ,@UserLogin = @UserLogin
 	END
+
+	IF (@PersonStatusId = 6 AND @RighttoPresentEndDate IS NOT NULL)
+	BEGIN
+		EXEC [dbo].[PersonTermination] @PersonId = @PersonId , @TerminationDate = @RighttoPresentEndDate , @PersonStatusId = @PersonStatusId ,@UserLogin = @UserLogin
+	END
+
+
 
 	-- update with DivisionOwner
 
@@ -93,7 +107,7 @@ BEGIN TRY
 	SELECT @ExistingTitleId = TitleId,
 			@ExistingPracticeId = DefaultPractice,
 			@ExistingDivisionId=DivisionId,
-			@PreviousTerminationDate = TerminationDate,
+			@PreviousTerminationDate = CASE WHEN PersonStatusId =6 THEN RighttoPresentEndDate ELSE TerminationDate END,
 			@PreviousHireDate = HireDate
 	FROM dbo.Person AS P
 	WHERE P.PersonId = @PersonId
@@ -156,12 +170,16 @@ BEGIN TRY
 	END
 			
 
-	IF(@PreviousTerminationDate >= @Today AND (@PersonStatusId = 1 OR (@PersonStatusId = 3 AND @TerminationDate IS NULL)))
+	IF(@PreviousTerminationDate >= @Today AND (@PersonStatusId = 1 OR (@PersonStatusId = 3 AND @TerminationDate IS NULL) OR(@PersonStatusId = 6 AND @RighttoPresentEndDate IS NULL)))
 	BEGIN
+			-- If we cancel termination for Right to Present termination we need to make sure to reopen the last active Pay. So we are comparing with the Right to Present Start date
+			DECLARE @TempHireDate DATETIME
+			SELECT @TempHireDate = CASE WHEN @HireDate IS NULL THEN @RighttoPresentStartDate ELSE @HireDate END
+
 			UPDATE dbo.Pay
 			SET EndDate = dbo.GetFutureDate()
 			WHERE Person = @PersonId 		
-			AND StartDate = (SELECT TOP(1) StartDate FROM dbo.Pay WHERE Person = @PersonId AND  StartDate >= @HireDate ORDER BY StartDate DESC)
+			AND StartDate = (SELECT TOP(1) StartDate FROM dbo.Pay WHERE Person = @PersonId AND  StartDate >= @TempHireDate ORDER BY StartDate DESC)
 	END
 
 	EXEC dbo.SessionLogPrepare @UserLogin = @UserLogin
@@ -186,8 +204,8 @@ BEGIN TRY
 			IsOffshore = @IsOffshore,
 			DivisionId = @PersonDivisionId,
 			TerminationReasonId = @TerminationReasonId,
-                        IsWelcomeEmailSent = CASE WHEN @PersonStatusId = 2  OR (@PreviousHireDate <> @HireDate AND @HireDate >= @Today) THEN 0
-										     ELSE IsWelcomeEmailSent END,
+            IsWelcomeEmailSent = CASE WHEN @PersonStatusId = 2  OR (@PreviousHireDate <> @HireDate AND @HireDate >= @Today) THEN 0
+									ELSE IsWelcomeEmailSent END,
 			JobSeekerStatusId = @JobSeekerStatusId,
 			SourceId = @SourceRecruitingMetricsId,
 			TargetedCompanyId = @TargetRecruitingMetricsId,
@@ -197,7 +215,9 @@ BEGIN TRY
 			IsMBO = @IsMBO,
 			IsInvestmentResource=@IsInvestmentResource,
 			PracticeLeadershipId = @PracticeLeadershipId,
-			TargetUtilization=@TargetUtilization
+			TargetUtilization=@TargetUtilization,
+			RighttoPresentStartDate = @RighttoPresentStartDate,
+			RighttoPresentEndDate = @RighttoPresentEndDate
 		WHERE PersonId = @PersonId
 
 		EXEC dbo.PersonStatusHistoryUpdate
@@ -285,7 +305,7 @@ BEGIN TRY
 	LEFT JOIN v_PersonHistory AS PH ON PH.PersonId = MP.PersonId AND (PH.TerminationDate IS NULL OR MPE.StartDate <= PH.TerminationDate) AND PH.HireDate <= MPE.EndDate
 	WHERE MP.PersonId = @PersonId AND PH.PersonId IS NULL
 
-	IF(ISNULL(@Alias,'') <> '' AND NOT EXISTS (SELECT 1 FROM dbo.aspnet_Users WHERE UserName = @Alias))
+	IF(ISNULL(@Alias,'') <> '' AND NOT EXISTS (SELECT 1 FROM dbo.aspnet_Users WHERE UserName = @Alias) AND @PersonStatusId != 6 AND @PreviousPersonStatusId != 6)
 	BEGIN
 
 		DECLARE @UserId UNIQUEIDENTIFIER,
