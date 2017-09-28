@@ -66,11 +66,12 @@ namespace PraticeManagement.Controls.Reports.HumanCapital
                 CellStyles dataDateCellStyle = new CellStyles();
                 dataDateCellStyle.DataFormat = "mm/dd/yy;@";
 
-                CellStyles[] dataCellStylearray = { dataCellStyle, 
+                CellStyles[] dataCellStylearray = { dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
-                                                   dataDateCellStyle,
+                                                    dataDateCellStyle,
+                                                    dataDateCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle
                                                   };
@@ -141,7 +142,7 @@ namespace PraticeManagement.Controls.Reports.HumanCapital
         #endregion
 
         #region ControlEvents
-        
+
         protected void btnExportToExcel_OnClick(object sender, EventArgs e)
         {
             var filename = string.Format("{0}_{1}-{2}.xls", "NewHireReport", HostingPage.StartDate.Value.ToString("MM.dd.yyyy"), HostingPage.EndDate.Value.ToString("MM.dd.yyyy"));
@@ -200,7 +201,7 @@ namespace PraticeManagement.Controls.Reports.HumanCapital
                 }
 
                 NPOIExcel.Export(filename, dataSetList, sheetStylesList);
-                
+
             }
         }
 
@@ -214,6 +215,7 @@ namespace PraticeManagement.Controls.Reports.HumanCapital
             data.Columns.Add("Resource");
             data.Columns.Add("Title");
             data.Columns.Add("Pay Types");
+            data.Columns.Add("Right to Present Start Date");
             data.Columns.Add("Hire Date");
             data.Columns.Add("Status");
             data.Columns.Add("Recruiter");
@@ -226,7 +228,8 @@ namespace PraticeManagement.Controls.Reports.HumanCapital
                 row.Add(person.HtmlEncodedName);
                 row.Add(person.Title != null ? person.Title.HtmlEncodedTitleName : string.Empty);
                 row.Add(person.CurrentPay != null ? person.CurrentPay.TimescaleName : string.Empty);
-                row.Add(person.HireDate);
+                row.Add(person.RighttoPresentStartDate != null && person.RighttoPresentStartDate != DateTime.MinValue ? person.RighttoPresentStartDate.Value.ToString(Constants.Formatting.EntryDateFormat) : string.Empty);
+                row.Add(person.HireDate != DateTime.MinValue ? person.HireDate.ToString(Constants.Formatting.EntryDateFormat) : string.Empty);
                 row.Add(person.Status.Name);
                 row.Add(person.RecruiterId.HasValue ? person.RecruiterLastFirstName : string.Empty);
                 data.Rows.Add(row.ToArray());
@@ -257,9 +260,9 @@ namespace PraticeManagement.Controls.Reports.HumanCapital
 
         #region Methods
 
-        protected string GetDateFormat(DateTime date)
+        protected string GetDateFormat(DateTime? date)
         {
-            return date.ToString(Constants.Formatting.EntryDateFormat);
+            return date != null && date != DateTime.MinValue ? date.Value.ToString(Constants.Formatting.EntryDateFormat) : string.Empty;
         }
 
         public void PopulateData(bool isPopUp = false)
