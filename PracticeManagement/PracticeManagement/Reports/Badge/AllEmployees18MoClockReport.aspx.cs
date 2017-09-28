@@ -65,7 +65,7 @@ namespace PraticeManagement.Reports.Badge
 
                 CellStyles dataCellStyle = new CellStyles();
 
-                var dataCellStylearray = new List<CellStyles>() { dataCellStyle,dataCellStyle, dataCellStyle, dataDateCellStyle, dataDateCellStyle, dataCellStyle, dataDateCellStyle, dataDateCellStyle };
+                var dataCellStylearray = new List<CellStyles>() { dataCellStyle, dataCellStyle, dataCellStyle, dataDateCellStyle, dataDateCellStyle, dataCellStyle, dataDateCellStyle, dataDateCellStyle };
 
                 RowStyles datarowStyle = new RowStyles(dataCellStylearray.ToArray());
                 RowStyles[] rowStylearray = { headerrowStyle, datarowStyle };
@@ -109,7 +109,7 @@ namespace PraticeManagement.Reports.Badge
         {
             if (!IsPostBack)
             {
-               DataHelper.FillTimescaleList(this.cblPayTypes, Resources.Controls.AllTypes);
+                DataHelper.FillTimescaleList(this.cblPayTypes, Resources.Controls.AllTypes);
                 cblPayTypes.SelectItems(new List<int>() { 2 });
                 FillPersonStatusList();
                 cblPersonStatus.SelectItems(new List<int>() { 1, 5 });
@@ -125,7 +125,7 @@ namespace PraticeManagement.Reports.Badge
                 try
                 {
                     var statuses = serviceClient.GetPersonStatuses();
-                    statuses = statuses.Where(p => p.Id != 2 && p.Id != 5).ToArray();
+                    statuses = statuses.Where(p => p.Id != 2 && p.Id != 5 && p.Id != 6).ToArray();
                     DataHelper.FillListDefault(cblPersonStatus, Resources.Controls.AllTypes, statuses, false);
                 }
                 catch (CommunicationException)
@@ -214,7 +214,7 @@ namespace PraticeManagement.Reports.Badge
                 var organicTimeLeft = "";
                 if (reportItem.OrganicBreakStartDate.HasValue && reportItem.OrganicBreakDuration > 0)
                 {
-                    organicTimeLeft =  reportItem.OrganicBreakDuration == 1 ? reportItem.OrganicBreakDuration + " month" : reportItem.OrganicBreakDuration + " months" ;
+                    organicTimeLeft = reportItem.OrganicBreakDuration == 1 ? reportItem.OrganicBreakDuration + " month" : reportItem.OrganicBreakDuration + " months";
                 }
                 row = new List<object>();
                 row.Add(reportItem.Person.Name);
@@ -298,7 +298,7 @@ namespace PraticeManagement.Reports.Badge
         private void SaveFilterValuesForSession()
         {
             MsManagementReportFilters filter = new MsManagementReportFilters();
-            
+
             filter.PayTypeIds = PayTypes;
             filter.PersonStatusIds = PersonStatus;
 
