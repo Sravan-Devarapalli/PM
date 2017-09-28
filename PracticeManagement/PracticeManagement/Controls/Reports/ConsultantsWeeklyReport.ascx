@@ -13,13 +13,14 @@
     }
     );
 
-    function saveReport() {
+ <%--   function saveReport() {
+        debugger;
         var printContent;
         var hdnSaveReportText;
-        printContent = document.getElementById('<%= divConsultingUtil.ClientID %>');
+       printContent = document.getElementById('<%= divConsultingUtil.ClientID %>');
         hdnSaveReportText = document.getElementById('<%= hdnSaveReportText.ClientID %>');
         hdnSaveReportText.value = printContent.innerHTML;
-    }
+    }--%>
 
     function ClosePopUp() {
         var popup = $find('mpeExportBehaviourId');
@@ -76,13 +77,11 @@
         <div class="textRight">
             <table class="WholeWidthWithHeight" id="tblExport" runat="server" visible="false">
                 <tr>
-                    <td colspan="4" class="Width90Percent">
-                    </td>
+                    <td colspan="4" class="Width90Percent"></td>
                     <td class="Width10Percent padRight5">
                         <table class="WholeWidth">
                             <tr>
-                                <td class="Width40P">
-                                    Export:
+                                <td class="Width40P">Export:
                                 </td>
                                 <td>
                                     <asp:Button ID="btnExportToExcel" runat="server" Text="Excel" OnClick="btnExportToExcel_OnClick"
@@ -90,7 +89,7 @@
                                 </td>
                                 <td>
                                     <asp:Button ID="btnExport" runat="server" Text="PDF" OnClick="btnExport_Click" UseSubmitBehavior="false"
-                                        ToolTip="Export To PDF" OnClientClick="saveReport();" />
+                                        ToolTip="Export To PDF" />
                                 </td>
                             </tr>
                         </table>
@@ -133,37 +132,37 @@
                 No Resources for the selected filters.
             </div>
             <br />
-                <asp:Chart ID="investmentChart" CssClass="ConsultantsWeeklyReportAlignCenter" runat="server"
-                    Width="1100px" Height="850px" OnClick="Chart_Click">
-                    <Series>
-                        <asp:Series Name="Weeks" ChartType="RangeBar" IsVisibleInLegend="false" />
-                    </Series>
-                    <ChartAreas>
-                        <asp:ChartArea Name="MainArea">
-                            <AxisY IsLabelAutoFit="False" LineDashStyle="NotSet">
-                                <MajorGrid LineColor="DimGray" />
-                                <MinorGrid Enabled="True" LineColor="Silver" LineDashStyle="Dot" />
-                                <LabelStyle Format="MMM, d" />
-                            </AxisY>
-                            <AxisY2 IsLabelAutoFit="False" Enabled="True">
-                                <MajorGrid LineColor="DimGray" />
-                                <MinorGrid Enabled="True" LineColor="Silver" LineDashStyle="Dot" />
-                                <LabelStyle Format="MMM, d" />
-                            </AxisY2>
-                            <AxisX IsLabelAutoFit="true">
-                                <MajorGrid Interval="Auto" LineDashStyle="Dot" />
-                                <MajorTickMark Enabled="False" />
-                            </AxisX>
-                            <AxisX2 Enabled="True">
-                                <MajorGrid Interval="Auto" LineDashStyle="Dot" />
-                                <MajorTickMark Enabled="False" />
-                            </AxisX2>
-                            <Area3DStyle Inclination="5" IsClustered="True" IsRightAngleAxes="False" LightStyle="Realistic"
-                                Perspective="1" />
-                        </asp:ChartArea>
-                    </ChartAreas>
-                </asp:Chart>
-                <br />
+            <asp:Chart ID="investmentChart" CssClass="ConsultantsWeeklyReportAlignCenter" runat="server"
+                Width="1100px" Height="850px" OnClick="Chart_Click">
+                <Series>
+                    <asp:Series Name="Weeks" ChartType="RangeBar" IsVisibleInLegend="false" />
+                </Series>
+                <ChartAreas>
+                    <asp:ChartArea Name="MainArea">
+                        <AxisY IsLabelAutoFit="False" LineDashStyle="NotSet">
+                            <MajorGrid LineColor="DimGray" />
+                            <MinorGrid Enabled="True" LineColor="Silver" LineDashStyle="Dot" />
+                            <LabelStyle Format="MMM, d" />
+                        </AxisY>
+                        <AxisY2 IsLabelAutoFit="False" Enabled="True">
+                            <MajorGrid LineColor="DimGray" />
+                            <MinorGrid Enabled="True" LineColor="Silver" LineDashStyle="Dot" />
+                            <LabelStyle Format="MMM, d" />
+                        </AxisY2>
+                        <AxisX IsLabelAutoFit="true">
+                            <MajorGrid Interval="Auto" LineDashStyle="Dot" />
+                            <MajorTickMark Enabled="False" />
+                        </AxisX>
+                        <AxisX2 Enabled="True">
+                            <MajorGrid Interval="Auto" LineDashStyle="Dot" />
+                            <MajorTickMark Enabled="False" />
+                        </AxisX2>
+                        <Area3DStyle Inclination="5" IsClustered="True" IsRightAngleAxes="False" LightStyle="Realistic"
+                            Perspective="1" />
+                    </asp:ChartArea>
+                </ChartAreas>
+            </asp:Chart>
+            <br />
             <div id="emptyInvestment" runat="server" visible="false">
                 No InvestmentResources
             </div>
@@ -176,8 +175,7 @@
             Style="display: none;">
             <table class="WholeWidth">
                 <tr class="PopUpHeader">
-                    <th>
-                        Please select one of the options below to export
+                    <th>Please select one of the options below to export
                     </th>
                 </tr>
                 <tr>
@@ -255,8 +253,7 @@
                             <div class="textCenter">
                                 <table id="Table1" cellpadding="0" cellspacing="0" width="100%" runat="server">
                                     <tr>
-                                        <td align="center">
-                                        </td>
+                                        <td align="center"></td>
                                     </tr>
                                     <tr>
                                         <td align="center" class="bgcolorwhite">
@@ -298,10 +295,10 @@
 </asp:Panel>
 <asp:Chart ID="chartPdf" CssClass="ConsultantsWeeklyReportAlignCenter" runat="server"
     Visible="false" Width="920px" Height="850px">
-    <Series>
+    <series>
         <asp:Series Name="Weeks" ChartType="RangeBar" IsVisibleInLegend="false" />
-    </Series>
-    <ChartAreas>
+    </series>
+    <chartareas>
         <asp:ChartArea Name="MainArea">
             <AxisY IsLabelAutoFit="False" LineDashStyle="NotSet">
                 <MajorGrid LineColor="DimGray" />
@@ -324,6 +321,6 @@
             <Area3DStyle Inclination="5" IsClustered="True" IsRightAngleAxes="False" LightStyle="Realistic"
                 Perspective="1" />
         </asp:ChartArea>
-    </ChartAreas>
+    </chartareas>
 </asp:Chart>
 
