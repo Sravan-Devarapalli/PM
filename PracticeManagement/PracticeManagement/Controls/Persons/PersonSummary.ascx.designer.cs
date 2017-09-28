@@ -247,6 +247,15 @@ namespace PraticeManagement.Controls.Persons {
         protected global::System.Web.UI.WebControls.HiddenField hdnTerminated;
         
         /// <summary>
+        /// hdnRighttoPresent control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdnRighttoPresent;
+        
+        /// <summary>
         /// hdnLooked control.
         /// </summary>
         /// <remarks>
