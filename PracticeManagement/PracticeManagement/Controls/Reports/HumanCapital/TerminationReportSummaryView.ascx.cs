@@ -41,7 +41,7 @@ namespace PraticeManagement.Controls.Reports.HumanCapital
                 RowStyles datarowStyle = new RowStyles(dataCellStylearray);
                 datarowStyle.Height = 350;
 
-                RowStyles[] rowStylearray = { headerrowStyle, datarowStyle};
+                RowStyles[] rowStylearray = { headerrowStyle, datarowStyle };
 
                 SheetStyles sheetStyle = new SheetStyles(rowStylearray);
                 sheetStyle.MergeRegion.Add(new int[] { 0, 0, 0, coloumnsCount - 1 });
@@ -69,14 +69,16 @@ namespace PraticeManagement.Controls.Reports.HumanCapital
                 CellStyles dataDateCellStyle = new CellStyles();
                 dataDateCellStyle.DataFormat = "mm/dd/yy;@";
 
-                CellStyles[] dataCellStylearray = { dataCellStyle, 
+                CellStyles[] dataCellStylearray = { dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
                                                     dataCellStyle,
-                                                   dataDateCellStyle,
-                                                   dataDateCellStyle,
+                                                    dataDateCellStyle,
+                                                    dataDateCellStyle,
+                                                    dataDateCellStyle,
+                                                    dataDateCellStyle,
                                                     dataCellStyle
                                                   };
 
@@ -88,7 +90,7 @@ namespace PraticeManagement.Controls.Reports.HumanCapital
                 sheetStyle.IsFreezePane = true;
                 sheetStyle.FreezePanColSplit = 0;
                 sheetStyle.FreezePanRowSplit = headerRowsCount;
-              
+
                 return sheetStyle;
             }
         }
@@ -186,7 +188,7 @@ namespace PraticeManagement.Controls.Reports.HumanCapital
                 {
                     report = ServiceCallers.Custom.Report(r => r.TerminationReport(startDate, endDate, HostingPage.PayTypes, null, HostingPage.Titles, HostingPage.TerminationReasons, HostingPage.Practices, HostingPage.ExcludeInternalProjects, null, null, null, null)).PersonList;
                 }
-                
+
                 report = report.OrderBy(p => p.PersonLastFirstName).ToList();
                 DataHelper.InsertExportActivityLogMessage(TerminationReportExport);
                 if (report.Count > 0)
@@ -220,14 +222,13 @@ namespace PraticeManagement.Controls.Reports.HumanCapital
                     dataSetList.Add(dataset);
                 }
 
-                NPOIExcel.Export(filename, dataSetList, sheetStylesList);   
+                NPOIExcel.Export(filename, dataSetList, sheetStylesList);
             }
         }
 
         public DataTable PrepareDataTable(List<Person> reportData)
         {
             DataTable data = new DataTable();
-            List<object> rownew;
             List<object> row;
 
             data.Columns.Add("Employee Id");
@@ -236,7 +237,9 @@ namespace PraticeManagement.Controls.Reports.HumanCapital
             data.Columns.Add("Pay Types");
             data.Columns.Add("Status");
             data.Columns.Add("Recruiter");
+            data.Columns.Add("Right to Present Start Date");
             data.Columns.Add("Hire Date");
+            data.Columns.Add("Right to Present End Date");
             data.Columns.Add("Termination Date");
             data.Columns.Add("Termination Reason");
 
@@ -250,10 +253,12 @@ namespace PraticeManagement.Controls.Reports.HumanCapital
                 row.Add(person.CurrentPay != null ? person.CurrentPay.TimescaleName : string.Empty);
                 row.Add(person.Status.Name);
                 row.Add(person.RecruiterId.HasValue ? person.RecruiterLastFirstName : string.Empty);
-                row.Add(person.HireDate);
+                row.Add(person.RighttoPresentStartDate != null ? (object)person.RighttoPresentStartDate.Value : string.Empty);
+                row.Add(person.HireDate != DateTime.MinValue ? (object)person.HireDate : string.Empty);
+                row.Add(person.RighttoPresentEndDate != null ? (object)person.RighttoPresentEndDate.Value : string.Empty);
                 row.Add(person.TerminationDate);
                 row.Add(person.TerminationReason);
-                
+
                 data.Rows.Add(row.ToArray());
             }
             return data;
@@ -284,9 +289,9 @@ namespace PraticeManagement.Controls.Reports.HumanCapital
 
         #region Methods
 
-        protected string GetDateFormat(DateTime date)
+        protected string GetDateFormat(DateTime? date)
         {
-            return date.ToString(Constants.Formatting.EntryDateFormat);
+            return date != null && date != DateTime.MinValue ? date.Value.ToString(Constants.Formatting.EntryDateFormat) : string.Empty;
         }
 
         public void PopulateData(bool isPopUp = false)
@@ -405,7 +410,7 @@ namespace PraticeManagement.Controls.Reports.HumanCapital
 
         private void PopulateTerminationDateFilter(List<Person> reportData)
         {
-            var terminationDateList = reportData.Select(r => new { Text = r.TerminationDate.Value.ToString("MMM yyyy"), Value = r.TerminationDate.Value.ToString("MM/01/yyyy"), orderby = r.TerminationDate.Value.ToString("yyyy/MM") }).Distinct().ToList().OrderBy(s => s.orderby);
+            var terminationDateList = reportData.FindAll(t => t.TerminationDate != null).Select(r => new { Text = r.TerminationDate.Value.ToString("MMM yyyy"), Value = r.TerminationDate.Value.ToString("MM/01/yyyy"), orderby = r.TerminationDate.Value.ToString("yyyy/MM") }).Distinct().ToList().OrderBy(s => s.orderby);
             DataHelper.FillListDefault(cblTerminationDate.CheckBoxListObject, "All Months ", terminationDateList.ToArray(), false, "Value", "Text");
             cblTerminationDate.SelectAllItems(true);
         }
