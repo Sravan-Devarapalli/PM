@@ -25,6 +25,7 @@
     <xs:sequence>
       <xs:element minOccurs="0" name="ActivePersons" nillable="true" type="xs:boolean" />
       <xs:element minOccurs="0" name="ActiveProjects" type="xs:boolean" />
+      <xs:element minOccurs="0" name="AtRiskProjects" type="xs:boolean" />
       <xs:element minOccurs="0" name="CompletedProjects" type="xs:boolean" />
       <xs:element minOccurs="0" name="ExperimentalProjects" type="xs:boolean" />
       <xs:element minOccurs="0" name="InternalProjects" type="xs:boolean" />
