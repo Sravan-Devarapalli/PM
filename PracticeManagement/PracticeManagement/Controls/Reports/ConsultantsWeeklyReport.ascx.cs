@@ -520,7 +520,7 @@ namespace PraticeManagement.Controls.Reports
             if (cookie.PersonId.HasValue)
             {
                 ShowDetailedReport(cookie.PersonId.Value, cookie.BegPeriod.Date, cookie.EndPeriod.Date, cookie.ChartTitle,
-                    cookie.ActiveProjects, cookie.ProjectedProjects, cookie.InternalProjects, cookie.ExperimentalProjects, cookie.ProposedProjects, cookie.CompletedProjects,cookie.AtRiskProjects);
+                    cookie.ActiveProjects, cookie.ProjectedProjects, cookie.InternalProjects, cookie.ExperimentalProjects, cookie.ProposedProjects, cookie.CompletedProjects, cookie.AtRiskProjects);
 
                 System.Web.UI.ScriptManager.RegisterStartupScript(updConsReport, updConsReport.GetType(), "focusDetailReport", "window.location='#details';", true);
             }
@@ -533,7 +533,7 @@ namespace PraticeManagement.Controls.Reports
             var report =
                 DataHelper.GetConsultantsWeeklyReport(
                     BegPeriod, Granularity, Period,
-                    utf.ActivePersons, utf.ProjectedPersons,
+                    utf.ActivePersons, utf.ProjectedPersons, utf.RighttoPresentPersons,
                     utf.ActiveProjects, utf.ProjectedProjects,
                     utf.ExperimentalProjects,
                     utf.InternalProjects, utf.ProposedProjects, utf.CompletedProjects, utf.AtRiskProjects, TimescaleIds, PracticeIdList, AvgUtil, SortId, (IsCapacityMode && SortId == 0) ? (SortDirection == "Desc" ? "Asc" : "Desc") : SortDirection, utf.ExcludeInternalPractices, 0, utf.IncludeBadgeStatus, DivisionIdList);
@@ -826,23 +826,29 @@ namespace PraticeManagement.Controls.Reports
         private void UpdateChartTitle(bool isPdf, int pageNumber)
         {
             //  Add chart title
-            string personsPlaceHolder = string.Empty, projectsPlaceHolder = string.Empty, practicesPlaceHolder = string.Empty;
-            if (utf.ProjectedPersons && utf.ActivePersons)
+            string personsPlaceHolder = "No", projectsPlaceHolder = string.Empty, practicesPlaceHolder = string.Empty;
+            if (utf.ProjectedPersons && utf.ActivePersons && utf.RighttoPresentPersons)
             {
                 personsPlaceHolder = "All";
             }
-            else if (utf.ActivePersons)
-            {
-                personsPlaceHolder = "Active";
-            }
-            else if (utf.ProjectedPersons)
-            {
-                personsPlaceHolder = "Projected";
-            }
             else
             {
-                personsPlaceHolder = "No";
+                personsPlaceHolder = string.Empty;
+                if (utf.ActivePersons)
+                {
+                    personsPlaceHolder += "Active,";
+                }
+                if (utf.ProjectedPersons)
+                {
+                    personsPlaceHolder += "Projected,";
+                }
+                if (utf.RighttoPresentPersons)
+                {
+                    personsPlaceHolder += "Right to Present";
+                }
             }
+
+            personsPlaceHolder = personsPlaceHolder.TrimEnd(',');
 
             if (utf.ActiveProjects && utf.ProjectedProjects
                 && utf.InternalProjects && utf.ExperimentalProjects && utf.ProposedProjects)
@@ -974,29 +980,34 @@ namespace PraticeManagement.Controls.Reports
 
             var report = DataHelper.GetConsultantsWeeklyReport(
                     BegPeriod, Granularity, Period,
-                    utf.ActivePersons, utf.ProjectedPersons,
+                    utf.ActivePersons, utf.ProjectedPersons, utf.RighttoPresentPersons,
                     utf.ActiveProjects, utf.ProjectedProjects,
                     utf.ExperimentalProjects,
                     utf.InternalProjects, utf.ProposedProjects, utf.CompletedProjects, utf.AtRiskProjects, TimescaleIds, PracticeIdList, AvgUtil, SortId, (IsCapacityMode && SortId == 0) ? (SortDirection == "Desc" ? "Desc" : "Asc") : SortDirection, utf.ExcludeInternalPractices, optionNumber == 2 ? 0 : optionNumber, false, DivisionIdList);
             report.Reverse();
-            string personsPlaceHolder = string.Empty, projectsPlaceHolder = string.Empty, practicesPlaceHolder = string.Empty;
-            if (utf.ProjectedPersons && utf.ActivePersons)
+            string personsPlaceHolder = "No", projectsPlaceHolder = string.Empty, practicesPlaceHolder = string.Empty;
+            if (utf.ProjectedPersons && utf.ActivePersons && utf.RighttoPresentPersons)
             {
                 personsPlaceHolder = "All";
             }
-            else if (utf.ActivePersons)
-            {
-                personsPlaceHolder = "Active";
-            }
-            else if (utf.ProjectedPersons)
-            {
-                personsPlaceHolder = "Projected";
-            }
             else
             {
-                personsPlaceHolder = "No";
+                personsPlaceHolder = string.Empty;
+                if (utf.ActivePersons)
+                {
+                    personsPlaceHolder += "Active,";
+                }
+                if (utf.ProjectedPersons)
+                {
+                    personsPlaceHolder += "Projected,";
+                }
+                if (utf.RighttoPresentPersons)
+                {
+                    personsPlaceHolder += "Right to Present";
+                }
             }
 
+            personsPlaceHolder = personsPlaceHolder.TrimEnd(',');
             if (utf.ActiveProjects && utf.ProjectedProjects
                 && utf.InternalProjects && utf.ExperimentalProjects && utf.ProposedProjects)
             {
@@ -1420,7 +1431,7 @@ namespace PraticeManagement.Controls.Reports
             var atRiskProjects = bool.Parse(query[10]);
 
             ShowDetailedReport(personId, repStartDate, repEndDate, query[3],
-            activeProjects, projectedProjects, internalProjects, experimentalProjects, proposedProjects, completedProjects,atRiskProjects);
+            activeProjects, projectedProjects, internalProjects, experimentalProjects, proposedProjects, completedProjects, atRiskProjects);
 
             System.Web.UI.ScriptManager.RegisterClientScriptBlock(updConsReport, updConsReport.GetType(), "focusDetailReport", "window.location='#details';", true);
 
