@@ -291,7 +291,7 @@ namespace DataTransferObjects
         {
             get
             {
-                return RecruiterId.HasValue ? string.Format(PersonNameFormat, RecruiterLastName, RecruiterFirstName) : string.Empty;
+                return RecruiterId.HasValue ? string.IsNullOrEmpty(RecruiterLastName) ? RecruiterFirstName : string.Format(PersonNameFormat, RecruiterLastName, RecruiterFirstName) : string.Empty;
             }
         }
 
@@ -596,6 +596,12 @@ namespace DataTransferObjects
         [DataMember]
         public DateTime ResourceEndDate { get; set; }
 
+        [DataMember]
+        public DateTime? RighttoPresentStartDate { get; set; }
+
+        [DataMember]
+        public DateTime? RighttoPresentEndDate { get; set; }
+
         public string FormattedName
         {
             get
@@ -755,7 +761,7 @@ namespace DataTransferObjects
 
         public override string ToString()
         {
-            return string.Format(
+            return string.IsNullOrEmpty(LastName) ? FirstName : string.Format(
                 PersonNameFormat,
                 LastName, FirstName);
         }
