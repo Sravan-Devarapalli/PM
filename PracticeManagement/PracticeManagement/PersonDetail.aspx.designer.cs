@@ -103,15 +103,6 @@ namespace PraticeManagement {
         protected global::System.Web.UI.WebControls.CustomValidator cvIsOwnerOrAssignedToProject;
         
         /// <summary>
-        /// btnChangeEmployeeStatus control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnChangeEmployeeStatus;
-        
-        /// <summary>
         /// reqPersonStatus control.
         /// </summary>
         /// <remarks>
@@ -119,6 +110,15 @@ namespace PraticeManagement {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RequiredFieldValidator reqPersonStatus;
+        
+        /// <summary>
+        /// btnChangeEmployeeStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnChangeEmployeeStatus;
         
         /// <summary>
         /// txtPrefferedFirstName control.
@@ -274,6 +274,51 @@ namespace PraticeManagement {
         protected global::System.Web.UI.WebControls.CustomValidator custWithPreviousTermDate;
         
         /// <summary>
+        /// cvWithRtpStartDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator cvWithRtpStartDate;
+        
+        /// <summary>
+        /// tblRtpStartDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTable tblRtpStartDate;
+        
+        /// <summary>
+        /// dtpRtpStartDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::PraticeManagement.Controls.DatePicker dtpRtpStartDate;
+        
+        /// <summary>
+        /// reqRtpStartDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator reqRtpStartDate;
+        
+        /// <summary>
+        /// compRtpStartDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CompareValidator compRtpStartDate;
+        
+        /// <summary>
         /// ddlPersonTitle control.
         /// </summary>
         /// <remarks>
@@ -391,24 +436,6 @@ namespace PraticeManagement {
         protected global::System.Web.UI.WebControls.CustomValidator custIsDefautManager;
         
         /// <summary>
-        /// ddlTerminationReason control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlTerminationReason;
-        
-        /// <summary>
-        /// txtTerminationReason control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtTerminationReason;
-        
-        /// <summary>
         /// waterMarkTxtTerminationReason control.
         /// </summary>
         /// <remarks>
@@ -427,6 +454,24 @@ namespace PraticeManagement {
         protected global::System.Web.UI.WebControls.CustomValidator custTerminationReason;
         
         /// <summary>
+        /// tblRtpEndDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTable tblRtpEndDate;
+        
+        /// <summary>
+        /// dtpRtpEndDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::PraticeManagement.Controls.DatePicker dtpRtpEndDate;
+        
+        /// <summary>
         /// ddlLocation control.
         /// </summary>
         /// <remarks>
@@ -436,31 +481,31 @@ namespace PraticeManagement {
         protected global::System.Web.UI.WebControls.DropDownList ddlLocation;
         
         /// <summary>
-        /// RequiredFieldValidator1 control.
+        /// rfvLocation control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldValidator1;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvLocation;
         
         /// <summary>
-        /// lbPayChexID control.
+        /// ddlTerminationReason control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lbPayChexID;
+        protected global::System.Web.UI.WebControls.DropDownList ddlTerminationReason;
         
         /// <summary>
-        /// txtPayCheckId control.
+        /// txtTerminationReason control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtPayCheckId;
+        protected global::System.Web.UI.WebControls.TextBox txtTerminationReason;
         
         /// <summary>
         /// txtEmailAddress control.
@@ -517,6 +562,33 @@ namespace PraticeManagement {
         protected global::System.Web.UI.WebControls.CustomValidator custUserName;
         
         /// <summary>
+        /// lbPayChexID control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lbPayChexID;
+        
+        /// <summary>
+        /// txtPayCheckId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtPayCheckId;
+        
+        /// <summary>
+        /// ddlPersonType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlPersonType;
+        
+        /// <summary>
         /// ddlDivision control.
         /// </summary>
         /// <remarks>
@@ -533,33 +605,6 @@ namespace PraticeManagement {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvDivision;
-        
-        /// <summary>
-        /// ddlPersonType control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlPersonType;
-        
-        /// <summary>
-        /// ddlDefaultPractice control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlDefaultPractice;
-        
-        /// <summary>
-        /// rfvPracticeArea control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvPracticeArea;
         
         /// <summary>
         /// txtTelephoneNumber control.
@@ -589,13 +634,22 @@ namespace PraticeManagement {
         protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvTelephoneNumber;
         
         /// <summary>
-        /// ddlPracticeLeadership control.
+        /// ddlDefaultPractice control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlPracticeLeadership;
+        protected global::System.Web.UI.WebControls.DropDownList ddlDefaultPractice;
+        
+        /// <summary>
+        /// rfvPracticeArea control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvPracticeArea;
         
         /// <summary>
         /// lblEmployeeNumber control.
@@ -650,6 +704,15 @@ namespace PraticeManagement {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CustomValidator custEmployeeNumber;
+        
+        /// <summary>
+        /// ddlPracticeLeadership control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlPracticeLeadership;
         
         /// <summary>
         /// chbMBO control.
@@ -848,24 +911,6 @@ namespace PraticeManagement {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton btnProjects;
-        
-        /// <summary>
-        /// cellOpportunities control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TableCell cellOpportunities;
-        
-        /// <summary>
-        /// btnOppportunities control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnOppportunities;
         
         /// <summary>
         /// cellActivityLog control.
@@ -1291,33 +1336,6 @@ namespace PraticeManagement {
         protected global::PraticeManagement.Controls.Persons.PersonProjects personProjects;
         
         /// <summary>
-        /// vwOpportunities control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.View vwOpportunities;
-        
-        /// <summary>
-        /// pnOpportunities control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnOpportunities;
-        
-        /// <summary>
-        /// personOpportunities control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::PraticeManagement.Controls.Generic.OpportunityList personOpportunities;
-        
-        /// <summary>
         /// vwActivityLog control.
         /// </summary>
         /// <remarks>
@@ -1696,6 +1714,15 @@ namespace PraticeManagement {
         protected global::System.Web.UI.WebControls.CustomValidator cvWithTerminationDate;
         
         /// <summary>
+        /// cvWithRtpEndDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CompareValidator cvWithRtpEndDate;
+        
+        /// <summary>
         /// rbnTerminate control.
         /// </summary>
         /// <remarks>
@@ -1748,6 +1775,15 @@ namespace PraticeManagement {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CompareValidator cvWithHireDate;
+        
+        /// <summary>
+        /// cvWithRtpHireDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CompareValidator cvWithRtpHireDate;
         
         /// <summary>
         /// ddlPopUpTerminationReason control.
@@ -1822,6 +1858,69 @@ namespace PraticeManagement {
         protected global::System.Web.UI.WebControls.CompareValidator cvWithTermiantionDate;
         
         /// <summary>
+        /// rbnRighttoPresent control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButton rbnRighttoPresent;
+        
+        /// <summary>
+        /// divRighttoPresent control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divRighttoPresent;
+        
+        /// <summary>
+        /// dtpRighttoPresentStartDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::PraticeManagement.Controls.DatePicker dtpRighttoPresentStartDate;
+        
+        /// <summary>
+        /// rfvRighttoPresentStartDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvRighttoPresentStartDate;
+        
+        /// <summary>
+        /// cvRighttoPresentStartDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CompareValidator cvRighttoPresentStartDate;
+        
+        /// <summary>
+        /// cvRtpToTermination control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CompareValidator cvRtpToTermination;
+        
+        /// <summary>
+        /// cvRtPStartToRtPEnd control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CompareValidator cvRtPStartToRtPEnd;
+        
+        /// <summary>
         /// valSummaryChangePersonStatusToContingent control.
         /// </summary>
         /// <remarks>
@@ -1847,6 +1946,15 @@ namespace PraticeManagement {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ValidationSummary valSummaryChangePersonStatusToActive;
+        
+        /// <summary>
+        /// valSummaryChangeStatusToRightToPresent control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ValidationSummary valSummaryChangeStatusToRightToPresent;
         
         /// <summary>
         /// btnOkChangePersonStatus control.
