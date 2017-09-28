@@ -66,6 +66,12 @@ namespace DataTransferObjects.Filters
             get;
             set;
         }
+
+        public bool IsRighttoPresent
+        {
+            get;
+            set;
+        }
     }
 }
 
