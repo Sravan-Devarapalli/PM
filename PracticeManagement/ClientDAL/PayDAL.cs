@@ -228,11 +228,11 @@ namespace DataAccess
             while (reader.Read())
             {
                 Pay pay = new Pay
-                    {
-                        Timescale = (TimescaleType)reader.GetInt32(timescaleIndex),
-                        StartDate = reader.GetDateTime(startDateIndex),
-                        EndDate = !reader.IsDBNull(endDateIndex) ? (DateTime?)reader.GetDateTime(endDateIndex) : null
-                    };
+                {
+                    Timescale = (TimescaleType)reader.GetInt32(timescaleIndex),
+                    StartDate = reader.GetDateTime(startDateIndex),
+                    EndDate = !reader.IsDBNull(endDateIndex) ? (DateTime?)reader.GetDateTime(endDateIndex) : null
+                };
 
                 result.Add(pay);
             }
@@ -262,30 +262,39 @@ namespace DataAccess
             int divisionNameIndex = reader.GetOrdinal(Constants.ColumnNames.DivisionName);
             int vendorIdIndex = reader.GetOrdinal(Constants.ColumnNames.VendorId);
             int vendorNameIndex = reader.GetOrdinal(Constants.ColumnNames.VendorName);
+            int isRtpIndex = -1;
+            try
+            {
+                isRtpIndex = reader.GetOrdinal(Constants.ColumnNames.IsRightToPresent);
+            }
+            catch
+            {
+                isRtpIndex = -1;
+            }
             while (reader.Read())
             {
                 Pay pay = new Pay
-                    {
-                        PersonId = reader.GetInt32(personIdIndex),
-                        Timescale = (TimescaleType)reader.GetInt32(timescaleIndex),
-                        TimescaleName = reader.GetString(timescaleNameIndex),
-                        Amount = reader.GetDecimal(amountIndex),
-                        StartDate = reader.GetDateTime(startDateIndex),
-                        EndDate =
+                {
+                    PersonId = reader.GetInt32(personIdIndex),
+                    Timescale = (TimescaleType)reader.GetInt32(timescaleIndex),
+                    TimescaleName = reader.GetString(timescaleNameIndex),
+                    Amount = reader.GetDecimal(amountIndex),
+                    StartDate = reader.GetDateTime(startDateIndex),
+                    EndDate =
                             !reader.IsDBNull(endDateIndex) ? (DateTime?)reader.GetDateTime(endDateIndex) : null,
-                        AmountHourly = reader.GetDecimal(amountHourlyIndex),
-                        VacationDays =
+                    AmountHourly = reader.GetDecimal(amountHourlyIndex),
+                    VacationDays =
                             !reader.IsDBNull(vacationDaysIndex) ? (int?)reader.GetInt32(vacationDaysIndex) : null,
-                        BonusAmount = reader.GetDecimal(bonusAmountIndex),
-                        BonusHoursToCollect = !reader.IsDBNull(bonusHoursToCollectIndex)
+                    BonusAmount = reader.GetDecimal(bonusAmountIndex),
+                    BonusHoursToCollect = !reader.IsDBNull(bonusHoursToCollectIndex)
                                                   ? (int?)reader.GetInt32(bonusHoursToCollectIndex)
                                                   : null,
-                        IsYearBonus = reader.GetBoolean(isYearBonusIndex),
-                        PracticeId =
+                    IsYearBonus = reader.GetBoolean(isYearBonusIndex),
+                    PracticeId =
                             !reader.IsDBNull(practiceIdIndex) ? (int?)reader.GetInt32(practiceIdIndex) : null,
-                        PracticeName =
+                    PracticeName =
                             !reader.IsDBNull(practiceNameIndex) ? reader.GetString(practiceNameIndex) : string.Empty
-                    };
+                };
 
                 if (!reader.IsDBNull(titleIdColumnIndex))
                 {
@@ -303,6 +312,10 @@ namespace DataAccess
                 if (vendorIdIndex > 0 && vendorNameIndex > 0 && !reader.IsDBNull(vendorIdIndex))
                 {
                     pay.vendor = new Vendor { Id = reader.GetInt32(vendorIdIndex), Name = reader.GetString(vendorNameIndex) };
+                }
+                if (isRtpIndex > -1)
+                {
+                    pay.IsRighttoPresent = reader.GetBoolean(isRtpIndex);
                 }
                 result.Add(pay);
             }
@@ -334,11 +347,11 @@ namespace DataAccess
                         while (reader.Read())
                         {
                             Triple<DateTime, bool, bool> resultLocal = new Triple<DateTime, bool, bool>(DateTime.Now, true, true)
-                                {
-                                    First = reader.GetDateTime(dateIndex),
-                                    Second = reader.GetBoolean(isSalaryTypeIndex),
-                                    Third = reader.GetBoolean(isHourlyTypeIndex)
-                                };
+                            {
+                                First = reader.GetDateTime(dateIndex),
+                                Second = reader.GetBoolean(isSalaryTypeIndex),
+                                Third = reader.GetBoolean(isHourlyTypeIndex)
+                            };
                             result.Add(resultLocal);
                         }
                     }
