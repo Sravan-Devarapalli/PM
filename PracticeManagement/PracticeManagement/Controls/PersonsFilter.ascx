@@ -47,6 +47,11 @@
                         <asp:CheckBox ID="chbProjected" runat="server" />
                         <span class="padRight5Imp">Contingent</span>
                     </td>
+                    <td class="no-wrap padLeft20Imp">
+                        <asp:CheckBox ID="chbRighttoPresent" runat="server" />
+                        <span class="padRight5Imp">Right to Present</span>
+                    </td>
+
                 </tr>
                 <tr>
                     <td class="no-wrap">
@@ -57,6 +62,7 @@
                         <asp:CheckBox ID="chbTerminated" runat="server" />
                         <span class="padRight5Imp">Terminated</span>
                     </td>
+                    <td></td>
                 </tr>
             </table>
         </td>
