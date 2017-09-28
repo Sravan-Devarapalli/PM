@@ -14,7 +14,8 @@
 	@AtRiskProjects BIT = 1,
 	@TimescaleIds NVARCHAR(4000) = NULL,
 	@PracticeIds NVARCHAR(4000) = NULL,
-	@ExcludeInternalPractices BIT = 0
+	@ExcludeInternalPractices BIT = 0,
+	@RighttoPresentPersons BIT =0
 )
 RETURNS TABLE 
 AS
@@ -60,7 +61,9 @@ AS
             AND ( (@ActivePersons = 1 AND p.PersonStatusId IN (1,5)) -- active and termination pending statues
 					OR
                     (@ProjectedPersons = 1 AND p.PersonStatusId = 3) -- projected status
-				)
+					OR 
+					(@RighttoPresentPersons = 1 AND p.PersonStatusId = 6)
+					)
 			AND (p.IsStrawman = 0)
 			AND pr.ShowInUtilizationReport = 1 
 			AND p.IsOffshore=0
