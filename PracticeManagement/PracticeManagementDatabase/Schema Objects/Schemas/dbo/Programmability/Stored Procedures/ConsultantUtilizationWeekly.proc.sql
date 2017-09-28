@@ -1,7 +1,10 @@
-﻿CREATE PROCEDURE [dbo].[ConsultantUtilizationWeekly] @StartDate DATETIME
+﻿CREATE PROCEDURE [dbo].[ConsultantUtilizationWeekly] 
+(	 
+	 @StartDate DATETIME
 	,@Step INT = 7
 	,@DaysForward INT = 184
 	,@ActivePersons BIT = 1
+	,@RighttoPresentPersons BIT =0
 	,@ActiveProjects BIT = 1
 	,@ProjectedPersons BIT = 1
 	,@ProjectedProjects BIT = 1
@@ -17,6 +20,7 @@
 	,@SortDirection NVARCHAR(15) = 'DESC'
 	,@IsSampleReport BIT = 0
 	,@DivisionIds NVARCHAR(4000) = NULL
+)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -81,7 +85,7 @@ BEGIN
 		LEFT JOIN dbo.TerminationReasons TR ON TR.TerminationReasonId = P.TerminationReasonId
         WHERE (p.IsStrawman = 0) 
 						AND (TR.TerminationReasonId IS NULL OR TR.IsPersonWorkedRule = 1)
-                        AND ((@ActivePersons = 1 AND p.PersonStatusId IN (1,5)) OR (@ProjectedPersons = 1 AND p.PersonStatusId = 3))
+                        AND ((@ActivePersons = 1 AND p.PersonStatusId IN (1,5)) OR (@ProjectedPersons = 1 AND p.PersonStatusId = 3) OR (@RighttoPresentPersons =1 AND p.PersonStatusId = 6))
 						AND (p.DefaultPractice IN (SELECT ResultId FROM dbo.ConvertStringListIntoTable(@PracticeIds)) AND (pr.IsCompanyInternal = 0 AND @ExcludeInternalPractices  = 1 OR @ExcludeInternalPractices = 0))
 						AND pr.ShowInUtilizationReport = 1 AND p.IsOffshore=0
 						AND (p.DivisionId IN (SELECT ResultId FROM dbo.ConvertStringListIntoTable(@DivisionIds))) '
@@ -89,18 +93,18 @@ BEGIN
 	---------------------------------------------------------
 	SET @Query = @Query + 
 		'
-        SELECT  p.PersonId,p.EmployeeNumber,p.First AS FirstName,p.LastName,p.HireDate,p.TerminationDate,c.TimescaleId,c.TimeScaleName AS Timescale,st.PersonStatusId,st.Name,P.TitleId,p.Title,p.DefaultPractice PracticeId,p.PracticeName,
+        SELECT  p.PersonId,p.EmployeeNumber,p.First AS FirstName,p.LastName,ISNULL(p.HireDate,P.RighttoPresentStartDate ) as HireDate , CASE WHEN p.HireDate IS NULL THEN P.RighttoPresentEndDate ELSE p.TerminationDate END as TerminationDate,c.TimescaleId,c.TimeScaleName AS Timescale,st.PersonStatusId,st.Name,P.TitleId,p.Title,p.DefaultPractice PracticeId,p.PracticeName,
 				CASE WHEN AvaHrs.AvaliableHours > 0 THEN  AvgUT.AvgUtilization ELSE 0 END AS wutilAvg,ISNULL(VactionDaysTable.VacationDays,0) AS PersonVactionDays,M.BadgeStartDate,M.BadgeEndDate,M.BreakStartDate,M.BreakEndDate,M.BlockStartDate,M.BlockEndDate,B.ManageServiceContract,p.IsInvestmentResource,p.TargetUtilization
 		        FROM v_person AS p INNER JOIN @CurrentConsultants AS c ON c.ConsId = p.PersonId
 				LEFT JOIN v_CurrentMSBadge M ON M.PersonId = p.PersonId INNER JOIN dbo.PersonStatus AS st ON p.PersonStatusId = st.PersonStatusId
 				LEFT JOIN MSBadge B ON B.Personid=p.personid 
 				LEFT JOIN dbo.GetNumberAvaliableHoursTable(@StartDate,@EndDate,@ActiveProjects,@ProjectedProjects,@ExperimentalProjects,@InternalProjects,@ProposedProjects,@CompletedProjects,@AtRiskProjects) AS AvaHrs ON AvaHrs.PersonId =  p.PersonId 
-		LEFT JOIN dbo.Practice AS pr ON p.DefaultPractice = pr.PracticeId
+				LEFT JOIN dbo.Practice AS pr ON p.DefaultPractice = pr.PracticeId
                 LEFT JOIN dbo.GetPersonVacationDaysTable(@StartDate,@Enddate) VactionDaysTable ON VactionDaysTable.PersonId = c.ConsId
 				LEFT JOIN dbo.GetAvgUtilizationTable(@StartDate,@EndDate,@ActiveProjects,@ProjectedProjects,@ExperimentalProjects,@InternalProjects,@ProposedProjects,@CompletedProjects,@AtRiskProjects) AS AvgUT ON AvgUT.PersonId =  p.PersonId'
 	SET @Query = @Query + @OrderBy
 	SET @Query = @Query + '  
-		SELECT PH.PersonId,PH.HireDate,PH.TerminationDate FROM v_PersonHistory PH INNER JOIN @CurrentConsultants AS c ON c.ConsId = PH.PersonId
+		SELECT PH.PersonId,ISNULL(PH.HireDate,PH.RighttoPresentStartDate) as HireDate,(CASE WHEN PH.HireDate IS NULL THEN PH.RighttoPresentEndDate ELSE PH.TerminationDate END) as TerminationDate FROM v_PersonHistory PH INNER JOIN @CurrentConsultants AS c ON c.ConsId = PH.PersonId
 		ORDER BY PH.PersonId,PH.HireDate '
 	--if a person has added Timeoff  for complete 8 hr then the day is treated as vacation day.
 	SET @Query = @Query + '  
@@ -116,6 +120,7 @@ BEGIN
 								 @Step					INT ,
 								 @DaysForward			INT ,
 								 @ActivePersons			BIT,
+								 @RighttoPresentPersons BIT,
 								 @ActiveProjects		BIT,
 								 @ProjectedPersons		BIT,
 								 @ProjectedProjects		BIT,
@@ -132,6 +137,7 @@ BEGIN
 		,@Step = @Step
 		,@DaysForward = @DaysForward
 		,@ActivePersons = @ActivePersons
+		,@RighttoPresentPersons = @RighttoPresentPersons
 		,@ActiveProjects = @ActiveProjects
 		,@ProjectedPersons = @ProjectedPersons
 		,@ProjectedProjects = @ProjectedProjects
