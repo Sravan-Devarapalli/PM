@@ -7,6 +7,8 @@ AS
 			PersonId,
 			HireDate,
 			TerminationDate,
+			RighttoPresentStartDate,
+			RighttoPresentEndDate,
 			PersonStatusId,
 			PH.Id
 	FROM dbo.PersonHistory PH
@@ -16,7 +18,9 @@ AS
 	SELECT PH1.PersonId,
 			PH1.HireDate,
 			PH1.PersonStatusId,
-			PH1.TerminationDate AS TerminationDate
+			PH1.TerminationDate AS TerminationDate,
+			PH1.RighttoPresentStartDate,
+			PH1.RighttoPresentEndDate
 	FROM PersonHistoryWithRowNo  PH1
 	LEFT JOIN PersonHistoryWithRowNo PH2 ON PH1.PersonId = PH2.PersonId AND PH1.RowNumber + 1 = PH2.RowNumber
 	WHERE PH2.PersonId IS NULL OR (PH1.PersonStatusId = 2 AND  PH1.TerminationDate < PH2.HireDate)
@@ -24,6 +28,8 @@ AS
 	SELECT P.PersonId,
 			P.HireDate,
 			P.PersonStatusId,
-			P.TerminationDate
+			P.TerminationDate,
+			p.RighttoPresentStartDate,
+			p.RighttoPresentEndDate
 	FROM dbo.Person P
 	WHERE IsStrawman = 1
