@@ -4,13 +4,11 @@
     TagPrefix="uc" %>
 <table class="WholeWidthWithHeight">
     <tr>
-        <td colspan="4" class="Width95Percent">
-        </td>
+        <td colspan="4" class="Width95Percent"></td>
         <td class=" Width5Percent padRight5">
             <table class="WholeWidth">
                 <tr>
-                    <td>
-                        Export:
+                    <td>Export:
                     </td>
                     <td>
                         <asp:Button ID="btnExportToExcel" runat="server" Text="Excel" OnClick="btnExportToExcel_OnClick"
@@ -46,40 +44,37 @@
             <table id="tblNewHireSummaryReport" class="tablesorter PersonSummaryReport WholeWidth zebra">
                 <thead>
                     <tr class="TimeperiodSummaryReportTr">
-                        <th class="ResourceColum padLeft5Imp">
-                            Resource
+                        <th class="ResourceColum padLeft5Imp">Resource
                             <img alt="Filter" src="../../../Images/divisions_16x16.png" title="Division" runat="server"
                                 id="imgDivisionFilter" />
                             <AjaxControlToolkit:PopupControlExtender ID="pceDivision" runat="server" TargetControlID="imgDivisionFilter"
                                 BehaviorID="pceDivision" PopupControlID="pnlDivision" Position="Bottom">
                             </AjaxControlToolkit:PopupControlExtender>
                         </th>
-                        <th class="Width130pxImp">
-                            Title
+                        <th class="Width130pxImp">Title
                             <img alt="Filter" title="Title" src="../../../Images/search_filter.png" class="FilterImg"
                                 runat="server" id="imgTitleFilter" />
                             <AjaxControlToolkit:PopupControlExtender ID="pceTitleFilter" runat="server" TargetControlID="imgTitleFilter"
                                 BehaviorID="pceTitleFilter" PopupControlID="pnlFilterTitle" Position="Bottom">
                             </AjaxControlToolkit:PopupControlExtender>
                         </th>
-                        <th class="Width110PxImp">
-                            Pay Type
+                        <th class="Width110PxImp">Pay Type
                             <img alt="Filter" title="Pay Type" src="../../../Images/search_filter.png" class="FilterImg"
                                 runat="server" id="imgPayTypeFilter" />
                             <AjaxControlToolkit:PopupControlExtender ID="pcePayTypeFilter" runat="server" TargetControlID="imgPayTypeFilter"
                                 BehaviorID="pcePayTypeFilter" PopupControlID="pnlFilterPayType" Position="Bottom">
                             </AjaxControlToolkit:PopupControlExtender>
                         </th>
-                        <th>
-                            Hire Date
+                        <th>Right to Present Start Date
+                        </th>
+                        <th>Hire Date
                             <img alt="Filter" src="../../../Images/search_filter.png" title="Hire Date" runat="server"
                                 class="FilterImg" id="imgHiredateFilter" />
                             <AjaxControlToolkit:PopupControlExtender ID="pceHiredateFilter" runat="server" TargetControlID="imgHiredateFilter"
                                 BehaviorID="pceHiredateFilter" PopupControlID="pnlFilterHireDate" Position="Bottom">
                             </AjaxControlToolkit:PopupControlExtender>
                         </th>
-                        <th>
-                            Status
+                        <th>Status
                             <img alt="Filter" src="../../../Images/search_filter.png" runat="server" title="Person Status"
                                 class="FilterImg" id="imgPersonStatusTypeFilter" />
                             <AjaxControlToolkit:PopupControlExtender ID="pcePersonStatusTypeFilter" runat="server"
@@ -88,7 +83,7 @@
                             </AjaxControlToolkit:PopupControlExtender>
                         </th>
                         <th>
-                            <asp:Label runat="server" style="width:20px;height:16px;padding-bottom:3px;" id="imgRecruiterFilterHidden"  > &nbsp;</asp:Label>
+                            <asp:Label runat="server" Style="width: 20px; height: 16px; padding-bottom: 3px;" ID="imgRecruiterFilterHidden"> &nbsp;</asp:Label>
                             Recruiter
                             <img alt="Filter" src="../../../Images/search_filter.png" runat="server" title="Recruiter"
                                 class="FilterImg" id="imgRecruiterFilter" />
@@ -110,6 +105,9 @@
             </td>
             <td>
                 <%# Eval("CurrentPay.TimescaleName")%>
+            </td>
+            <td>
+                <%# GetDateFormat((DateTime?)Eval("RighttoPresentStartDate"))%>
             </td>
             <td>
                 <%# GetDateFormat((DateTime)Eval("HireDate"))%>
