@@ -24,6 +24,10 @@ namespace DataTransferObjects
 
         [EnumMember]
         [Description("Termination Pending")]
-        TerminationPending = 5
+        TerminationPending = 5,
+
+        [EnumMember]
+        [Description("Right to Present")]
+        RightToPresent = 6
     }
 }
