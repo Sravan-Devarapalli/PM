@@ -69,7 +69,9 @@ AS
 			PLeadrsh.PaychexID as PracticeLeadershipADPID,
 			PGCP.Timescale as PracticeLeadershipCurrentyPayType,
 			p.IsInvestmentResource,
-			p.TargetUtilization
+			p.TargetUtilization,
+			p.RighttoPresentStartDate,
+			p.RighttoPresentEndDate
 	  FROM dbo.Person AS p
 	       LEFT JOIN dbo.Practice AS r ON p.DefaultPractice = r.PracticeId
 		   LEFT JOIN dbo.PersonDivision d ON p.DivisionId=d.DivisionId
