@@ -173,7 +173,7 @@ namespace PraticeManagement.Reports.Badge
                 try
                 {
                     var statuses = serviceClient.GetPersonStatuses();
-                    statuses = statuses.Where(p => p.Id != 2 && p.Id != 5).ToArray();
+                    statuses = statuses.Where(p => p.Id != 2 && p.Id != 5 && p.Id != 6).ToArray();
                     DataHelper.FillListDefault(cblPersonStatus, Resources.Controls.AllTypes, statuses, false);
                 }
                 catch (CommunicationException)
@@ -222,7 +222,7 @@ namespace PraticeManagement.Reports.Badge
             lblRange.Text = dtpStart.DateValue.ToString(Constants.Formatting.EntryDateFormat) + " - " + dtpEnd.DateValue.ToString(Constants.Formatting.EntryDateFormat);
             var paytypes = cblPayTypes.areAllSelected ? null : cblPayTypes.SelectedItems;
             var statuses = PersonStatus;
-            var resources = ServiceCallers.Custom.Report(r => r.ListBadgeResourcesByType(paytypes, statuses, dtpStart.DateValue, dtpEnd.DateValue, false, false, false, false, false,true,false).ToList());
+            var resources = ServiceCallers.Custom.Report(r => r.ListBadgeResourcesByType(paytypes, statuses, dtpStart.DateValue, dtpEnd.DateValue, false, false, false, false, false, true, false).ToList());
             repblocked.DataSource = resources;
             repblocked.DataBind();
             if (resources.Count > 0)
