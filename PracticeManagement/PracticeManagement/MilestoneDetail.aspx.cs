@@ -1937,8 +1937,10 @@ namespace PraticeManagement
                 lblTotalRevenue.Text = Milestone.ComputedFinancials.Revenue.ToString();
                 lblTotalRevenueNet.Text = Milestone.ComputedFinancials.RevenueNet.ToString();
 
-                lblClientDiscountAmount.Text =
-                    (Milestone.ComputedFinancials.Revenue - Milestone.ComputedFinancials.RevenueNet).ToString();
+                var discountAmt = (Milestone.ComputedFinancials.Revenue.Value * Project.Discount / 100);
+                var nfi = new NumberFormatInfo { CurrencyDecimalDigits = 0, CurrencySymbol = "$" };
+                lblClientDiscountAmount.Text = discountAmt >= 0 ?
+                    String.Format(nfi, "{0:c}", discountAmt) : ((PracticeManagementCurrency)discountAmt).ToString();
 
                 lblClientDiscount.Text = Milestone.Project.Discount.ToString("##0.00");
                 lblTotalExpenses.Text = PersonListSeniorityAnalyzer.GreaterSeniorityExists ? "(Hidden)" : (Milestone.ComputedFinancials.Cogs + Milestone.ComputedFinancials.Expenses).ToString();
