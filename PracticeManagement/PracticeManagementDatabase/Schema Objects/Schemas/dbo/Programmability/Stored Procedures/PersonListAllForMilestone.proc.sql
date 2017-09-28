@@ -50,6 +50,8 @@ AS
 	FROM dbo.Person AS P 
 	INNER JOIN dbo.MilestonePerson AS MP ON MP.PersonId = P.PersonId
 	WHERE mp.MilestonePersonId = @MilestonePersonId) AS Per
+	WHERE Per.HireDate IS NOT NULL
+
 	UNION
 	SELECT  p.PersonId,
 			p.FirstName,
