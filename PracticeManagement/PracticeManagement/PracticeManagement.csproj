@@ -510,6 +510,7 @@
     <Content Include="Images\Profile-16x16.png" />
     <Content Include="Images\Recursive.png" />
     <Content Include="Images\resource_add_icon.png" />
+    <Content Include="Images\RtP_Comp_Icon.png" />
     <Content Include="Images\save24.png" />
     <Content Include="Images\saveToDisk.png" />
     <Content Include="Images\search_24.png" />
