@@ -261,7 +261,7 @@
                 </table>
             </asp:Panel>
             <asp:Panel ID="pnlNewHiresHelp" runat="server" CssClass="pnlNewHireHelp" Style="display: none;">
-                New hires are individuals who had a status of "Active" or "Contingent" at some point
+                New hires are individuals who had a status of "Active" or "Contingent" or "Right to Present" at some point
                 during the selected time period. Their current status may be different.
             </asp:Panel>
             <table class="PaddingTenPx TimePeriodSummaryReportHeader">
