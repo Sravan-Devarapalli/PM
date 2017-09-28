@@ -77,11 +77,12 @@ namespace PracticeManagementService
             bool projected,
             bool terminated,
             bool terminatedPending,
+            bool righttoPresent,
             char? alphabet)
         {
             PersonRateCalculator.VerifyPrivileges(userName, ref recruiterIdsSelected);
             return
-                PersonDAL.PersonListFilteredWithCurrentPayByCommaSeparatedIdsList(practiceIdsSelected, divisionIdsSelected, !active, pageSize, pageNo, looked, DateTime.MinValue, DateTime.MinValue, recruiterIdsSelected, null, sortBy, timeScaleIdsSelected, projected, terminated, terminatedPending, alphabet);
+                PersonDAL.PersonListFilteredWithCurrentPayByCommaSeparatedIdsList(practiceIdsSelected, divisionIdsSelected, !active, pageSize, pageNo, looked, DateTime.MinValue, DateTime.MinValue, recruiterIdsSelected, null, sortBy, timeScaleIdsSelected, projected, terminated, terminatedPending, righttoPresent, alphabet);
         }
 
         /// <summary>
@@ -204,10 +205,10 @@ namespace PracticeManagementService
         /// <param name="terminatedPending">Is Termination Pending or not</param>
         /// <param name="alphabet">person starts with the letter</param>
         /// <returns></returns>
-        public int GetPersonCountByCommaSeperatedIdsList(string practiceIds, string divisionIdsSelected, bool active, string looked, string recruiterIds, string userName, string timeScaleIds, bool projected, bool terminated, bool terminatedPending, char? alphabet)
+        public int GetPersonCountByCommaSeperatedIdsList(string practiceIds, string divisionIdsSelected, bool active, string looked, string recruiterIds, string userName, string timeScaleIds, bool projected, bool terminated, bool terminatedPending, bool righttoPresent, char? alphabet)
         {
             PersonRateCalculator.VerifyPrivileges(userName, ref recruiterIds);
-            return PersonDAL.PersonGetCount(practiceIds, divisionIdsSelected, !active, looked, recruiterIds, timeScaleIds, projected, terminated, terminatedPending, alphabet);
+            return PersonDAL.PersonGetCount(practiceIds, divisionIdsSelected, !active, looked, recruiterIds, timeScaleIds, projected, terminated, terminatedPending, righttoPresent, alphabet);
         }
 
         /// <summary>
@@ -510,19 +511,21 @@ namespace PracticeManagementService
         private static void SendActivateAccountEmail(Person person, Person oldPerson, string loginPageUrl)
         {
             bool isOldPersonContingentOrTerminated = (oldPerson == null) || (oldPerson.Status.Id == (int)PersonStatusType.Contingent || oldPerson.Status.Id == (int)PersonStatusType.Terminated);
-            if (!isOldPersonContingentOrTerminated) return;
-            MailUtil.SendActivateAccountEmail(person.FirstName, person.LastName, person.HireDate.ToString(Constants.Formatting.EntryDateFormat),
-                                              person.Alias, (person.Title != null) ? person.Title.TitleName : null, (person.CurrentPay != null) ? Generic.GetDescription(person.CurrentPay.Timescale) : null, person.TelephoneNumber,
-                                              person.IsOffshore ? "Yes" : "No", person.ManagerName, person.DivisionType.ToString());
+            if ((isOldPersonContingentOrTerminated && person.Status.Id != (int)PersonStatusType.RightToPresent) || (oldPerson != null && oldPerson.Status.Id == (int)PersonStatusType.RightToPresent && person.Status.Id == (int)PersonStatusType.Active))
+            {
+                MailUtil.SendActivateAccountEmail(person.FirstName, person.LastName, person.HireDate.ToString(Constants.Formatting.EntryDateFormat),
+                                                  person.Alias, (person.Title != null) ? person.Title.TitleName : null, (person.CurrentPay != null) ? Generic.GetDescription(person.CurrentPay.Timescale) : null, person.TelephoneNumber,
+                                                  person.IsOffshore ? "Yes" : "No", person.ManagerName, person.DivisionType.ToString());
 
-            DateTime currentPmTime = SettingsHelper.GetCurrentPMTime();
-            TimeSpan welcomeEmailTimeStamp = new TimeSpan(7, 0, 0);
-            if (person.HireDate.Date >= currentPmTime.Date &&
-                (person.HireDate.Date != currentPmTime.Date || currentPmTime.TimeOfDay <= welcomeEmailTimeStamp))
-                return;
-            //send welcome mail if person have past hire date
-            var companyName = ConfigurationDAL.GetCompanyName();
-            SendWelcomeEmail(person, companyName, loginPageUrl);
+                DateTime currentPmTime = SettingsHelper.GetCurrentPMTime();
+                TimeSpan welcomeEmailTimeStamp = new TimeSpan(7, 0, 0);
+                if (person.HireDate.Date >= currentPmTime.Date &&
+                    (person.HireDate.Date != currentPmTime.Date || currentPmTime.TimeOfDay <= welcomeEmailTimeStamp))
+                    return;
+                //send welcome mail if person have past hire date
+                var companyName = ConfigurationDAL.GetCompanyName();
+                SendWelcomeEmail(person, companyName, loginPageUrl);
+            }
         }
 
         /// <summary>
@@ -569,7 +572,7 @@ namespace PracticeManagementService
 
                 if (!person.Id.HasValue)
                 {
-                    if (!string.IsNullOrEmpty(person.Alias))
+                    if (!string.IsNullOrEmpty(person.Alias) && person.Status.Id != (int)PersonStatusType.RightToPresent)
                     {
                         // Create a login
                         string password = Membership.GeneratePassword(Math.Max(Membership.MinRequiredPasswordLength, 1),
@@ -584,7 +587,17 @@ namespace PracticeManagementService
                 }
                 else
                 {
-                    if (string.Compare(oldPerson.Alias, person.Alias, true) != 0)
+                    if (oldPerson.Status.Id == (int)PersonStatusType.RightToPresent && person.Status.Id == (int)PersonStatusType.Active)
+                    {
+                        // Create a login
+                        string password = Membership.GeneratePassword(Math.Max(Membership.MinRequiredPasswordLength, 1),
+                                                                      Membership.MinRequiredNonAlphanumericCharacters);
+                        string salt = GenerateSalt();
+                        string hashedPassword = EncodePassword(password, salt);
+
+                        PersonDAL.Createuser(person.Alias, hashedPassword, salt, person.Alias, connection, transaction);
+                    }
+                    if (string.Compare(oldPerson.Alias, person.Alias, true) != 0 && oldPerson.Status.Id != (int)PersonStatusType.RightToPresent)
                     {
                         if (Membership.FindUsersByName(person.Alias).Count == 0)
                             PersonDAL.MembershipAliasUpdate(oldPerson.Alias, person.Alias, connection, transaction);
@@ -610,7 +623,7 @@ namespace PracticeManagementService
 
                 // Saving the Locked-Out value
                 if (isAdministrator  // && userInfo != null && person.LockedOut != userInfo.IsLockedOut
-                     && !isLockedOutUpdated)
+                     && !isLockedOutUpdated && person.Status.Id != (int)PersonStatusType.RightToPresent)
                 {
                     if (person.LockedOut)
                     {
@@ -637,7 +650,10 @@ namespace PracticeManagementService
                 }
                 if (person.Id != null) person.CurrentPay = PayDAL.GetCurrentByPerson(person.Id.Value);
             }
-            SendMailsAfterProcessPersonData(oldPerson, person, isReHireDueToPay, loginPageUrl, userLogin);
+            if (person.Status.Id != (int)PersonStatusType.RightToPresent)
+            {
+                SendMailsAfterProcessPersonData(oldPerson, person, isReHireDueToPay, loginPageUrl, userLogin);
+            }
         }
 
         /// <summary>
