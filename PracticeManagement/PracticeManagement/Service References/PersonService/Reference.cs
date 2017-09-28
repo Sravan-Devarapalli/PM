@@ -47,7 +47,7 @@ namespace PraticeManagement.PersonService {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IPersonService/GetPersonListWithCurrentPayByCommaSeparatedIdsL" +
             "ist", ReplyAction="http://tempuri.org/IPersonService/GetPersonListWithCurrentPayByCommaSeparatedIdsL" +
             "istResponse")]
-        DataTransferObjects.Person[] GetPersonListWithCurrentPayByCommaSeparatedIdsList(string practiceIdsSelected, string divisionIdsSelected, bool active, int pageSize, int pageNo, string looked, string recruiterIdsSelected, string userName, string sortBy, string timeScaleIdsSelected, bool projected, bool terminated, bool terminatedPending, System.Nullable<char> alphabet);
+        DataTransferObjects.Person[] GetPersonListWithCurrentPayByCommaSeparatedIdsList(string practiceIdsSelected, string divisionIdsSelected, bool active, int pageSize, int pageNo, string looked, string recruiterIdsSelected, string userName, string sortBy, string timeScaleIdsSelected, bool projected, bool terminated, bool terminatedPending, bool righttoPresent, System.Nullable<char> alphabet);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IPersonService/PersonListAllShort", ReplyAction="http://tempuri.org/IPersonService/PersonListAllShortResponse")]
         DataTransferObjects.Person[] PersonListAllShort(System.Nullable<int> practice, string statusIds, System.DateTime startDate, System.DateTime endDate);
@@ -65,7 +65,7 @@ namespace PraticeManagement.PersonService {
         DataTransferObjects.Person[] PersonListAllForMilestone(System.Nullable<int> milestonePersonId, System.DateTime startDate, System.DateTime endDate);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IPersonService/GetPersonCountByCommaSeperatedIdsList", ReplyAction="http://tempuri.org/IPersonService/GetPersonCountByCommaSeperatedIdsListResponse")]
-        int GetPersonCountByCommaSeperatedIdsList(string practiceIds, string divisionIdsSelected, bool active, string looked, string recruiterIds, string userName, string timeScaleIds, bool projected, bool terminated, bool terminationpending, System.Nullable<char> alphabet);
+        int GetPersonCountByCommaSeperatedIdsList(string practiceIds, string divisionIdsSelected, bool active, string looked, string recruiterIds, string userName, string timeScaleIds, bool projected, bool terminated, bool terminationpending, bool righttoPresent, System.Nullable<char> alphabet);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IPersonService/GetPersonWorkingHoursDetailsWithinThePeriod", ReplyAction="http://tempuri.org/IPersonService/GetPersonWorkingHoursDetailsWithinThePeriodResp" +
             "onse")]
@@ -400,7 +400,6 @@ namespace PraticeManagement.PersonService {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public partial class PersonServiceClient : System.ServiceModel.ClientBase<PraticeManagement.PersonService.IPersonService>, PraticeManagement.PersonService.IPersonService {
         
-             
         public PersonServiceClient(string endpointConfigurationName) : 
                 base(endpointConfigurationName) {
         }
@@ -453,8 +452,8 @@ namespace PraticeManagement.PersonService {
             return base.Channel.GetPermissions(person);
         }
         
-        public DataTransferObjects.Person[] GetPersonListWithCurrentPayByCommaSeparatedIdsList(string practiceIdsSelected, string divisionIdsSelected, bool active, int pageSize, int pageNo, string looked, string recruiterIdsSelected, string userName, string sortBy, string timeScaleIdsSelected, bool projected, bool terminated, bool terminatedPending, System.Nullable<char> alphabet) {
-            return base.Channel.GetPersonListWithCurrentPayByCommaSeparatedIdsList(practiceIdsSelected, divisionIdsSelected, active, pageSize, pageNo, looked, recruiterIdsSelected, userName, sortBy, timeScaleIdsSelected, projected, terminated, terminatedPending, alphabet);
+        public DataTransferObjects.Person[] GetPersonListWithCurrentPayByCommaSeparatedIdsList(string practiceIdsSelected, string divisionIdsSelected, bool active, int pageSize, int pageNo, string looked, string recruiterIdsSelected, string userName, string sortBy, string timeScaleIdsSelected, bool projected, bool terminated, bool terminatedPending, bool righttoPresent, System.Nullable<char> alphabet) {
+            return base.Channel.GetPersonListWithCurrentPayByCommaSeparatedIdsList(practiceIdsSelected, divisionIdsSelected, active, pageSize, pageNo, looked, recruiterIdsSelected, userName, sortBy, timeScaleIdsSelected, projected, terminated, terminatedPending, righttoPresent, alphabet);
         }
         
         public DataTransferObjects.Person[] PersonListAllShort(System.Nullable<int> practice, string statusIds, System.DateTime startDate, System.DateTime endDate) {
@@ -477,8 +476,8 @@ namespace PraticeManagement.PersonService {
             return base.Channel.PersonListAllForMilestone(milestonePersonId, startDate, endDate);
         }
         
-        public int GetPersonCountByCommaSeperatedIdsList(string practiceIds, string divisionIdsSelected, bool active, string looked, string recruiterIds, string userName, string timeScaleIds, bool projected, bool terminated, bool terminationpending, System.Nullable<char> alphabet) {
-            return base.Channel.GetPersonCountByCommaSeperatedIdsList(practiceIds, divisionIdsSelected, active, looked, recruiterIds, userName, timeScaleIds, projected, terminated, terminationpending, alphabet);
+        public int GetPersonCountByCommaSeperatedIdsList(string practiceIds, string divisionIdsSelected, bool active, string looked, string recruiterIds, string userName, string timeScaleIds, bool projected, bool terminated, bool terminationpending, bool righttoPresent, System.Nullable<char> alphabet) {
+            return base.Channel.GetPersonCountByCommaSeperatedIdsList(practiceIds, divisionIdsSelected, active, looked, recruiterIds, userName, timeScaleIds, projected, terminated, terminationpending, righttoPresent, alphabet);
         }
         
         public DataTransferObjects.PersonWorkingHoursDetailsWithinThePeriod GetPersonWorkingHoursDetailsWithinThePeriod(int personId, System.DateTime startDate, System.DateTime endDate) {
