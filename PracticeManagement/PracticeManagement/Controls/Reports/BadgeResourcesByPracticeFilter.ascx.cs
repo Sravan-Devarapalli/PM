@@ -22,7 +22,8 @@ namespace PraticeManagement.Controls.Reports
                         clientList.Append(item.Value).Append(',');
                 return clientList.ToString();
             }
-            set {
+            set
+            {
                 DataHelper.FillPracticeListOnlyActive(cblPractices, Resources.Controls.AllPracticesText);
                 cblPractices.SelectedItems = value;
             }
@@ -34,7 +35,8 @@ namespace PraticeManagement.Controls.Reports
             {
                 return cblPayTypes.areAllSelected ? null : cblPayTypes.SelectedItems;
             }
-            set {
+            set
+            {
                 DataHelper.FillTimescaleList(this.cblPayTypes, Resources.Controls.AllTypes);
                 cblPayTypes.SelectedItems = value;
             }
@@ -59,7 +61,8 @@ namespace PraticeManagement.Controls.Reports
                 return clientList.ToString();
             }
 
-            set {
+            set
+            {
                 FillPersonStatusList();
                 cblPersonStatus.SelectedItems = value;
             }
@@ -75,7 +78,8 @@ namespace PraticeManagement.Controls.Reports
                         clientList.Append(item.Value).Append(',');
                 return clientList.ToString();
             }
-            set {
+            set
+            {
                 DataHelper.FillTitleList(cblTitles, "All Titles", true, ddlType - 1);
                 cblTitles.SelectedItems = value;
             }
@@ -93,8 +97,9 @@ namespace PraticeManagement.Controls.Reports
             {
                 return chbBadgedNotOnProject.Checked;
             }
-            set {
-                chbBadgedNotOnProject.Checked = value; 
+            set
+            {
+                chbBadgedNotOnProject.Checked = value;
             }
         }
 
@@ -104,7 +109,8 @@ namespace PraticeManagement.Controls.Reports
             {
                 return chbBadgedOnProject.Checked;
             }
-            set {
+            set
+            {
                 chbBadgedOnProject.Checked = value;
             }
         }
@@ -115,7 +121,8 @@ namespace PraticeManagement.Controls.Reports
             {
                 return chbClockNotStarted.Checked;
             }
-            set {
+            set
+            {
                 chbClockNotStarted.Checked = value;
             }
         }
@@ -124,7 +131,7 @@ namespace PraticeManagement.Controls.Reports
         {
             if (!IsPostBack)
             {
-                
+
                 if (ddlType == 1)
                 {
                     if (cblPractices.Items.Count <= 0)
@@ -136,7 +143,7 @@ namespace PraticeManagement.Controls.Reports
                     tdTitles.Visible = false;
                     lblCategory.Text = "Practice Area";
                 }
-                else 
+                else
                 {
                     if (cblTitles.Items.Count <= 0)
                     {
@@ -167,7 +174,7 @@ namespace PraticeManagement.Controls.Reports
                 try
                 {
                     var statuses = serviceClient.GetPersonStatuses();
-                    statuses = statuses.Where(p => p.Id != 2 && p.Id != 5).ToArray();
+                    statuses = statuses.Where(p => p.Id != 2 && p.Id != 5 && p.Id != 6).ToArray();
                     DataHelper.FillListDefault(cblPersonStatus, Resources.Controls.AllTypes, statuses, false);
                 }
                 catch (CommunicationException)
