@@ -8,6 +8,7 @@
 	IsContingentRule	BIT NOT NULL CONSTRAINT DF_TerminationReasons_IsContingentRule DEFAULT(0),
 	IsPersonWorkedRule	BIT NOT NULL CONSTRAINT DF_TerminationReasons_IsPersonWorkedRule DEFAULT(1),
 	IsVisible			BIT NOT NULL CONSTRAINT DF_TerminationReasons_IsVisible DEFAULT(1),
-	CONSTRAINT PK_TerminationReasons_TerminationReasonId PRIMARY KEY (TerminationReasonId)
+	IsRighttoPresentRule BIT NOT NULL CONSTRAINT DF_TerminationReasons_IsRighttoPresentRule DEFAULT (0) 
+    CONSTRAINT PK_TerminationReasons_TerminationReasonId PRIMARY KEY (TerminationReasonId)
 )
 
