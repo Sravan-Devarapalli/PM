@@ -7,8 +7,7 @@
 <head id="Head2" runat="server">
     <title>Consulting Utilization Report | Practice Management</title>
     <style type="text/css">
-        .tab-invisible
-        {
+        .tab-invisible {
             display: none;
         }
     </style>
@@ -16,13 +15,13 @@
 </head>
 <body>
     <form id="form2" runat="server">
-    <AjaxControlToolkit:ToolkitScriptManager ID="scriptManager" runat="server" LoadScriptsBeforeUI="true"
-        CombineScripts="False" EnablePageMethods="True" ScriptMode="Release" EnableScriptLocalization="False">
-        <Scripts>
-            <asp:ScriptReference Name="MicrosoftAjax.js" Path="~/Scripts/MicrosoftAjax.min.js" />
-        </Scripts>
-    </AjaxControlToolkit:ToolkitScriptManager>
-    <uc:ConsultantsWeeklyReport ID="repWeeklyReport" IsSampleReport="true" runat="server" />
+        <AjaxControlToolkit:ToolkitScriptManager ID="scriptManager" runat="server" LoadScriptsBeforeUI="true"
+            CombineScripts="False" EnablePageMethods="True" ScriptMode="Release" EnableScriptLocalization="False">
+            <Scripts>
+                <asp:ScriptReference Name="MicrosoftAjax.js" Path="~/Scripts/MicrosoftAjax.min.js" />
+            </Scripts>
+        </AjaxControlToolkit:ToolkitScriptManager>
+        <uc:ConsultantsWeeklyReport ID="repWeeklyReport" IsSampleReport="true" runat="server" />
     </form>
 </body>
 </html>
