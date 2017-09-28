@@ -167,7 +167,7 @@ namespace PraticeManagement.Controls.Reports.HumanCapital
                 foreach (var R in RecuriterList)
                 {
                     int count = data.Count(p => p.RecruiterId.HasValue ? p.RecruiterId.Value == R.Id.Value : R.Id.Value == 0);
-                    Recruiters.Add(R.Id == 0 ? R.LastName : R.PersonLastFirstName, count);
+                    Recruiters.Add(R.Id == 0 ? R.FirstName : R.PersonLastFirstName, count);
                 }
 
             }
@@ -301,7 +301,7 @@ namespace PraticeManagement.Controls.Reports.HumanCapital
                 var pointWidth = (Recruiters.Count > 25) ? 70 - (Recruiters.Count - 25) * 5 : 70;
                 pointWidth = pointWidth < 20 ? 20 : pointWidth;
                 int width = Recruiters.Count * pointWidth < 400 ? 400 : Recruiters.Count * pointWidth;
-                chrtNewHireReportByRecruiter.Width = width ;//> HostingPage.TotalPageWidth - 150 ? HostingPage.TotalPageWidth - 150 : width;
+                chrtNewHireReportByRecruiter.Width = width;//> HostingPage.TotalPageWidth - 150 ? HostingPage.TotalPageWidth - 150 : width;
                 chrtNewHireReportByRecruiter.Height = (Recruiters.Max(c => c.Value) * 9 < 800) ? 800 : Recruiters.Max(c => c.Value) * 9;
                 InitAxis(chrtNewHireReportByRecruiter.ChartAreas[MAIN_CHART_AREA_NAME].AxisX, "Recruiter", false);
                 InitAxis(chrtNewHireReportByRecruiter.ChartAreas[MAIN_CHART_AREA_NAME].AxisY, "Number of New Hires", true);
