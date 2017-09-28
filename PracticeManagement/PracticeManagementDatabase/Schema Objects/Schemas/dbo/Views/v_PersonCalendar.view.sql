@@ -22,6 +22,6 @@ AS
 	  FROM dbo.Calendar AS cal
 		   INNER JOIN dbo.GetFutureDateTable() FD ON 1 = 1
 		   INNER JOIN dbo.GetHolidayTimeTypeIdTable() HTT ON 1 = 1
-	       INNER JOIN dbo.v_PersonHistoryAndStrawman AS p ON cal.Date >= p.HireDate AND cal.Date <= ISNULL(p.TerminationDate, FD.FutureDate)
+	       INNER JOIN dbo.v_PersonHistoryAndStrawman AS p ON cal.Date >= ISNULL(p.HireDate,p.RighttoPresentStartDate)AND cal.Date <= CASE WHEN P.HireDate IS NULL THEN ISNULL(p.RighttoPresentEndDate, fd.FutureDate) ELSE ISNULL(P.TerminationDate, FD.FutureDate) END
 	       LEFT JOIN dbo.PersonCalendar AS pcal ON pcal.Date = cal.Date AND pcal.PersonId = p.PersonId
 
