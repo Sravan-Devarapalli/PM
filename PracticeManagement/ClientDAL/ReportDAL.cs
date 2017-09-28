@@ -1947,6 +1947,26 @@ namespace DataAccess
             int hireDateIndex = reader.GetOrdinal(Constants.ColumnNames.HireDateColumn);
             int employeeNumberIndex = reader.GetOrdinal(Constants.ColumnNames.EmployeeNumber);
 
+            int rtpStartDateIndex;
+            try
+            {
+                rtpStartDateIndex = reader.GetOrdinal(Constants.ColumnNames.RighttoPresentStartDate);
+            }
+            catch
+            {
+                rtpStartDateIndex = -1;
+            }
+
+            int rtpEndDateIndex;
+            try
+            {
+                rtpEndDateIndex = reader.GetOrdinal(Constants.ColumnNames.RighttoPresentEndDate);
+            }
+            catch
+            {
+                rtpEndDateIndex = -1;
+            }
+
             int terminationDateIndex;
             try
             {
@@ -2005,17 +2025,24 @@ namespace DataAccess
                     person.DivisionType = (PersonDivisionType)reader.GetInt32(divisionIdIndex);
                 }
 
-                person.HireDate = reader.GetDateTime(hireDateIndex);
+                person.HireDate = !reader.IsDBNull(hireDateIndex) ? reader.GetDateTime(hireDateIndex) : DateTime.MinValue;
                 person.EmployeeNumber = reader.GetString(employeeNumberIndex);
 
                 if (terminationDateIndex > -1 && !reader.IsDBNull(terminationDateIndex))
                 {
                     person.TerminationDate = reader.GetDateTime(terminationDateIndex);
-                    if (!reader.IsDBNull(terminationReasonIdIndex))
-                    {
-                        person.TerminationReasonid = reader.GetInt32(terminationReasonIdIndex);
-                        person.TerminationReason = reader.GetString(terminationReasonIndex);
-                    }
+
+                }
+                if (terminationReasonIdIndex > -1 && !reader.IsDBNull(terminationReasonIdIndex))
+                {
+                    person.TerminationReasonid = reader.GetInt32(terminationReasonIdIndex);
+                    person.TerminationReason = reader.GetString(terminationReasonIndex);
+                }
+
+                if (rtpStartDateIndex > -1)
+                {
+                    person.RighttoPresentStartDate = !reader.IsDBNull(rtpStartDateIndex) ? (DateTime?)reader.GetDateTime(rtpStartDateIndex) : null;
+                    person.RighttoPresentEndDate = !reader.IsDBNull(rtpEndDateIndex) ? (DateTime?)reader.GetDateTime(rtpEndDateIndex) : null;
                 }
                 result.Add(person);
             }
@@ -6178,7 +6205,7 @@ namespace DataAccess
                 command.Parameters.AddWithValue(Constants.ParameterNames.StartDate, startDate == null ? (object)DBNull.Value : startDate);
                 command.Parameters.AddWithValue(Constants.ParameterNames.EndDate, endDate == null ? (object)DBNull.Value : endDate);
                 command.Parameters.AddWithValue(Constants.ParameterNames.ActualsEndDate, actualsEndDate == null ? (object)DBNull.Value : actualsEndDate);
-                command.Parameters.AddWithValue(Constants.ParameterNames.IsBudget,isBudget);
+                command.Parameters.AddWithValue(Constants.ParameterNames.IsBudget, isBudget);
                 command.Parameters.AddWithValue(Constants.ParameterNames.IsActual, isActual);
                 command.Parameters.AddWithValue(Constants.ParameterNames.IsEAC, isEAC);
                 command.Parameters.AddWithValue(Constants.ParameterNames.IsProjected, isProjected);
@@ -6281,7 +6308,7 @@ namespace DataAccess
                     fi.GrossMargin = reader.GetDecimal(projectedMarginIndex);
                     fi.Revenue = reader.GetDecimal(projectedRevenueIndex);
 
-                    fi.EACHours = reader.GetDecimal(EACHoursIndex) ;
+                    fi.EACHours = reader.GetDecimal(EACHoursIndex);
                     fi.EACGrossMargin = reader.GetDecimal(EACMarginIndex);
                     fi.EACRevenue = reader.GetDecimal(EACRevenueIndex);
 
