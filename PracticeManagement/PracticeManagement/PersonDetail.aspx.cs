@@ -79,7 +79,7 @@ namespace PraticeManagement
         private Pay payForcvEmployeePayTypeChangeViolation;
         private ExceptionDetail internalException;
         private bool _disableValidatecustTerminateDateTE;
-        private int _finalWizardView = 8;
+        private int _finalWizardView = 7;
         private int _startingWizardView = 0;
         private DateTime? _editablePayStartDate;
 
@@ -207,12 +207,12 @@ namespace PraticeManagement
         {
             get
             {
-                if ((PrevPersonStatusId == (int)PersonStatusType.Active || PrevPersonStatusId == (int)PersonStatusType.Contingent) && rbnTerminate.Checked)
+                if ((PrevPersonStatusId == (int)PersonStatusType.Active || PrevPersonStatusId == (int)PersonStatusType.Contingent || PrevPersonStatusId == (int)PersonStatusType.RightToPresent) && rbnTerminate.Checked)
                 {
                     //Employee with terminated / termination Pending.
-                    return dtpPopUpTerminateDate.DateValue.Date >= DateTime.Now.Date ? (PrevPersonStatusId == (int)PersonStatusType.Active ? PersonStatusType.TerminationPending : PersonStatusType.Contingent) : PersonStatusType.Terminated;
+                    return dtpPopUpTerminateDate.DateValue.Date >= DateTime.Now.Date ? (PrevPersonStatusId == (int)PersonStatusType.Active ? PersonStatusType.TerminationPending : PrevPersonStatusId == (int)PersonStatusType.RightToPresent ? PersonStatusType.RightToPresent : PersonStatusType.Contingent) : PersonStatusType.Terminated;
                 }
-                else if ((PrevPersonStatusId == (int)PersonStatusType.TerminationPending && rbnCancleTermination.Checked) || ((PrevPersonStatusId == (int)PersonStatusType.Contingent || PrevPersonStatusId == (int)PersonStatusType.Terminated) && rbnActive.Checked))
+                else if ((PrevPersonStatusId == (int)PersonStatusType.TerminationPending && rbnCancleTermination.Checked) || ((PrevPersonStatusId == (int)PersonStatusType.Contingent || PrevPersonStatusId == (int)PersonStatusType.Terminated || PrevPersonStatusId == (int)PersonStatusType.RightToPresent) && rbnActive.Checked))
                 {
                     //Cancel Termination.
                     //Active employee with the selected hire date.
@@ -223,6 +223,10 @@ namespace PraticeManagement
                 {
                     //system automatically opens new compensation record.
                     return PersonStatusType.Contingent;
+                }
+                else if ((PrevPersonStatusId == (int)PersonStatusType.RightToPresent && rbnCancleTermination.Checked) || (PrevPersonStatusId == (int)PersonStatusType.Terminated && rbnRighttoPresent.Checked))
+                {
+                    return PersonStatusType.RightToPresent;
                 }
                 else
                 {
@@ -341,6 +345,18 @@ namespace PraticeManagement
             }
         }
 
+        private Pay CurrentPay
+        {
+            get
+            {
+                return ViewState["Current_Pay"] as Pay;
+            }
+            set
+            {
+                ViewState["Current_Pay"] = value;
+            }
+        }
+
         /// <summary>
         /// Gets or sets original person Status ID, need to store it for comparing with new one
         /// </summary>
@@ -378,6 +394,30 @@ namespace PraticeManagement
             set
             {
                 ViewState["ViewState_PrevTerminationDate"] = value;
+            }
+        }
+
+        private DateTime? PreviousRighttoPresentEndDate
+        {
+            get
+            {
+                return (DateTime?)ViewState["ViewState_PreviousRighttoPresentEndDate"];
+            }
+            set
+            {
+                ViewState["ViewState_PreviousRighttoPresentEndDate"] = value;
+            }
+        }
+
+        private DateTime? PreviousRighttoPresentStartDate
+        {
+            get
+            {
+                return (DateTime?)ViewState["ViewState_PreviousRighttoPresentStartDate"];
+            }
+            set
+            {
+                ViewState["ViewState_PreviousRighttoPresentStartDate"] = value;
             }
         }
 
@@ -456,7 +496,7 @@ namespace PraticeManagement
         {
             get
             {
-                return IsStatusChangeClicked ? ((PopupStatus.Value == PersonStatusType.Terminated || PopupStatus.Value == PersonStatusType.TerminationPending || (PrevPersonStatusId == (int)PersonStatusType.Contingent && PopupStatus.Value == PersonStatusType.Contingent)) ? GetDate(dtpPopUpTerminateDate.DateValue) : null) : GetDate(dtpTerminationDate.DateValue);
+                return IsStatusChangeClicked ? ((PopupStatus.Value == PersonStatusType.Terminated || PopupStatus.Value == PersonStatusType.TerminationPending || (PrevPersonStatusId == (int)PersonStatusType.Contingent && PopupStatus.Value == PersonStatusType.Contingent) || (PrevPersonStatusId == (int)PersonStatusType.RightToPresent && PopupStatus.Value == PersonStatusType.RightToPresent)) ? GetDate(dtpPopUpTerminateDate.DateValue) : null) : GetDate(dtpTerminationDate.DateValue);
             }
         }
 
@@ -469,7 +509,7 @@ namespace PraticeManagement
         {
             get
             {
-                return IsStatusChangeClicked ? ((PopupStatus.Value == PersonStatusType.Terminated || PopupStatus.Value == PersonStatusType.TerminationPending || (PrevPersonStatusId == (int)PersonStatusType.Contingent && PopupStatus.Value == PersonStatusType.Contingent)) ? ddlPopUpTerminationReason.SelectedValue : string.Empty) : ddlTerminationReason.SelectedValue;
+                return IsStatusChangeClicked ? ((PopupStatus.Value == PersonStatusType.Terminated || PopupStatus.Value == PersonStatusType.TerminationPending || (PrevPersonStatusId == (int)PersonStatusType.Contingent && PopupStatus.Value == PersonStatusType.Contingent) || (PrevPersonStatusId == (int)PersonStatusType.RightToPresent && PopupStatus.Value == PersonStatusType.RightToPresent)) ? ddlPopUpTerminationReason.SelectedValue : string.Empty) : ddlTerminationReason.SelectedValue;
             }
         }
 
@@ -505,6 +545,28 @@ namespace PraticeManagement
             }
         }
 
+        private bool isCVDivision
+        {
+            get;
+            set;
+        }
+
+        private bool IsStatusChangedFromRightToPresentToActive
+        {
+            get
+            {
+                if (ViewState["IsStatusChangedFromRightToPresentToActive"] == null)
+                {
+                    ViewState["IsStatusChangedFromRightToPresentToActive"] = false;
+                }
+                return (bool)ViewState["IsStatusChangedFromRightToPresentToActive"];
+            }
+            set
+            {
+                ViewState["IsStatusChangedFromRightToPresentToActive"] = value;
+            }
+        }
+
         private int ActiveWizard
         {
             get
@@ -530,7 +592,7 @@ namespace PraticeManagement
                 _ActiveWizardsArray.Add(1, new int[] { 0, 1 });
                 _ActiveWizardsArray.Add(2, new int[] { 0, 1, 2 });
                 _ActiveWizardsArray.Add(3, new int[] { 0, 1, 2, 3 });
-                _ActiveWizardsArray.Add(8, new int[] { 0, 1, 2, 3, 8 });
+                _ActiveWizardsArray.Add(7, new int[] { 0, 1, 2, 3, 7 });
                 return _ActiveWizardsArray;
             }
         }
@@ -572,7 +634,7 @@ namespace PraticeManagement
             LockdownCompensation();
             mlConfirmation.ClearMessage();
             AllowContinueWithoutSave = cellActivityLog.Visible = PersonId.HasValue;
-            personOpportunities.TargetPersonId = PersonId;
+            //personOpportunities.TargetPersonId = PersonId;
             mlError.ClearMessage();
             this.dvTerminationDateErrors.Visible = false;
 
@@ -580,7 +642,7 @@ namespace PraticeManagement
             {
                 activityLog.Update();
             }
-            cellOpportunities.Visible = UserIsAdministrator || UserIsOperations;
+            //cellOpportunities.Visible = UserIsAdministrator || UserIsOperations;
             cellCompensation.Visible = UserIsAdministrator || UserIsHR || UserIsRecruiter || UserIsOperations;
         }
 
@@ -599,19 +661,28 @@ namespace PraticeManagement
 
 
             ddlPersonStatus.Visible = !(lblPersonStatus.Visible = btnChangeEmployeeStatus.Visible = PersonId.HasValue);
-            btnAddCompensation.Enabled = !(PersonStatusId == PersonStatusType.Terminated);
+            btnAddCompensation.Enabled = !(PersonStatusId == PersonStatusType.Terminated || PersonStatusId == PersonStatusType.RightToPresent);
 
             DisableInactiveViews();
             DisplayWizardButtons();
             if (PersonId.HasValue)
             {
                 Person person = GetPerson(PersonId.Value);
-                if (!IsWizards && person.Manager == null && hdnIsSetPracticeOwnerClicked.Value == "false" && !IsPostBack)
+
+                if ((!IsWizards && person.Manager == null && hdnIsSetPracticeOwnerClicked.Value == "false" && !IsPostBack) || (PersonStatusId == PersonStatusType.RightToPresent))
                 {
-                    ListItem unasigned = new ListItem("Unassigned", "-1");
+                    ListItem unasigned = new ListItem("--Select a value--", "-1");
                     defaultManager.ManagerDdl.Items.Add(unasigned);
                     defaultManager.ManagerDdl.SelectedValue = "-1";
                 }
+                if (!(PersonStatusId == PersonStatusType.RightToPresent))
+                {
+                    ListItem unasigned = new ListItem("--Select a value--", "-1");
+                    defaultManager.ManagerDdl.Items.Remove(unasigned);
+                    defaultManager.ManagerDdl.Items.Remove(unasigned);
+
+                }
+                defaultManager.Enabled = !(PersonStatusId == PersonStatusType.RightToPresent);
             }
             showTargetUtil();
         }
@@ -720,8 +791,10 @@ namespace PraticeManagement
         protected void btnDivisionChageOk_Click(object sender, EventArgs e)
         {
             cvDivisionChange.Enabled = false;
+            isCVDivision = true;
             mpeDivisionChange.Hide();
             Save_Click(sender, e);
+
         }
 
         protected void btnDivisionChangeCancel_Click(object source, EventArgs args)
@@ -823,18 +896,27 @@ namespace PraticeManagement
                 custCompensationCoversMilestone.Enabled = false;
                 cvEndCompensation.Enabled = cvHireDateChange.Enabled = cvDivisionChange.Enabled = custCancelTermination.Enabled = cvIsOwnerForDivisionOrPractice.Enabled = cvIsOwnerOrAssignedToProject.Enabled = true;
 
-                var popupStatus = PopupStatus.Value == PersonStatusType.Contingent && PrevPersonStatusId == (int)PersonStatusType.Contingent && rbnTerminate.Checked ? PersonStatusType.TerminationPending : PopupStatus.Value;
+                var popupStatus = ((PopupStatus.Value == PersonStatusType.Contingent && PrevPersonStatusId == (int)PersonStatusType.Contingent) || (PopupStatus.Value == PersonStatusType.RightToPresent && PrevPersonStatusId == (int)PersonStatusType.RightToPresent)) && rbnTerminate.Checked ? PersonStatusType.TerminationPending : PopupStatus.Value;
 
                 switch (popupStatus)
                 {
                     case PersonStatusType.TerminationPending:
                     case PersonStatusType.Terminated:
+                        if (PrevPersonStatusId == (int)PersonStatusType.RightToPresent)
+                        {
+                            cvWithRtpHireDate.Enabled = true;
+                        }
+                        else
+                        {
+                            cvWithRtpHireDate.Enabled = false;
+                        }
                         Page.Validate(valSummaryChangePersonStatusToTerminate.ValidationGroup);
                         if (!Page.IsValid)
                         {
                             divTerminate.Attributes["class"] = "padLeft25 PaddingTop6";
                             divActive.Attributes["class"] = "displayNone";
                             divContingent.Attributes["class"] = "displayNone";
+                            divRighttoPresent.Attributes["class"] = "displayNone";
                             mpeViewPersonChangeStatus.Show();
                         }
                         else
@@ -857,6 +939,7 @@ namespace PraticeManagement
                                 divContingent.Attributes["class"] = "padLeft25 PaddingTop6";
                                 divActive.Attributes["class"] = "displayNone";
                                 divTerminate.Attributes["class"] = "displayNone";
+                                divRighttoPresent.Attributes["class"] = "displayNone";
                                 mpeViewPersonChangeStatus.Show();
                             }
                         }
@@ -869,6 +952,15 @@ namespace PraticeManagement
                         }
                         else
                         {
+                            if (PrevPersonStatusId == (int)PersonStatusType.RightToPresent)
+                            {
+                                cvWithRtpEndDate.Enabled = true;
+                            }
+                            else
+                            {
+                                cvWithRtpEndDate.Enabled = false;
+                            }
+
                             //change employee status to active.
                             Page.Validate(valSummaryChangePersonStatusToActive.ValidationGroup);
                             if (!Page.IsValid)
@@ -876,14 +968,45 @@ namespace PraticeManagement
                                 divActive.Attributes["class"] = "padLeft25 PaddingTop6";
                                 divTerminate.Attributes["class"] = "displayNone";
                                 divContingent.Attributes["class"] = "displayNone";
+                                divRighttoPresent.Attributes["class"] = "displayNone";
 
                                 mpeViewPersonChangeStatus.Show();
                             }
+
                         }
                         PopulateDivisionAndPracticeDropdown();
 
                         break;
 
+                    case PersonStatusType.RightToPresent:
+                        if (rbnCancleTermination.Checked)
+                        {
+                            dtpPopUpTerminateDate.TextValue = ddlPopUpTerminationReason.SelectedValue = dtpRtpEndDate.TextValue = string.Empty;
+                        }
+                        else
+                        {
+                            if (PreviousTerminationDate.HasValue)
+                            {
+                                cvRtpToTermination.Enabled = true;
+                                cvRtPStartToRtPEnd.Enabled = false;
+                            }
+                            else
+                            {
+                                cvRtpToTermination.Enabled = false;
+                                cvRtPStartToRtPEnd.Enabled = true;
+                            }
+                            Page.Validate(valSummaryChangeStatusToRightToPresent.ValidationGroup);
+                            if (!Page.IsValid)
+                            {
+                                divRighttoPresent.Attributes["class"] = "padLeft25 PaddingTop6";
+                                divContingent.Attributes["class"] = "displayNone";
+                                divActive.Attributes["class"] = "displayNone";
+                                divTerminate.Attributes["class"] = "displayNone";
+                                mpeViewPersonChangeStatus.Show();
+                            }
+                        }
+
+                        break;
                     default:
                         IsStatusChangeClicked = false;
                         break;
@@ -893,15 +1016,63 @@ namespace PraticeManagement
                     IsRehire = PrevPersonStatusId == (int)PersonStatusType.Terminated;
                     PersonStatusId = PopupStatus.Value;
                     lblPersonStatus.Text = DataHelper.GetDescription(PopupStatus.Value);
-                    dtpHireDate.DateValue = HireDate.Value;
+                    dtpHireDate.DateValue = HireDate.HasValue ? HireDate.Value : DateTime.MinValue;
+                    if (PrevPersonStatusId == (int)PersonStatusType.RightToPresent && PopupStatus.Value == PersonStatusType.Active)
+                    {
+                        dtpRtpEndDate.DateValue = HireDate.Value.AddDays(-1);
+                        dtpRtpStartDate.ReadOnly = dtpRtpEndDate.ReadOnly = true;
+                        dtpRtpStartDate.EnabledTextBox = dtpRtpEndDate.EnabledTextBox = false;
+                        dtpHireDate.EnabledTextBox = true;
+                        dtpHireDate.ReadOnly = false;
+                        IsStatusChangedFromRightToPresentToActive = true;
+                        cvHireDateChange.Enabled = false;
+                    }
+                    if (PrevPersonStatusId == (int)PersonStatusType.Terminated && PopupStatus.Value == PersonStatusType.RightToPresent)
+                    {
+                        dtpHireDate.EnabledTextBox = dtpTerminationDate.EnabledTextBox = false;
+                        dtpHireDate.ReadOnly = dtpTerminationDate.ReadOnly = true;
+                        dtpHireDate.TextValue = dtpTerminationDate.TextValue = string.Empty;
+                        dtpRtpEndDate.TextValue = string.Empty;
+                        dtpRtpEndDate.ReadOnly = true;
+                        dtpRtpEndDate.EnabledTextBox = false;
+                        dtpRtpStartDate.ReadOnly = false;
+                        dtpRtpStartDate.EnabledTextBox = true;
+                        dtpRtpStartDate.DateValue = dtpRighttoPresentStartDate.DateValue;
+
+                    }
+
                     dtpTerminationDate.TextValue = TerminationDate.HasValue ? TerminationDate.Value.ToShortDateString() : string.Empty;
                     if (TerminationDate.HasValue)
                     {
                         ddlTerminationReason.Visible = true;
                         txtTerminationReason.Visible = false;
                         ddlTerminationReason.SelectedValue = TerminationReasonId;
+
+                        if (PrevPersonStatusId == (int)PersonStatusType.RightToPresent && (PopupStatus.Value == PersonStatusType.Terminated || PopupStatus.Value == PersonStatusType.RightToPresent))
+                        {
+                            dtpTerminationDate.TextValue = string.Empty;
+                            dtpRtpEndDate.DateValue = TerminationDate.Value;
+                            dtpRtpStartDate.ReadOnly = dtpRtpEndDate.ReadOnly = dtpTerminationDate.ReadOnly = true;
+                            dtpRtpStartDate.EnabledTextBox = dtpRtpEndDate.EnabledTextBox = dtpTerminationDate.EnabledTextBox = false;
+                            dtpHireDate.EnabledTextBox = false;
+                            dtpHireDate.ReadOnly = true;
+
+                        }
                     }
-                    Save_Click(source, args);
+
+                    if (PrevPersonStatusId == (int)PersonStatusType.RightToPresent && PopupStatus.Value == PersonStatusType.Active)
+                    {
+                        personnelCompensation.StartDate = HireDate.Value;
+                        personnelCompensation.DivisionId = string.IsNullOrEmpty(ddlDivision.SelectedValue) ? null : (int?)Int32.Parse(ddlDivision.SelectedValue);
+                        personnelCompensation.PracticeId = string.IsNullOrEmpty(ddlDefaultPractice.SelectedValue) ? null : (int?)Int32.Parse(ddlDefaultPractice.SelectedValue);
+                        personnelCompensation.TitleId = string.IsNullOrEmpty(ddlPersonTitle.SelectedValue) ? null : (int?)Int32.Parse(ddlPersonTitle.SelectedValue);
+
+                        btnNext_Click(btnNext, null);
+                    }
+                    else
+                    {
+                        Save_Click(source, args);
+                    }
                 }
             }
             else
@@ -1009,9 +1180,13 @@ namespace PraticeManagement
 
         protected void btnChangeEmployeeStatus_Click(object sender, EventArgs e)
         {
+            if (PreviousRighttoPresentEndDate.HasValue && !PreviousTerminationDate.HasValue)
+            {
+                reqHireDate.Enabled = compHireDate.Enabled = false;
+            }
             reqHireDate.Validate();
             compHireDate.Validate();
-            if (reqHireDate.IsValid && compHireDate.IsValid)
+            if ((reqHireDate.IsValid && compHireDate.IsValid) || PersonStatusId == PersonStatusType.RightToPresent)
             {
                 LoadChangeEmployeeStatusPopUpData();
                 mpeViewPersonChangeStatus.Show();
@@ -1056,10 +1231,10 @@ namespace PraticeManagement
                 activityLog.Update();
             }
 
-            if (mvPerson.Views[viewIndex] == vwOpportunities) //Opportunities
-            {
-                personOpportunities.DatabindOpportunities();
-            }
+            //if (mvPerson.Views[viewIndex] == vwOpportunities) //Opportunities
+            //{
+            //    personOpportunities.DatabindOpportunities();
+            //}
         }
 
         protected void btnStartDate_Command(object sender, CommandEventArgs e)
@@ -1142,10 +1317,11 @@ namespace PraticeManagement
         {
             IsDirty = true;
             dtpHireDate.Focus();
-            if (IsWizards)
+            if (IsWizards || (PrevPersonStatusId == (int)PersonStatusType.RightToPresent && PersonStatusId == PersonStatusType.Active))
             {
                 personnelCompensation.StartDate = dtpHireDate.DateValue;
             }
+            dtpRtpEndDate.DateValue = PreviousRighttoPresentEndDate.HasValue || PrevPersonStatusId == (int)PersonStatusType.RightToPresent ? dtpHireDate.DateValue.AddDays(-1) : DateTime.MinValue;
         }
 
         protected void ddlPersonTitle_OnSelectedIndexChanged(object sender, EventArgs e)
@@ -1448,7 +1624,7 @@ namespace PraticeManagement
 
         protected void custTerminationDate_ServerValidate(object source, ServerValidateEventArgs args)
         {
-            if (PersonStatusId.HasValue && (PersonStatusId.Value == PersonStatusType.Terminated || PersonStatusId.Value == PersonStatusType.TerminationPending))
+            if (PersonStatusId.HasValue && (PersonStatusId.Value == PersonStatusType.Terminated || PersonStatusId.Value == PersonStatusType.TerminationPending) && PrevPersonStatusId != (int)PersonStatusType.RightToPresent)
             {
                 args.IsValid = TerminationDate.HasValue;
             }
@@ -1610,7 +1786,7 @@ namespace PraticeManagement
 
             var validator = ((CustomValidator)sender);
             e.IsValid = true;
-            if (PreviousHireDate.HasValue && HireDate != PreviousHireDate && PayHistory != null)
+            if (PreviousHireDate.HasValue && HireDate.HasValue && HireDate != PreviousHireDate && PayHistory != null)
             {
                 if (PayHistory.Any(p => p.EndDate.HasValue && p.EndDate.Value.AddDays(-1).Date < HireDate.Value.Date
                                         &&
@@ -1822,9 +1998,11 @@ namespace PraticeManagement
                     {
                         switch (owner.IsDivisionOwner)
                         {
-                            case true: divisions += owner.Target + ", ";
+                            case true:
+                                divisions += owner.Target + ", ";
                                 break;
-                            case false: practiceAreas += owner.Target + ", ";
+                            case false:
+                                practiceAreas += owner.Target + ", ";
                                 break;
                         }
                     }
@@ -2321,10 +2499,11 @@ namespace PraticeManagement
                 var imgEditCompensation = e.Row.FindControl("imgEditCompensation") as Image;
                 var imgCompensationDelete = e.Row.FindControl("imgCompensationDelete") as Image;
                 var btnStartDate = e.Row.FindControl("btnStartDate") as LinkButton;
+                bool isRtP = PersonStatusId.HasValue && PersonStatusId == PersonStatusType.RightToPresent;
 
                 var isVisible = (pay.EndDate.HasValue) ? !((pay.EndDate.Value.AddDays(-1) < now.Date) || (PersonStatusId.HasValue && PersonStatusId.Value == PersonStatusType.Terminated)) || (_editablePayStartDate.HasValue && _editablePayStartDate.Value == pay.StartDate) : true;
 
-                imgCopy.Visible = isVisible;
+                imgCopy.Visible = isVisible && !isRtP;
 
                 if (gvCompensationHistory.EditIndex == e.Row.DataItemIndex)
                 {
@@ -3119,7 +3298,7 @@ namespace PraticeManagement
 
         public static void SaveRoles(Person person, string[] currentRoles)
         {
-            if (string.IsNullOrEmpty(person.Alias)) return;
+            if (string.IsNullOrEmpty(person.Alias) || person.Status.Id == (int)PersonStatusType.RightToPresent) return;
 
             // Saving roles
 
@@ -3148,7 +3327,17 @@ namespace PraticeManagement
         {
             int activeindex = mvPerson.ActiveViewIndex;
             int[] activeWizardsArray = ActiveWizardsArray[ActiveWizard];
-            rfvTxtTargetUtil.Enabled = rfvTxtTargetUtil.Enabled = chbInvestmentResouce.Checked;
+            rfvTxtTargetUtil.Enabled = chbInvestmentResouce.Checked;
+            if (ddlPersonStatus.SelectedValue == "6" || (PrevPersonStatusId == (int)PersonStatusType.RightToPresent && PopupStatus.HasValue && (PopupStatus.Value == PersonStatusType.Terminated || PopupStatus.Value == PersonStatusType.RightToPresent)))
+            {
+                DisableValidationsForRightToPresent();
+            }
+            if (!string.IsNullOrEmpty(txtEmailAddress.Text))
+            {
+                regEmailAddress.Enabled
+               = custEmailAddress.Enabled
+               = custUserName.Enabled = true;
+            }
             Page.Validate(valsPerson.ValidationGroup);
             personBadge.ValidateMSBadgeDetails();
             if (Page.IsValid)
@@ -3201,13 +3390,25 @@ namespace PraticeManagement
 
             divCompensationHistory.Visible = !IsWizards;
             divCompensation.Visible = IsWizards;
+            if (IsStatusChangedFromRightToPresentToActive)
+            {
+                divCompensationHistory.Visible = false;
+                divCompensation.Visible = true;
+            }
+
         }
 
-        private void DisplayWizardButtons()
+        private void DisplayWizardButtons()//right to present to active
         {
             btnCancelAndReturn.Visible = btnSave.Visible = !IsWizards;
             btnNext.Visible = btnWizardsCancel.Visible = IsWizards;
             btnNext.Text = ActiveWizard == _finalWizardView ? "Finish" : "Next";
+
+            if (IsStatusChangedFromRightToPresentToActive)
+            {
+                btnCancelAndReturn.Visible = btnSave.Visible = false;
+                btnNext.Visible = btnWizardsCancel.Visible = true;
+            }
         }
 
         private void DisableTerminationDateAndReason()
@@ -3255,10 +3456,10 @@ namespace PraticeManagement
         {
             if (PrevPersonStatusId == (int)PersonStatusType.Active)
             {
-                rbnCancleTermination.CssClass =
+                rbnCancleTermination.CssClass = rbnRighttoPresent.CssClass =
                 rbnActive.CssClass = rbnContingent.CssClass =
                 divActive.Attributes["class"] = displayNone;
-                divContingent.Attributes["class"] = divTerminate.Attributes["class"] = displayNone;
+                divContingent.Attributes["class"] = divTerminate.Attributes["class"] = divRighttoPresent.Attributes["class"] = displayNone;
                 bool isTimeEntriesExists = ServiceCallers.Custom.Person(p => p.CheckPersonTimeEntriesAfterHireDate((int)PersonId));
                 if (!isTimeEntriesExists)
                 {
@@ -3267,44 +3468,49 @@ namespace PraticeManagement
                 }
                 dtpPopUpTerminateDate.DateValue = DateTime.Now.Date;
                 rbnTerminate.CssClass = "";
-                rbnActive.Checked = rbnCancleTermination.Checked = rbnContingent.Checked = rbnTerminate.Checked = false;
+                rbnActive.Checked = rbnCancleTermination.Checked = rbnContingent.Checked = rbnTerminate.Checked = rbnRighttoPresent.Checked = false;
             }
-            else if (PrevPersonStatusId == (int)PersonStatusType.TerminationPending || (PrevPersonStatusId == (int)PersonStatusType.Contingent && PreviousTerminationDate.HasValue))
+            else if (PrevPersonStatusId == (int)PersonStatusType.TerminationPending || (PrevPersonStatusId == (int)PersonStatusType.Contingent && PreviousTerminationDate.HasValue) || (PrevPersonStatusId == (int)PersonStatusType.RightToPresent && PreviousRighttoPresentEndDate.HasValue))
             {
                 rbnCancleTermination.CssClass = "";
-                rbnActive.Checked = rbnTerminate.Checked = rbnContingent.Checked = rbnCancleTermination.Checked = false;
+                rbnActive.Checked = rbnTerminate.Checked = rbnContingent.Checked = rbnCancleTermination.Checked = rbnRighttoPresent.Checked = false;
 
                 rbnActive.CssClass =
                 rbnTerminate.CssClass =
                 rbnContingent.CssClass =
+                rbnRighttoPresent.CssClass =
                 divActive.Attributes["class"] =
                 divTerminate.Attributes["class"] =
-                divContingent.Attributes["class"] = displayNone;
+                divContingent.Attributes["class"] =
+                divRighttoPresent.Attributes["class"] = displayNone;
             }
-            else if (PrevPersonStatusId == (int)PersonStatusType.Contingent)
+            else if (PrevPersonStatusId == (int)PersonStatusType.Contingent || PrevPersonStatusId == (int)PersonStatusType.RightToPresent)
             {
-                dtpActiveHireDate.DateValue = dtpHireDate.DateValue;
+                dtpActiveHireDate.DateValue = dtpHireDate.DateValue != DateTime.MinValue ? dtpHireDate.DateValue : DateTime.Now.Date;
                 dtpPopUpTerminateDate.DateValue = DateTime.Now.Date;
 
                 rbnActive.CssClass = rbnTerminate.CssClass = "";
                 rbnCancleTermination.CssClass =
                 rbnContingent.CssClass =
+                rbnRighttoPresent.CssClass =
                 divActive.Attributes["class"] =
                 divContingent.Attributes["class"] =
-                divTerminate.Attributes["class"] = displayNone;
-                rbnActive.Checked = rbnCancleTermination.Checked = rbnContingent.Checked = rbnTerminate.Checked = false;
+                divTerminate.Attributes["class"] =
+                divRighttoPresent.Attributes["class"] = displayNone;
+                rbnActive.Checked = rbnCancleTermination.Checked = rbnContingent.Checked = rbnTerminate.Checked = rbnRighttoPresent.Checked = false;
             }
             else if (PrevPersonStatusId == (int)PersonStatusType.Terminated)
             {
-                dtpActiveHireDate.DateValue = dtpContingentHireDate.DateValue = PreviousTerminationDate.Value.AddDays(1);
+                dtpActiveHireDate.DateValue = dtpContingentHireDate.DateValue = dtpRighttoPresentStartDate.DateValue = PreviousTerminationDate.HasValue ? PreviousTerminationDate.Value.AddDays(1) : PreviousRighttoPresentEndDate.Value.AddDays(1);
 
-                rbnActive.CssClass = rbnContingent.CssClass = "";
+                rbnActive.CssClass = rbnContingent.CssClass = rbnRighttoPresent.CssClass = "";
                 rbnCancleTermination.CssClass =
                 divActive.Attributes["class"] =
                 rbnTerminate.CssClass =
                 divTerminate.Attributes["class"] =
-                divContingent.Attributes["class"] = displayNone;
-                rbnActive.Checked = rbnCancleTermination.Checked = rbnContingent.Checked = rbnTerminate.Checked = false;
+                divContingent.Attributes["class"] =
+                divRighttoPresent.Attributes["class"] = displayNone;
+                rbnActive.Checked = rbnCancleTermination.Checked = rbnContingent.Checked = rbnTerminate.Checked = rbnRighttoPresent.Checked = false;
             }
 
             FillTerminationReasonsByTerminationDate(dtpPopUpTerminateDate, ddlPopUpTerminationReason);
@@ -3341,6 +3547,7 @@ namespace PraticeManagement
         private void FillTerminationReasonsByTerminationDate(DatePicker terminationDate, ListControl ddlTerminationReasons)
         {
             var reasons = new List<TerminationReason>();
+            var pay = new Pay();
             if (terminationDate != null)
             {
                 ddlTerminationReasons.SelectedValue = string.Empty;
@@ -3348,9 +3555,22 @@ namespace PraticeManagement
                 {
                     reasons = SettingsHelper.GetTerminationReasonsList().Where(tr => tr.IsContigent == true).ToList();
                 }
+                else if (PrevPersonStatusId == (int)PersonStatusType.RightToPresent)
+                {
+                    reasons = SettingsHelper.GetTerminationReasonsList().Where(tr => tr.IsRighttoPresentRule == true).ToList();
+                }
                 else if (GetDate(terminationDate.DateValue).HasValue && PayHistory.Any(p => p.StartDate.Date <= terminationDate.DateValue.Date && (!p.EndDate.HasValue || p.EndDate.Value > terminationDate.DateValue.Date)))
                 {
-                    var pay = PayHistory.First(p => p.StartDate.Date <= terminationDate.DateValue.Date && (!p.EndDate.HasValue || p.EndDate.Value > terminationDate.DateValue.Date));
+                    pay = PayHistory.First(p => p.StartDate.Date <= terminationDate.DateValue.Date && (!p.EndDate.HasValue || p.EndDate.Value > terminationDate.DateValue.Date));
+
+                }
+                else if (GetDate(terminationDate.DateValue).HasValue)
+                {
+                    pay = PayHistory.LastOrDefault();
+                }
+
+                if (pay != null)
+                {
                     switch (pay.Timescale)
                     {
                         case TimescaleType.Hourly:
@@ -3369,6 +3589,7 @@ namespace PraticeManagement
                         default:
                             break;
                     }
+
                 }
             }
 
@@ -3429,6 +3650,22 @@ namespace PraticeManagement
             custTerminateDateTE.Enabled = false;
             int activeindex = mvPerson.ActiveViewIndex;
             rfvTxtTargetUtil.Enabled = rfvTxtTargetUtil.Enabled = chbInvestmentResouce.Checked;
+            if (PersonStatusId == PersonStatusType.RightToPresent || (PrevPersonStatusId == (int)PersonStatusType.RightToPresent && PopupStatus.HasValue && (PopupStatus.Value == PersonStatusType.Terminated || PopupStatus.Value == PersonStatusType.RightToPresent)) || (PersonStatusId == PersonStatusType.Terminated && string.IsNullOrEmpty(dtpHireDate.TextValue)))
+            {
+                DisableValidationsForRightToPresent();
+            }
+            else
+            {
+                EnableValidations();
+            }
+
+            if (!string.IsNullOrEmpty(txtEmailAddress.Text))
+            {
+                regEmailAddress.Enabled
+               = custEmailAddress.Enabled
+               = custUserName.Enabled = true;
+            }
+
             for (int i = 0, j = mvPerson.ActiveViewIndex; i < mvPerson.Views.Count; i++, j++)
             {
                 if (j == mvPerson.Views.Count)
@@ -3459,7 +3696,7 @@ namespace PraticeManagement
                 cvHireDateChange.Validate();
                 SelectView(rowSwitcher.Cells[activeindex].Controls[0], activeindex, true);
             }
-            if (cvDivisionChange.Enabled && Page.IsValid)
+            if (cvDivisionChange.Enabled && Page.IsValid && !isCVDivision)
             {
                 cvDivisionChange.Validate();
                 SelectView(rowSwitcher.Cells[activeindex].Controls[0], activeindex, true);
@@ -3510,6 +3747,7 @@ namespace PraticeManagement
                     PersonId = personId;
                     ClearDirty();
                     hdTitleChanged.Value = 0.ToString();
+                    IsStatusChangedFromRightToPresentToActive = false;
                     return true;
                 }
             }
@@ -3607,6 +3845,7 @@ namespace PraticeManagement
                 var status = new List<PersonStatus>();
                 status.Add(new PersonStatus { Id = (int)PersonStatusType.Active, Name = PersonStatusType.Active.ToString() });
                 status.Add(new PersonStatus { Id = (int)PersonStatusType.Contingent, Name = PersonStatusType.Contingent.ToString() });
+                status.Add(new PersonStatus { Id = (int)PersonStatusType.RightToPresent, Name = DataHelper.GetDescription(PersonStatusType.RightToPresent) });
                 DataHelper.FillListDefault(ddlPersonStatus, string.Empty, status.ToArray(), true);
                 PersonStatusId = PersonStatusType.Active;
                 FillTerminationReasonsByTerminationDate(dtpTerminationDate, ddlTerminationReason);
@@ -3654,6 +3893,7 @@ namespace PraticeManagement
                 if (person != null)
                 {
                     PayHistory = person.PaymentHistory;
+                    CurrentPay = PayHistory.FirstOrDefault();//since we have only one pay record for (Right to Present)RtP person
                     PopulateControls(person);
                 }
             }
@@ -3666,7 +3906,7 @@ namespace PraticeManagement
                 btnResetPassword.Visible = false;
                 FillPracticeLeadership();
             }
-            personOpportunities.DataBind();
+            //personOpportunities.DataBind();
         }
 
         public void FillPracticeLeadership()
@@ -3737,6 +3977,12 @@ namespace PraticeManagement
             persons = ServiceCallers.Custom.Person(p => p.GetPersonsByPayTypesAndByStatusIds(statusIds, paytypeIds)).ToList();
             DataHelper.FillPersonList(ddlEmpReferral, "-- Select Employee --", persons.ToArray(), string.Empty);
             rbEmpReferralNo.Checked = true;
+
+            if (ddlRecruiter.SelectedValue == "0")//third party
+            {
+                ddlSource.Items.Clear();
+                DataHelper.FillVendors(ddlSource, "-- Select Source --");
+            }
         }
 
         protected void rbActiveCandidate_CheckedChanged(object sender, EventArgs e)
@@ -3792,7 +4038,7 @@ namespace PraticeManagement
                 && !paymentHistory.Any(p => p.StartDate <= now.Date && (!p.EndDate.HasValue || (p.EndDate.HasValue && now.Date <= p.EndDate.Value.AddDays(-1)))))
             {
                 Pay pay = paymentHistory.OrderByDescending(p => p.StartDate).FirstOrDefault(p => p.StartDate < now.Date);
-                _editablePayStartDate = pay != null && (!PersonHireDate.HasValue || (PersonHireDate.HasValue && pay.StartDate >= PersonHireDate.Value.Date)) ? pay.StartDate : (DateTime?)null;
+                _editablePayStartDate = pay != null && ((!PersonHireDate.HasValue && PersonStatusId.Value != PersonStatusType.RightToPresent) || (PersonHireDate.HasValue && pay.StartDate >= PersonHireDate.Value.Date)) ? pay.StartDate : (DateTime?)null;
             }
             gvCompensationHistory.DataSource = paymentHistory;
             gvCompensationHistory.DataBind();
@@ -3837,6 +4083,27 @@ namespace PraticeManagement
             PrevPersonStatusId = (person.Status != null) ? person.Status.Id : -1;
             lblPersonStatus.Text = PersonStatusId.HasValue ? DataHelper.GetDescription((PersonStatusType)PrevPersonStatusId) : string.Empty;
 
+            if (person.Status != null && person.Status.Id == (int)PersonStatusType.RightToPresent)
+            {
+                dtpHireDate.ReadOnly = true;
+                dtpHireDate.EnabledTextBox = false;
+                dtpRtpStartDate.ReadOnly = false;
+                dtpRtpStartDate.EnabledTextBox = true;
+                PersonHireDate = person.RighttoPresentStartDate;
+            }
+            else
+            {
+                dtpHireDate.ReadOnly = false;
+                dtpHireDate.EnabledTextBox = true;
+                dtpRtpStartDate.ReadOnly = true;
+                dtpRtpStartDate.EnabledTextBox = false;
+            }
+            // Controls related to Right to Present
+            tblRtpStartDate.Visible = tblRtpEndDate.Visible = person.RighttoPresentStartDate.HasValue;
+            dtpRtpStartDate.DateValue = person.RighttoPresentStartDate != null ? person.RighttoPresentStartDate.Value : DateTime.MinValue;
+            dtpRtpEndDate.DateValue = person.RighttoPresentEndDate != null ? person.RighttoPresentEndDate.Value : DateTime.MinValue;
+            PreviousRighttoPresentEndDate = person.RighttoPresentEndDate;
+            PreviousRighttoPresentStartDate = person.RighttoPresentStartDate;
             //Populate Termination date and termination reason.
             PopulateTerminationDate(person.TerminationDate);
             FillTerminationReasonsByTerminationDate(dtpTerminationDate, ddlTerminationReason);
@@ -3951,6 +4218,14 @@ namespace PraticeManagement
                 rbActiveCandidate.Checked = person.JobSeekersStatus == JobSeekersStatus.ActiveCandidate;
                 rbPassiveCandidate.Checked = person.JobSeekersStatus == JobSeekersStatus.PassiveCandidate;
             }
+            if (person != null && person.RecruiterId != null)
+            {
+                if (person.RecruiterId == 0)//third party
+                {
+                    ddlSource.Items.Clear();
+                    DataHelper.FillVendors(ddlSource, "-- Select Source --");
+                }
+            }
             if (person != null && person.SourceRecruitingMetrics != null)
             {
                 ddlSource.SelectedValue = person.SourceRecruitingMetrics.RecruitingMetricsId.ToString();
@@ -3995,11 +4270,11 @@ namespace PraticeManagement
             person.FirstName = txtFirstName.Text;
             person.LastName = txtLastName.Text;
             person.PrefferedFirstName = txtPrefferedFirstName.Text;
-            person.HireDate = HireDate.Value;
+            person.HireDate = HireDate.HasValue ? HireDate.Value : DateTime.MinValue;
 
             person.IsOffshore = ddlPersonType.SelectedValue == "1";
             person.PaychexID = txtPayCheckId.Text;
-            person.TerminationDate = TerminationDate;// dtpTerminationDate.DateValue != DateTime.MinValue ? (DateTime?)dtpTerminationDate.DateValue : null;
+            person.TerminationDate = (PrevPersonStatusId != (int)PersonStatusType.RightToPresent) ? TerminationDate : null;// dtpTerminationDate.DateValue != DateTime.MinValue ? (DateTime?)dtpTerminationDate.DateValue : null;
             person.TerminationReasonid = string.IsNullOrEmpty(TerminationReasonId) ? null : (int?)Convert.ToInt32(TerminationReasonId);// ddlTerminationReason.SelectedValue != string.Empty ? (int?)Convert.ToInt32(ddlTerminationReason.SelectedValue) : null;
 
             person.Alias = Email;
@@ -4008,6 +4283,9 @@ namespace PraticeManagement
             person.EmployeeNumber = txtEmployeeNumber.Text;
 
             person.Status = new PersonStatus { Id = (int)PersonStatusId };
+
+            person.RighttoPresentStartDate = GetDate(dtpRtpStartDate.DateValue);
+            person.RighttoPresentEndDate = GetDate(dtpRtpEndDate.DateValue);
 
             //Set Locked-Out value
             person.LockedOut = IsLockOut;
@@ -4043,7 +4321,7 @@ namespace PraticeManagement
                 person.DivisionType = (PersonDivisionType)Enum.Parse(typeof(PersonDivisionType), ddlDivision.SelectedValue);
             }
 
-            if (IsWizards)
+            if (IsWizards || IsStatusChangedFromRightToPresentToActive)
             {
                 int[] activeWizardsArray = ActiveWizardsArray[ActiveWizard];
                 if (activeWizardsArray.Any(a => mvPerson.Views[a] == vwCompensation))
@@ -4105,7 +4383,7 @@ namespace PraticeManagement
             var person = new Person();
             PopulateData(person);
 
-            if (PersonId.HasValue && PrevPersonStatusId == (int)PersonStatusType.Terminated && (PersonStatusId.Value == PersonStatusType.Active || PersonStatusId.Value == PersonStatusType.Contingent))
+            if (PersonId.HasValue && PrevPersonStatusId == (int)PersonStatusType.Terminated && (PersonStatusId.Value == PersonStatusType.Active || PersonStatusId.Value == PersonStatusType.Contingent || PersonStatusId.Value == PersonStatusType.RightToPresent))
             {
                 TransferToCompesationDetailPage(person);
             }
@@ -4125,10 +4403,13 @@ namespace PraticeManagement
                             currentRoles = Roles.GetRolesForUser(oldPerson.Alias);
                         oldPerson.RoleNames = currentRoles;
                     }
-                    int? personId = serviceClient.SavePersonDetail(person, User.Identity.Name, LoginPageUrl, IsWizards, Page.User.Identity.Name);
+                    int? personId = serviceClient.SavePersonDetail(person, User.Identity.Name, LoginPageUrl, IsStatusChangedFromRightToPresentToActive ? IsStatusChangedFromRightToPresentToActive : IsWizards, Page.User.Identity.Name);
                     SaveRoles(person, currentRoles);
 
-                    serviceClient.SendAdministratorAddedEmail(person, oldPerson);
+                    if (person.Status.Id != (int)PersonStatusType.RightToPresent && (PrevPersonStatusId == (int)PersonStatusType.RightToPresent && person.Status.Id == (int)PersonStatusType.Active))
+                    {
+                        serviceClient.SendAdministratorAddedEmail(person, oldPerson);
+                    }
 
                     if (personId.Value < 0)
                     {
@@ -4308,7 +4589,7 @@ namespace PraticeManagement
             int divisionId;
             int.TryParse(ddlDivision.SelectedValue, out divisionId);
             PersonDivision division = ServiceCallers.Custom.Person(p => p.GetPersonDivisionById(divisionId));
-            if (ddlDefaultPractice.SelectedIndex == 0 || division == null)
+            if (ddlDefaultPractice.SelectedIndex == 0 || division == null || PersonStatusId == PersonStatusType.RightToPresent)
             {
                 return false;
             }
@@ -4337,6 +4618,98 @@ namespace PraticeManagement
         }
 
         #endregion Methods
+
+        protected void ddlPersonStatus_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ddlPersonStatus.SelectedValue == "6")
+            {
+                dtpHireDate.TextValue = dtpTerminationDate.TextValue = string.Empty;
+                dtpHireDate.EnabledTextBox = false;
+                dtpHireDate.ReadOnly = tblRtpStartDate.Visible = tblRtpEndDate.Visible = reqRtpStartDate.Enabled = compRtpStartDate.Enabled = true;
+                dtpRtpStartDate.ReadOnly = false;
+                dtpRtpStartDate.EnabledTextBox = true;
+
+                ListItem unasigned = new ListItem("--Select a value--", "-1");
+                defaultManager.ManagerDdl.Items.Add(unasigned);
+                defaultManager.ManagerDdl.SelectedValue = "-1";
+
+                defaultManager.Enabled = false;
+                DisableValidationsForRightToPresent();
+            }
+            else
+            {
+                dtpHireDate.EnabledTextBox = true;
+                dtpHireDate.ReadOnly = tblRtpStartDate.Visible = tblRtpEndDate.Visible = reqRtpStartDate.Enabled = compRtpStartDate.Enabled = false;
+                ListItem unasigned = new ListItem("--Select a value--", "-1");
+                defaultManager.ManagerDdl.Items.Remove(unasigned);
+                defaultManager.EnsureDatabound();
+                defaultManager.Enabled = true;
+                EnableValidations();
+
+            }
+        }
+
+        protected void dtpRtpStartDate_SelectionChanged(object sender, EventArgs e)
+        {
+            IsDirty = true;
+            dtpRtpStartDate.Focus();
+            if (IsWizards)
+            {
+                personnelCompensation.StartDate = dtpRtpStartDate.DateValue;
+            }
+        }
+
+        protected void ddlRecruiter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ddlSource.Items.Clear();
+            FillRecruitingMetrics();
+        }
+
+        protected void cvWithRtpStartDate_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            args.IsValid = (PreviousRighttoPresentStartDate.HasValue) ? dtpHireDate.DateValue > PreviousRighttoPresentStartDate : true;
+        }
+
+        private void DisableValidationsForRightToPresent()
+        {
+            rfvLocation.Enabled = rfvEmailAddress.Enabled = rfvTelephoneNumber.Enabled = reqHireDate.Enabled = cvDivisionChange.Enabled =
+                    cvRoles.Enabled = rfvSeniority.Enabled = false;
+
+            if (string.IsNullOrEmpty(txtEmailAddress.Text))
+            {
+                regEmailAddress.Enabled
+               = custEmailAddress.Enabled
+               = custUserName.Enabled = false;
+            }
+            if (string.IsNullOrEmpty(txtTelephoneNumber.Text))
+            {
+                reqTelphoneNumber.Enabled = false;
+            }
+            if (string.IsNullOrEmpty(dtpHireDate.TextValue))
+            {
+                compHireDate.Enabled = custWithPreviousTermDate.Enabled = false;
+                custTerminationDate.Enabled = false;
+            }
+            reqRtpStartDate.Enabled = compRtpStartDate.Enabled = true;
+        }
+
+        private void EnableValidations()
+        {
+            rfvLocation.Enabled = rfvEmailAddress.Enabled = rfvTelephoneNumber.Enabled = reqHireDate.Enabled = cvDivisionChange.Enabled =
+                   cvRoles.Enabled = rfvSeniority.Enabled = true;
+
+            regEmailAddress.Enabled
+           = custEmailAddress.Enabled
+           = custUserName.Enabled = true;
+
+            reqTelphoneNumber.Enabled = true;
+
+            compHireDate.Enabled = custWithPreviousTermDate.Enabled = true;
+            custTerminationDate.Enabled = true;
+
+            reqRtpStartDate.Enabled = compRtpStartDate.Enabled = false;
+
+        }
     }
 }
 
