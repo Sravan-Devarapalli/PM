@@ -336,15 +336,15 @@ BEGIN
 
 	
 
-	  SELECT B.ProjectId,
-			 B.PersonId,
+	 SELECT ISNULL(B.ProjectId, A.ProjectId) as ProjectId,
+			 ISNULL(B.PersonId, A.PersonId) as PersonId,
 			 Per.FirstName,
 			 Per.LastName,
 			 Per.TitleId,
 			 Per.Title,
-			 CONVERT(DECIMAL(6,2),B.BudgetHours) BudgetHours,
-			 CONVERT(DECIMAL(18,2),B.BudgetMargin) as BudgetMargin,
-			 CONVERT(DECIMAL(18,2),B.Revenue) as BudgetRevenue,
+			 CONVERT(DECIMAL(6,2),ISNULL(B.BudgetHours,0)) BudgetHours,
+			 CONVERT(DECIMAL(18,2),ISNULL(B.BudgetMargin,0)) as BudgetMargin,
+			 CONVERT(DECIMAL(18,2),ISNULL(B.Revenue,0)) as BudgetRevenue,
 			 CONVERT(DECIMAL(6,2), ISNULL(A.ActualHours,0)) as ActualHours,
 			 CONVERT(DECIMAL(18,2), ISNULL(A.ActualMargin,0)) as ActualMargin,
 			 CONVERT(DECIMAL(18,2),ISNULL(A.ActualRevenue,0)) as ActualRevenue,
@@ -355,8 +355,8 @@ BEGIN
 			 CONVERT(DECIMAL(18,2),ISNULL(A.EACMargin,0)) as EACMargin,
 			 CONVERT(DECIMAL(18,2),ISNULL(A.EACRevenue,0)) as EACRevenue
 	  FROM #Budget B
-	  LEFT JOIN #ActualAndProjected A on A.PersonId=B.PersonId 
-	  LEFT JOIN v_Person Per on B.PersonId=Per.PersonId
+	  full JOIN #ActualAndProjected A on A.PersonId=B.PersonId 
+	  LEFT JOIN v_Person Per on Per.PersonId =ISNULL(B.PersonId,A.PersonId)
 
 	;WITH ActualExpenses
 	AS
