@@ -471,8 +471,17 @@ BEGIN
 			ORDER BY P.LastName, B.FinancialDate
 
 			--select Budget Bill rate Data
-			SELECT * FROM #BudgetBillRatePeriod
-			ORDER BY StartDate
+			--SELECT * FROM #BudgetBillRatePeriod
+			--ORDER BY StartDate
+
+			select B.PersonId,
+				   B.StartDate,
+				   Avg(B.BillRate) as BillRate,
+				   B.PayRate
+			from #BudgetBillRatePeriod B
+			group by B.PersonId,
+				   B.StartDate,
+				   B.PayRate
 
 			--select Budget resource revenues
 
