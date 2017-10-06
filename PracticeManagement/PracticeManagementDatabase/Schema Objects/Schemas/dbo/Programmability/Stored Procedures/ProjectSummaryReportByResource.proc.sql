@@ -195,7 +195,7 @@ AS
 						LEFT JOIN dbo.v_OverheadFixedRateTimescale AS o ON p.Date BETWEEN o.StartDate AND ISNULL(o.EndDate, FD.FutureDate) AND o.TimescaleId = p.Timescale
 						LEFT JOIN #MilestoneRevenueRetrospective AS r ON ME.MilestoneId = r.MilestoneId AND c.Date = r.Date
 					GROUP BY pro.ProjectId,ME.MilestoneId, Per.PersonId,c.Date,C.DaysInYear,ME.IsHourlyAmount,ME.HoursPerDay,ME.PersonMilestoneDailyAmount,
-							p.Timescale,p.HourlyRate,p.VacationDays,
+							p.Timescale,p.HourlyRate,p.VacationDays,ME.Id,
 							r.HoursPerDay,r.MilestoneDailyAmount, MLFO.Rate,ME.ActualHoursPerDay, ME.Amount, ME.PersonRoleId
 	
 					CREATE CLUSTERED INDEX CIX_cteFinancialsRetrospectiveActualHours ON #cteFinancialsRetrospective(ProjectId,
