@@ -12,7 +12,8 @@
     [ResponseDate] DATETIME NULL, 
     [TargetRevenue] DECIMAL(18, 2) NULL, 
     [Comments] NVARCHAR(MAX) NULL, 
-    [IsRevenueException] BIT NOT NULL DEFAULT 0
+    [IsRevenueException] BIT NOT NULL DEFAULT 0, 
+    [RequestReason] NVARCHAR(MAX) NULL
 )
 
 GO
