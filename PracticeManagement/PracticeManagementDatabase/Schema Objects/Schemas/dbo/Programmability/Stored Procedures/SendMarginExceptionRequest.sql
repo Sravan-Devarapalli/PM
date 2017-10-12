@@ -7,6 +7,7 @@
 	@TargetRevenue DECIMAL(18,2),
 	@Comments   NVARCHAR(MAX),
 	@IsRevenueException BIT,
+	@Reason NVARCHAR(MAX),
 	@Recipient	NVARCHAR(100) OUT
 )
 AS
@@ -20,6 +21,7 @@ BEGIN
 		SELECT @CurrentPMTime = dbo.GettingPMTime(GETUTCDATE())
 		SELECT @userId = PersonId FROM dbo.Person WHERE Alias = @UserAlias
 
+		-- tier one approver
 		SELECT @Approver=PRD.DivisionOwnerId
 		FROM Project P
 		JOIN ProjectDivision PD ON PD.DivisionId=P.DivisionId
@@ -29,15 +31,11 @@ BEGIN
 
 		--status 1- Request, 2- Accept, 3- Decline
 
-		INSERT INTO dbo.MarginExceptionRequest(ProjectId,Requestor,Approver,TargetMargin,RequestDate,TierOneStatus,TierTwoStatus, TargetRevenue, IsRevenueException)
-		VALUES(@ProjectIdLocal,@UserId,@Approver,@TargetMargin,@CurrentPMTime,1, @TierTwoStatus, @TargetRevenue, @IsRevenueException)
+		INSERT INTO dbo.MarginExceptionRequest(ProjectId,Requestor,Approver,TargetMargin,RequestDate,TierOneStatus,TierTwoStatus, TargetRevenue, IsRevenueException, RequestReason, Comments)
+		VALUES(@ProjectIdLocal,@UserId,@Approver,@TargetMargin,@CurrentPMTime,1, @TierTwoStatus, @TargetRevenue, @IsRevenueException, @Reason, @Comments)
 
 		select @Recipient=Alias from person where PersonId=@Approver
 
-		select @Recipient=@Recipient+','+ p.Alias
-		FROM Person P
-		JOIN Title T on P.TitleId =T.TitleId
-		WHERE @TierTwoStatus = 1 AND T.Title = 'Chief Financial Officer' AND P.PersonStatusId = 1 --Active
 
 		EXEC dbo.SessionLogUnprepare
 
