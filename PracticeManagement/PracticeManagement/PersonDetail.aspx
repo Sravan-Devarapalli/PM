@@ -884,7 +884,7 @@ function ModifyInnerTextToWrapText() {
                                     <asp:RegularExpressionValidator ID="reqTelphoneNumber" runat="server" ControlToValidate="txtTelephoneNumber"
                                         Display="Dynamic" ErrorMessage="The Telephone number is not valid. " ValidationGroup="Person"
                                         ToolTip="The Telephone number is not valid." Text="*" EnableClientScript="False"
-                                        ValidationExpression="^[01]?[- .]?(\([2-9]\d{2}\)|[2-9]\d{2})[- .]?\d{3}[- .]?\d{4}$"></asp:RegularExpressionValidator>&nbsp;
+                                        ValidationExpression="^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,5})|(\(?\d{2,6}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$"></asp:RegularExpressionValidator>&nbsp;
                                     <asp:RequiredFieldValidator ID="rfvTelephoneNumber" runat="server" ErrorMessage="The Telephone number is required."
                                         ControlToValidate="txtTelephoneNumber" ToolTip="The Telephone number is required."
                                         ValidationGroup="Person" Text="*" EnableClientScript="false" SetFocusOnError="true"
