@@ -91,4 +91,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="ProjectId" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="0fb4f607-82bd-4982-bd99-c6b999c02f8c" ChangeDateTime="10/10/2017 09:44:20">
+    <Property Name="ElementName" Value="[dbo].[MarginExceptionRequest].[RequestReasons]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[MarginExceptionRequest]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="RequestReason" />
+  </Operation>
 </Operations>
