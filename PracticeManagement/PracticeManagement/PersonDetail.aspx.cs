@@ -1066,6 +1066,13 @@ namespace PraticeManagement
                         personnelCompensation.DivisionId = string.IsNullOrEmpty(ddlDivision.SelectedValue) ? null : (int?)Int32.Parse(ddlDivision.SelectedValue);
                         personnelCompensation.PracticeId = string.IsNullOrEmpty(ddlDefaultPractice.SelectedValue) ? null : (int?)Int32.Parse(ddlDefaultPractice.SelectedValue);
                         personnelCompensation.TitleId = string.IsNullOrEmpty(ddlPersonTitle.SelectedValue) ? null : (int?)Int32.Parse(ddlPersonTitle.SelectedValue);
+                        if (CurrentPay != null)
+                        {
+                            personnelCompensation.Timescale = CurrentPay.Timescale;
+                            personnelCompensation.Amount = (decimal?)CurrentPay.Amount.Value;
+                            personnelCompensation.VacationDays = CurrentPay.VacationDays;
+                            personnelCompensation.VendorId = CurrentPay.vendor != null ? CurrentPay.vendor.Id : null;
+                        }
 
                         btnNext_Click(btnNext, null);
                     }
