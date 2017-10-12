@@ -283,10 +283,10 @@
                     <td>Email&nbsp;Address
                     </td>
                     <td>
-                        <asp:TextBox ID="txtEmailAddress" runat="server" CssClass="Width120Px" onchange="setDirty();" MaxLength="35"></asp:TextBox>&nbsp;@&nbsp;
+                        <asp:TextBox ID="txtEmailAddress" runat="server" CssClass="Width120Px" onchange="setDirty();" MaxLength="45"></asp:TextBox>&nbsp;@&nbsp;
                      <%--   <asp:DropDownList ID="ddlDomain" runat="server" onchange="setDirty();" CssClass="Width109PxImp">
                         </asp:DropDownList>--%>
-                        <asp:TextBox ID="txtDomain" runat="server" CssClass="Width100PxImp" onchange="setDirty();" MaxLength="15"></asp:TextBox>
+                        <asp:TextBox ID="txtDomain" runat="server" CssClass="Width100PxImp" onchange="setDirty();" MaxLength="30"></asp:TextBox>
                     </td>
                     <td>
                         <asp:RequiredFieldValidator ID="rfvEmailAddress" runat="server" ControlToValidate="txtEmailAddress"
@@ -328,7 +328,7 @@
                             <asp:RegularExpressionValidator ID="reqTelphoneNumber" runat="server" ControlToValidate="txtTelephoneNumber"
                                 Display="Dynamic" ErrorMessage="Phone numbers must be either 10 digits (US) or 12 digits (International) in length.  Please enter only numbers. "
                                 ValidationGroup="Vendor" ToolTip="Phone numbers must be either 10 digits (US) or 12 digits (International) in length.  Please enter only numbers."
-                                Text="*" EnableClientScript="False" ValidationExpression="^([+]?\d{2,3})?[- .]?(?:[- .()]*\d){10}[^\d\n]*$"></asp:RegularExpressionValidator>&nbsp;
+                                Text="*" EnableClientScript="False" ValidationExpression="^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,5})|(\(?\d{2,6}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$"></asp:RegularExpressionValidator>&nbsp;
                         </td>
                     </tr>
                     <tr>
