@@ -396,10 +396,13 @@ namespace PracticeManagementService
             var addresses = commaSeperatedToAddresses.Split(',');
             string[] addressesDisplayName = !string.IsNullOrEmpty(commaSeperatedToAddressesDisplayNames) ? commaSeperatedToAddressesDisplayNames.Split(',') : addresses;
             addressesDisplayName = !string.IsNullOrEmpty(commaSeperatedToAddressesDisplayNames) && addressesDisplayName.Length == addresses.Length ? addressesDisplayName : addresses;
-
+          
             for (int i = 0; i < addresses.Length; i++)
             {
-                message.To.Add(new MailAddress(addresses[i], addressesDisplayName[i]));
+                if (!string.IsNullOrEmpty(addresses[i]))
+                {
+                    message.To.Add(new MailAddress(addresses[i], addressesDisplayName[i]));
+                }
             }
 
             if (!string.IsNullOrEmpty(commaSeperatedBccAddresses))
