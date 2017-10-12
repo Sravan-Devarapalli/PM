@@ -4,14 +4,14 @@
 	@Status		INT,
 	@UserAlias  NVARCHAR(100),
 	@TierTwoStatus INT,
-	@Comments   NVARCHAR(MAX),
-	@Recipient	NVARCHAR(100) OUT
+	@Comments   NVARCHAR(MAX)
 )
 AS
 BEGIN
 
 	    DECLARE @UserId			INT,
-			    @CurrentPMTime  DATETIME
+			    @CurrentPMTime  DATETIME,
+				@Recipient	NVARCHAR(100)
 
 		SELECT @CurrentPMTime = dbo.GettingPMTime(GETUTCDATE())
 		SELECT @userId = PersonId FROM dbo.Person WHERE Alias = @UserAlias
@@ -40,10 +40,28 @@ BEGIN
 		WHERE M.Id=@RequestId and M.TierOneStatus=2 and (M.TierTwoStatus=2 OR M.TierTwoStatus=0)
 		EXEC dbo.SessionLogUnprepare
 
-		SELECT @Recipient = Alias 
+
+		EXEC dbo.SessionLogUnprepare
+
+		declare @CFOAlias NVARCHAR(MAX)=''
+
+		-- TierTwo Approver
+		select @CFOAlias=@CFOAlias+','+ p.Alias
+		FROM Person P
+		JOIN Title T on P.TitleId =T.TitleId
+		WHERE T.Title = 'Chief Financial Officer' AND P.PersonStatusId = 1 --Active
+
+		SELECT M.RequestReason as Reason ,
+			   M.Comments,
+			   P.FirstName+', '+p.LastName as Requester,
+			   @CFOAlias as CFOAlias,
+			   M.TierTwoStatus
+		FROM MarginExceptionRequest M
+		JOIN Person p on m.Requestor = p.PersonId
+		WHERE M.Id=@RequestId AND M.TierOneStatus = 2 AND M.TierTwoStatus = 1
+
+		SELECT Alias as RequestorAlias
 		FROM Person P
 		JOIN MarginExceptionRequest M on M.Requestor=P.PersonId
 		WHERE M.Id=@RequestId
-
-		EXEC dbo.SessionLogUnprepare
 END
