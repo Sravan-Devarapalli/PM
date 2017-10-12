@@ -6,6 +6,8 @@ namespace DataTransferObjects
     /// </summary>
     public static class Constants
     {
+        public static object ColumnNames { get; set; }
+
         public static class RoleNames
         {
             public const string AdministratorRoleName = "System Administrator";
