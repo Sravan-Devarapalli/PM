@@ -1230,7 +1230,7 @@ namespace PracticeManagementService
 
         public void SendMarginExceptionRequest(int projectId, string userAlias, decimal targetMargin, string reasons, string comments, string user, bool isTierTwo, decimal targetRevenue, bool isRevenueException)
         {
-            string toAddress = ProjectDAL.SendMarginExceptionRequest(projectId, userAlias, targetMargin, isTierTwo, targetRevenue, comments, isRevenueException);
+            string toAddress = ProjectDAL.SendMarginExceptionRequest(projectId, userAlias, targetMargin, isTierTwo, targetRevenue, comments, isRevenueException, reasons);
             var project = ProjectDAL.GetProjectByIdShort(projectId);
 
             MailUtil.SendMarginExceptionRequestMail(project, reasons, comments, toAddress, user);
@@ -1238,9 +1238,20 @@ namespace PracticeManagementService
 
         public void SendMarginExceptionResponse(int status, string userAlias, int requestId, string reasons, string comments, string user, int projectId, bool isTierTwo)
         {
-            string toAddress = ProjectDAL.SendMarginExceptionResponse(status, userAlias, requestId, isTierTwo, comments);
+            string RequestorAlias = "RequestorAlias";
+            string CFOAlias = "CFOAlias";
+            string Reason = "Reason";
+            string Comments = "Comments";
+            string RequesterName = "Requester";
+            string TierTwoStatus = "TierTwoStatus";
+            var marginException = ProjectDAL.SendMarginExceptionResponse(status, userAlias, requestId, isTierTwo, comments);
             var project = ProjectDAL.GetProjectByIdShort(projectId);
-            MailUtil.SendMarginExceptionResponseMail(project, status, reasons, comments, toAddress, user);
+            MailUtil.SendMarginExceptionResponseMail(project, status, reasons, comments, marginException[RequestorAlias], user);
+
+            if (marginException.ContainsKey(TierTwoStatus) && marginException[TierTwoStatus] == "1")
+            {
+                MailUtil.SendMarginExceptionRequestMail(project, marginException[Reason], marginException[Comments], marginException[CFOAlias], marginException[RequesterName]);
+            }
         }
 
         public ProjectBudgetManagement GetBudgetManagementDataForProject(int projectId, bool isBudgetToDate, DateTime? actualsEndDate)
