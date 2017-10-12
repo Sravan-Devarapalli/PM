@@ -9,6 +9,8 @@
         /// </summary>
         public class ColumnNames
         {
+            public const string RequestorAlias = "RequestorAlias";
+            public const string CFOAlias = "CFOAlias";
             public const string IsRightToPresent = "IsRightToPresent";
             public const string RighttoPresentEndDate = "RighttoPresentEndDate";
             public const string RighttoPresentStartDate = "RighttoPresentStartDate";
@@ -730,6 +732,7 @@
         /// </summary>
         public class ParameterNames
         {
+            public const string Reason = "@Reason";
             public const string RighttoPresentPersons = "@RighttoPresentPersons";
             public const string RtPStartDate = "@RighttoPresentStartDate";
             public const string RtPEndDate = "@RighttoPresentEndDate";
