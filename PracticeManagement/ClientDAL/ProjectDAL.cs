@@ -5050,7 +5050,7 @@ namespace DataAccess
             }
         }
 
-        public static string SendMarginExceptionRequest(int projectId, string userAlias, decimal targetMargin, bool isTierTwo, decimal targetRevenue, string comments, bool isRevenueException)
+        public static string SendMarginExceptionRequest(int projectId, string userAlias, decimal targetMargin, bool isTierTwo, decimal targetRevenue, string comments, bool isRevenueException, string reasons)
         {
             using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
             {
@@ -5066,6 +5066,7 @@ namespace DataAccess
                     command.Parameters.AddWithValue(Constants.ParameterNames.TargetRevenue, targetRevenue);
                     command.Parameters.AddWithValue(Constants.ParameterNames.Comments, comments);
                     command.Parameters.AddWithValue(Constants.ParameterNames.IsRevenueException, isRevenueException);
+                    command.Parameters.AddWithValue(Constants.ParameterNames.Reason, reasons);
 
                     SqlParameter recipientParam = new SqlParameter(Constants.ParameterNames.recipient, SqlDbType.NVarChar) { Direction = ParameterDirection.Output, Size = 100 };
                     command.Parameters.Add(recipientParam);
@@ -5076,7 +5077,7 @@ namespace DataAccess
             }
         }
 
-        public static string SendMarginExceptionResponse(int status, string userAlias, int requestId, bool isTierTwo, string comments)
+        public static Dictionary<string, string> SendMarginExceptionResponse(int status, string userAlias, int requestId, bool isTierTwo, string comments)
         {
             using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
             {
@@ -5091,11 +5092,43 @@ namespace DataAccess
                     command.Parameters.AddWithValue(Constants.ParameterNames.TierTwoStatus, isTierTwo ? 1 : 0);
                     command.Parameters.AddWithValue(Constants.ParameterNames.Comments, comments);
 
-                    SqlParameter recipientParam = new SqlParameter(Constants.ParameterNames.recipient, SqlDbType.NVarChar) { Direction = ParameterDirection.Output, Size = 100 };
-                    command.Parameters.Add(recipientParam);
+                    //SqlParameter recipientParam = new SqlParameter(Constants.ParameterNames.recipient, SqlDbType.NVarChar) { Direction = ParameterDirection.Output, Size = 100 };
+                    //command.Parameters.Add(recipientParam);
                     connection.Open();
-                    command.ExecuteNonQuery();
-                    return (string)recipientParam.Value;
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        Dictionary<string, string> marginExceptionDetails = new Dictionary<string, string>();
+                        if (reader.HasRows)
+                        {
+
+                            var RequestReasonIndex = reader.GetOrdinal(Constants.ColumnNames.Reason);
+                            var CommentsIndex = reader.GetOrdinal(Constants.ColumnNames.Comments);
+                            var RequestorNameIndex = reader.GetOrdinal(Constants.ColumnNames.Requester);
+                            var CFOAliasIndex = reader.GetOrdinal(Constants.ColumnNames.CFOAlias);
+                            var TierTwoStatusIndex = reader.GetOrdinal(Constants.ColumnNames.TierTwoStatus);
+                            while (reader.Read())
+                            {
+                                marginExceptionDetails.Add(Constants.ColumnNames.Reason, reader.IsDBNull(RequestReasonIndex)?string.Empty: reader.GetString(RequestReasonIndex));
+                                marginExceptionDetails.Add(Constants.ColumnNames.Comments, reader.IsDBNull(CommentsIndex) ? string.Empty : reader.GetString(CommentsIndex));
+                                marginExceptionDetails.Add(Constants.ColumnNames.Requester, reader.IsDBNull(RequestorNameIndex) ? string.Empty : reader.GetString(RequestorNameIndex));
+                                marginExceptionDetails.Add(Constants.ColumnNames.CFOAlias, reader.IsDBNull(CFOAliasIndex) ? string.Empty : reader.GetString(CFOAliasIndex));
+                                marginExceptionDetails.Add(Constants.ColumnNames.TierTwoStatus, reader.IsDBNull(TierTwoStatusIndex) ? string.Empty : reader.GetInt32(TierTwoStatusIndex).ToString());
+                            }
+
+                        }
+                        reader.NextResult();
+
+                        if (reader.HasRows)
+                        {
+                            var RequestorAliasIndex = reader.GetOrdinal(Constants.ColumnNames.RequestorAlias);
+                            while (reader.Read())
+                            {
+                                marginExceptionDetails.Add(Constants.ColumnNames.RequestorAlias, reader.GetString(RequestorAliasIndex));
+                            }
+                        }
+
+                        return marginExceptionDetails;
+                    }
                 }
             }
         }
