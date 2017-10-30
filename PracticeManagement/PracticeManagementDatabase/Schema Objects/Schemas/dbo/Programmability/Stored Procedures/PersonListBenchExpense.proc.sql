@@ -229,8 +229,10 @@ AS
 			ISNULL(P.PreferredFirstName,P.FirstName) AS FirstName,
 			ISNULL(pr.Name,'') PracticeName,
 			ISNULL(pr.IsCompanyInternal,0) IsCompanyInternal,
-			P.HireDate,
-			ISNULL(p.TerminationDate, @FutureDate) AS TerminationDate,
+			CASE WHEN p.HireDate IS NULL AND p.RighttoPresentStartDate IS NOT NULL THEN p.RighttoPresentStartDate
+				 ELSE p.HireDate END AS HireDate,
+			CASE WHEN p.TerminationDate is NULL AND p.RighttoPresentEndDate IS NOT NULL THEN p.RighttoPresentEndDate
+				 ELSE ISNULL(p.TerminationDate, @FutureDate) END AS TerminationDate,
 			C.MonthStartDate AS [Month],
 			C.MonthEndDate AS MonthEnd,
 			P.PersonStatusId,
@@ -264,6 +266,8 @@ AS
 				pr.IsCompanyInternal,
 				p.HireDate,
 				p.TerminationDate,
+				p.RighttoPresentStartDate,
+				p.RighttoPresentEndDate,
 				p.PersonStatusId,
 				p.SeniorityId,
 				FLHRD.Timescale,
