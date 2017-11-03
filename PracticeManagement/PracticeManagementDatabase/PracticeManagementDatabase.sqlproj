@@ -5076,6 +5076,8 @@
     <Build Include="Schema Objects\Schemas\dbo\Tables\BudgetResetType.sql" />
     <Build Include="Schema Objects\Schemas\dbo\Programmability\Stored Procedures\GetBudgetRevisionTypeById.sql" />
     <Build Include="Schema Objects\Schemas\dbo\Programmability\Stored Procedures\GetEACFinancialsByProjectIds.sql" />
+    <Build Include="Schema Objects\Schemas\dbo\Programmability\Functions\GetFloatingHolidayTimeTypeId.sql" />
+    <Build Include="Schema Objects\Schemas\dbo\Programmability\Functions\GetFloatingHolidayTimeTypeIdTable.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="How to create dbschema file.txt">
