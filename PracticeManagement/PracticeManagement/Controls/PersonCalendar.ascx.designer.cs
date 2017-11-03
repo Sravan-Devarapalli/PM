@@ -607,6 +607,15 @@ namespace PraticeManagement.Controls {
         protected global::AjaxControlToolkit.FilteredTextBoxExtender ftetxtHoursPerDayInsert;
         
         /// <summary>
+        /// cvFHRestrictToOnePerYear control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator cvFHRestrictToOnePerYear;
+        
+        /// <summary>
         /// valSumTimeOff control.
         /// </summary>
         /// <remarks>
@@ -794,6 +803,15 @@ namespace PraticeManagement.Controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CustomValidator custLockdownDetails;
+        
+        /// <summary>
+        /// cvFHOnePerYearSingleDay control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator cvFHOnePerYearSingleDay;
         
         /// <summary>
         /// valSumErrorSingleDay control.
