@@ -259,6 +259,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FloatingHoliday.
+        /// </summary>
+        internal static string CSSFloatingHoliday {
+            get {
+                return ResourceManager.GetString("CSSFloatingHoliday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to WeekEndDayOff.
         /// </summary>
         internal static string CssWeekEndDayOff {
