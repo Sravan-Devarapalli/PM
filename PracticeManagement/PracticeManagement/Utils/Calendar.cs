@@ -16,7 +16,7 @@ namespace PraticeManagement.Utils
             return calendarItem.DayOff
                         ? (calendarItem.CompanyDayOff
                         ? (calendarItem.Date.DayOfWeek == DayOfWeek.Sunday || calendarItem.Date.DayOfWeek == DayOfWeek.Saturday ? Resources.Controls.CssWeekEndDayOff : Resources.Controls.CssDayOff)
-                            : (calendarItem.Date.DayOfWeek == DayOfWeek.Sunday || calendarItem.Date.DayOfWeek == DayOfWeek.Saturday ? Resources.Controls.CssWeekEndDayOff : calendarItem.IsFloatingHoliday ? Resources.Controls.CssCompanyDayOnFloatingDay : Resources.Controls.CssCompanyDayOn)
+                            : (calendarItem.Date.DayOfWeek == DayOfWeek.Sunday || calendarItem.Date.DayOfWeek == DayOfWeek.Saturday ? Resources.Controls.CssWeekEndDayOff : calendarItem.IsFloatingHoliday ? Resources.Controls.CssCompanyDayOnFloatingDay : calendarItem.IsFloatingVacation?Resources.Controls.CSSFloatingHoliday: Resources.Controls.CssCompanyDayOn)
                           )
                         : (calendarItem.CompanyDayOff
                             ? (calendarItem.Date.DayOfWeek == DayOfWeek.Sunday || calendarItem.Date.DayOfWeek == DayOfWeek.Saturday ? Resources.Controls.CssWeekEndDayOn : Resources.Controls.CssCompanyDayOff)
