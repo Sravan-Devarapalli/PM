@@ -48,19 +48,21 @@ AS
 			@PTOTimeTypeId INT ,
 			@SickLeaveTimeTypeId INT ,
 			@ORTTimeTypeId INT,
-			@UnpaidTimeTypeId	INT
+			@UnpaidTimeTypeId	INT,
+			@FloatinHolidayTimeTypeId INT
  		    
 			 
 	SELECT  @HolidayTimeTypeId = dbo.GetHolidayTimeTypeId() ,
 			@PTOTimeTypeId = dbo.GetPTOTimeTypeId() ,
 			@ORTTimeTypeId = dbo.GetORTTimeTypeId() ,
 			@SickLeaveTimeTypeId = dbo.[GetSickLeaveTimeTypeId](),
-			@UnpaidTimeTypeId = dbo.GetUnpaidTimeTypeId()
+			@UnpaidTimeTypeId = dbo.GetUnpaidTimeTypeId(),
+			@FloatinHolidayTimeTypeId = dbo.GetFloatingHolidayTimeTypeId()
 
 	SELECT 	TT.TimeTypeId,
 			TT.name,
 			CASE WHEN TT.TimeTypeId = @PTOTimeTypeId THEN 1 ELSE 0  END IsPTO,
-			CASE WHEN TT.TimeTypeId = @HolidayTimeTypeId THEN 1 ELSE 0  END IsHoliday,
+			CASE WHEN (TT.TimeTypeId = @HolidayTimeTypeId OR TT.TimeTypeId = @FloatinHolidayTimeTypeId)THEN 1 ELSE 0  END IsHoliday,
 			CASE WHEN TT.TimeTypeId = @ORTTimeTypeId THEN 1 ELSE 0  END IsORT,
 			CASE WHEN TT.TimeTypeId = @SickLeaveTimeTypeId THEN 1 ELSE 0  END IsSickLeave,
 			CASE WHEN TT.TimeTypeId = @UnpaidTimeTypeId THEN 1 ELSE 0  END IsUnpaid,
@@ -145,7 +147,7 @@ AS
 											   THEN TEH.ActualHours
 											   ELSE 0
 										  END), 2) AS PTOHours ,
-								ROUND(SUM(CASE WHEN TT.Code = 'W9320'
+								ROUND(SUM(CASE WHEN TT.Code IN ('W9320','W9610')
 											   THEN TEH.ActualHours
 											   ELSE 0
 										  END), 2) AS HolidayHours ,
