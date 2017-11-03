@@ -6,26 +6,19 @@
             <HeaderTemplate>
                 </td> </tr>
                 <tr>
-                    <th>
-                        Sun
+                    <th>Sun
                     </th>
-                    <th>
-                        Mon
+                    <th>Mon
                     </th>
-                    <th>
-                        Tue
+                    <th>Tue
                     </th>
-                    <th>
-                        Wed
+                    <th>Wed
                     </th>
-                    <th>
-                        Thu
+                    <th>Thu
                     </th>
-                    <th>
-                        Fri
+                    <th>Fri
                     </th>
-                    <th>
-                        Sat
+                    <th>Sat
                     </th>
                 </tr>
                 <tr>
@@ -37,7 +30,7 @@
             (    ((bool)Eval("DayOff") 
                     ? ((bool)Eval("CompanyDayOff") 
                         ? (((DateTime)Eval("Date")).DayOfWeek == DayOfWeek.Sunday || ((DateTime)Eval("Date")).DayOfWeek == DayOfWeek.Saturday ? "WeekEndDayOff" : "DayOff") 
-                        : (((DateTime)Eval("Date")).DayOfWeek == DayOfWeek.Sunday || ((DateTime)Eval("Date")).DayOfWeek == DayOfWeek.Saturday ? "WeekEndDayOff" : "CompanyDayOn")
+                        : (((DateTime)Eval("Date")).DayOfWeek == DayOfWeek.Sunday || ((DateTime)Eval("Date")).DayOfWeek == DayOfWeek.Saturday ? "WeekEndDayOff" : (bool)Eval("IsFloatingVacation")?"FloatingHoliday": "CompanyDayOn")
                       ) 
                     : ((bool)Eval("CompanyDayOff") 
                         ? (((DateTime)Eval("Date")).DayOfWeek == DayOfWeek.Sunday || ((DateTime)Eval("Date")).DayOfWeek == DayOfWeek.Saturday ? "WeekEndDayOn" : "CompanyDayOff")
@@ -45,7 +38,8 @@
                       )
                 )
             )
-            ) : "" %>' ToolTip='<%# GetToolTip( (string)Eval("HolidayDescription"), (double?)Eval("ActualHours"),(bool)Eval("IsFloatingHoliday") )%>'>
+            ) : "" %>'
+                    ToolTip='<%# GetToolTip( (string)Eval("HolidayDescription"), (double?)Eval("ActualHours"),(bool)Eval("IsFloatingHoliday") )%>'>
                     <asp:LinkButton ID="btnDay" runat="server" Text='<%# Eval("Date.Day") %>' Visible='<%# ((DateTime)Eval("Date")).Month == Month && ((DateTime)Eval("Date")).Year == Year && !(bool)GetIsReadOnly((bool)Eval("ReadOnly"), (bool)Eval("DayOff"), (bool)Eval("CompanyDayOff"), (DateTime)Eval("Date"), (bool)Eval("IsUnpaidTimeType"))%>'
                         DayOff='<%# (bool)Eval("DayOff") ? "true":"false" %>' Date='<%# Eval("Date") %>'
                         OnClientClick='<%# DayOnClientClick() %>' ToolTip='<%# GetToolTip( (string)Eval("HolidayDescription"), (double?)Eval("ActualHours"),(bool)Eval("IsFloatingHoliday") )%>'
