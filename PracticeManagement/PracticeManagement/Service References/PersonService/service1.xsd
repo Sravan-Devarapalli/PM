@@ -1142,6 +1142,7 @@
         <xs:element minOccurs="0" name="includeHoliday" type="xs:boolean" />
         <xs:element minOccurs="0" name="includeUnpaid" type="xs:boolean" />
         <xs:element minOccurs="0" name="includeSickLeave" type="xs:boolean" />
+        <xs:element minOccurs="0" name="includeFloatingHoliday" type="xs:boolean" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
