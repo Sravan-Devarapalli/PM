@@ -115,6 +115,13 @@ namespace DataTransferObjects
         }
 
         [DataMember]
+        public bool IsFloatingVacation
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
         public int? TimeTypeId { get; set; }
 
         [DataMember]
@@ -148,3 +155,4 @@ namespace DataTransferObjects
         }
     }
 }
+
