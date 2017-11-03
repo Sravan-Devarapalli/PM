@@ -30,6 +30,7 @@ namespace PraticeManagement.Controls
         public const string IsW2SalaryAllowedAttribute = "IsW2SalaryAllowed";
         public const string IsPTOTimeType = "PTO";
         public const string IsUnpaidAttribute = "IsUnpaid";
+        public const string IsFloatingHolidayType = "Floating Holiday";
         public const string IsORTAttribute = "IsORT";
         public const string DefaultHours = "8.00";
         public const string EmptyHours = "0.00";
@@ -41,6 +42,7 @@ namespace PraticeManagement.Controls
         public const string SalaryVoliationForMessage = "Invalid Pay Type: Employee is not a W2-Salary employee for the selected day(s).";
         public const string HourlyVoliationForMessage = "Invalid Pay Type: Employee is not a W2-Hourly employee for the selected day(s).";
         public const string EmployeeVoliationForMessage = "Invalid Pay Type: Employee is not a W2-Salary/W2-Hourly employee for the selected day(s).";
+        public const string FloatingHolidayLimitValidationMessage = "Floating Holiday has already been allocated for the current calendar year on {0}.";
         private int coloumnsCount = 1;
         private int headerRowsCount = 1;
         public const string lockdownMessage = "'{0}' functionality in Calendar page was locked down by System Administrator for dates on and before '{1}'";
@@ -376,7 +378,6 @@ namespace PraticeManagement.Controls
         {
             dtpStartDateTimeOff.DateValue = startDate;
             dtpEndDateTimeOff.DateValue = endDate;
-            //ddlTimeTypesTimeOff.SelectedValue = timeTypeId;
             ListItem selectedTimeType = null;
             selectedTimeType = ddlTimeTypesTimeOff.Items.FindByValue(timeTypeId.ToString());
             if (selectedTimeType == null)
@@ -555,7 +556,7 @@ namespace PraticeManagement.Controls
             DateTime yearStartdate = new DateTime(SelectedYear, 1, 1);
             DateTime yearEnddate = new DateTime(SelectedYear, 12, 31);
             DateTime startdate = SelectedPerson.HireDate > yearStartdate ? SelectedPerson.HireDate : yearStartdate;
-            var administrativeTimeTypes = ServiceCallers.Custom.Person(p => p.GetPersonAdministrativeTimeTypesInRange(SelectedPersonId.Value, startdate, yearEnddate, true, false, isUnpaidWorktypeInclude, true));
+            var administrativeTimeTypes = ServiceCallers.Custom.Person(p => p.GetPersonAdministrativeTimeTypesInRange(SelectedPersonId.Value, startdate, yearEnddate, true, false, isUnpaidWorktypeInclude, true, true));
             DataHelper.FillListDefault(ddlTimeTypesSingleDay, "- - Make Selection - -", administrativeTimeTypes, false);
             DataHelper.FillListDefault(ddlTimeTypesTimeOff, "- - Make Selection - -", administrativeTimeTypes, false);
             AddAttributesToTimeTypesDropdown(ddlTimeTypesSingleDay, administrativeTimeTypes);
@@ -632,6 +633,17 @@ namespace PraticeManagement.Controls
         {
             custLockdownDetails.Enabled = true;
             custLockdownDelete.Enabled = custSingleDayDelete.Enabled = false;
+            if (ddlTimeTypesSingleDay.SelectedItem.Text == IsFloatingHolidayType)
+            {
+                rangeHoursSingleDay.MinimumValue = rangeHoursSingleDay.MaximumValue = "8";
+                rangeHoursSingleDay.ToolTip = rangeHoursSingleDay.ErrorMessage = "Hours must be 8.00 for a Floating Holiday.";
+            }
+            else
+            {
+                rangeHoursSingleDay.MinimumValue = "0.25";
+                rangeHoursSingleDay.MaximumValue = "8";
+                rangeHoursSingleDay.ToolTip = rangeHoursSingleDay.ErrorMessage = "Hours must be between 0.25 and 8.00.";
+            }
             Page.Validate(valSumErrorSingleDay.ValidationGroup);
             if (Page.IsValid)
             {
@@ -736,6 +748,18 @@ namespace PraticeManagement.Controls
         {
             custLockdownDates.Enabled = true;
             custLockdownDelete.Enabled = false;
+            if (ddlTimeTypesTimeOff.SelectedItem.Text == IsFloatingHolidayType)
+            {
+                rangHoursPerDay.MinimumValue = rangHoursPerDay.MaximumValue = "8";
+                rangHoursPerDay.ToolTip = rangHoursPerDay.ErrorMessage = "Hours must be 8.00 for a Floating Holiday.";
+            }
+            else
+            {
+                rangHoursPerDay.MinimumValue = "0.25";
+                rangHoursPerDay.MaximumValue = "8";
+                rangHoursPerDay.ToolTip = rangHoursPerDay.ErrorMessage = "Hours must be between 0.25 and 8.00.";
+            }
+
             Page.Validate(valSumTimeOff.ValidationGroup);
             if (Page.IsValid)
             {
@@ -835,6 +859,7 @@ namespace PraticeManagement.Controls
         {
             custLockdownDelete.Enabled = true;
             custLockdownDates.Enabled = custLockdownDetails.Enabled = false;
+
             Page.Validate(valSumTimeOff.ValidationGroup);
             if (Page.IsValid)
             {
@@ -1039,7 +1064,7 @@ namespace PraticeManagement.Controls
             {
                 args.IsValid = false;
             }
-         
+
         }
 
         protected void cvValidateSubDateWithTermDate_ServerValidate(object source, ServerValidateEventArgs args)
@@ -1415,6 +1440,49 @@ namespace PraticeManagement.Controls
             {
                 var calendarItems = service.GetLockoutDetails((int)LockoutPages.Calendar).ToList();
                 Lockouts = calendarItems;
+            }
+        }
+
+        protected void cvFHRestrictToOnePerYear_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            args.IsValid = true;
+            var validator = source as CustomValidator;
+            if (ddlTimeTypesTimeOff.SelectedItem.Text == IsFloatingHolidayType)
+            {
+                validator.ErrorMessage = validator.ToolTip = FloatingHolidayLimitValidationMessage;
+                bool isFHAlreadyExists = CalendarItems.Any(c => c.IsFloatingVacation && c.Date.Year == SelectedYear);
+                args.IsValid = !isFHAlreadyExists && dtpStartDateTimeOff.DateValue == dtpEndDateTimeOff.DateValue;
+                if (!args.IsValid)
+                {
+                    if (isFHAlreadyExists)
+                    {
+                        DateTime FHDate = CalendarItems.First(c => c.IsFloatingVacation && c.Date.Year == SelectedYear).Date;
+                        validator.ErrorMessage = validator.ToolTip = string.Format(FloatingHolidayLimitValidationMessage, FHDate.ToString(Constants.Formatting.EntryDateFormat));
+                    }
+                    else
+                    {
+                        validator.ErrorMessage = validator.ToolTip = "Only one Floating Holiday can be allocated for the current calendar year";
+                    }
+                }
+            }
+
+        }
+
+        protected void cvFHOnePerYearSingleDay_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            args.IsValid = true;
+            var validator = source as CustomValidator;
+            if (ddlTimeTypesSingleDay.SelectedItem.Text == IsFloatingHolidayType)
+            {
+                DateTime singleDate;
+                DateTime.TryParse(lbdateSingleDay.Text, out singleDate);
+                bool isFHAlreadyExists = CalendarItems.Any(c => c.IsFloatingVacation && c.Date.Year == SelectedYear);
+                args.IsValid = isFHAlreadyExists ? CalendarItems.First(c => c.IsFloatingVacation && c.Date.Year == SelectedYear).Date == singleDate : true;
+                if (!args.IsValid)
+                {
+                    DateTime FHDate = CalendarItems.First(c => c.IsFloatingVacation && c.Date.Year == SelectedYear).Date;
+                    validator.ErrorMessage = validator.ToolTip = string.Format(FloatingHolidayLimitValidationMessage, FHDate.ToString(Constants.Formatting.EntryDateFormat));
+                }
             }
         }
     }
