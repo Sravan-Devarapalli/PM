@@ -34,7 +34,8 @@ BEGIN
             CASE WHEN CAL.DayOff = 1 THEN NULL
 				 WHEN PCAL.DayOff = 1 THEN PCAL.ActualHours
 			END AS ActualHours,
-            ISNULL(PCAL.IsFloatingHoliday,0) AS [IsFloatingHoliday] ,
+            ISNULL(PCAL.IsFloatingHoliday,0) AS [IsFloatingHoliday] , -- worked on holiday and took substitute 
+			ISNULL(PCAL.IsFloatingVacation,0) as IsFloatingVacation,
             PCAL.TimeTypeId,
 			CASE WHEN @UnpaidTimeTypeId = PCAL.TimeTypeId THEN 1 ELSE 0 END AS [IsUnpaidTimeType]
     FROM    dbo.Calendar AS CAL
@@ -61,6 +62,7 @@ BEGIN
 				 WHEN PCAL.DayOff = 1 THEN PCAL.ActualHours
 			END AS ActualHours,
             ISNULL(PCAL.IsFloatingHoliday,0) AS [IsFloatingHoliday] ,
+			ISNULL(PCAL.IsFloatingVacation,0) as IsFloatingVacation,
             PCAL.TimeTypeId,
 			CASE WHEN @UnpaidTimeTypeId = PCAL.TimeTypeId THEN 1 ELSE 0 END AS [IsUnpaidTimeType]
     FROM    dbo.Calendar AS CAL
