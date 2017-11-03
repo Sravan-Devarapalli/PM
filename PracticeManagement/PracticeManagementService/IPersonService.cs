@@ -439,7 +439,7 @@ namespace PracticeManagementService
         List<Employment> GetPersonEmploymentHistoryById(int personId);
 
         [OperationContract]
-        List<TimeTypeRecord> GetPersonAdministrativeTimeTypesInRange(int personId, DateTime startDate, DateTime endDate, bool includePTO, bool includeHoliday, bool includeUnpaid, bool includeSickLeave);
+        List<TimeTypeRecord> GetPersonAdministrativeTimeTypesInRange(int personId, DateTime startDate, DateTime endDate, bool includePTO, bool includeHoliday, bool includeUnpaid, bool includeSickLeave, bool includeFloatingHoliday);
 
         [OperationContract]
         bool IsPersonTimeOffExistsInSelectedRangeForOtherthanGivenTimescale(int personId, DateTime startDate, DateTime endDate, int timeScaleId);
