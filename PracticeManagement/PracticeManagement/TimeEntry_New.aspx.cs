@@ -982,7 +982,7 @@ namespace PraticeManagement
 
                 var workTypeElement = teSectionDataItem.Descendants(XName.Get(WorkTypeXname)).ToList()[0];
 
-                AdministrativeTimeTypes = AdministrativeTimeTypes ?? ServiceCallers.Custom.Person(p => p.GetPersonAdministrativeTimeTypesInRange(SelectedPerson.Id.Value, SelectedDates[0], SelectedDates[SelectedDates.Length - 1], false, false, false, false));
+                AdministrativeTimeTypes = AdministrativeTimeTypes ?? ServiceCallers.Custom.Person(p => p.GetPersonAdministrativeTimeTypesInRange(SelectedPerson.Id.Value, SelectedDates[0], SelectedDates[SelectedDates.Length - 1], false, false, false, false,false));
 
                 if (bar.IsHoliday)
                 {
@@ -1026,7 +1026,7 @@ namespace PraticeManagement
             else if (e.Item.ItemType == ListItemType.Footer)
             {
                 var imgPlus = e.Item.FindControl(imgPlusAdministrativeSectionImage) as ImageButton;
-                AdministrativeTimeTypes = AdministrativeTimeTypes ?? ServiceCallers.Custom.Person(p => p.GetPersonAdministrativeTimeTypesInRange(SelectedPerson.Id.Value, SelectedDates[0], SelectedDates[SelectedDates.Length - 1], false, false, false, false));
+                AdministrativeTimeTypes = AdministrativeTimeTypes ?? ServiceCallers.Custom.Person(p => p.GetPersonAdministrativeTimeTypesInRange(SelectedPerson.Id.Value, SelectedDates[0], SelectedDates[SelectedDates.Length - 1], false, false, false, false, false));
                 if (AdministrativeTimeTypes.Count() < 1)
                     imgPlus.Style["display"] = "none";
                 extDupilcateOptionsRemoveExtenderAdministrative.ControlsToCheck = DdlWorkTypeIdsList;
