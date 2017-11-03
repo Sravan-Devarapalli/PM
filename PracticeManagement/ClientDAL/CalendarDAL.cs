@@ -235,10 +235,11 @@ namespace DataAccess
             int isFloatingHolidayIndex;
             int timeTypeIdIndex;
             int isUnpaidTimeTypeIndex;
-            GetPersonCalendarItemIndexes(reader, out dateIndex, out dayOffIndex, out companyDayOffIndex, out readOnlyIndex, out  holidayDescriptionIndex, out actualHoursIndex, out isFloatingHolidayIndex, out timeTypeIdIndex, out isUnpaidTimeTypeIndex);
+            int isFloatingVacationIndex;
+            GetPersonCalendarItemIndexes(reader, out dateIndex, out dayOffIndex, out companyDayOffIndex, out readOnlyIndex, out  holidayDescriptionIndex, out actualHoursIndex, out isFloatingHolidayIndex, out timeTypeIdIndex, out isUnpaidTimeTypeIndex, out isFloatingVacationIndex);
 
             while (reader.Read())
-                result.Add(ReadSinglePersonCalendarItem(reader, dateIndex, dayOffIndex, companyDayOffIndex, readOnlyIndex, holidayDescriptionIndex, actualHoursIndex, isFloatingHolidayIndex, timeTypeIdIndex, isUnpaidTimeTypeIndex));
+                result.Add(ReadSinglePersonCalendarItem(reader, dateIndex, dayOffIndex, companyDayOffIndex, readOnlyIndex, holidayDescriptionIndex, actualHoursIndex, isFloatingHolidayIndex, timeTypeIdIndex, isUnpaidTimeTypeIndex, isFloatingVacationIndex));
         }
 
         public static bool GetCalendarItemIndexes(SqlDataReader reader, out int dateIndex, out int dayOffIndex, out int companyDayOffIndex, out int isRecurringIndex, out int recurringHolidayIdIndex, out int holidayDescriptionIndex, out int recurringHolidayDateIndex)
@@ -290,7 +291,7 @@ namespace DataAccess
         /// <param name="companyDayOffIndex"></param>
         /// <param name="readOnlyIndex"></param>
         /// <returns>True if indexes have been initialized, false otherwise</returns>
-        public static bool GetPersonCalendarItemIndexes(SqlDataReader reader, out int dateIndex, out int dayOffIndex, out int companyDayOffIndex, out int readOnlyIndex, out int holidayDescriptionIndex, out int actualHoursIndex, out int isFloatingHolidayIndex, out int timeTypeIdIndex, out int isUnpaidTimeTypeIndex)
+        public static bool GetPersonCalendarItemIndexes(SqlDataReader reader, out int dateIndex, out int dayOffIndex, out int companyDayOffIndex, out int readOnlyIndex, out int holidayDescriptionIndex, out int actualHoursIndex, out int isFloatingHolidayIndex, out int timeTypeIdIndex, out int isUnpaidTimeTypeIndex, out int isFloatingVacationIndex)
         {
             try
             {
@@ -303,17 +304,18 @@ namespace DataAccess
                 actualHoursIndex = reader.GetOrdinal(Constants.ColumnNames.ActualHours);
                 isFloatingHolidayIndex = reader.GetOrdinal(Constants.ColumnNames.IsFloatingHolidayColumn);
                 isUnpaidTimeTypeIndex = reader.GetOrdinal(Constants.ColumnNames.IsUnpaidTimeType);
+                isFloatingVacationIndex = reader.GetOrdinal(Constants.ColumnNames.IsFloatingVacation);
                 return true;
             }
             catch (Exception)
             {
-                timeTypeIdIndex = dateIndex = dayOffIndex = companyDayOffIndex = readOnlyIndex = holidayDescriptionIndex = actualHoursIndex = isFloatingHolidayIndex = isUnpaidTimeTypeIndex = -1;
+                timeTypeIdIndex = dateIndex = dayOffIndex = companyDayOffIndex = readOnlyIndex = holidayDescriptionIndex = actualHoursIndex = isFloatingHolidayIndex = isUnpaidTimeTypeIndex = isFloatingVacationIndex= - 1;
             }
 
             return false;
         }
 
-        public static CalendarItem ReadSinglePersonCalendarItem(SqlDataReader reader, int dateIndex, int dayOffIndex, int companyDayOffIndex, int readOnlyIndex, int holidayDescriptionIndex, int actualHoursIndex, int isFloatingHolidayIndex, int timeTypeIdIndex, int isUnpaidTimeTypeIndex)
+        public static CalendarItem ReadSinglePersonCalendarItem(SqlDataReader reader, int dateIndex, int dayOffIndex, int companyDayOffIndex, int readOnlyIndex, int holidayDescriptionIndex, int actualHoursIndex, int isFloatingHolidayIndex, int timeTypeIdIndex, int isUnpaidTimeTypeIndex, int isFloatingVacationIndex)
         {
             var calendarItem = new CalendarItem
             {
@@ -325,7 +327,8 @@ namespace DataAccess
                 TimeTypeId = reader.IsDBNull(timeTypeIdIndex) ? null : (int?)reader.GetInt32(timeTypeIdIndex),
                 ActualHours = reader.IsDBNull(actualHoursIndex) ? null : (double?)reader.GetFloat(actualHoursIndex),
                 IsFloatingHoliday = reader.GetInt32(isFloatingHolidayIndex) == 1,
-                IsUnpaidTimeType = reader.GetInt32(isUnpaidTimeTypeIndex) == 1
+                IsUnpaidTimeType = reader.GetInt32(isUnpaidTimeTypeIndex) == 1,
+                IsFloatingVacation = reader.GetInt32(isFloatingVacationIndex)==1
             };
 
             return calendarItem;
