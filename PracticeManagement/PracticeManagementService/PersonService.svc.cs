@@ -1101,9 +1101,9 @@ namespace PracticeManagementService
             return PersonDAL.GetPersonListWithRole(rolename);
         }
 
-        public List<TimeTypeRecord> GetPersonAdministrativeTimeTypesInRange(int personId, DateTime startDate, DateTime endDate, bool includePTO, bool includeHoliday, bool includeUnpaid, bool inludeSickLeave)
+        public List<TimeTypeRecord> GetPersonAdministrativeTimeTypesInRange(int personId, DateTime startDate, DateTime endDate, bool includePTO, bool includeHoliday, bool includeUnpaid, bool inludeSickLeave, bool includeFloatingHoliday)
         {
-            return PersonDAL.GetPersonAdministrativeTimeTypesInRange(personId, startDate, endDate, includePTO, includeHoliday, includeUnpaid, inludeSickLeave);
+            return PersonDAL.GetPersonAdministrativeTimeTypesInRange(personId, startDate, endDate, includePTO, includeHoliday, includeUnpaid, inludeSickLeave, includeFloatingHoliday);
         }
 
         public bool IsPersonTimeOffExistsInSelectedRangeForOtherthanGivenTimescale(int personId, DateTime startDate, DateTime endDate, int timeScaleId)
