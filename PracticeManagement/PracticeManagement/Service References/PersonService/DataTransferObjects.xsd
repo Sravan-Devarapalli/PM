@@ -804,6 +804,7 @@
       <xs:element minOccurs="0" name="DivisionId" nillable="true" type="xs:int" />
       <xs:element minOccurs="0" name="DivisionName" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="EndDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="IsRighttoPresent" type="xs:boolean" />
       <xs:element minOccurs="0" name="IsYearBonus" type="xs:boolean" />
       <xs:element minOccurs="0" name="OldEndDate" nillable="true" type="xs:dateTime" />
       <xs:element minOccurs="0" name="OldStartDate" nillable="true" type="xs:dateTime" />
