@@ -13,7 +13,7 @@ namespace PraticeManagement.Controls
 {
     public partial class PersonMonthCalendar : System.Web.UI.UserControl
     {
-       
+
         #region Properties
 
         public PraticeManagement.Controls.PersonCalendar HostingControl
@@ -61,11 +61,11 @@ namespace PraticeManagement.Controls
 
         private CalendarItem[] CalendarItems
         {
-            get 
+            get
             {
-               return HostingControl.CalendarItems;
+                return HostingControl.CalendarItems;
             }
-            
+
         }
 
         private bool IsReadOnly
@@ -74,7 +74,7 @@ namespace PraticeManagement.Controls
             {
                 return !HostingControl.HasPermissionToEditCalender;
             }
-            
+
         }
 
         private bool IsUserHrORAdmin
@@ -122,6 +122,7 @@ namespace PraticeManagement.Controls
                     HostingControl.PreviousStartDate = HostingControl.PreviousEndDate = series.First;
                     HostingControl.PreviousTimeType = HostingControl.TimeTypeDdlSingleday.SelectedItem.Text;
                     HostingControl.PreviousHours = HostingControl.TxtHoursSingleDay.Text;
+                    HostingControl.SeriesStartDate = HostingControl.SeriesEndDate = DateTime.MinValue;
                 }
                 else
                 {
