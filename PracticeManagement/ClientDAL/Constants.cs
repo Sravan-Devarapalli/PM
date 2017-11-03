@@ -9,6 +9,7 @@
         /// </summary>
         public class ColumnNames
         {
+            public const string IsFloatingVacation = "IsFloatingVacation";
             public const string RequestorAlias = "RequestorAlias";
             public const string CFOAlias = "CFOAlias";
             public const string IsRightToPresent = "IsRightToPresent";
@@ -732,6 +733,7 @@
         /// </summary>
         public class ParameterNames
         {
+            public const string IncludeFloatingHoliday = "@IncludeFloatingHoliday";
             public const string Reason = "@Reason";
             public const string RighttoPresentPersons = "@RighttoPresentPersons";
             public const string RtPStartDate = "@RighttoPresentStartDate";
