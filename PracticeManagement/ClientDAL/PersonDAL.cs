@@ -1513,7 +1513,9 @@ namespace DataAccess
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
                     var result = new List<Person>();
+
                     ReadPersonExpense(reader, result);
+
                     return result;
                 }
             }
@@ -3941,7 +3943,7 @@ namespace DataAccess
             }
         }
 
-        public static List<TimeTypeRecord> GetPersonAdministrativeTimeTypesInRange(int personId, DateTime startDate, DateTime endDate, bool includePTO, bool includeHoliday, bool includeUnpaid, bool includeSickLeave)
+        public static List<TimeTypeRecord> GetPersonAdministrativeTimeTypesInRange(int personId, DateTime startDate, DateTime endDate, bool includePTO, bool includeHoliday, bool includeUnpaid, bool includeSickLeave, bool includeFloatingHoliday)
         {
             using (var connection = new SqlConnection(DataSourceHelper.DataConnection))
             using (var command = new SqlCommand(Constants.ProcedureNames.Person.GetPersonAdministrativeTimeTypesInRange, connection))
@@ -3954,6 +3956,7 @@ namespace DataAccess
                 command.Parameters.AddWithValue(Constants.ParameterNames.IncludeHolidayParam, includeHoliday);
                 command.Parameters.AddWithValue(Constants.ParameterNames.IncludeUnpaidParam, includeUnpaid);
                 command.Parameters.AddWithValue(Constants.ParameterNames.IncludeSickLeaveParam, includeSickLeave);
+                command.Parameters.AddWithValue(Constants.ParameterNames.IncludeFloatingHoliday, includeFloatingHoliday);
                 connection.Open();
 
                 using (SqlDataReader reader = command.ExecuteReader())
