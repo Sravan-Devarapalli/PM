@@ -1723,3 +1723,14 @@ img.chevronImage
     width: 16px;
     height: 16px;
 }
+
+DIV.FloatingHoliday {
+    height: 24px;
+    width: 24px;
+    background-color: #76ddf3;
+}
+
+TD.FloatingHoliday, TH.FloatingHoliday {
+    background-color: #76ddf3;
+}
+
