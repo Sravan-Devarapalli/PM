@@ -79,6 +79,18 @@ namespace PraticeManagement.Controls.TimeEntry
             }
         }
 
+        public bool IsFloatingHolidayDate
+        {
+            get
+            {
+                return ViewState["IsFloatingHolidayDate"] != null ? (bool)ViewState["IsFloatingHolidayDate"] : false;
+            }
+            set
+            {
+                ViewState["IsFloatingHolidayDate"] = value;
+            }
+        }
+
         public bool IsORT
         {
             get
@@ -247,7 +259,11 @@ namespace PraticeManagement.Controls.TimeEntry
 
         public void CanelControlStyle()
         {
-            tbActualHours.BackColor = Color.White;
+            if (!IsFloatingHolidayDate)
+            {
+                tbActualHours.BackColor = Color.White;
+            }
+
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -261,7 +277,7 @@ namespace PraticeManagement.Controls.TimeEntry
                 HostingPage.AdminstratorSectionTargetHours[DateBehind].Value = tbActualHours.ClientID;
                 HostingPage.AdminstratorSectionTargetNotes[DateBehind].Value = tbNotes.ClientID;
             }
-            if (IsHoliday || IsUnpaid || IsHolidayDate)
+            if (IsHoliday || IsUnpaid || IsHolidayDate || IsFloatingHolidayDate)
             {
                 imgClear.Style["display"] = "none";
             }
@@ -415,6 +431,7 @@ namespace PraticeManagement.Controls.TimeEntry
                 if (!enabled)
                 {
                     tbActualHours.Attributes["readonly"] = "readonly";
+
                     tbActualHours.Attributes["class"] = "bgColorWhiteImp";
                 }
                 else
