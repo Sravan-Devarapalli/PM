@@ -269,7 +269,7 @@ namespace PraticeManagement.PersonService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IPersonService/GetPersonAdministrativeTimeTypesInRange", ReplyAction="http://tempuri.org/IPersonService/GetPersonAdministrativeTimeTypesInRangeResponse" +
             "")]
-        DataTransferObjects.TimeEntry.TimeTypeRecord[] GetPersonAdministrativeTimeTypesInRange(int personId, System.DateTime startDate, System.DateTime endDate, bool includePTO, bool includeHoliday, bool includeUnpaid, bool includeSickLeave);
+        DataTransferObjects.TimeEntry.TimeTypeRecord[] GetPersonAdministrativeTimeTypesInRange(int personId, System.DateTime startDate, System.DateTime endDate, bool includePTO, bool includeHoliday, bool includeUnpaid, bool includeSickLeave, bool includeFloatingHoliday);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IPersonService/IsPersonTimeOffExistsInSelectedRangeForOthertha" +
             "nGivenTimescale", ReplyAction="http://tempuri.org/IPersonService/IsPersonTimeOffExistsInSelectedRangeForOthertha" +
@@ -712,8 +712,8 @@ namespace PraticeManagement.PersonService {
             return base.Channel.GetPersonEmploymentHistoryById(personId);
         }
         
-        public DataTransferObjects.TimeEntry.TimeTypeRecord[] GetPersonAdministrativeTimeTypesInRange(int personId, System.DateTime startDate, System.DateTime endDate, bool includePTO, bool includeHoliday, bool includeUnpaid, bool includeSickLeave) {
-            return base.Channel.GetPersonAdministrativeTimeTypesInRange(personId, startDate, endDate, includePTO, includeHoliday, includeUnpaid, includeSickLeave);
+        public DataTransferObjects.TimeEntry.TimeTypeRecord[] GetPersonAdministrativeTimeTypesInRange(int personId, System.DateTime startDate, System.DateTime endDate, bool includePTO, bool includeHoliday, bool includeUnpaid, bool includeSickLeave, bool includeFloatingHoliday) {
+            return base.Channel.GetPersonAdministrativeTimeTypesInRange(personId, startDate, endDate, includePTO, includeHoliday, includeUnpaid, includeSickLeave, includeFloatingHoliday);
         }
         
         public bool IsPersonTimeOffExistsInSelectedRangeForOtherthanGivenTimescale(int personId, System.DateTime startDate, System.DateTime endDate, int timeScaleId) {
