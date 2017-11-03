@@ -18,6 +18,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @PTOTimeType INT,
+			@FloatingHolidayTimeType INT,
 			@W2SalaryTimeScaleId INT = 0,
 			@W2HourlyTimeScaleId INT = 0,
 			@EndDateReport DATETIME,
@@ -27,6 +28,8 @@ BEGIN
 	 SET @EndDateReport = @EndDate
 
 	SELECT @PTOTimeType= TimeTypeId FROM dbo.TimeType WHERE Code = 'W9310'
+	SELECT @FloatingHolidayTimeType = TimeTypeId FROM dbo.TimeType WHERE Code ='W9610' 
+
 	IF(@W2SalaryPersons = 1)
 	BEGIN
 		SELECT @W2SalaryTimeScaleId= TimeScaleId FROm dbo.Timescale WHERE TimescaleCode='SLRY'
@@ -88,13 +91,14 @@ BEGIN
 	--To get PTO Hours
 	 SELECT	PC.PersonId
 		   ,PC.Date
-		   ,CASE WHEN PC.TimeTypeId=@PTOTimeType THEN 1 ELSE 2 END AS IsTimeOff
+		   ,CASE WHEN PC.TimeTypeId=@PTOTimeType THEN 1 
+				 WHEN PC.TimeTypeId = @FloatingHolidayTimeType THEN 0 -- consider floating holiday enetered by user as the Company Holiday
+				 ELSE 2 END AS IsTimeOff
 		   ,PC.Description
 		   ,ROUND(ISNULL(PC.ActualHours,0),2) TimeOffHours
 	 FROM dbo.PersonCalendar PC 
 		  INNER JOIN @CurrentConsultants AS c ON c.ConsId=PC.PersonId AND PC.Date BETWEEN @StartDateReport AND @EndDateReport
-		  --LEFT JOIN dbo.Calendar AS Cal ON Cal.Date=PC.Date
-	 WHERE PC.DayOff=1  AND DATEPART(DW,PC.Date) NOT IN (1,7) --AND PC.TimeTypeId=@PTOTimeType
+	 WHERE PC.DayOff=1  AND DATEPART(DW,PC.Date) NOT IN (1,7) 
 	 
 	 UNION ALL
 	 -- To get Company Holidays
