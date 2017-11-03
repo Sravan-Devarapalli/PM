@@ -185,7 +185,7 @@ AS
 											   ELSE 0
 										  END), 2) AS PTOHours ,
 								ROUND(SUM(CASE WHEN CC.TimeEntrySectionId = 4 
-													AND TT.Code = 'W9320'
+													AND TT.Code IN ('W9320','W9610')
 											  THEN TEH.ActualHours
 									          ELSE 0
 									     END), 2) AS HolidayHours ,
