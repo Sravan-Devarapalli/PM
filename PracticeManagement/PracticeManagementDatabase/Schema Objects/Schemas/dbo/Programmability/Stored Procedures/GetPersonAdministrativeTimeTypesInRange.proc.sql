@@ -11,12 +11,14 @@ CREATE PROCEDURE dbo.[GetPersonAdministrativeTimeTypesInRange]
   @IncludePTO     BIT = 0,
   @IncludeHoliday BIT = 0,
   @IncludeUnpaid  BIT = 0,
-  @IncludeSickLeave BIT = 0
+  @IncludeSickLeave BIT = 0,
+  @IncludeFloatingHoliday BIT = 0
 )
 AS
 BEGIN
 
 	DECLARE @HolidayTimeTypeId	INT,
+			@FloatingHolidayTimeTypeId INT,
 			@PTOTimeTypeId		INT,
 			@UnpaidTimeTypeId	INT,
 			@ORTTimeTypeId		INT,
@@ -25,6 +27,7 @@ BEGIN
 			@IsPersonW2Hourly   BIT = 0
 
 	SELECT @HolidayTimeTypeId = dbo.GetHolidayTimeTypeId(),
+		   @FloatingHolidayTimeTypeId = dbo.GetFloatingHolidayTimeTypeId(),
 		   @PTOTimeTypeId = dbo.GetPTOTimeTypeId(),
 		   @UnpaidTimeTypeId = dbo.GetUnpaidTimeTypeId(),
 		   @SickLeaveTimeTypeId = dbo.GetSickLeaveTimeTypeId(),
@@ -40,6 +43,8 @@ BEGIN
 	SELECT CASE WHEN @IncludeUnpaid = 0 THEN  @UnpaidTimeTypeId ELSE -1 END 
 	UNION 
 	SELECT CASE WHEN @IncludeSickLeave = 0 THEN  @SickLeaveTimeTypeId ELSE -1 END 
+	UNION
+	SELECT CASE WHEN @IncludeFloatingHoliday = 0  THEN @FloatingHolidayTimeTypeId ELSE -1 END
 
 	SELECT @IsPersonW2Salary = 1 FROM dbo.Pay p WHERE p.Person = @PersonId AND p.StartDate <= @EndDate AND p.EndDate-1 >= @StartDate AND p.Timescale = 2 --w2-salary
 	SELECT @IsPersonW2Hourly = 1 FROM dbo.Pay p WHERE p.Person = @PersonId AND p.StartDate <= @EndDate AND p.EndDate-1 >= @StartDate AND p.Timescale = 1 --w2-hourly
