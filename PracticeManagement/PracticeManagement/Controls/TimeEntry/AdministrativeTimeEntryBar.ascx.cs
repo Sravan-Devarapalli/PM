@@ -190,6 +190,8 @@ namespace PraticeManagement.Controls.TimeEntry
 
                 ste.IsHolidayDate = calendarItem.Attribute(XName.Get(TimeEntry_New.CssClassXname)).Value == "DayOff";
 
+                ste.IsFloatingHolidayDate = calendarItem.Attribute(XName.Get(TimeEntry_New.CssClassXname)).Value == "FloatingHoliday";
+
                 var textBoxId = ste.Controls[1].ClientID;
 
                 ste.DataBindApprovedManagers();
