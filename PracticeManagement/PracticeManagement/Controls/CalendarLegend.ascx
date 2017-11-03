@@ -57,7 +57,22 @@
                 <td class="DayDescription">
                     - This is a company holiday, but the person is scheduled to work anyway.
                 </td>
-            </tr>           
+            </tr>    
+            <tr>
+                <td class="TdCompanyDayOn">
+                    <table class="InnerTableCompanyDay" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td class="InnerTdCompanyDayOn">
+                                <div class="FloatingHoliday">
+                                    &nbsp;</div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="DayDescription">
+                    - This is a company work day, and the person is taking a Floating Holiday.
+                </td>
+            </tr>       
         </table>
     </asp:Panel>
 </div>
