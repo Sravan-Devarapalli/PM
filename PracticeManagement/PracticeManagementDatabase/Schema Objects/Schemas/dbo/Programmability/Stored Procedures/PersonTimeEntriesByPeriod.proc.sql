@@ -11,6 +11,7 @@ AS
     BEGIN
 	
         DECLARE @HolidayTimeTypeId INT ,
+			@FloatingHolidayTimeTypeId INT,
             @PTOTimeTypeId INT ,
 			@SickLeaveTimeTypeId INT ,
             @IsW2SalaryPerson BIT = 0 ,
@@ -25,6 +26,7 @@ AS
  		    
 			 
         SELECT  @HolidayTimeTypeId = dbo.GetHolidayTimeTypeId() ,
+				@FloatingHolidayTimeTypeId = dbo.GetFloatingHolidayTimeTypeId(),
                 @PTOTimeTypeId = dbo.GetPTOTimeTypeId() ,
                 @ORTTimeTypeId = dbo.GetORTTimeTypeId() ,
                 @FutureDateLocal = dbo.GetFutureDate() ,
@@ -150,7 +152,7 @@ AS
                 INNER JOIN dbo.Client C ON C.ClientId = CC.ClientId
                                        AND CC.TimeEntrySectionId = 4 --Administrative Section 
                                        AND (
-												(  CC.TimeTypeId in (@HolidayTimeTypeId)
+												(  CC.TimeTypeId in (@HolidayTimeTypeId, @FloatingHolidayTimeTypeId)
 												   AND @IsW2SalaryPerson = 1
 												)
 												OR 
@@ -184,7 +186,7 @@ AS
 				0 IsUnpaid,
 				0 IsSickLeave
         FROM    dbo.ChargeCode CC
-        WHERE   CC.TimeTypeId = @HolidayTimeTypeId AND @IsW2SalaryPerson = 1
+        WHERE   (CC.TimeTypeId = @HolidayTimeTypeId OR cc.TimeTypeId = @FloatingHolidayTimeTypeId )AND @IsW2SalaryPerson = 1
                 AND @IsW2SalaryPerson = 1
         UNION ALL
         SELECT  CC.ProjectId AS 'ProjectId' ,
