@@ -116,13 +116,10 @@
 </script>
 <table class="Width98Percent">
     <tr>
-        <td class="Width15Percent">
-            &nbsp;
+        <td class="Width15Percent">&nbsp;
         </td>
-        <td class="vTop Width70Percent TextAlignCenter">
-        </td>
-        <td class="Width15Percent">
-            &nbsp;
+        <td class="vTop Width70Percent TextAlignCenter"></td>
+        <td class="Width15Percent">&nbsp;
         </td>
     </tr>
 </table>
@@ -134,8 +131,7 @@
                     <uc3:LoadingProgress ID="ldProgress" runat="server" />
                     <table class="CalendarTable Width98Percent TextAlignCenter" align="center">
                         <tr>
-                            <td class="textRightImp ValignMiddleImp width30P">
-                                Select a Person:
+                            <td class="textRightImp ValignMiddleImp width30P">Select a Person:
                             </td>
                             <td class="textLeft no-wrap">
                                 <pmc:CustomDropDown ID="ddlPerson" runat="server" IsOptionGroupRequired="false">
@@ -161,21 +157,18 @@
                                 <asp:Button ID="btnAddTimeOff" runat="server" Text="Add Time Off" OnClick="btnAddTimeOff_Click"
                                     ToolTip="Add Time Off" />
                             </td>
-                            <td class="Width22Per">
-                                &nbsp;
+                            <td class="Width22Per">&nbsp;
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2" class="Width67PImp no-wrap">
-                            </td>
+                            <td colspan="2" class="Width67PImp no-wrap"></td>
                             <td class="textRightImp">
                                 <asp:Label Text="Export:" ID="lblExport" runat="server"></asp:Label>
                                 <asp:Button ID="btnExportExcel" runat="server" Text="Excel" OnClick="btnExportExcel_Click" />
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2" class="Width67PImp no-wrap">
-                            </td>
+                            <td colspan="2" class="Width67PImp no-wrap"></td>
                             <td class="textRightImp">
                                 <asp:CheckBox ID="chbIncludeCompanyHolidays" runat="server" />
                                 <asp:Label Text="Include Company Holidays" ID="lblCompanyHolidaysCheckbox" runat="server"></asp:Label>
@@ -199,8 +192,7 @@
                     </table>
                     <table align="center" class="Width98Percent">
                         <tr>
-                            <td class="Width15Percent">
-                                &nbsp;
+                            <td class="Width15Percent">&nbsp;
                             </td>
                             <td class="Width70Percent" align="center">
                                 <table class="CalendarTable">
@@ -226,18 +218,14 @@
                                                 </tr>
                                             </table>
                                         </td>
-                                        <td rowspan="9" class="setCheckboxesLeft PaddingTop45Left2">
-                                        </td>
+                                        <td rowspan="9" class="setCheckboxesLeft PaddingTop45Left2"></td>
                                     </tr>
                                     <tr class="HeadRow">
-                                        <td class="setColorToCalendar">
-                                            January
+                                        <td class="setColorToCalendar">January
                                         </td>
-                                        <td>
-                                            February
+                                        <td>February
                                         </td>
-                                        <td class="setColorToCalendar">
-                                            March
+                                        <td class="setColorToCalendar">March
                                         </td>
                                     </tr>
                                     <tr>
@@ -252,14 +240,11 @@
                                         </td>
                                     </tr>
                                     <tr class="HeadRow">
-                                        <td>
-                                            April
+                                        <td>April
                                         </td>
-                                        <td class="setColorToCalendar">
-                                            May
+                                        <td class="setColorToCalendar">May
                                         </td>
-                                        <td>
-                                            June
+                                        <td>June
                                         </td>
                                     </tr>
                                     <tr>
@@ -274,14 +259,11 @@
                                         </td>
                                     </tr>
                                     <tr class="HeadRow">
-                                        <td class="setColorToCalendar">
-                                            July
+                                        <td class="setColorToCalendar">July
                                         </td>
-                                        <td>
-                                            August
+                                        <td>August
                                         </td>
-                                        <td class="setColorToCalendar">
-                                            September
+                                        <td class="setColorToCalendar">September
                                         </td>
                                     </tr>
                                     <tr>
@@ -296,14 +278,11 @@
                                         </td>
                                     </tr>
                                     <tr class="HeadRow">
-                                        <td>
-                                            October
+                                        <td>October
                                         </td>
-                                        <td class="setColorToCalendar">
-                                            November
+                                        <td class="setColorToCalendar">November
                                         </td>
-                                        <td>
-                                            December
+                                        <td>December
                                         </td>
                                     </tr>
                                     <tr>
@@ -319,8 +298,7 @@
                                     </tr>
                                 </table>
                             </td>
-                            <td class="Width15Percent">
-                                &nbsp;
+                            <td class="Width15Percent">&nbsp;
                             </td>
                         </tr>
                     </table>
@@ -332,8 +310,7 @@
                     <asp:Panel ID="pnlSelectEditCondtion" runat="server" CssClass="ConfirmBoxClassError Height175Width320Px PanelPerson">
                         <table class="calendarPopup">
                             <tr>
-                                <td colspan="3" class="Width20Px">
-                                </td>
+                                <td colspan="3" class="Width20Px"></td>
                             </tr>
                             <tr>
                                 <td class="TextAlignLeft padLeft5" colspan="3">
@@ -352,8 +329,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="3" class="height10Px">
-                                </td>
+                                <td colspan="3" class="height10Px"></td>
                             </tr>
                             <tr>
                                 <td colspan="3">
@@ -374,15 +350,13 @@
                             <asp:Panel ID="pnlAddTimeOff" runat="server" CssClass="ConfirmBoxClassError PanelPerson">
                                 <table class="calendarPopup">
                                     <tr>
-                                        <td colspan="3" class="height20P">
-                                        </td>
+                                        <td colspan="3" class="height20P"></td>
                                     </tr>
                                     <tr>
                                         <td colspan="3">
                                             <table class="Width100Per">
                                                 <tr>
-                                                    <td class="singleRowTableTd AddTimeOffStartDate">
-                                                        Start Date:
+                                                    <td class="singleRowTableTd AddTimeOffStartDate">Start Date:
                                                     </td>
                                                     <td class="singleRowTableTd AddTimeOffDatePicker">
                                                         <uc:DatePicker ID="dtpStartDateTimeOff" runat="server" TextBoxWidth="75px" OnClientChange="btnDeleteTimeOffDisable(); dtpStartDateTimeOff_OnClientChange();"
@@ -395,8 +369,7 @@
                                                             Text="*" EnableClientScript="false" SetFocusOnError="true" Display="Dynamic"
                                                             Operator="DataTypeCheck" Type="Date" ValidationGroup="TimeOff"></asp:CompareValidator>
                                                     </td>
-                                                    <td class="PaddingBottomTop0PxImp">
-                                                    </td>
+                                                    <td class="PaddingBottomTop0PxImp"></td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -405,8 +378,7 @@
                                         <td colspan="3">
                                             <table class="Width100Per">
                                                 <tr>
-                                                    <td class="singleRowTableTd AddTimeOffStartDate">
-                                                        End Date:
+                                                    <td class="singleRowTableTd AddTimeOffStartDate">End Date:
                                                     </td>
                                                     <td class="singleRowTableTd AddTimeOffDatePicker">
                                                         <uc:DatePicker ID="dtpEndDateTimeOff" runat="server" TextBoxWidth="75px" OnClientChange="btnDeleteTimeOffDisable(); dtpEndDateTimeOff_OnClientChange();"
@@ -440,15 +412,13 @@
                                                         <asp:CustomValidator ID="custLockdownDates" runat="server" Text="*" EnableClientScript="false"
                                                             SetFocusOnError="true" Display="Dynamic" ValidationGroup="TimeOff" OnServerValidate="custLockdownDates_ServerValidate"></asp:CustomValidator>
                                                     </td>
-                                                    <td class="PaddingBottomTop0PxImp">
-                                                    </td>
+                                                    <td class="PaddingBottomTop0PxImp"></td>
                                                 </tr>
                                             </table>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3" class="padLeft20 TextAlignLeft">
-                                            1. Select type of time to be entered:
+                                        <td colspan="3" class="padLeft20 TextAlignLeft">1. Select type of time to be entered:
                                         </td>
                                     </tr>
                                     <tr>
@@ -462,17 +432,14 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3" class="height10Px">
+                                        <td colspan="3" class="height10Px"></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" class="padLeft20 TextAlignLeft">2. Enter the number of hours (per day, if applicable):
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3" class="padLeft20 TextAlignLeft">
-                                            2. Enter the number of hours (per day, if applicable):
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="3" class="AddTimeOffHours">
-                                            Hours:&nbsp;
+                                        <td colspan="3" class="AddTimeOffHours">Hours:&nbsp;
                                             <asp:TextBox ID="txthoursTimeOff" runat="server" CssClass="width50Px" MaxLength="4"
                                                 onchange="btnDeleteTimeOffDisable();"></asp:TextBox>&nbsp;&nbsp;(8.00 Hrs Max,
                                             0.25 Hr incr.)
@@ -492,11 +459,13 @@
                                                 TargetControlID="txthoursTimeOff" FilterMode="ValidChars" FilterType="Custom,Numbers"
                                                 ValidChars=".">
                                             </AjaxControlToolkit:FilteredTextBoxExtender>
+                                            <asp:CustomValidator ID="cvFHRestrictToOnePerYear" runat="server" ErrorMessage="Only one Floating Holiday Per Year."
+                                                ToolTip="Only one Floating Holiday Per Year." Text="*" EnableClientScript="false"
+                                                SetFocusOnError="true" Display="Dynamic" ValidationGroup="TimeOff" OnServerValidate="cvFHRestrictToOnePerYear_ServerValidate"></asp:CustomValidator>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3" class="height10Px">
-                                        </td>
+                                        <td colspan="3" class="height10Px"></td>
                                     </tr>
                                     <tr>
                                         <td colspan="3" class="ValSumTimeOff">
@@ -527,12 +496,10 @@
                                 Style="display: none;">
                                 <table class="calendarPopup">
                                     <tr>
-                                        <td colspan="3" class="height20P">
-                                        </td>
+                                        <td colspan="3" class="height20P"></td>
                                     </tr>
                                     <tr>
-                                        <td class="textCenter bold padRight5 width100P" colspan="3">
-                                            Date:&nbsp;&nbsp;&nbsp;
+                                        <td class="textCenter bold padRight5 width100P" colspan="3">Date:&nbsp;&nbsp;&nbsp;
                                             <asp:Label ID="lbdateSingleDay" runat="server"></asp:Label>
                                             <asp:HiddenField ID="hdnDateSingleDay" runat="server"></asp:HiddenField>
                                             <asp:CustomValidator ID="cvSingleDay" runat="server" Text="*" EnableClientScript="false"
@@ -540,8 +507,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3" class="padLeft20 textLeft">
-                                            1. Select type of time to be entered:
+                                        <td colspan="3" class="padLeft20 textLeft">1. Select type of time to be entered:
                                         </td>
                                     </tr>
                                     <tr>
@@ -555,17 +521,14 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3" class="height10P">
+                                        <td colspan="3" class="height10P"></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" class="padLeft20 textLeft">2. Enter the number of hours (per day, if applicable):
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3" class="padLeft20 textLeft">
-                                            2. Enter the number of hours (per day, if applicable):
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="AddTimeOffHours">
-                                            Hours:&nbsp;
+                                        <td class="AddTimeOffHours">Hours:&nbsp;
                                             <asp:TextBox ID="txtHoursSingleDay" runat="server" CssClass="width50Px" MaxLength="4"
                                                 onchange="btnDeleteSingleDayDisable();"></asp:TextBox>&nbsp;&nbsp;(8.00 Hrs
                                             Max, 0.25 Hr incr.)
@@ -587,11 +550,13 @@
                                             </AjaxControlToolkit:FilteredTextBoxExtender>
                                             <asp:CustomValidator ID="custLockdownDetails" runat="server" Text="*" EnableClientScript="false" Enabled="false"
                                                 SetFocusOnError="true" Display="Dynamic" ValidationGroup="SingleDay" OnServerValidate="custLockdownDetails_ServerValidate"></asp:CustomValidator>
+                                            <asp:CustomValidator ID="cvFHOnePerYearSingleDay" runat="server" ErrorMessage="Only one Floating Holiday Per Year."
+                                                ToolTip="Only one Floating Holiday Per Year." Text="*" EnableClientScript="false"
+                                                SetFocusOnError="true" Display="Dynamic" ValidationGroup="SingleDay" OnServerValidate="cvFHOnePerYearSingleDay_ServerValidate"></asp:CustomValidator>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3" class="height10Px">
-                                        </td>
+                                        <td colspan="3" class="height10Px"></td>
                                     </tr>
                                     <tr>
                                         <td colspan="3" class="textLeft padLeft10">
@@ -605,15 +570,14 @@
                                                 runat="server" />
                                             <asp:Button ID="btnDeleteSingleDay" OnClick="btnDeleteSingleDay_OnClick" Text="Delete"
                                                 ToolTip="Delete" runat="server" />
-                                                  <asp:CustomValidator ID="custSingleDayDelete" runat="server" Text="*" EnableClientScript="false" Enabled="false"
+                                            <asp:CustomValidator ID="custSingleDayDelete" runat="server" Text="*" EnableClientScript="false" Enabled="false"
                                                 SetFocusOnError="true" Display="Dynamic" ValidationGroup="SingleDay" OnServerValidate="custLockdownDelete_ServerValidate"></asp:CustomValidator>
                                             <asp:Button ID="btnCancelEditSingleDay" Text="Cancel" ToolTip="Cancel" runat="server"
                                                 OnClick="btnCancelEditSingleDay_OnClick" />
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3" class="height10Px">
-                                        </td>
+                                        <td colspan="3" class="height10Px"></td>
                                     </tr>
                                 </table>
                             </asp:Panel>
@@ -632,27 +596,23 @@
                                 CssClass="PnlHolidayAndSubStituteDayPadding PanelPerson HolidayAndSubstituteDay">
                                 <table class="WholeWidth">
                                     <tr>
-                                        <td class="HolidayLabel">
-                                            You have selected :
+                                        <td class="HolidayLabel">You have selected :
                                         </td>
                                         <td class="LabelHolidayDate">
                                             <asp:Label ID="lblHolidayDate" CssClass="fontBold" runat="server"></asp:Label>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>
-                                        </td>
+                                        <td></td>
                                         <td class="LabelHolidayDate">
                                             <asp:Label ID="lblHolidayName" CssClass="fontBold" runat="server"></asp:Label>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2" class="height20P">
-                                        </td>
+                                        <td colspan="2" class="height20P"></td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2" class="height20P TextAlignLeft">
-                                            Please select substitute day for this holiday :
+                                        <td colspan="2" class="height20P TextAlignLeft">Please select substitute day for this holiday :
                                         </td>
                                     </tr>
                                     <tr>
@@ -698,8 +658,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2" class="Height5Px">
-                                        </td>
+                                        <td colspan="2" class="Height5Px"></td>
                                     </tr>
                                 </table>
                             </asp:Panel>
@@ -721,8 +680,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="LabelModifySubstituteDate Width75Percent">
-                                            Substitute Date:&nbsp;
+                                        <td class="LabelModifySubstituteDate Width75Percent">Substitute Date:&nbsp;
                                             <asp:Label ID="lblModifySubstituteday" runat="server" CssClass="fontBold"></asp:Label>
                                         </td>
                                         <td class="LabelModifySubstituteDate Width25Percent textLeft">
@@ -774,14 +732,12 @@
                     <asp:Panel ID="pnlDeleteSubstituteDay" runat="server" Style="display: none;" CssClass="PnlDeleteSubstitutionDate PnlHolidayAndSubStituteDayPadding PanelPerson">
                         <table class="WholeWidth">
                             <tr>
-                                <td class="TextAlignCenter">
-                                    Date<span class="fontBold">:
+                                <td class="TextAlignCenter">Date<span class="fontBold">:
                                         <asp:Label ID="lblDeleteSubstituteDay" runat="server"></asp:Label></span>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="Height5Px">
-                                </td>
+                                <td class="Height5Px"></td>
                             </tr>
                             <tr>
                                 <td>
@@ -789,8 +745,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td class="Height5Px">
-                                </td>
+                                <td class="Height5Px"></td>
                             </tr>
                             <tr>
                                 <td align="center" class="Padding10px0px10px0px">
