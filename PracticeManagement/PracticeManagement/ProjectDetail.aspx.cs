@@ -1988,7 +1988,7 @@ namespace PraticeManagement
                         {
                             hdnIsRevenueException.Value = (!(marginvariance < -tierOneThreshold.MarginThreshold)).ToString();
                             hdnIsMarginException.Value = ((!isActiveProject || (isActiveProject && project.showBudgetRequest)) && ((project.TierOneExceptionStatus == 0 || project.TierOneExceptionStatus == 3 || project.TierTwoExceptionStatus == 3) || ((project.TierTwoExceptionStatus == 2 || project.TierTwoExceptionStatus == 0) && project.TierOneExceptionStatus == 2))).ToString();
-                            btnMrgSubmit.Visible = (project.Status.Id != (int)ProjectStatusType.Completed) && (!isActiveProject || (isActiveProject && project.showBudgetRequest)) && (currentPersonId == project.Director.Id.Value || currentPersonId == project.ProjectOwner.Id.Value || currentPersonId == project.SeniorManagerId || UserIsAdministrator || project.ProjectManagers.Exists(p => p.Id.Value == currentPersonId));
+                            btnMrgSubmit.Visible = (project.Status.Id != (int)ProjectStatusType.Completed) && (!isActiveProject || (isActiveProject && project.showBudgetRequest)) && ((project.Director != null && currentPersonId == project.Director.Id.Value) || currentPersonId == project.ProjectOwner.Id.Value || currentPersonId == project.SeniorManagerId || UserIsAdministrator || project.ProjectManagers.Exists(p => p.Id.Value == currentPersonId));
                             divExceptionOne.Visible = (project.Status.Id != (int)ProjectStatusType.Completed) && (!isActiveProject && ((project.TierOneExceptionStatus == 0 || project.TierOneExceptionStatus == 3 || project.TierTwoExceptionStatus == 3) || ((project.TierTwoExceptionStatus == 2 || project.TierTwoExceptionStatus == 0) && project.TierOneExceptionStatus == 2)));// Red
                             divExceptionTwo.Visible = isActiveProject && !(project.TierOneExceptionStatus == 1 || (project.TierOneExceptionStatus != 3 && project.TierTwoExceptionStatus == 1));// Yellow
                             btnMrgSubmit.Enabled = true;
@@ -2036,7 +2036,6 @@ namespace PraticeManagement
             imgReset.Style["display"] = isEnable && Project.IsBudgetReset ? "" : "none";
             spanBudgetAsterisk.Style["display"] = !btnBudgetResetReq.Enabled && btnBudgetResetReq.Style["display"] == "" ? "" : "none";
             txtPOAmount.ReadOnly = txtSowBudget.ReadOnly = Project != null && Project.Budget.HasValue && !isUserAllowed;
-            //var a = ProjectId.HasValue ? ServiceCallers.Custom.Project(p => p.FinancialsByProject(ProjectId.Value)).Revenue.Value.ToString(): "";
         }
 
         private void populateOutsourceId(int id)
