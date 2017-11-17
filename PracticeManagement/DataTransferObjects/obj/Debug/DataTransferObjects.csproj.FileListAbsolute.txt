@@ -1,0 +1,6 @@
+E:\PMVSO\PracticeManagement\DataTransferObjects\obj\Debug\DataTransferObjects.csprojResolveAssemblyReference.cache
+E:\PMVSO\PracticeManagement\DataTransferObjects\bin\Debug\DataTransferObjects.dll
+E:\PMVSO\PracticeManagement\DataTransferObjects\bin\Debug\DataTransferObjects.pdb
+E:\PMVSO\PracticeManagement\DataTransferObjects\bin\Debug\Microsoft.WindowsAzure.ServiceRuntime.dll
+E:\PMVSO\PracticeManagement\DataTransferObjects\obj\Debug\DataTransferObjects.dll
+E:\PMVSO\PracticeManagement\DataTransferObjects\obj\Debug\DataTransferObjects.pdb

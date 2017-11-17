@@ -21,4 +21,3 @@ BEGIN
 
 	EXEC dbo.SessionLogUnprepare
 END
-

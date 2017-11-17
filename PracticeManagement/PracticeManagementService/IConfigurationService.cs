@@ -100,6 +100,33 @@ namespace PracticeManagementService
 
         [OperationContract]
         List<Location> GetLocations();
+
+        [OperationContract]
+        List<ClientMarginThreshold> GetMarginThresholds();
+
+        [OperationContract]
+        List<ClientMarginException> GetMarginExceptionThresholds();
+
+        [OperationContract]
+        void InsertMarginThreshold(ClientMarginThreshold threshold);
+
+        [OperationContract]
+        void UpdateMarginThreshold(ClientMarginThreshold threshold);
+
+        [OperationContract]
+        void InsertMarginExceptionThreshold(ClientMarginException threshold);
+
+        [OperationContract]
+        void UpdateMarginExceptionThreshold(ClientMarginException threshold);
+
+        [OperationContract]
+        void DeleteMarginThreshold(int id);
+
+        [OperationContract]
+        void DeleteMarginExceptionThreshold(int id);
+
+        [OperationContract]
+        List<OpenTask> GetOpenTasksForUser(string user);
+
     }
 }
-

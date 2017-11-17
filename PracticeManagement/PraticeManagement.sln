@@ -254,42 +254,4 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(SourceCodeControl) = preSolution
-		SccNumberOfProjects = 11
-		SccProjectName0 = SurroundSCMScci
-		SccLocalPath0 = ..
-		SccProvider0 = MSSCCI:Surround\u0020SCM
-		SccProjectFilePathRelativizedFromConnection0 = PM_New\\
-		SccProjectUniqueName1 = ClientDAL\\DataAccess.csproj
-		SccLocalPath1 = ..
-		SccProjectFilePathRelativizedFromConnection1 = PM_New\\ClientDAL\\
-		SccProjectUniqueName2 = PracticeManagementService\\PracticeManagementService.csproj
-		SccLocalPath2 = ..
-		SccProjectFilePathRelativizedFromConnection2 = PM_New\\PracticeManagementService\\
-		SccProjectUniqueName3 = DataTransferObjects\\DataTransferObjects.csproj
-		SccLocalPath3 = ..
-		SccProjectFilePathRelativizedFromConnection3 = PM_New\\DataTransferObjects\\
-		SccProjectUniqueName4 = PracticeManagement\\PracticeManagement.csproj
-		SccLocalPath4 = ..
-		SccProjectFilePathRelativizedFromConnection4 = PM_New\\PracticeManagement\\
-		SccProjectUniqueName5 = PMWebAzureService\\PMWebAzureService.ccproj
-		SccLocalPath5 = ..
-		SccProjectFilePathRelativizedFromConnection5 = PM_New\\PMWebAzureService\\
-		SccProjectUniqueName6 = DEVAzureService\\DEVAzureService.ccproj
-		SccLocalPath6 = ..
-		SccProjectFilePathRelativizedFromConnection6 = PM_New\\DEVAzureService\\
-		SccProjectUniqueName7 = UpdatePracticeAndSeniority\\UpdatePracticeAndSeniority.csproj
-		SccLocalPath7 = ..
-		SccProjectFilePathRelativizedFromConnection7 = PM_New\\UpdatePracticeAndSeniority\\
-		SccProjectUniqueName8 = PMAzureSchedular\\PMAzureSchedular.ccproj
-		SccLocalPath8 = ..
-		SccProjectFilePathRelativizedFromConnection8 = PM_New\\PMAzureSchedular\\
-		SccProjectUniqueName9 = DEVAzureSchedular\\DEVAzureSchedular.ccproj
-		SccLocalPath9 = ..
-		SccProjectFilePathRelativizedFromConnection9 = PM_New\\DEVAzureSchedular\\
-		SccProjectUniqueName10 = PracticeManagementDatabase\\PracticeManagementDatabase.sqlproj
-		SccLocalPath10 = ..
-		SccProjectFilePathRelativizedFromConnection10 = PM_New\\PracticeManagementDatabase\\
-	EndGlobalSection
 EndGlobal
-

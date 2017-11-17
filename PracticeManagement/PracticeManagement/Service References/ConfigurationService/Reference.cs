@@ -107,6 +107,33 @@ namespace PraticeManagement.ConfigurationService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IConfigurationService/GetLocations", ReplyAction="http://tempuri.org/IConfigurationService/GetLocationsResponse")]
         DataTransferObjects.Location[] GetLocations();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IConfigurationService/GetMarginThresholds", ReplyAction="http://tempuri.org/IConfigurationService/GetMarginThresholdsResponse")]
+        DataTransferObjects.ClientMarginThreshold[] GetMarginThresholds();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IConfigurationService/GetMarginExceptionThresholds", ReplyAction="http://tempuri.org/IConfigurationService/GetMarginExceptionThresholdsResponse")]
+        DataTransferObjects.ClientMarginException[] GetMarginExceptionThresholds();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IConfigurationService/InsertMarginThreshold", ReplyAction="http://tempuri.org/IConfigurationService/InsertMarginThresholdResponse")]
+        void InsertMarginThreshold(DataTransferObjects.ClientMarginThreshold threshold);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IConfigurationService/UpdateMarginThreshold", ReplyAction="http://tempuri.org/IConfigurationService/UpdateMarginThresholdResponse")]
+        void UpdateMarginThreshold(DataTransferObjects.ClientMarginThreshold threshold);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IConfigurationService/InsertMarginExceptionThreshold", ReplyAction="http://tempuri.org/IConfigurationService/InsertMarginExceptionThresholdResponse")]
+        void InsertMarginExceptionThreshold(DataTransferObjects.ClientMarginException threshold);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IConfigurationService/UpdateMarginExceptionThreshold", ReplyAction="http://tempuri.org/IConfigurationService/UpdateMarginExceptionThresholdResponse")]
+        void UpdateMarginExceptionThreshold(DataTransferObjects.ClientMarginException threshold);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IConfigurationService/DeleteMarginThreshold", ReplyAction="http://tempuri.org/IConfigurationService/DeleteMarginThresholdResponse")]
+        void DeleteMarginThreshold(int id);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IConfigurationService/DeleteMarginExceptionThreshold", ReplyAction="http://tempuri.org/IConfigurationService/DeleteMarginExceptionThresholdResponse")]
+        void DeleteMarginExceptionThreshold(int id);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IConfigurationService/GetOpenTasksForUser", ReplyAction="http://tempuri.org/IConfigurationService/GetOpenTasksForUserResponse")]
+        DataTransferObjects.OpenTask[] GetOpenTasksForUser(string user);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -117,7 +144,7 @@ namespace PraticeManagement.ConfigurationService {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public partial class ConfigurationServiceClient : System.ServiceModel.ClientBase<PraticeManagement.ConfigurationService.IConfigurationService>, PraticeManagement.ConfigurationService.IConfigurationService {
         
-              
+             
         public ConfigurationServiceClient(string endpointConfigurationName) : 
                 base(endpointConfigurationName) {
         }
@@ -253,6 +280,41 @@ namespace PraticeManagement.ConfigurationService {
         public DataTransferObjects.Location[] GetLocations() {
             return base.Channel.GetLocations();
         }
+        
+        public DataTransferObjects.ClientMarginThreshold[] GetMarginThresholds() {
+            return base.Channel.GetMarginThresholds();
+        }
+        
+        public DataTransferObjects.ClientMarginException[] GetMarginExceptionThresholds() {
+            return base.Channel.GetMarginExceptionThresholds();
+        }
+        
+        public void InsertMarginThreshold(DataTransferObjects.ClientMarginThreshold threshold) {
+            base.Channel.InsertMarginThreshold(threshold);
+        }
+        
+        public void UpdateMarginThreshold(DataTransferObjects.ClientMarginThreshold threshold) {
+            base.Channel.UpdateMarginThreshold(threshold);
+        }
+        
+        public void InsertMarginExceptionThreshold(DataTransferObjects.ClientMarginException threshold) {
+            base.Channel.InsertMarginExceptionThreshold(threshold);
+        }
+        
+        public void UpdateMarginExceptionThreshold(DataTransferObjects.ClientMarginException threshold) {
+            base.Channel.UpdateMarginExceptionThreshold(threshold);
+        }
+        
+        public void DeleteMarginThreshold(int id) {
+            base.Channel.DeleteMarginThreshold(id);
+        }
+        
+        public void DeleteMarginExceptionThreshold(int id) {
+            base.Channel.DeleteMarginExceptionThreshold(id);
+        }
+        
+        public DataTransferObjects.OpenTask[] GetOpenTasksForUser(string user) {
+            return base.Channel.GetOpenTasksForUser(user);
+        }
     }
 }
-

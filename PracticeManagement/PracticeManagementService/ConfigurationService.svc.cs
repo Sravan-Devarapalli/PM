@@ -176,6 +176,51 @@ namespace PracticeManagementService
         {
             return ConfigurationDAL.GetLocations();
         }
+
+        public List<ClientMarginThreshold> GetMarginThresholds()
+        {
+            return ConfigurationDAL.GetMarginThresholds();
+
+        }
+
+        public List<ClientMarginException> GetMarginExceptionThresholds()
+        {
+            return ConfigurationDAL.GetMarginExceptionThresholds();
+        }
+
+        public void InsertMarginThreshold(ClientMarginThreshold threshold)
+        {
+            ConfigurationDAL.InsertMarginThreshold(threshold);
+        }
+
+        public void UpdateMarginThreshold(ClientMarginThreshold threshold)
+        {
+            ConfigurationDAL.UpdateMarginThreshold(threshold);
+        }
+
+        public void InsertMarginExceptionThreshold(ClientMarginException threshold)
+        {
+            ConfigurationDAL.InsertMarginExceptionThreshold(threshold);
+        }
+
+        public void UpdateMarginExceptionThreshold(ClientMarginException threshold)
+        {
+            ConfigurationDAL.UpdateMarginExceptionThreshold(threshold);
+        }
+
+        public void DeleteMarginThreshold(int id)
+        {
+            ConfigurationDAL.DeleteMarginThreshold(id);
+        }
+
+        public void DeleteMarginExceptionThreshold(int id)
+        {
+            ConfigurationDAL.DeleteMarginExceptionThreshold(id);
+        }
+
+        public List<OpenTask> GetOpenTasksForUser(string user)
+        {
+            return ConfigurationDAL.GetOpenTasksForUser(user);
+        }
     }
 }
-

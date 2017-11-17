@@ -8,4 +8,3 @@ AS
 	WHERE S.IsActive = 1
 		AND S.IsDeleted = 0
 	ORDER BY S.Description
-

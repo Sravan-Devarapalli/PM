@@ -1,0 +1,11 @@
+E:\PMVSO\PracticeManagement\PracticeManagementService\obj\Debug\PracticeManagementService.csprojResolveAssemblyReference.cache
+E:\PMVSO\PracticeManagement\PracticeManagementService\bin\PracticeManagementService.dll.config
+E:\PMVSO\PracticeManagement\PracticeManagementService\bin\PracticeManagementService.dll
+E:\PMVSO\PracticeManagement\PracticeManagementService\bin\PracticeManagementService.pdb
+E:\PMVSO\PracticeManagement\PracticeManagementService\bin\DataAccess.dll
+E:\PMVSO\PracticeManagement\PracticeManagementService\bin\DataTransferObjects.dll
+E:\PMVSO\PracticeManagement\PracticeManagementService\bin\Microsoft.WindowsAzure.ServiceRuntime.dll
+E:\PMVSO\PracticeManagement\PracticeManagementService\bin\DataAccess.pdb
+E:\PMVSO\PracticeManagement\PracticeManagementService\bin\DataTransferObjects.pdb
+E:\PMVSO\PracticeManagement\PracticeManagementService\obj\Debug\PracticeManagementService.dll
+E:\PMVSO\PracticeManagement\PracticeManagementService\obj\Debug\PracticeManagementService.pdb

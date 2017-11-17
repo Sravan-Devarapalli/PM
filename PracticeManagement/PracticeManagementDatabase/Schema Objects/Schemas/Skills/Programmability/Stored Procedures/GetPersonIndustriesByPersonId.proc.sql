@@ -12,4 +12,3 @@ BEGIN
 		AND I.IsDeleted = 0
 	ORDER BY I.Description
 END
-

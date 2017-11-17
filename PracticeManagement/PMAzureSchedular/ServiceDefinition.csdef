@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ServiceDefinition name="PMAzureSchedular" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition">
+<ServiceDefinition name="PMAzureSchedular" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2015-04.2.6">
   <WorkerRole name="UpdatePracticeAndSeniority" vmsize="ExtraSmall">
     <LocalResources>
       <LocalStorage name="NETFXInstall" sizeInMB="1024" cleanOnRoleRecycle="false" />
@@ -44,4 +44,3 @@
     </ConfigurationSettings>
   </WorkerRole>
 </ServiceDefinition>
-

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ServiceConfiguration serviceName="PMAzureSchedular" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="2" osVersion="*">
+<ServiceConfiguration serviceName="PMAzureSchedular" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="2" osVersion="*" schemaVersion="2015-04.2.6">
   <Role name="UpdatePracticeAndSeniority">
     <Instances count="1" />
     <ConfigurationSettings>
@@ -36,11 +36,10 @@
       <Setting name="UATTestingMail" value="PMTesting@logic2020.com" />
       <Setting name="FeedbackMailsScheduleTime" value="06:00:00" />
       <!--HH:mm:ss and 24 hour time format-->
-      <Setting name="FTPHostName" value="ftp.logic2020.csod.com" /> 
+      <Setting name="FTPHostName" value="ftp.logic2020.csod.com" />
       <Setting name="FTPUserName" value="logic2020" />
       <Setting name="FTPPassword" value="o9ELp4Rr" />
       <Setting name="FTPUploadTime" value="04:30:00" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>
-

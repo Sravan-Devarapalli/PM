@@ -440,7 +440,16 @@ namespace DataTransferObjects
         PTOReport,
 
         [EnumMember]
-        ExpenseReport
+        ExpenseReport,
+
+        [EnumMember]
+        BudgetManagementReport,
+
+        [EnumMember]
+        BudgetComparision,
+
+        [EnumMember]
+        BurnReport
     }
 
     [DataContract]
@@ -518,5 +527,15 @@ namespace DataTransferObjects
         No = 2
     }
 
-}
+    public enum BudgetRevision
+    {
+        [EnumMember]
+        Submit,
 
+        [EnumMember]
+        Reset,
+
+        [EnumMember]
+        Decline
+    }
+}

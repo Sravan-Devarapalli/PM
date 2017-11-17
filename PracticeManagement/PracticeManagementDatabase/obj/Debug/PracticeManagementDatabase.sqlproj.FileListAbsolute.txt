@@ -1,0 +1,5 @@
+E:\PMVSO\PracticeManagement\PracticeManagementDatabase\sql\debug\PracticeManagementDatabase.dacpac
+E:\PMVSO\PracticeManagement\PracticeManagementDatabase\obj\Debug\PracticeManagementDatabase.dll
+E:\PMVSO\PracticeManagement\PracticeManagementDatabase\obj\Debug\PracticeManagementDatabase.pdb
+E:\PMVSO\PracticeManagement\PracticeManagementDatabase\sql\debug\PracticeManagementDatabase.dll
+E:\PMVSO\PracticeManagement\PracticeManagementDatabase\sql\debug\PracticeManagementDatabase.pdb

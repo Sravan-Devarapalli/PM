@@ -843,7 +843,19 @@
     <None Include="Service References\ConfigurationService\ConfigurationService22.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\ConfigurationService\ConfigurationService23.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ConfigurationService\ConfigurationService24.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\ConfigurationService\ConfigurationService25.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ConfigurationService\ConfigurationService26.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ConfigurationService\ConfigurationService27.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ConfigurationService\ConfigurationService5.xsd">
@@ -1232,7 +1244,6 @@
     </None>
     <None Include="Service References\RoleService\RoleService1.disco" />
     <None Include="Service References\ActivityLogService\ActivityLogService1.disco" />
-    <None Include="Service References\ConfigurationService\ConfigurationService1.disco" />
     <None Include="Service References\ClientService\ClientService1.disco" />
     <None Include="Service References\MilestonePersonService\MilestonePersonService1.disco" />
     <Content Include="Scripts\AjaxBluebird.js" />
@@ -1243,6 +1254,7 @@
     <Content Include="Scripts\MilestoneDetail.js" />
     <None Include="Service References\ProjectStatusService\ProjectStatusService1.disco" />
     <Content Include="Scripts\ProjectDetail.js" />
+    <None Include="Service References\ConfigurationService\ConfigurationService1.disco" />
     <Content Include="Service References\TimeEntryService\PraticeManagement.TimeEntryService.TimeEntriesGroupedByPerson.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Content>

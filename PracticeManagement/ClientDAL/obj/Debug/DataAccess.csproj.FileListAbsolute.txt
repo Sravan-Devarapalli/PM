@@ -1,0 +1,10 @@
+E:\PMVSO\PracticeManagement\ClientDAL\obj\Debug\DataAccess.csprojResolveAssemblyReference.cache
+E:\PMVSO\PracticeManagement\ClientDAL\bin\Debug\DataAccess.dll
+E:\PMVSO\PracticeManagement\ClientDAL\bin\Debug\DataAccess.pdb
+E:\PMVSO\PracticeManagement\ClientDAL\bin\Debug\DataTransferObjects.dll
+E:\PMVSO\PracticeManagement\ClientDAL\bin\Debug\DiffieHellman.dll
+E:\PMVSO\PracticeManagement\ClientDAL\bin\Debug\Org.Mentalis.Security.dll
+E:\PMVSO\PracticeManagement\ClientDAL\bin\Debug\Microsoft.WindowsAzure.ServiceRuntime.dll
+E:\PMVSO\PracticeManagement\ClientDAL\bin\Debug\DataTransferObjects.pdb
+E:\PMVSO\PracticeManagement\ClientDAL\obj\Debug\DataAccess.dll
+E:\PMVSO\PracticeManagement\ClientDAL\obj\Debug\DataAccess.pdb

@@ -21,14 +21,18 @@
     <MetadataSource Address="http://localhost/PracticeManagementService/ConfigurationService.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="ConfigurationService1.wsdl" MetadataType="Wsdl" ID="02fd79d2-f695-46a0-a5c7-6350286f6f18" SourceId="1" SourceUrl="http://ggku3sys52.ggktech.local/PracticeManagementService/ConfigurationService.svc?wsdl" />
-    <MetadataFile FileName="ConfigurationService5.xsd" MetadataType="Schema" ID="6ed5c9bc-4a24-4d9e-a724-d37708812666" SourceId="1" SourceUrl="http://ggku3sys52.ggktech.local/PracticeManagementService/ConfigurationService.svc?xsd=xsd0" />
-    <MetadataFile FileName="ConfigurationService6.xsd" MetadataType="Schema" ID="00e9ea6b-637d-43b8-8312-b98be277b713" SourceId="1" SourceUrl="http://ggku3sys52.ggktech.local/PracticeManagementService/ConfigurationService.svc?xsd=xsd5" />
-    <MetadataFile FileName="ConfigurationService7.xsd" MetadataType="Schema" ID="99222e57-9cf5-4085-814d-287037d381a8" SourceId="1" SourceUrl="http://ggku3sys52.ggktech.local/PracticeManagementService/ConfigurationService.svc?xsd=xsd3" />
-    <MetadataFile FileName="ConfigurationService1.disco" MetadataType="Disco" ID="c4c952b5-1351-49c1-81ec-d1a53b2af1c0" SourceId="1" SourceUrl="http://ggku3sys52.ggktech.local/PracticeManagementService/ConfigurationService.svc?disco" />
-    <MetadataFile FileName="ConfigurationService8.xsd" MetadataType="Schema" ID="f901b348-d7cf-4129-b013-dafbb21c531e" SourceId="1" SourceUrl="http://ggku3sys52.ggktech.local/PracticeManagementService/ConfigurationService.svc?xsd=xsd4" />
-    <MetadataFile FileName="ConfigurationService9.xsd" MetadataType="Schema" ID="8a6727ee-a481-47f7-9382-414884decc2d" SourceId="1" SourceUrl="http://ggku3sys52.ggktech.local/PracticeManagementService/ConfigurationService.svc?xsd=xsd2" />
-    <MetadataFile FileName="ConfigurationService10.xsd" MetadataType="Schema" ID="f5bcc932-b041-47be-878f-5e05abe751c8" SourceId="1" SourceUrl="http://ggku3sys52.ggktech.local/PracticeManagementService/ConfigurationService.svc?xsd=xsd1" />
+    <MetadataFile FileName="ConfigurationService5.xsd" MetadataType="Schema" ID="5605a392-5f26-470f-bb38-c816593e9ea0" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?xsd=xsd9" />
+    <MetadataFile FileName="ConfigurationService6.xsd" MetadataType="Schema" ID="6746c600-2556-4e8e-8006-4b9ca32d7e7e" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?xsd=xsd8" />
+    <MetadataFile FileName="ConfigurationService7.xsd" MetadataType="Schema" ID="0db28c08-3334-4643-b2ad-c2893f36be86" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?xsd=xsd1" />
+    <MetadataFile FileName="ConfigurationService1.wsdl" MetadataType="Wsdl" ID="e932e9ae-7da2-4242-8e86-665c8dbbf30b" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?wsdl" />
+    <MetadataFile FileName="ConfigurationService8.xsd" MetadataType="Schema" ID="2d8f6b60-0da3-420c-89b7-177ca2adf0b9" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?xsd=xsd5" />
+    <MetadataFile FileName="ConfigurationService9.xsd" MetadataType="Schema" ID="98eacbae-380f-4718-9e16-20ed902a381d" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?xsd=xsd4" />
+    <MetadataFile FileName="ConfigurationService10.xsd" MetadataType="Schema" ID="b3815b01-43c9-46ae-9dc4-33c5dd128d94" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?xsd=xsd3" />
+    <MetadataFile FileName="ConfigurationService1.disco" MetadataType="Disco" ID="e309cc95-852a-49cc-96c3-6c7e2e143764" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?disco" />
+    <MetadataFile FileName="ConfigurationService23.xsd" MetadataType="Schema" ID="a76af22b-2ef0-4722-9d09-99fb1dcbd303" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?xsd=xsd2" />
+    <MetadataFile FileName="ConfigurationService24.xsd" MetadataType="Schema" ID="05a4f438-e14a-4462-aad1-8d80333334f5" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?xsd=xsd7" />
+    <MetadataFile FileName="ConfigurationService26.xsd" MetadataType="Schema" ID="996d6fd7-c899-4a50-84c1-db9ca861b7ef" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?xsd=xsd6" />
+    <MetadataFile FileName="ConfigurationService27.xsd" MetadataType="Schema" ID="4a358e13-4446-4d6c-bfc9-233608a17514" SourceId="1" SourceUrl="http://ggku3sys280.ggktech.local/PracticemanagementService/ConfigurationService.svc?xsd=xsd0" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
