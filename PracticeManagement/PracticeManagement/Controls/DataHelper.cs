@@ -979,13 +979,17 @@ namespace PraticeManagement.Controls
         /// <param name="control"></param>
         /// <param name="firstItemText"></param>
 
-        public static void FillDirectorsList(ListControl control, string firstItemText, List<int> excludedPersons = null, bool fillPreferredFirstName = false)
+        public static void FillDirectorsList(ListControl control, string firstItemText, List<int> excludedPersons = null, bool fillPreferredFirstName = false, bool includeInActive = false)
         {
             using (var serviceClient = new PersonServiceClient())
             {
                 try
                 {
                     string statusids = (int)DataTransferObjects.PersonStatusType.Active + ", " + (int)DataTransferObjects.PersonStatusType.TerminationPending;
+                    if (includeInActive)
+                    {
+                        statusids += ", " + (int)DataTransferObjects.PersonStatusType.Terminated;
+                    }
                     Person[] persons = serviceClient.PersonListShortByRoleAndStatus(statusids, DataTransferObjects.Constants.RoleNames.DirectorRoleName);
                     persons = excludedPersons != null ? persons.Where(p => !excludedPersons.Any(g => g == p.Id)).ToArray() : persons;
                     FillPersonList(control, firstItemText, persons, String.Empty, false, fillPreferredFirstName);

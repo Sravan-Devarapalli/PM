@@ -31,9 +31,9 @@ namespace PraticeManagement.Controls.Projects
 
         private const string CurrencyDisplayFormat = "$###,###,###,###,###,##0";
         private const string CurrencyExcelReportFormat = "$####,###,###,###,###,##0.00";
-        private const int numberOfFixedCol = 28;
+        private const int numberOfFixedCol = 29;
         private const int ProjectStateColumnIndex = 0;
-        private const int ProjectNumberColumnIndex = 1;
+        private const int ProjectNumberColumnIndex = 2;
         private const int MaxPeriodLength = 24;
 
         private const string ButtonClientNameId = "btnClientName";
@@ -490,25 +490,22 @@ namespace PraticeManagement.Controls.Projects
         {
             get
             {
-                if (HostingPageIsBudgetManagementReport != null)
+                var sel = ddlFeeType.SelectedValues;
+                if (sel == null || (sel.Contains(1) && sel.Contains(2)))
                 {
-                    var sel = ddlFeeType.SelectedValues;
-                    if (sel == null || (sel.Contains(1) && sel.Contains(2)))
-                    {
-                        return null;
-                    }
-                    else if (sel.Contains(1))
-                    {
-                        return 1;
-                    }
-                    else
-                    {
-                        return 2;
-                    }
+                    return null;
+                }
+                else if (sel.Contains(1))
+                {
+                    return 1;
+                }
+                else if (sel.Contains(2))
+                {
+                    return 2;
                 }
                 else
                 {
-                    return null;
+                    return 0;
                 }
             }
         }
@@ -1002,6 +999,7 @@ namespace PraticeManagement.Controls.Projects
                      //ViewIdsList = ddlCalculationsType.SelectedValue,
                      SupressZeroProjects = ddlSupressZeroBalance.SelectedValue,
                      FeeTypeIds = FeeTypeIds,
+                     FeeType = FeeType,
                      Level = ddlLevel.SelectedValue,
                      ActualEndDate = ActualsEndDate
                  };
@@ -1489,8 +1487,8 @@ namespace PraticeManagement.Controls.Projects
                             }
                         }
                     }
-                    var abc = new ProjectComparer(sortExpression);
-                    Array.Sort(projectList, abc);
+                    var comp = new ProjectComparer(sortExpression);
+                    Array.Sort(projectList, comp);
                     if (ListViewSortDirection != "Ascending")
                         Array.Reverse(projectList);
                 }
@@ -1771,17 +1769,18 @@ namespace PraticeManagement.Controls.Projects
 
 
 
-                tdLevelLbl.Visible = tdLevelValue.Visible = tdFeeTypeLbl.Visible = tdFeeType.Visible = HostingPageIsBudgetManagementReport != null;
+                tdLevelLbl.Visible = tdLevelValue.Visible = HostingPageIsBudgetManagementReport != null;
 
                 //if (HostingPageIsBudgetManagementReport != null)
                 //{
                 ListItem allFeeTypes = new ListItem("All", "");
-                ListItem TMOnly = new ListItem("T&M Only", "1");
-                ListItem FFOnly = new ListItem("Fixed Fee Only", "2");
+                ListItem TMOnly = new ListItem("Time & Materials", "1");
+                ListItem FFOnly = new ListItem("Fixed Fee", "2");
 
                 ddlFeeType.Items.Add(allFeeTypes);
-                ddlFeeType.Items.Add(TMOnly);
                 ddlFeeType.Items.Add(FFOnly);
+                ddlFeeType.Items.Add(TMOnly);
+
                 ddlFeeType.SelectedIndex = 0;
                 //}
                 // Set the default viewable interval.
@@ -2313,6 +2312,7 @@ namespace PraticeManagement.Controls.Projects
                                 {
                                     ProjectID = pro.Id != null ? pro.Id.ToString() : string.Empty,
                                     ProjectNumber = pro.ProjectNumber != null ? pro.ProjectNumber.ToString() : string.Empty,
+                                    FeeType = pro.FeeType,
                                     Account = (pro.Client != null && pro.Client.Name != null) ? pro.Client.Name.ToString() : string.Empty,
                                     HouseAccount = (pro.Client != null && pro.Client.IsHouseAccount == true) ? "Yes" : string.Empty,
                                     BusinessGroup = (pro.BusinessGroup != null && pro.BusinessGroup.Name != null) ? pro.BusinessGroup.Name : string.Empty,
@@ -2349,6 +2349,7 @@ namespace PraticeManagement.Controls.Projects
                                           {
                                               ProjectID = pro.Id != null ? pro.Id.ToString() : string.Empty,
                                               ProjectNumber = pro.ProjectNumber != null ? pro.ProjectNumber.ToString() : string.Empty,
+                                              FeeType = pro.FeeType,
                                               Account = (pro.Client != null && pro.Client.Name != null) ? pro.Client.Name.ToString() : string.Empty,
                                               HouseAccount = (pro.Client != null && pro.Client.IsHouseAccount == true) ? "Yes" : string.Empty,
                                               BusinessGroup = (pro.BusinessGroup != null && pro.BusinessGroup.Name != null) ? pro.BusinessGroup.Name : string.Empty,
@@ -2438,6 +2439,7 @@ namespace PraticeManagement.Controls.Projects
             DataTable data = new DataTable();
 
             data.Columns.Add("Project Number");
+            data.Columns.Add("Fee Type");
             data.Columns.Add("Account");
             data.Columns.Add("House Account");
             data.Columns.Add("Business Group");
@@ -2507,10 +2509,6 @@ namespace PraticeManagement.Controls.Projects
                         objects[column] = (property.GetValue(propertyBag) == Revenue) ? ServiceRevenue : property.GetValue(propertyBag);
                         if (property.Name == "ProjectNumber")
                         {
-                            if (property.GetValue(propertyBag).ToString() == "P001123")
-                            {
-
-                            }
                             project = projectsList.Where(p => p.ProjectNumber == property.GetValue(propertyBag).ToString()).FirstOrDefault();
                         }
                         if (property.Name == "Type")
@@ -3408,7 +3406,7 @@ namespace PraticeManagement.Controls.Projects
                 // fill summary
                 row = lvProjects.FindControl("lvSummary") as System.Web.UI.HtmlControls.HtmlTableRow;
                 var tdSummary = row.FindControl("tdSummary") as System.Web.UI.HtmlControls.HtmlTableCell;
-                tdSummary.ColSpan = HostingPageIsBudgetManagementReport != null && showDetailedReport ? 28 : 6;
+                tdSummary.ColSpan = HostingPageIsBudgetManagementReport != null && showDetailedReport ? 29 : 7;
                 while (row.Cells.Count > 1)
                 {
                     row.Cells.RemoveAt(1);
@@ -3541,4 +3539,3 @@ namespace PraticeManagement.Controls.Projects
         }
     }
 }
-

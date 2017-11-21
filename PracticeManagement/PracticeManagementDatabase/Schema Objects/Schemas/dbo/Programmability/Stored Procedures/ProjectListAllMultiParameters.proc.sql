@@ -159,7 +159,11 @@ AS
 			p.IsClientTimeEntryRequired,
 			PrevProject.ProjectId AS PreviousProjectId,
 			PrevProject.ProjectNumber AS PreviousProjectNumber,
-			p.OutsourceId
+			p.OutsourceId,
+			CASE WHEN (FeeType.MinimumValue = FeeType.MaximumValue AND FeeType.MinimumValue = 0) THEN 'FF'
+				 WHEN (FeeType.MinimumValue = FeeType.MaximumValue AND FeeType.MinimumValue = 1) THEN 'TM'
+				 WHEN (FeeType.MinimumValue != FeeType.MaximumValue) THEN 'FF/TM'
+				 ELSE '' END AS FeeType
 	FROM	dbo.Project AS P
 	INNER JOIN dbo.Practice pr ON pr.PracticeId = P.PracticeId
 	INNER JOIN dbo.Client AS Clnt ON P.ClientId = Clnt.ClientId

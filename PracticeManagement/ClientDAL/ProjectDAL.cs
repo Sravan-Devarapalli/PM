@@ -2121,6 +2121,13 @@ namespace DataAccess
                 int previousProjectNumberIndex = -1;
                 int previousProjectIdIndex = -1;
                 int outsourceIdIndex = -1;
+                int feeTypeIndex = -1;
+
+                try
+                {
+                    feeTypeIndex = reader.GetOrdinal(Constants.ColumnNames.FeeType);
+                }
+                catch { }
                 try
                 {
                     outsourceIdIndex = reader.GetOrdinal(Constants.ColumnNames.OutsourceId);
@@ -2553,6 +2560,11 @@ namespace DataAccess
                         }
                         catch
                         {
+                        }
+
+                        if (feeTypeIndex > -1)
+                        {
+                            project.FeeType = reader.GetString(feeTypeIndex);
                         }
                         resultList.Add(project);
                     }

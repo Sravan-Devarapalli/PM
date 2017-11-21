@@ -229,14 +229,14 @@
         else {
             level.selectedIndex = 0;
             calculationType.selectedIndex = 0;
-
-            var divFee = document.getElementById("<%= divFeeType.ClientID %>");
-            var arrayOfCheckBoxes = divFee.getElementsByTagName('input');
-            for (var i = 0; i < arrayOfCheckBoxes.length; i++) {
-                arrayOfCheckBoxes[i].checked = true;
-            }
-            GetDefault(document.getElementById("<%= ddlFeeType.ClientID %>"));
         }
+
+        var divFee = document.getElementById("<%= divFeeType.ClientID %>");
+        var arrayOfCheckBoxes = divFee.getElementsByTagName('input');
+        for (var i = 0; i < arrayOfCheckBoxes.length; i++) {
+            arrayOfCheckBoxes[i].checked = true;
+        }
+        GetDefault(document.getElementById("<%= ddlFeeType.ClientID %>"));
 
         GetDefault(document.getElementById("<%= ddldataPoints.ClientID %>"));
         SetActualDropDown();
@@ -584,13 +584,13 @@
                                         <td class="ProjectSummaryGrandTotalTd tdActual" style="width: 150px !important">Actuals
                                         </td>
                                         <td class="Width20Px" rowspan="4"></td>
-                                        <td id="tdFeeTypeLbl" runat="server" class="ProjectSummaryGrandTotalTd" visible="false" style="width: 150px !important">Fee Type</td>
-                                        <td class="Width20Px" rowspan="4"></td>
                                         <td class="ProjectSummaryGrandTotalTd" style="width: 150px !important">Suppress Zero Balance Projects
                                         </td>
                                         <td class="Width20Px" rowspan="4"></td>
-                                        <td id="tdLevelLbl" runat="server" class="ProjectSummaryGrandTotalTd" visible="false" width="150px">Level
+                                        <td id="tdLevelLbl" runat="server" class="ProjectSummaryGrandTotalTd" visible="false" style="width: 150px !important">Level
                                         </td>
+                                        <td class="Width20Px" rowspan="4"></td>
+                                        <td id="tdFeeTypeLbl" runat="server" class="ProjectSummaryGrandTotalTd" style="width: 220px !important">FF/T&M</td>
                                         <td rowspan="4">
                                             <table class="textRight WholeWidth">
                                                 <tr>
@@ -641,15 +641,7 @@
                                                 <asp:ListItem Value="0">All</asp:ListItem>
                                             </asp:DropDownList>
                                         </td>
-                                        <td id="tdFeeType" runat="server" rowspan="2" visible="false">
-                                            <div id="divFeeType" runat="server">
-                                                <pmc:ScrollingDropDown ID="ddlFeeType" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown TextAlignLeftImp"
-                                                    onclick="scrollingDropdown_onclick('ddlFeeType','Fee Type')" DropDownListType="FeeType" />
-                                                <ext:ScrollableDropdownExtender ID="ScrollableDropdownExtender2" runat="server" TargetControlID="ddlFeeType"
-                                                    UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="150px">
-                                                </ext:ScrollableDropdownExtender>
-                                            </div>
-                                        </td>
+
                                         <td rowspan="2" class="">
                                             <asp:DropDownList ID="ddlSupressZeroBalance" runat="server" AutoPostBack="false" CssClass="height20PImp" Width="150px">
                                                 <asp:ListItem Text="Yes" Value="1" Selected="True"></asp:ListItem>
@@ -661,6 +653,15 @@
                                                 <asp:ListItem Text="Summary" Value="1" Selected="True"></asp:ListItem>
                                                 <asp:ListItem Text="Detail" Value="2"></asp:ListItem>
                                             </asp:DropDownList>
+                                        </td>
+                                        <td id="tdFeeType" runat="server" rowspan="2">
+                                            <div id="divFeeType" runat="server">
+                                                <pmc:ScrollingDropDown ID="ddlFeeType" runat="server" SetDirty="false" CssClass="ProjectSummaryScrollingDropDown TextAlignLeftImp"
+                                                    onclick="scrollingDropdown_onclick('ddlFeeType','Fee Type')" DropDownListType="FeeType" />
+                                                <ext:ScrollableDropdownExtender ID="ScrollableDropdownExtender2" runat="server" TargetControlID="ddlFeeType"
+                                                    UseAdvanceFeature="true" EditImageUrl="~/Images/Dropdown_Arrow.png" Width="220px">
+                                                </ext:ScrollableDropdownExtender>
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr class="PadLeft10Td">
@@ -750,6 +751,10 @@
                         <table id="lvProjects_table" runat="server" class="CompPerfTable WholeWidth tablesorter">
                             <tr runat="server" id="lvHeader" class="CompPerfHeader">
                                 <td class="CompPerfProjectState">
+                                    <div class="ie-bg">
+                                    </div>
+                                </td>
+                                <td class="CompPerfProjectState" style="width: 50px !important">
                                     <div class="ie-bg">
                                     </div>
                                 </td>
@@ -864,11 +869,8 @@
 
                                 <td class="MinWidth hideCol">
                                     <div class="ie-bg  alignCenter">
-                                        <%--<asp:LinkButton ID="LinkButton5" CommandArgument="18" CommandName="Sort" runat="server"
-                                            CssClass="arrow">--%>
-                                            Capabilities
+                                        Capabilities
 
-                                        <%--</asp:LinkButton>--%>
                                     </div>
                                 </td>
 
@@ -948,6 +950,7 @@
                     <ItemTemplate>
                         <tr runat="server" id="boundingRow" class="bgcolorwhite">
                             <td class="CompPerfProjectState"></td>
+                            <td class="CompPerfProjectState TextAlignCenter"><%# Eval("FeeType")%> </td>
                             <td class="CompPerfProjectNumber">
                                 <asp:Label ID="lblProjectNumber" runat="server" />
                             </td>
@@ -1040,6 +1043,7 @@
                     <AlternatingItemTemplate>
                         <tr runat="server" id="boundingRow" class="rowEven">
                             <td class="CompPerfProjectState"></td>
+                            <td class="CompPerfProjectState TextAlignCenter"><%# Eval("FeeType")%> </td>
                             <td class="CompPerfProjectNumber">
                                 <asp:Label ID="lblProjectNumber" runat="server" />
                             </td>

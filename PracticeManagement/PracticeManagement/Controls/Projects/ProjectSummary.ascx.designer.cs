@@ -427,15 +427,6 @@ namespace PraticeManagement.Controls.Projects {
         protected global::AjaxControlToolkit.TabPanel tpMainFilters;
         
         /// <summary>
-        /// tdFeeTypeLbl control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableCell tdFeeTypeLbl;
-        
-        /// <summary>
         /// tdLevelLbl control.
         /// </summary>
         /// <remarks>
@@ -443,6 +434,15 @@ namespace PraticeManagement.Controls.Projects {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlTableCell tdLevelLbl;
+        
+        /// <summary>
+        /// tdFeeTypeLbl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell tdFeeTypeLbl;
         
         /// <summary>
         /// btnResetCalculations control.
@@ -526,6 +526,33 @@ namespace PraticeManagement.Controls.Projects {
         protected global::System.Web.UI.WebControls.DropDownList ddlActualPeriod;
         
         /// <summary>
+        /// ddlSupressZeroBalance control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlSupressZeroBalance;
+        
+        /// <summary>
+        /// tdLevelValue control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell tdLevelValue;
+        
+        /// <summary>
+        /// ddlLevel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlLevel;
+        
+        /// <summary>
         /// tdFeeType control.
         /// </summary>
         /// <remarks>
@@ -560,33 +587,6 @@ namespace PraticeManagement.Controls.Projects {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::PraticeManagement.Controls.Generic.ScrollableDropdown.ScrollableDropdownExtender ScrollableDropdownExtender2;
-        
-        /// <summary>
-        /// ddlSupressZeroBalance control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlSupressZeroBalance;
-        
-        /// <summary>
-        /// tdLevelValue control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableCell tdLevelValue;
-        
-        /// <summary>
-        /// ddlLevel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlLevel;
         
         /// <summary>
         /// chbProjected control.
@@ -814,4 +814,3 @@ namespace PraticeManagement.Controls.Projects {
         protected global::System.Web.UI.WebControls.Label lblProjectTooltip;
     }
 }
-

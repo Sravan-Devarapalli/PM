@@ -9,6 +9,7 @@
         /// </summary>
         public class ColumnNames
         {
+            public const string FeeType = "FeeType";
             public const string IsFloatingVacation = "IsFloatingVacation";
             public const string RequestorAlias = "RequestorAlias";
             public const string CFOAlias = "CFOAlias";

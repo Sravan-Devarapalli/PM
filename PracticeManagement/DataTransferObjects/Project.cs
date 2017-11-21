@@ -655,6 +655,12 @@ namespace DataTransferObjects
             set;
         }
 
+        [DataMember]
+        public string FeeType {
+            get;
+            set;
+        }
+
         #endregion Properties
 
         #region Formatting

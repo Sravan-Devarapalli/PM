@@ -136,7 +136,7 @@ BEGIN
 									INNER JOIN dbo.aspnet_UsersInRoles AS ur ON u.UserId = ur.UserId
 									INNER JOIN dbo.aspnet_Roles AS r ON ur.RoleId = r.RoleId
 						   WHERE    r.RoleName = 'Salesperson' AND 
-									(p.PersonStatusId IN (1,3,5))
+									(p.PersonStatusId IN (1,3,5) or @IncludeInactive =1)
 									AND ( @PersonId IS NULL
 										  OR p.PersonId IN (
 										  SELECT sp.PersonId
@@ -152,4 +152,3 @@ BEGIN
 					s.FirstName
 	END
 END
-
